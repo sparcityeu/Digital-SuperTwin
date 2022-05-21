@@ -1,2 +1,0 @@
-all:
-	gcc  -g -Wall -Werror -Wextra -Wno-unused-parameter -DCONFIG_PFMLIB_DEBUG -DCONFIG_PFMLIB_OS_LINUX -I. -D_GNU_SOURCE -pthread -o showevtinfo lib/libpfm.a  -lm -lrt
