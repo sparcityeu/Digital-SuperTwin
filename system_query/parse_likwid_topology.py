@@ -124,25 +124,24 @@ def parse_likwid():
         my_dict['max_threads_per_block'] = int(topol[start + 11].split('\t')[1])
         my_dict['max_thread_dimensions'] = topol[start + 12].split('\t')[1]
         my_dict['max_regs_per_block'] = topol[start + 13].split('\t')[1]
+        my_dict['shared_mem_per_block'] = int(topol[start + 14].split('\t')[1])
+        my_dict['memory_bus_width'] = int(topol[start + 15].split('\t')[1])
+        my_dict['texture_alignment'] = int(topol[start + 16].split('\t')[1])
+        my_dict['surface_alignment'] = int(topol[start + 17].split('\t')[1])
+        my_dict['max_grid_sizes'] = topol[start + 20].split('\t')[1]
         
         gpu_info['GPUs'].append(my_dict)
+        
+    
+    return [socket_groups, domains, cache_topology, gpu_info]
 
-    
-    
-    
-    
-    
-    print('Socket groups:', socket_groups)
-    print('Domains:', domains)
-    print('Cache topology:', cache_topology)
-    print('GPU info:', gpu_info)
-    exit(1)
-
-
-    
 
 
 if __name__ == "__main__":
 
     
-    parse_likwid()
+    socket_groups, domains, cache_topology, gpu_info = parse_likwid()
+    print('Socket groups:', socket_groups)
+    print('Domains:', domains)
+    print('Cache topology:', cache_topology)
+    print('GPU info:', gpu_info)

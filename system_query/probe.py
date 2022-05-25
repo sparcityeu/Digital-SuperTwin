@@ -3,6 +3,8 @@ import diskinfo
 import smart_utils
 import smart_utils_info
 import detect_utils
+import parse_cpuid
+import parse_likwid_topology
 
 ##Chosen info to generate dtdl twin
 chosen_info = {}
@@ -52,6 +54,7 @@ chosen_info['network']['name']['model'] = ''
 chosen_info['network']['name']['firmware'] = ''
 
 
+##Note that this info here is "to be expanded" for all cpus, all includes all specs and events
 chosen_info['cpu'] = {}
 chosen_info['cpu']['specs'] = {}
 chosen_info['cpu']['specs']['model'] = ''
@@ -60,18 +63,56 @@ chosen_info['cpu']['specs']['sockets'] = ''
 chosen_info['cpu']['specs']['cores'] = ''
 chosen_info['cpu']['specs']['threads'] = ''
 chosen_info['cpu']['specs']['hyperthreading'] = ''
-#chosen_info['cpu']['specs']['min_mhz'] = '' 
-#chosen_info['cpu']['specs']['max_mhz'] = ''
-#chosen_info['cpu']['specs']['bus_mhz'] = ''
+chosen_info['cpu']['specs']['min_mhz'] = '' 
+chosen_info['cpu']['specs']['max_mhz'] = ''
+chosen_info['cpu']['specs']['bus_mhz'] = ''
 chosen_info['cpu']['specs']['flags'] = ''
+
+chosen_info['cpu']['tlb'] = {}
+chosen_info['cpu']['cache'] = {}
+
+chosen_info['numa'] = {}
+
+chosen_info['gpus'] = {}
 
 ##tlb from cpuid
 ##performance counters from cpuid
 ##gpu(s) from likwid-topology
 
+def generate_hardware_dict(to_gen, info_list):
 
+    for item in info_list:
+                
+        try:
+            to_gen[item[0]]
+        except:
+            to_gen[item[0]] = {}
 
+        try:
+            to_gen[item[0]][item[1]]
+        except:
+            to_gen[item[0]][item[1]] = {}
 
+        try:
+            to_gen[item[0]][item[1]][item[2]]
+        except:
+            to_gen[item[0]][item[1]][item[2]] = {}
+        
+
+    for item in info_list:
+        to_gen[item[0]][item[1]][item[2]] = item[3]
+
+    return to_gen
+
+def print_hardware_dict(hw_dict):
+
+    print('##################')
+    for key in hw_dict:
+        print('### key:', key)
+        for inner in hw_dict[key]:
+            print('### inner:', inner)
+            print(hw_dict[key][inner])
+    
 if __name__ == "__main__":
 
     hostname = detect_utils.cmd('hostname')[1].strip('\n')
@@ -79,72 +120,26 @@ if __name__ == "__main__":
     diskinfo_list = diskinfo.detect()
 
     system = {}
-
-    for item in system_list:
-        #print(item)
-        #print(item[0], item[1], item[2], item[3])
-
-        
-        try:
-            system[item[0]]
-        except:
-            system[item[0]] = {}
-
-        try:
-            system[item[0]][item[1]]
-        except:
-            system[item[0]][item[1]] = {}
-
-        try:
-            system[item[0]][item[1]][item[2]]
-        except:
-            system[item[0]][item[1]][item[2]] = {}
-        
-
-    for item in system_list:
-        system[item[0]][item[1]][item[2]] = item[3]
-
-
-    print('##################')
-    for key in system:
-        print('### key:', key)
-        for inner in system[key]:
-            print('### inner:', inner)
-            print(system[key][inner])
-
-
     disk = {}
 
-    for item in diskinfo_list:
-
-        try:
-            disk[item[0]]
-        except:
-            disk[item[0]] = {}
-
-        try:
-            disk[item[0]][item[1]]
-        except:
-            disk[item[0]][item[1]] = {}
-
-        try:
-            disk[item[0]][item[1]][item[2]]
-        except:
-            disk[item[0]][item[1]][item[2]] = {}
-        
-
-    for item in diskinfo_list:
-        disk[item[0]][item[1]][item[2]] = item[3]
+    system = generate_hardware_dict(system, system_list)
+    disk = generate_hardware_dict(disk, diskinfo_list)                
+    cache_info = parse_cpuid.parse_cpuid()
+    socket_groups, domains, cache_topology, gpu_info = parse_likwid_topology.parse_likwid()
 
 
-    print('##################')
-    for key in disk:
-        print('### key:', key)
-        for inner in disk[key]:
-            print('### inner:', inner)
-            print(disk[key][inner])
-
-
-
-
-            
+    print('#############################')
+    print_hardware_dict(system)
+    print('#############################')
+    print_hardware_dict(disk)
+    print('#############################')
+    print(cache_info)
+    print('#############################')
+    print(socket_groups)
+    print('#############################')
+    print(domains)
+    print('#############################')
+    print(cache_topology)
+    print('#############################')
+    print(gpu_info)
+    print('#############################')

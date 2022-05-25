@@ -92,6 +92,6 @@ def parse_cpuid():
 
 if __name__ == "__main__":
 
-    parse_cpuid()
-
+    info = parse_cpuid()
+    print('info:', info)
     
