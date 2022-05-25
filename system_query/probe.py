@@ -60,9 +60,9 @@ chosen_info['cpu']['specs']['sockets'] = ''
 chosen_info['cpu']['specs']['cores'] = ''
 chosen_info['cpu']['specs']['threads'] = ''
 chosen_info['cpu']['specs']['hyperthreading'] = ''
-chosen_info['cpu']['specs']['clock'] = '' ##from likwid_topology
-chosen_info['cpu']['specs']['min_clock'] = '' ##from lshw
-chosen_info['cpu']['specs']['max_clock'] = ''
+#chosen_info['cpu']['specs']['min_mhz'] = '' 
+#chosen_info['cpu']['specs']['max_mhz'] = ''
+#chosen_info['cpu']['specs']['bus_mhz'] = ''
 chosen_info['cpu']['specs']['flags'] = ''
 
 ##tlb from cpuid
