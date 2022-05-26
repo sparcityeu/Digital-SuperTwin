@@ -5,80 +5,124 @@ import smart_utils_info
 import detect_utils
 import parse_cpuid
 import parse_likwid_topology
-
-##Chosen info to generate dtdl twin
-chosen_info = {}
-chosen_info['hostname'] = ''
-chosen_info['os'] = ''
-chosen_info['arch']  =  ''
-chosen_info['uuid'] = ''
-
-chosen_info['system'] = {}
-
-chosen_info['system']['motherboard'] = {}
-chosen_info['system']['motherboard']['name'] = ''
-chosen_info['system']['motherboard']['vendor'] = ''
-
-chosen_info['system']['bios'] = {}
-chosen_info['system']['bios']['version'] = ''
-chosen_info['system']['bios']['date'] = ''
-chosen_info['system']['bios']['vendor'] = ''
-
-chosen_info['system']['kernel'] = {}
-chosen_info['system']['kernel']['version'] = ''
-
-chosen_info['memory'] = {}
-chosen_info['memory']['total'] = {}
-chosen_info['memory']['total']['size'] = ''
-chosen_info['memory']['total']['banks'] = ''
-
-chosen_info['memory']['banks'] = {}
-#for bank
-chosen_info['memory']['banks']['id'] = ''
-chosen_info['memory']['banks']['size'] = ''
-chosen_info['memory']['banks']['slot'] = ''
-chosen_info['memory']['banks']['clock'] = ''
-chosen_info['memory']['banks']['description'] = ''
-chosen_info['memory']['banks']['vendor'] = ''
-chosen_info['memory']['banks']['model'] = ''
-
-#consider update()
-chosen_info['network'] = {}
-chosen_info['network']['name'] = {}
-chosen_info['network']['name']['ipv4'] = ''
-chosen_info['network']['name']['serial'] = ''
-chosen_info['network']['name']['link'] = ''
-chosen_info['network']['name']['businfo'] = ''
-chosen_info['network']['name']['vendor'] = ''
-chosen_info['network']['name']['model'] = ''
-chosen_info['network']['name']['firmware'] = ''
+import json
+from pprint import pprint
 
 
-##Note that this info here is "to be expanded" for all cpus, all includes all specs and events
-chosen_info['cpu'] = {}
-chosen_info['cpu']['specs'] = {}
-chosen_info['cpu']['specs']['model'] = ''
-chosen_info['cpu']['specs']['type'] = ''
-chosen_info['cpu']['specs']['sockets'] = ''
-chosen_info['cpu']['specs']['cores'] = ''
-chosen_info['cpu']['specs']['threads'] = ''
-chosen_info['cpu']['specs']['hyperthreading'] = ''
-chosen_info['cpu']['specs']['min_mhz'] = '' 
-chosen_info['cpu']['specs']['max_mhz'] = ''
-chosen_info['cpu']['specs']['bus_mhz'] = ''
-chosen_info['cpu']['specs']['flags'] = ''
+def pretty_print_info(info):
+    pprint(info)
 
-chosen_info['cpu']['tlb'] = {}
-chosen_info['cpu']['cache'] = {}
+def choose_info(hostname, system, disk, cache_info, socket_groups, domains, cache_topology, gpu_info):
+    ##Chosen info to generate dtdl twin
+    chosen_info = {}
+    chosen_info['hostname'] = hostname
+    chosen_info['os'] = system['system']['os']['version']
+    chosen_info['arch']  =  system['system']['kernel']['arch']
+    chosen_info['uuid'] = system['system']['product']['uuid']
+    
+    chosen_info['system'] = {}
+    
+    chosen_info['system']['motherboard'] = {}
+    chosen_info['system']['motherboard']['name'] = system['system']['motherboard']['name']
+    chosen_info['system']['motherboard']['vendor'] = system['system']['motherboard']['vendor']
+    
+    chosen_info['system']['bios'] = {}
+    chosen_info['system']['bios']['version'] = system['firmware']['bios']['version']
+    chosen_info['system']['bios']['date'] = system['firmware']['bios']['date']
+    chosen_info['system']['bios']['vendor'] = system['firmware']['bios']['vendor']
+    
+    chosen_info['system']['kernel'] = {}
+    chosen_info['system']['kernel']['version'] = system['system']['kernel']['version']
+    
+    chosen_info['memory'] = {}
+    chosen_info['memory']['total'] = {}
+    chosen_info['memory']['total']['size'] = int(system['memory']['total']['size'])
+    chosen_info['memory']['total']['banks'] = int(system['memory']['banks']['count'])
+    
+    chosen_info['memory']['banks'] = {}
+    #for bank
+    for i in range(chosen_info['memory']['total']['banks']):
+        ident = 'bank:' + str(i)
+        temp_bank = {}
+        temp_bank['id'] = i
+        temp_bank['size'] = int(system['memory'][ident]['size'])
+        temp_bank['slot'] = system['memory'][ident]['slot']
+        temp_bank['clock'] = int(system['memory'][ident]['clock'])
+        temp_bank['description'] = system['memory'][ident]['description']
+        temp_bank['vendor'] = system['memory'][ident]['vendor']
+        temp_bank['model'] = system['memory'][ident]['product']
+        chosen_info['memory']['banks'][ident] = temp_bank
+        
 
-chosen_info['numa'] = {}
+    chosen_info['network'] = {}
+    for key in system['network']:
+        chosen_info['network'][key] = {}
+        try:
+            chosen_info['network'][key]['ipv4'] = system['network'][key]['ipv4']
+        except:
+            chosen_info['network'][key]['ipv4'] = ''
 
-chosen_info['gpus'] = {}
+        try:
+            chosen_info['network'][key]['businfo'] = system['network'][key]['businfo']
+            chosen_info['network'][key]['vendor'] = system['network'][key]['vendor']
+            chosen_info['network'][key]['model'] = system['network'][key]['product']
+            chosen_info['network'][key]['firmware'] = system['network'][key]['firmware']
+            chosen_info['network'][key]['virtual'] = 'no'
+        except:
+            chosen_info['network'][key]['businfo'] = 'virtual'
+            chosen_info['network'][key]['vendor'] = 'virtual'
+            chosen_info['network'][key]['model'] = 'virtual'
+            chosen_info['network'][key]['firmware'] = 'virtual'
+            chosen_info['network'][key]['virtual'] = 'yes'
 
-##tlb from cpuid
-##performance counters from cpuid
-##gpu(s) from likwid-topology
+        try:
+            chosen_info['network'][key]['speed'] = system['network'][key]['speed']
+        except:
+            chosen_info['network'][key]['speed'] = 'no-link'
+            
+        chosen_info['network'][key]['serial'] = system['network'][key]['serial']
+        chosen_info['network'][key]['link'] = system['network'][key]['link']
+        
+    
 
+    chosen_info['disk'] = {}
+    chosen_info['disk']['no_disks'] = disk['disk']['logical']['count']
+    for key in disk['disk']:
+        if(key != 'logical'):
+            chosen_info['disk'][key] = {}
+            chosen_info['disk'][key]['size'] = disk['disk'][key]['size']
+            chosen_info['disk'][key]['model'] = disk['disk'][key]['model']
+            chosen_info['disk'][key]['rotational'] = int(disk['disk'][key]['rotational'])
+    
+    ##Note that this info here is "to be expanded" for all cpus, all includes all specs and events
+    chosen_info['cpu'] = {}
+    chosen_info['cpu']['specs'] = {}
+    chosen_info['cpu']['specs']['sockets'] = int(system['cpu']['physical']['number'])
+    ##From there, assumes all cpus will be identical on the same machine
+    chosen_info['cpu']['specs']['model'] = system['cpu']['physical_0']['product']
+    chosen_info['cpu']['specs']['type'] = system['cpu']['physical_0']['architecture']
+    chosen_info['cpu']['specs']['cores'] = int(system['cpu']['physical_0']['cores'])
+    chosen_info['cpu']['specs']['threads'] = int(system['cpu']['physical_0']['threads'])
+    chosen_info['cpu']['specs']['threads_per_core'] = int(system['cpu']['physical_0']['threads_per_core'])
+    chosen_info['cpu']['specs']['hyperthreading'] = system['cpu']['physical']['smt']
+    chosen_info['cpu']['specs']['min_mhz'] = system['cpu']['physical_0']['min_Mhz']
+    chosen_info['cpu']['specs']['max_mhz'] = system['cpu']['physical_0']['max_Mhz']
+    #chosen_info['cpu']['specs']['bus_mhz'] = system['cpu']['physical_0']['bus_mhz']
+    chosen_info['cpu']['specs']['flags'] = system['cpu']['physical_0']['flags']
+    
+    chosen_info['cpu']['tlb'] = cache_info['tlb']
+    chosen_info['cpu']['cache'] = cache_topology
+    
+    chosen_info['numa'] = domains
+    
+    chosen_info['gpus'] = gpu_info
+
+    return chosen_info
+    
+    ##tlb from cpuid
+    ##performance counters from cpuid
+    ##gpu(s) from likwid-topology
+    
 def generate_hardware_dict(to_gen, info_list):
 
     for item in info_list:
@@ -127,19 +171,25 @@ if __name__ == "__main__":
     cache_info = parse_cpuid.parse_cpuid()
     socket_groups, domains, cache_topology, gpu_info = parse_likwid_topology.parse_likwid()
 
+    info = choose_info(hostname, system, disk, cache_info, socket_groups, domains, cache_topology, gpu_info)
 
-    print('#############################')
-    print_hardware_dict(system)
-    print('#############################')
-    print_hardware_dict(disk)
-    print('#############################')
-    print(cache_info)
-    print('#############################')
-    print(socket_groups)
-    print('#############################')
-    print(domains)
-    print('#############################')
-    print(cache_topology)
-    print('#############################')
-    print(gpu_info)
-    print('#############################')
+    #print(system)
+    #print('#############################')
+    #print_hardware_dict(system)
+    #print('#############################')
+    #print_hardware_dict(disk)
+    #print('#############################')
+    #print(cache_info)
+    #print('#############################')
+    #print(socket_groups)
+    #print('#############################')
+    #print(domains)
+    #print('#############################')
+    #print(cache_topology)
+    #print('#############################')
+    #print(gpu_info)
+    #print('#############################')
+    pprint(info)    
+
+    with open("probing.json", "w") as outfile:
+        json.dump(info, outfile)

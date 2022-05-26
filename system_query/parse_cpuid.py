@@ -6,7 +6,7 @@ def gv_parentheses(cpuid_string):
 
 def gv_parentheses_space(cpuid_string):
     str_list = cpuid_string.split(' ')
-    return str_list[-2].strip('(').strip(')') + ' ' +str_list[-1].strip('(').strip(')')
+    return str_list[-2].strip('(').strip(')') + ' ' + str_list[-1].strip('(').strip(')')
     
 
 def parse_cpuid():
