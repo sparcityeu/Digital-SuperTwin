@@ -1,5 +1,6 @@
 import detect_utils
 import re
+from pprint import pprint
 
 def find_ind(to_find, str_list):
     for i in range(len(str_list)):
@@ -136,12 +137,72 @@ def parse_likwid():
     return [socket_groups, domains, cache_topology, gpu_info]
 
 
+def remove_whitespace(ls):
+
+    white = True
+    while white:
+        try:
+            ls.remove('')
+        except:
+            white = False
+
+    return ls
+
+def parse_affinity():
+
+    info = detect_utils.cmd('likwid-topology')[1]
+    num_info = detect_utils.output_lines('likwid-topology')
+    
+    sockets = int(remove_whitespace(num_info[find_ind("Sockets:", num_info)].split("\t"))[1])
+    cores_per_socket = int(remove_whitespace(num_info[find_ind("Cores per socket:", num_info)].split("\t"))[1])
+    threads_per_core = int(remove_whitespace(num_info[find_ind("Threads per core:", num_info)].split("\t"))[1])
+    
+
+    big_fields = info.split('--------------------------------------------------------------------------------')
+    
+    #print('big_fields:', big_fields[2])
+
+    affinity = {}
+    affinity['socket'] = {}
+
+    for i in range(sockets):
+        affinity['socket'][i] = {}
+                
+        for j in range(sockets*cores_per_socket):
+            try:
+                affinity['socket'][i]['cores']
+            except:
+                affinity['socket'][i]['cores'] = {}
+
+                        
+    for line in big_fields[2].split('\n'):
+        cols = remove_whitespace(line.split(" "))
+        if(len(cols) != 0 and cols[0] != 'HWThread'):
+            hwthread = int(cols[0])
+            #in_core_thread = int(cols[1])
+            core = int(cols[2])
+            #die = int(cols[3])
+            socket = int(cols[4])
+
+            try:
+                affinity['socket'][socket]['cores'][core].append(hwthread)
+            except:
+                affinity['socket'][socket]['cores'][core] = []
+                affinity['socket'][socket]['cores'][core].append(hwthread)
+            
+
+
+    return affinity
+    
 
 if __name__ == "__main__":
 
     
-    socket_groups, domains, cache_topology, gpu_info = parse_likwid()
-    print('Socket groups:', socket_groups)
-    print('Domains:', domains)
-    print('Cache topology:', cache_topology)
-    print('GPU info:', gpu_info)
+    #socket_groups, domains, cache_topology, gpu_info = parse_likwid()
+    #print('Socket groups:', socket_groups)
+    #print('Domains:', domains)
+    #print('Cache topology:', cache_topology)
+    #print('GPU info:', gpu_info)
+
+    affinity = parse_affinity()
+    pprint(affinity)
