@@ -12,7 +12,7 @@ from pprint import pprint
 def pretty_print_info(info):
     pprint(info)
 
-def choose_info(hostname, system, disk, cache_info, socket_groups, domains, cache_topology, gpu_info):
+def choose_info(hostname, system, disk, cache_info, socket_groups, domains, cache_topology, affinity, gpu_info):
     ##Chosen info to generate dtdl twin
     chosen_info = {}
     chosen_info['hostname'] = hostname
@@ -114,6 +114,7 @@ def choose_info(hostname, system, disk, cache_info, socket_groups, domains, cach
     chosen_info['cpu']['cache'] = cache_topology
     
     chosen_info['numa'] = domains
+    chosen_info['affinity'] = affinity
     
     chosen_info['gpus'] = gpu_info
 
@@ -170,8 +171,9 @@ if __name__ == "__main__":
     disk = generate_hardware_dict(disk, diskinfo_list)                
     cache_info = parse_cpuid.parse_cpuid()
     socket_groups, domains, cache_topology, gpu_info = parse_likwid_topology.parse_likwid()
+    affinity = parse_likwid_topology.parse_affinity()
 
-    info = choose_info(hostname, system, disk, cache_info, socket_groups, domains, cache_topology, gpu_info)
+    info = choose_info(hostname, system, disk, cache_info, socket_groups, domains, cache_topology, affinity, gpu_info)
 
     #print(system)
     #print('#############################')
