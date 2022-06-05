@@ -168,6 +168,8 @@ if __name__ == "__main__":
     disk = {}
 
     system = generate_hardware_dict(system, system_list)
+    #pprint(system)
+    #exit(1)
     disk = generate_hardware_dict(disk, diskinfo_list)                
     cache_info = parse_cpuid.parse_cpuid()
     socket_groups, domains, cache_topology, gpu_info = parse_likwid_topology.parse_likwid()

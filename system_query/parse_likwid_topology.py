@@ -50,7 +50,13 @@ def parse_cache_topology(topol, ret_dict, name, level):
 
 def parse_likwid():
 
+    
+
     topol = detect_utils.output_lines('sudo likwid-topology --caches -G')
+    if(len(topol) == 0):
+        topol = detect_utils.output_lines('sudo likwid-topology --caches')
+
+    #print('topol:', topol)
     
     ind_no_sockets = find_ind('Sockets:', topol)
     no_sockets = int(topol[ind_no_sockets].split('\t')[2])
@@ -159,9 +165,7 @@ def parse_affinity():
     
 
     big_fields = info.split('--------------------------------------------------------------------------------')
-    
-    #print('big_fields:', big_fields[2])
-
+        
     affinity = {}
     affinity['socket'] = {}
 
@@ -177,12 +181,25 @@ def parse_affinity():
                         
     for line in big_fields[2].split('\n'):
         cols = remove_whitespace(line.split(" "))
+        if(len(cols) < 2):
+            cols = remove_whitespace(line.split("\t"))
+        #print('line:', line, 'cols:', cols)
+        #print(big_fields[2].split('\n'))
+
+
+        '''
+        What's happening here is: likwid-topology layout changes w.r. to numa and CUPTI existence
+        '''
         if(len(cols) != 0 and cols[0] != 'HWThread'):
             hwthread = int(cols[0])
             #in_core_thread = int(cols[1])
             core = int(cols[2])
             #die = int(cols[3])
-            socket = int(cols[4])
+            socket = 1
+            if(len(cols) == 6):
+                socket = int(cols[4])
+            else:
+                socket = int(cols[3])
 
             try:
                 affinity['socket'][socket]['cores'][core].append(hwthread)
