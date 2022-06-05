@@ -40,18 +40,28 @@ def choose_info(hostname, system, disk, cache_info, socket_groups, domains, cach
     chosen_info['memory']['total']['banks'] = int(system['memory']['banks']['count'])
     
     chosen_info['memory']['banks'] = {}
+
+    pprint(system['memory'])
+    
     #for bank
-    for i in range(chosen_info['memory']['total']['banks']):
-        ident = 'bank:' + str(i)
-        temp_bank = {}
-        temp_bank['id'] = i
-        temp_bank['size'] = int(system['memory'][ident]['size'])
-        temp_bank['slot'] = system['memory'][ident]['slot']
-        temp_bank['clock'] = int(system['memory'][ident]['clock'])
-        temp_bank['description'] = system['memory'][ident]['description']
-        temp_bank['vendor'] = system['memory'][ident]['vendor']
-        temp_bank['model'] = system['memory'][ident]['product']
-        chosen_info['memory']['banks'][ident] = temp_bank
+    _id = 0
+    for key in system['memory']:
+        if(key.find('bank:') != -1):
+            ident = key
+            temp_bank = {}
+            temp_bank['id'] = _id
+            _id += 1
+
+            try:
+                temp_bank['size'] = int(system['memory'][ident]['size'])
+                temp_bank['slot'] = system['memory'][ident]['slot']
+                temp_bank['clock'] = int(system['memory'][ident]['clock'])
+                temp_bank['description'] = system['memory'][ident]['description']
+                temp_bank['vendor'] = system['memory'][ident]['vendor']
+                temp_bank['model'] = system['memory'][ident]['product']
+                chosen_info['memory']['banks'][ident] = temp_bank
+            except:
+                _id -= 1
         
 
     chosen_info['network'] = {}
