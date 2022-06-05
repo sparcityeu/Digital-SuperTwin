@@ -355,8 +355,12 @@ def get_cpus(hw_lst):
             value = None
             if d_key in lscpu:
                 value = lscpu[d_key]
+                print('value:', value, 'conv:', conv)
                 if conv:
-                    value = conv(value)
+                    try:
+                        value = conv(value)
+                    except:
+                        value = conv(value.replace(",", "."))
             elif t_key == 'threads':
                 value = (int(lscpu.get('Thread(s) per core', 1))
                          * int(lscpu.get('Core(s) per socket', 1)))
