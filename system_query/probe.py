@@ -41,7 +41,7 @@ def choose_info(hostname, system, disk, cache_info, socket_groups, domains, cach
     
     chosen_info['memory']['banks'] = {}
 
-    pprint(system['memory'])
+    #pprint(system['memory'])
     
     #for bank
     _id = 0
