@@ -7,7 +7,7 @@ import detect_utils
 
 if __name__ == "__main__":
 
-    os.system('sh standard_deploy.sh')
+    #os.system('sh standard_deploy.sh')
     
     pminfo = detect_utils.output_lines('pminfo')
     #print(pminfo)
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     line_0 = '. /etc/pcp.env' + '\n'
     mid_lines = []
     for item in to_prune:
-        mid_lines.append('pmnsdel "' + item + '"\n')
+        mid_lines.append('pmnsdel ' + item + ' \n')
         
     z_line_0 = '$PCP_RC_DIR/pmcd start' + '\n'
     
@@ -45,5 +45,5 @@ if __name__ == "__main__":
 
 
         
-    os.system('sh prune.sh')
+    #os.system('sh prune.sh')
         
