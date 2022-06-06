@@ -12,36 +12,38 @@ if __name__ == "__main__":
     pminfo = detect_utils.output_lines('pminfo')
     #print(pminfo)
 
-    pmprobe_zero = detect_utils.output_lines('pmprobe')
-    #print(pmprobe_zero)
+    pmprobe_zero = detect_utils.output_lines('pmprobe -n /var/lib/pcp/pmns/root')
+    print('Number of probed metrics:', len(pmprobe_zero))
 
     to_prune = []
-    for item in pmprobe_zero:
-        fields = item.split(" ")
+    for i in range(220, len(pmprobe_zero)):
+        fields = pmprobe_zero[i].split(" ")
         #print(fields)
 
         no_vals = int(fields[1])
-        if(no_vals < 1):
-            to_prune.append(fields[0])
+        #if(no_vals < 1):
+        to_prune.append(fields[0])
 
 
 
     #print('to_prune:', to_prune)
-    print('len:', len(to_prune))
+    print('Number of metrics to prune:', len(to_prune))
 
     
     line_0 = '. /etc/pcp.env' + '\n'
     mid_lines = []
     for item in to_prune:
-        mid_lines.append('pmnsdel ' + item + ' \n')
-        
-    z_line_0 = '$PCP_RC_DIR/pmcd start' + '\n'
+        mid_lines.append('pmnsdel -n /var/lib/pcp/pmns/root ' + item + ' \n')
+
+    #z_line_0 = 'systemctl enable pmcd'
+    z_line_1 = '$PCP_RC_DIR/pmcd start' + '\n'
     
     with open('prune.sh', 'w+') as scr:
         scr.write(line_0)
         for item in mid_lines:
             scr.write(item)
-        scr.write(z_line_0)
+        #scr.write(z_line_0)
+        scr.write(z_line_1)
 
 
         

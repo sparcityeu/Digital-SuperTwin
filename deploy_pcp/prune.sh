@@ -1,607 +1,1625 @@
 . /etc/pcp.env
-pmnsdel hinv.map.dmname 
-pmnsdel hinv.map.mdname 
-pmnsdel hinv.cpu.frequency_scaling.time 
-pmnsdel mem.util.shared 
-pmnsdel mem.util.highTotal 
-pmnsdel mem.util.highFree 
-pmnsdel mem.util.lowTotal 
-pmnsdel mem.util.lowFree 
-pmnsdel mem.util.reverseMaps 
-pmnsdel mem.util.mmap_copy 
-pmnsdel mem.util.quicklists 
-pmnsdel mem.numa.max_bandwidth 
-pmnsdel mem.numa.util.highTotal 
-pmnsdel mem.numa.util.highFree 
-pmnsdel mem.numa.util.lowTotal 
-pmnsdel mem.numa.util.lowFree 
-pmnsdel mem.vmstat.allocstall 
-pmnsdel mem.vmstat.allocstall_high 
-pmnsdel mem.vmstat.compact_blocks_moved 
-pmnsdel mem.vmstat.compact_pagemigrate_failed 
-pmnsdel mem.vmstat.compact_pages_moved 
-pmnsdel mem.vmstat.kswapd_skip_congestion_wait 
-pmnsdel mem.vmstat.kswapd_steal 
-pmnsdel mem.vmstat.nr_foll_pin_acquired 
-pmnsdel mem.vmstat.nr_foll_pin_released 
-pmnsdel mem.vmstat.nr_pages_scanned 
-pmnsdel mem.vmstat.pgalloc_high 
-pmnsdel mem.vmstat.pgrefill_dma32 
-pmnsdel mem.vmstat.pgrefill_movable 
-pmnsdel mem.vmstat.pgrefill_dma 
-pmnsdel mem.vmstat.pgrefill_high 
-pmnsdel mem.vmstat.pgrefill_normal 
-pmnsdel mem.vmstat.pgscan_direct_dma 
-pmnsdel mem.vmstat.pgscan_direct_dma32 
-pmnsdel mem.vmstat.pgscan_direct_high 
-pmnsdel mem.vmstat.pgscan_direct_movable 
-pmnsdel mem.vmstat.pgscan_direct_normal 
-pmnsdel mem.vmstat.pgscan_kswapd_dma 
-pmnsdel mem.vmstat.pgscan_kswapd_dma32 
-pmnsdel mem.vmstat.pgscan_kswapd_high 
-pmnsdel mem.vmstat.pgscan_kswapd_movable 
-pmnsdel mem.vmstat.pgscan_kswapd_normal 
-pmnsdel mem.vmstat.pgsteal_dma 
-pmnsdel mem.vmstat.pgsteal_dma32 
-pmnsdel mem.vmstat.pgsteal_file 
-pmnsdel mem.vmstat.pgsteal_high 
-pmnsdel mem.vmstat.pgsteal_movable 
-pmnsdel mem.vmstat.pgsteal_normal 
-pmnsdel mem.vmstat.pgsteal_kswapd_dma 
-pmnsdel mem.vmstat.pgsteal_kswapd_dma32 
-pmnsdel mem.vmstat.pgsteal_kswapd_normal 
-pmnsdel mem.vmstat.pgsteal_kswapd_movable 
-pmnsdel mem.vmstat.pgsteal_direct_dma 
-pmnsdel mem.vmstat.pgsteal_direct_dma32 
-pmnsdel mem.vmstat.pgsteal_direct_normal 
-pmnsdel mem.vmstat.pgsteal_direct_movable 
-pmnsdel mem.vmstat.thp_fault_fallback_charge 
-pmnsdel mem.vmstat.unevictable_pgs_mlockfreed 
-pmnsdel mem.zoneinfo.scanned 
-pmnsdel mem.zoneinfo.nr_free_pages 
-pmnsdel mem.zoneinfo.nr_alloc_batch 
-pmnsdel mem.zoneinfo.cma 
-pmnsdel mem.zoneinfo.nr_swapcached 
-pmnsdel mem.zoneinfo.nr_foll_pin_acquired 
-pmnsdel mem.zoneinfo.nr_foll_pin_released 
-pmnsdel mem.zoneinfo.workingset_refault_anon 
-pmnsdel mem.zoneinfo.workingset_refault_file 
-pmnsdel mem.zoneinfo.workingset_active_anon 
-pmnsdel mem.zoneinfo.workingset_active_file 
-pmnsdel mem.zoneinfo.workingset_restore_anon 
-pmnsdel mem.zoneinfo.workingset_restore_file 
-pmnsdel swap.in 
-pmnsdel swap.out 
-pmnsdel network.tcp.pawspassiverejected 
-pmnsdel network.tcp.prequeued 
-pmnsdel network.tcp.directcopyfrombacklog 
-pmnsdel network.tcp.directcopyfromprequeue 
-pmnsdel network.tcp.prequeueddropped 
-pmnsdel network.tcp.hphitstouser 
-pmnsdel network.tcp.fackreorder 
-pmnsdel network.tcp.forwardretrans 
-pmnsdel network.tcp.schedulerfail 
-pmnsdel network.tcp.tcptimeoutrehash 
-pmnsdel network.tcp.tcpduplicatedatarehash 
-pmnsdel network.tcp.tcpdsackrecvsegs 
-pmnsdel network.tcp.tcpdsackignoreddubious 
-pmnsdel network.tcp.tcpmigratereqsuccess 
-pmnsdel network.tcp.tcpmigratereqfailure 
-pmnsdel network.tcp.tcploss 
-pmnsdel network.udp.memerrors 
-pmnsdel network.udplite.memerrors 
-pmnsdel network.mptcp.mpcapablesynrx 
-pmnsdel network.mptcp.mpcapableackrx 
-pmnsdel network.mptcp.mpcapablefallbackack 
-pmnsdel network.mptcp.mpcapablefallbacksynack 
-pmnsdel network.mptcp.mptcpretrans 
-pmnsdel network.mptcp.mpjoinnotokenfound 
-pmnsdel network.mptcp.mpjoinsynrx 
-pmnsdel network.mptcp.mpjoinsynackrx 
-pmnsdel network.mptcp.mpjoinsynackhmacfailure 
-pmnsdel network.mptcp.mpjoinackrx 
-pmnsdel network.mptcp.mpjoinackhmacfailure 
-pmnsdel network.mptcp.dssnotmatching 
-pmnsdel network.mptcp.infinitemaprx 
-pmnsdel network.mptcp.mpcapablesyntx 
-pmnsdel network.mptcp.mpcapablesynackrx 
-pmnsdel network.mptcp.mpfallbacktokeninit 
-pmnsdel network.mptcp.dssnomatchtcp 
-pmnsdel network.mptcp.datacsumerr 
-pmnsdel network.mptcp.ofoqueuetail 
-pmnsdel network.mptcp.ofoqueue 
-pmnsdel network.mptcp.ofomerge 
-pmnsdel network.mptcp.nodssinwindow 
-pmnsdel network.mptcp.duplicatedata 
-pmnsdel network.mptcp.addaddr 
-pmnsdel network.mptcp.echoadd 
-pmnsdel network.mptcp.portadd 
-pmnsdel network.mptcp.mpjoinportsynrx 
-pmnsdel network.mptcp.mpjoinportsynackrx 
-pmnsdel network.mptcp.mpjoinportackrx 
-pmnsdel network.mptcp.mismatchportsynrx 
-pmnsdel network.mptcp.mismatchportackrx 
-pmnsdel network.mptcp.rmaddr 
-pmnsdel network.mptcp.rmsubflow 
-pmnsdel network.mptcp.mppriotx 
-pmnsdel network.mptcp.mppriorx 
-pmnsdel network.mptcp.rcvpruned 
-pmnsdel network.mptcp.mpfailtx 
-pmnsdel network.mptcp.mpfailrx 
-pmnsdel network.mptcp.subflowstale 
-pmnsdel network.mptcp.subflowrecover 
-pmnsdel network.mptcp.addaddrdrop 
-pmnsdel network.mptcp.rmaddrdrop 
-pmnsdel disk.dm.read 
-pmnsdel disk.dm.write 
-pmnsdel disk.dm.total 
-pmnsdel disk.dm.blkread 
-pmnsdel disk.dm.blkwrite 
-pmnsdel disk.dm.blktotal 
-pmnsdel disk.dm.read_bytes 
-pmnsdel disk.dm.write_bytes 
-pmnsdel disk.dm.total_bytes 
-pmnsdel disk.dm.read_merge 
-pmnsdel disk.dm.write_merge 
-pmnsdel disk.dm.avactive 
-pmnsdel disk.dm.aveq 
-pmnsdel disk.dm.read_rawactive 
-pmnsdel disk.dm.write_rawactive 
-pmnsdel disk.dm.total_rawactive 
-pmnsdel disk.dm.capacity 
-pmnsdel disk.dm.discard 
-pmnsdel disk.dm.blkdiscard 
-pmnsdel disk.dm.discard_bytes 
-pmnsdel disk.dm.discard_merge 
-pmnsdel disk.dm.discard_rawactive 
-pmnsdel disk.dm.flush 
-pmnsdel disk.dm.flush_rawactive 
-pmnsdel disk.md.read 
-pmnsdel disk.md.write 
-pmnsdel disk.md.total 
-pmnsdel disk.md.blkread 
-pmnsdel disk.md.blkwrite 
-pmnsdel disk.md.blktotal 
-pmnsdel disk.md.read_bytes 
-pmnsdel disk.md.write_bytes 
-pmnsdel disk.md.total_bytes 
-pmnsdel disk.md.read_merge 
-pmnsdel disk.md.write_merge 
-pmnsdel disk.md.avactive 
-pmnsdel disk.md.aveq 
-pmnsdel disk.md.read_rawactive 
-pmnsdel disk.md.write_rawactive 
-pmnsdel disk.md.total_rawactive 
-pmnsdel disk.md.status 
-pmnsdel disk.md.capacity 
-pmnsdel disk.md.discard 
-pmnsdel disk.md.blkdiscard 
-pmnsdel disk.md.discard_bytes 
-pmnsdel disk.md.discard_merge 
-pmnsdel disk.md.discard_rawactive 
-pmnsdel disk.md.flush 
-pmnsdel disk.md.flush_rawactive 
-pmnsdel disk.wwid.capacity 
-pmnsdel rpc.client.rpccnt 
-pmnsdel rpc.client.rpcretrans 
-pmnsdel rpc.client.rpcauthrefresh 
-pmnsdel rpc.client.netcnt 
-pmnsdel rpc.client.netudpcnt 
-pmnsdel rpc.client.nettcpcnt 
-pmnsdel rpc.client.nettcpconn 
-pmnsdel rpc.server.rpccnt 
-pmnsdel rpc.server.rpcerr 
-pmnsdel rpc.server.rpcbadfmt 
-pmnsdel rpc.server.rpcbadauth 
-pmnsdel rpc.server.rpcbadclnt 
-pmnsdel rpc.server.rchits 
-pmnsdel rpc.server.rcmisses 
-pmnsdel rpc.server.rcnocache 
-pmnsdel rpc.server.fh_cached 
-pmnsdel rpc.server.fh_valid 
-pmnsdel rpc.server.fh_fixup 
-pmnsdel rpc.server.fh_lookup 
-pmnsdel rpc.server.fh_stale 
-pmnsdel rpc.server.fh_concurrent 
-pmnsdel rpc.server.netcnt 
-pmnsdel rpc.server.netudpcnt 
-pmnsdel rpc.server.nettcpcnt 
-pmnsdel rpc.server.nettcpconn 
-pmnsdel rpc.server.fh_anon 
-pmnsdel rpc.server.fh_nocache_dir 
-pmnsdel rpc.server.fh_nocache_nondir 
-pmnsdel rpc.server.io_read 
-pmnsdel rpc.server.io_write 
-pmnsdel rpc.server.th_cnt 
-pmnsdel rpc.server.th_fullcnt 
-pmnsdel nfs.client.calls 
-pmnsdel nfs.client.reqs 
-pmnsdel nfs.server.calls 
-pmnsdel nfs.server.reqs 
-pmnsdel nfs.server.threads.total 
-pmnsdel nfs.server.threads.pools 
-pmnsdel nfs.server.threads.requests 
-pmnsdel nfs.server.threads.enqueued 
-pmnsdel nfs.server.threads.processed 
-pmnsdel nfs.server.threads.timedout 
-pmnsdel nfs3.client.calls 
-pmnsdel nfs3.client.reqs 
-pmnsdel nfs3.server.calls 
-pmnsdel nfs3.server.reqs 
-pmnsdel nfs4.client.calls 
-pmnsdel nfs4.client.reqs 
-pmnsdel nfs4.server.calls 
-pmnsdel nfs4.server.reqs 
-pmnsdel ipc.sem.key 
-pmnsdel ipc.sem.owner 
-pmnsdel ipc.sem.perms 
-pmnsdel ipc.sem.nsems 
-pmnsdel ipc.msg.key 
-pmnsdel ipc.msg.owner 
-pmnsdel ipc.msg.perms 
-pmnsdel ipc.msg.msgsz 
-pmnsdel ipc.msg.messages 
-pmnsdel ipc.msg.last_send_pid 
-pmnsdel ipc.msg.last_recv_pid 
-pmnsdel tape.dev.in_flight 
-pmnsdel tape.dev.io_ns 
-pmnsdel tape.dev.other_cnt 
-pmnsdel tape.dev.read_byte_cnt 
-pmnsdel tape.dev.read_cnt 
-pmnsdel tape.dev.read_ns 
-pmnsdel tape.dev.resid_cnt 
-pmnsdel tape.dev.write_byte_cnt 
-pmnsdel tape.dev.write_cnt 
-pmnsdel tape.dev.write_ns 
-pmnsdel zram.read 
-pmnsdel zram.write 
-pmnsdel zram.total 
-pmnsdel zram.blkread 
-pmnsdel zram.blkwrite 
-pmnsdel zram.blktotal 
-pmnsdel zram.read_bytes 
-pmnsdel zram.write_bytes 
-pmnsdel zram.total_bytes 
-pmnsdel zram.read_merge 
-pmnsdel zram.write_merge 
-pmnsdel zram.avactive 
-pmnsdel zram.aveq 
-pmnsdel zram.read_rawactive 
-pmnsdel zram.write_rawactive 
-pmnsdel zram.total_rawactive 
-pmnsdel zram.capacity 
-pmnsdel zram.discard 
-pmnsdel zram.blkdiscard 
-pmnsdel zram.discard_bytes 
-pmnsdel zram.discard_merge 
-pmnsdel zram.discard_rawactive 
-pmnsdel zram.flush 
-pmnsdel zram.flush_rawactive 
-pmnsdel zram.io_stat.invalid 
-pmnsdel zram.io_stat.notify_free 
-pmnsdel zram.io_stat.failed.reads 
-pmnsdel zram.io_stat.failed.writes 
-pmnsdel zram.mm_stat.data_size.original 
-pmnsdel zram.mm_stat.data_size.compressed 
-pmnsdel zram.mm_stat.mem.used_total 
-pmnsdel zram.mm_stat.mem.limit 
-pmnsdel zram.mm_stat.mem.max_used 
-pmnsdel zram.mm_stat.pages.same 
-pmnsdel zram.mm_stat.pages.compacted 
-pmnsdel zram.mm_stat.pages.huge 
-pmnsdel zram.bd_stat.count 
-pmnsdel zram.bd_stat.reads 
-pmnsdel zram.bd_stat.writes 
-pmnsdel fchost.lip_count 
-pmnsdel fchost.nos_count 
-pmnsdel fchost.error_frames 
-pmnsdel fchost.dumped_frames 
-pmnsdel fchost.in.frames 
-pmnsdel fchost.in.bytes 
-pmnsdel fchost.out.frames 
-pmnsdel fchost.out.bytes 
-pmnsdel pmcd.pmie.configfile 
-pmnsdel pmcd.pmie.logfile 
-pmnsdel pmcd.pmie.pmcd_host 
-pmnsdel pmcd.pmie.numrules 
-pmnsdel pmcd.pmie.actions 
-pmnsdel pmcd.pmie.eval.true 
-pmnsdel pmcd.pmie.eval.false 
-pmnsdel pmcd.pmie.eval.unknown 
-pmnsdel pmcd.pmie.eval.expected 
-pmnsdel pmcd.pmie.eval.actual 
-pmnsdel cgroup.cpu.stat.user 
-pmnsdel cgroup.cpu.stat.system 
-pmnsdel cgroup.cpu.stat.usage 
-pmnsdel cgroup.cpusched.cfs_quota 
-pmnsdel cgroup.memory.current 
-pmnsdel cgroup.memory.stat.swap 
-pmnsdel cgroup.memory.stat.anon 
-pmnsdel cgroup.memory.stat.anon_thp 
-pmnsdel cgroup.memory.stat.file 
-pmnsdel cgroup.memory.stat.file_dirty 
-pmnsdel cgroup.memory.stat.file_mapped 
-pmnsdel cgroup.memory.stat.file_writeback 
-pmnsdel cgroup.memory.stat.kernel_stack 
-pmnsdel cgroup.memory.stat.pgactivate 
-pmnsdel cgroup.memory.stat.pgdeactivate 
-pmnsdel cgroup.memory.stat.pglazyfree 
-pmnsdel cgroup.memory.stat.pglazyfreed 
-pmnsdel cgroup.memory.stat.pgrefill 
-pmnsdel cgroup.memory.stat.pgscan 
-pmnsdel cgroup.memory.stat.pgsteal 
-pmnsdel cgroup.memory.stat.slab 
-pmnsdel cgroup.memory.stat.slab_reclaimable 
-pmnsdel cgroup.memory.stat.slab_unreclaimable 
-pmnsdel cgroup.memory.stat.sock 
-pmnsdel cgroup.memory.stat.thp_collapse_alloc 
-pmnsdel cgroup.memory.stat.thp_fault_alloc 
-pmnsdel cgroup.memory.stat.total.swap 
-pmnsdel cgroup.memory.stat.recent.rotated_anon 
-pmnsdel cgroup.memory.stat.recent.rotated_file 
-pmnsdel cgroup.memory.stat.recent.scanned_anon 
-pmnsdel cgroup.memory.stat.recent.scanned_file 
-pmnsdel cgroup.memory.stat.workingset.activate 
-pmnsdel cgroup.memory.stat.workingset.nodereclaim 
-pmnsdel cgroup.memory.stat.workingset.refault 
-pmnsdel cgroup.netclass.classid 
-pmnsdel cgroup.pressure.cpu.some.avg10sec 
-pmnsdel cgroup.pressure.cpu.some.avg1min 
-pmnsdel cgroup.pressure.cpu.some.avg5min 
-pmnsdel cgroup.pressure.cpu.some.total 
-pmnsdel cgroup.pressure.memory.some.avg10sec 
-pmnsdel cgroup.pressure.memory.some.avg1min 
-pmnsdel cgroup.pressure.memory.some.avg5min 
-pmnsdel cgroup.pressure.memory.some.total 
-pmnsdel cgroup.pressure.memory.full.avg10sec 
-pmnsdel cgroup.pressure.memory.full.avg1min 
-pmnsdel cgroup.pressure.memory.full.avg5min 
-pmnsdel cgroup.pressure.memory.full.total 
-pmnsdel cgroup.pressure.io.some.avg10sec 
-pmnsdel cgroup.pressure.io.some.avg1min 
-pmnsdel cgroup.pressure.io.some.avg5min 
-pmnsdel cgroup.pressure.io.some.total 
-pmnsdel cgroup.pressure.io.full.avg10sec 
-pmnsdel cgroup.pressure.io.full.avg1min 
-pmnsdel cgroup.pressure.io.full.avg5min 
-pmnsdel cgroup.pressure.io.full.total 
-pmnsdel cgroup.io.stat.rbytes 
-pmnsdel cgroup.io.stat.wbytes 
-pmnsdel cgroup.io.stat.rios 
-pmnsdel cgroup.io.stat.wios 
-pmnsdel cgroup.io.stat.dbytes 
-pmnsdel cgroup.io.stat.dios 
-pmnsdel proc.namespaces.envid 
-pmnsdel hotproc.psinfo.cwd 
-pmnsdel hotproc.psinfo.exe 
-pmnsdel hotproc.psinfo.oom_score 
-pmnsdel hotproc.psinfo.tgid 
-pmnsdel hotproc.psinfo.ngid 
-pmnsdel hotproc.psinfo.cpusallowed 
-pmnsdel hotproc.psinfo.nvctxsw 
-pmnsdel hotproc.psinfo.vctxsw 
-pmnsdel hotproc.psinfo.labels 
-pmnsdel hotproc.psinfo.cgroups 
-pmnsdel hotproc.psinfo.threads 
-pmnsdel hotproc.psinfo.sigcatch_s 
-pmnsdel hotproc.psinfo.sigignore_s 
-pmnsdel hotproc.psinfo.blocked_s 
-pmnsdel hotproc.psinfo.signal_s 
-pmnsdel hotproc.psinfo.policy_s 
-pmnsdel hotproc.psinfo.environ 
-pmnsdel hotproc.psinfo.cguest_time 
-pmnsdel hotproc.psinfo.guest_time 
-pmnsdel hotproc.psinfo.delayacct_blkio_time 
-pmnsdel hotproc.psinfo.policy 
-pmnsdel hotproc.psinfo.rt_priority 
-pmnsdel hotproc.psinfo.psargs 
-pmnsdel hotproc.psinfo.wchan_s 
-pmnsdel hotproc.psinfo.ttyname 
-pmnsdel hotproc.psinfo.processor 
-pmnsdel hotproc.psinfo.exit_signal 
-pmnsdel hotproc.psinfo.cnswap 
-pmnsdel hotproc.psinfo.nswap 
-pmnsdel hotproc.psinfo.wchan 
-pmnsdel hotproc.psinfo.sigcatch 
-pmnsdel hotproc.psinfo.sigignore 
-pmnsdel hotproc.psinfo.blocked 
-pmnsdel hotproc.psinfo.signal 
-pmnsdel hotproc.psinfo.eip 
-pmnsdel hotproc.psinfo.esp 
-pmnsdel hotproc.psinfo.start_stack 
-pmnsdel hotproc.psinfo.end_code 
-pmnsdel hotproc.psinfo.start_code 
-pmnsdel hotproc.psinfo.rss_rlim 
-pmnsdel hotproc.psinfo.rss 
-pmnsdel hotproc.psinfo.vsize 
-pmnsdel hotproc.psinfo.start_time 
-pmnsdel hotproc.psinfo.it_real_value 
-pmnsdel hotproc.psinfo.nice 
-pmnsdel hotproc.psinfo.priority 
-pmnsdel hotproc.psinfo.cstime 
-pmnsdel hotproc.psinfo.cutime 
-pmnsdel hotproc.psinfo.stime 
-pmnsdel hotproc.psinfo.utime 
-pmnsdel hotproc.psinfo.cmaj_flt 
-pmnsdel hotproc.psinfo.maj_flt 
-pmnsdel hotproc.psinfo.cmin_flt 
-pmnsdel hotproc.psinfo.minflt 
-pmnsdel hotproc.psinfo.flags 
-pmnsdel hotproc.psinfo.tty_pgrp 
-pmnsdel hotproc.psinfo.tty 
-pmnsdel hotproc.psinfo.session 
-pmnsdel hotproc.psinfo.pgrp 
-pmnsdel hotproc.psinfo.ppid 
-pmnsdel hotproc.psinfo.sname 
-pmnsdel hotproc.psinfo.cmd 
-pmnsdel hotproc.psinfo.pid 
-pmnsdel hotproc.memory.vmnonlib 
-pmnsdel hotproc.memory.vmreal 
-pmnsdel hotproc.memory.vmpte 
-pmnsdel hotproc.memory.vmhwm 
-pmnsdel hotproc.memory.vmpin 
-pmnsdel hotproc.memory.vmpeak 
-pmnsdel hotproc.memory.vmswap 
-pmnsdel hotproc.memory.vmlib 
-pmnsdel hotproc.memory.vmexe 
-pmnsdel hotproc.memory.vmstack 
-pmnsdel hotproc.memory.vmdata 
-pmnsdel hotproc.memory.vmrss 
-pmnsdel hotproc.memory.vmlock 
-pmnsdel hotproc.memory.vmsize 
-pmnsdel hotproc.memory.maps 
-pmnsdel hotproc.memory.dirty 
-pmnsdel hotproc.memory.datrss 
-pmnsdel hotproc.memory.librss 
-pmnsdel hotproc.memory.textrss 
-pmnsdel hotproc.memory.share 
-pmnsdel hotproc.memory.rss 
-pmnsdel hotproc.memory.size 
-pmnsdel hotproc.id.container 
-pmnsdel hotproc.id.fsgid_nm 
-pmnsdel hotproc.id.sgid_nm 
-pmnsdel hotproc.id.egid_nm 
-pmnsdel hotproc.id.gid_nm 
-pmnsdel hotproc.id.fsuid_nm 
-pmnsdel hotproc.id.suid_nm 
-pmnsdel hotproc.id.euid_nm 
-pmnsdel hotproc.id.uid_nm 
-pmnsdel hotproc.id.fsgid 
-pmnsdel hotproc.id.sgid 
-pmnsdel hotproc.id.egid 
-pmnsdel hotproc.id.gid 
-pmnsdel hotproc.id.fsuid 
-pmnsdel hotproc.id.suid 
-pmnsdel hotproc.id.euid 
-pmnsdel hotproc.id.uid 
-pmnsdel hotproc.io.cancelled_write_bytes 
-pmnsdel hotproc.io.write_bytes 
-pmnsdel hotproc.io.read_bytes 
-pmnsdel hotproc.io.syscw 
-pmnsdel hotproc.io.syscr 
-pmnsdel hotproc.io.wchar 
-pmnsdel hotproc.io.rchar 
-pmnsdel hotproc.schedstat.pcount 
-pmnsdel hotproc.schedstat.run_delay 
-pmnsdel hotproc.schedstat.cpu_time 
-pmnsdel hotproc.fd.count 
-pmnsdel hotproc.namespaces.envid 
-pmnsdel hotproc.namespaces.sid 
-pmnsdel hotproc.namespaces.pgid 
-pmnsdel hotproc.namespaces.pid 
-pmnsdel hotproc.namespaces.tgid 
-pmnsdel hotproc.smaps.locked 
-pmnsdel hotproc.smaps.swappss 
-pmnsdel hotproc.smaps.swap 
-pmnsdel hotproc.smaps.private_hugetlb 
-pmnsdel hotproc.smaps.shared_hugetlb 
-pmnsdel hotproc.smaps.filepmdmapped 
-pmnsdel hotproc.smaps.shmempmdmapped 
-pmnsdel hotproc.smaps.anonhugepages 
-pmnsdel hotproc.smaps.lazyfree 
-pmnsdel hotproc.smaps.anonymous 
-pmnsdel hotproc.smaps.referenced 
-pmnsdel hotproc.smaps.private_dirty 
-pmnsdel hotproc.smaps.private_clean 
-pmnsdel hotproc.smaps.shared_dirty 
-pmnsdel hotproc.smaps.shared_clean 
-pmnsdel hotproc.smaps.pss_shmem 
-pmnsdel hotproc.smaps.pss_file 
-pmnsdel hotproc.smaps.pss_anon 
-pmnsdel hotproc.smaps.pss 
-pmnsdel hotproc.smaps.rss 
-pmnsdel hotproc.autogroup.nice 
-pmnsdel hotproc.autogroup.id 
-pmnsdel hotproc.predicate.ctxswitch 
-pmnsdel hotproc.predicate.virtualsize 
-pmnsdel hotproc.predicate.residentsize 
-pmnsdel hotproc.predicate.iodemand 
-pmnsdel hotproc.predicate.iowait 
-pmnsdel hotproc.predicate.schedwait 
-pmnsdel hotproc.predicate.cpuburn 
-pmnsdel acct.psinfo.tty 
-pmnsdel acct.psinfo.exitcode 
-pmnsdel acct.psinfo.pid 
-pmnsdel acct.psinfo.ppid 
-pmnsdel acct.psinfo.btime 
-pmnsdel acct.psinfo.etime 
-pmnsdel acct.psinfo.utime 
-pmnsdel acct.psinfo.stime 
-pmnsdel acct.psinfo.mem 
-pmnsdel acct.psinfo.io 
-pmnsdel acct.psinfo.rw 
-pmnsdel acct.psinfo.minflt 
-pmnsdel acct.psinfo.majflt 
-pmnsdel acct.psinfo.swaps 
-pmnsdel acct.psinfo.ttyname 
-pmnsdel acct.id.uid 
-pmnsdel acct.id.gid 
-pmnsdel acct.id.uid_nm 
-pmnsdel acct.id.gid_nm 
-pmnsdel acct.flag.fork 
-pmnsdel acct.flag.su 
-pmnsdel acct.flag.core 
-pmnsdel acct.flag.xsig 
-pmnsdel containers.engine 
-pmnsdel containers.name 
-pmnsdel containers.pid 
-pmnsdel containers.cgroup 
-pmnsdel containers.state.running 
-pmnsdel containers.state.paused 
-pmnsdel containers.state.restarting 
-pmnsdel event.flags 
-pmnsdel event.missed 
-pmnsdel disk.dev.await 
-pmnsdel disk.dev.r_await 
-pmnsdel disk.dev.w_await 
-pmnsdel disk.dev.d_await 
-pmnsdel disk.dev.f_await 
-pmnsdel disk.dev.avg_qlen 
-pmnsdel disk.dev.avg_rqsz 
-pmnsdel disk.dev.r_avg_rqsz 
-pmnsdel disk.dev.w_avg_rqsz 
-pmnsdel disk.dev.d_avg_rqsz 
-pmnsdel disk.dev.util 
-pmnsdel disk.dm.await 
-pmnsdel disk.dm.r_await 
-pmnsdel disk.dm.w_await 
-pmnsdel disk.dm.d_await 
-pmnsdel disk.dm.f_await 
-pmnsdel disk.dm.avg_qlen 
-pmnsdel disk.dm.avg_rqsz 
-pmnsdel disk.dm.r_avg_rqsz 
-pmnsdel disk.dm.w_avg_rqsz 
-pmnsdel disk.dm.d_avg_rqsz 
-pmnsdel disk.dm.util 
-pmnsdel disk.md.await 
-pmnsdel disk.md.r_await 
-pmnsdel disk.md.w_await 
-pmnsdel disk.md.d_await 
-pmnsdel disk.md.f_await 
-pmnsdel disk.md.avg_qlen 
-pmnsdel disk.md.avg_rqsz 
-pmnsdel disk.md.r_avg_rqsz 
-pmnsdel disk.md.w_avg_rqsz 
-pmnsdel disk.md.d_avg_rqsz 
-pmnsdel disk.md.util 
-pmnsdel disk.wwid.await 
-pmnsdel disk.wwid.r_await 
-pmnsdel disk.wwid.w_await 
-pmnsdel disk.wwid.d_await 
-pmnsdel disk.wwid.f_await 
-pmnsdel disk.wwid.avg_qlen 
-pmnsdel disk.wwid.avg_rqsz 
-pmnsdel disk.wwid.r_avg_rqsz 
-pmnsdel disk.wwid.w_avg_rqsz 
-pmnsdel disk.wwid.d_avg_rqsz 
-pmnsdel disk.wwid.util 
-pmnsdel kernel.cpu.util.user 
-pmnsdel kernel.cpu.util.nice 
-pmnsdel kernel.cpu.util.sys 
-pmnsdel kernel.cpu.util.idle 
-pmnsdel kernel.cpu.util.intr 
-pmnsdel kernel.cpu.util.wait 
-pmnsdel kernel.cpu.util.steal 
-pmnsdel proc.hog.cpu 
-pmnsdel proc.hog.disk 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.bounce 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.NFS_Unstable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.slabReclaimable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.slabUnreclaimable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.active_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.inactive_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.active_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.inactive_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.unevictable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.mlocked 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.shmem 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.kernelStack 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.hugepagesTotal 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.hugepagesFree 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.hugepagesRsvd 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.hugepagesSurp 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.directMap4k 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.directMap2M 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.vmallocTotal 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.vmallocUsed 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.vmallocChunk 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.mmap_copy 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.quicklists 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.corrupthardware 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.anonhugepages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.directMap1G 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.available 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.hugepagesTotalBytes 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.hugepagesFreeBytes 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.hugepagesRsvdBytes 
+pmnsdel -n /var/lib/pcp/pmns/root mem.util.hugepagesSurpBytes 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.max_bandwidth 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.total 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.free 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.used 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.active 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.inactive 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.active_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.inactive_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.active_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.inactive_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.highTotal 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.highFree 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.lowTotal 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.lowFree 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.unevictable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.mlocked 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.dirty 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.writeback 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.filePages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.mapped 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.anonpages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.shmem 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.kernelStack 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.pageTables 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.NFS_Unstable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.bounce 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.writebackTmp 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.slab 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.slabReclaimable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.slabUnreclaimable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.hugepagesTotal 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.hugepagesFree 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.hugepagesSurp 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.hugepagesTotalBytes 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.hugepagesFreeBytes 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.util.hugepagesSurpBytes 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.alloc.hit 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.alloc.miss 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.alloc.foreign 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.alloc.interleave_hit 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.alloc.local_node 
+pmnsdel -n /var/lib/pcp/pmns/root mem.numa.alloc.other_node 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.allocstall 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.allocstall_dma 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.allocstall_dma32 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.allocstall_high 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.allocstall_movable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.allocstall_normal 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.balloon_deflate 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.balloon_inflate 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.balloon_migrate 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.compact_blocks_moved 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.compact_daemon_free_scanned 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.compact_daemon_migrate_scanned 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.compact_daemon_wake 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.compact_fail 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.compact_free_scanned 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.compact_isolated 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.compact_migrate_scanned 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.compact_pagemigrate_failed 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.compact_pages_moved 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.compact_stall 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.compact_success 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.drop_pagecache 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.drop_slab 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.htlb_buddy_alloc_fail 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.htlb_buddy_alloc_success 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.kswapd_inodesteal 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.kswapd_low_wmark_hit_quickly 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.kswapd_high_wmark_hit_quickly 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.kswapd_skip_congestion_wait 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.kswapd_steal 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_active_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_active_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_anon_pages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_anon_transparent_hugepages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_bounce 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_dirtied 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_dirty 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_dirty_background_threshold 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_dirty_threshold 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_file_hugepages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_file_pages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_file_pmdmapped 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_foll_pin_acquired 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_foll_pin_released 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_free_cma 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_free_pages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_inactive_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_inactive_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_isolated_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_isolated_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_kernel_misc_reclaimable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_kernel_stack 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_mapped 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_mlock 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_pages_scanned 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_page_table_pages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_shmem 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_shmem_hugepages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_shmem_pmdmapped 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_slab 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_slab_reclaimable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_slab_unreclaimable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_unevictable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_unstable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_vmscan_immediate_reclaim 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_vmscan_write 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_writeback 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_writeback_temp 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_written 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_zone_active_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_zone_active_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_zone_inactive_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_zone_inactive_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_zone_unevictable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_zone_write_pending 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.nr_zspages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.numa_foreign 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.numa_hint_faults 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.numa_hint_faults_local 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.numa_hit 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.numa_huge_pte_updates 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.numa_interleave 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.numa_local 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.numa_miss 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.numa_other 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.numa_pages_migrated 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.numa_pte_updates 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.oom_kill 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pageoutrun 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgactivate 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgalloc_dma 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgalloc_dma32 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgalloc_high 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgalloc_movable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgalloc_normal 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgrefill_dma32 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgrefill_movable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgdeactivate 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgfault 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgfree 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pginodesteal 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pglazyfreed 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgmajfault 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgmigrate_fail 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgmigrate_success 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgpgin 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgpgout 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgrefill_dma 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgrefill_high 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgrefill_normal 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgrotated 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgscan_direct 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgscan_direct_dma 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgscan_direct_dma32 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgscan_direct_high 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgscan_direct_movable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgscan_direct_normal 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgscan_direct_throttle 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgscan_direct_total 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgscan_kswapd 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgscan_kswapd_dma 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgscan_kswapd_dma32 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgscan_kswapd_high 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgscan_kswapd_movable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgscan_kswapd_normal 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgscan_kswapd_total 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_dma 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_dma32 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_high 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_movable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_normal 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_kswapd 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_kswapd_dma 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_kswapd_dma32 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_kswapd_normal 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_kswapd_movable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_direct 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_direct_dma 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_direct_dma32 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_direct_normal 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_direct_movable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pgsteal_total 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pswpin 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.pswpout 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.slabs_scanned 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.swap_ra 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.swap_ra_hit 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_collapse_alloc 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_collapse_alloc_failed 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_deferred_split_page 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_fault_alloc 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_fault_fallback 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_fault_fallback_charge 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_file_alloc 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_file_mapped 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_split 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_split_page 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_split_page_failed 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_split_pmd 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_split_pud 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_swpout 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_swpout_fallback 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_zero_page_alloc 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.thp_zero_page_alloc_failed 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.unevictable_pgs_cleared 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.unevictable_pgs_culled 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.unevictable_pgs_mlocked 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.unevictable_pgs_mlockfreed 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.unevictable_pgs_munlocked 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.unevictable_pgs_rescued 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.unevictable_pgs_scanned 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.unevictable_pgs_stranded 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.workingset_activate 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.workingset_nodes 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.workingset_nodereclaim 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.workingset_refault 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.workingset_restore 
+pmnsdel -n /var/lib/pcp/pmns/root mem.vmstat.zone_reclaim_failed 
+pmnsdel -n /var/lib/pcp/pmns/root mem.buddyinfo.pages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.buddyinfo.total 
+pmnsdel -n /var/lib/pcp/pmns/root mem.slabinfo.objects.active 
+pmnsdel -n /var/lib/pcp/pmns/root mem.slabinfo.objects.total 
+pmnsdel -n /var/lib/pcp/pmns/root mem.slabinfo.objects.size 
+pmnsdel -n /var/lib/pcp/pmns/root mem.slabinfo.slabs.active 
+pmnsdel -n /var/lib/pcp/pmns/root mem.slabinfo.slabs.total 
+pmnsdel -n /var/lib/pcp/pmns/root mem.slabinfo.slabs.pages_per_slab 
+pmnsdel -n /var/lib/pcp/pmns/root mem.slabinfo.slabs.objects_per_slab 
+pmnsdel -n /var/lib/pcp/pmns/root mem.slabinfo.slabs.total_size 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.free 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.min 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.low 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.high 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.scanned 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.spanned 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.present 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.managed 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_free_pages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_alloc_batch 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_inactive_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_active_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_inactive_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_active_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_unevictable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_mlock 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_anon_pages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_mapped 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_file_pages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_dirty 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_writeback 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_slab_reclaimable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_slab_unreclaimable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_page_table_pages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_kernel_stack 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_unstable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_bounce 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_vmscan_write 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_vmscan_immediate_reclaim 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_writeback_temp 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_isolated_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_isolated_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_shmem 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_dirtied 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_written 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.numa_hit 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.numa_miss 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.numa_foreign 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.numa_interleave 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.numa_local 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.numa_other 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.workingset_refault 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.workingset_activate 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.workingset_nodereclaim 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_anon_transparent_hugepages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_free_cma 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.cma 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_swapcached 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_shmem_hugepages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_shmem_pmdmapped 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_file_hugepages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_file_pmdmapped 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_kernel_misc_reclaimable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_foll_pin_acquired 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_foll_pin_released 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.workingset_refault_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.workingset_refault_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.workingset_active_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.workingset_active_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.workingset_restore_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.workingset_restore_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_zspages 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_zone_inactive_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_zone_active_file 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_zone_inactive_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_zone_active_anon 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_zone_unevictable 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.nr_zone_write_pending 
+pmnsdel -n /var/lib/pcp/pmns/root mem.zoneinfo.protection 
+pmnsdel -n /var/lib/pcp/pmns/root mem.ksm.full_scans 
+pmnsdel -n /var/lib/pcp/pmns/root mem.ksm.merge_across_nodes 
+pmnsdel -n /var/lib/pcp/pmns/root mem.ksm.pages_shared 
+pmnsdel -n /var/lib/pcp/pmns/root mem.ksm.pages_sharing 
+pmnsdel -n /var/lib/pcp/pmns/root mem.ksm.pages_to_scan 
+pmnsdel -n /var/lib/pcp/pmns/root mem.ksm.pages_unshared 
+pmnsdel -n /var/lib/pcp/pmns/root mem.ksm.pages_volatile 
+pmnsdel -n /var/lib/pcp/pmns/root mem.ksm.run_state 
+pmnsdel -n /var/lib/pcp/pmns/root mem.ksm.sleep_time 
+pmnsdel -n /var/lib/pcp/pmns/root swap.pagesin 
+pmnsdel -n /var/lib/pcp/pmns/root swap.pagesout 
+pmnsdel -n /var/lib/pcp/pmns/root swap.in 
+pmnsdel -n /var/lib/pcp/pmns/root swap.out 
+pmnsdel -n /var/lib/pcp/pmns/root swap.free 
+pmnsdel -n /var/lib/pcp/pmns/root swap.length 
+pmnsdel -n /var/lib/pcp/pmns/root swap.used 
+pmnsdel -n /var/lib/pcp/pmns/root network.all.in.bytes 
+pmnsdel -n /var/lib/pcp/pmns/root network.all.in.packets 
+pmnsdel -n /var/lib/pcp/pmns/root network.all.in.errors 
+pmnsdel -n /var/lib/pcp/pmns/root network.all.in.drops 
+pmnsdel -n /var/lib/pcp/pmns/root network.all.out.bytes 
+pmnsdel -n /var/lib/pcp/pmns/root network.all.out.packets 
+pmnsdel -n /var/lib/pcp/pmns/root network.all.out.errors 
+pmnsdel -n /var/lib/pcp/pmns/root network.all.out.drops 
+pmnsdel -n /var/lib/pcp/pmns/root network.all.total.bytes 
+pmnsdel -n /var/lib/pcp/pmns/root network.all.total.packets 
+pmnsdel -n /var/lib/pcp/pmns/root network.all.total.errors 
+pmnsdel -n /var/lib/pcp/pmns/root network.all.total.drops 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.collisions 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.mtu 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.speed 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.baudrate 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.duplex 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.up 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.running 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.wireless 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.type 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.inet_addr 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.ipv6_addr 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.ipv6_scope 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.hw_addr 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.in.bytes 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.in.packets 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.in.errors 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.in.drops 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.in.fifo 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.in.frame 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.in.compressed 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.in.mcasts 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.out.bytes 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.out.packets 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.out.errors 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.out.drops 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.out.fifo 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.out.carrier 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.out.compressed 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.total.bytes 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.total.packets 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.total.errors 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.total.drops 
+pmnsdel -n /var/lib/pcp/pmns/root network.interface.total.mcasts 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.total 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.tcp.inuse 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.tcp.orphan 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.tcp.tw 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.tcp.alloc 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.tcp.mem 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.udp.inuse 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.udp.mem 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.udplite.inuse 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.raw.inuse 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.frag.inuse 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.frag.memory 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.tcp6.inuse 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.udp6.inuse 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.udplite6.inuse 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.raw6.inuse 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.frag6.inuse 
+pmnsdel -n /var/lib/pcp/pmns/root network.sockstat.frag6.memory 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.forwarding 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.defaultttl 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.inreceives 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.inhdrerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.inaddrerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.forwdatagrams 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.inunknownprotos 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.indiscards 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.indelivers 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.outrequests 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.outdiscards 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.outnoroutes 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.reasmtimeout 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.reasmreqds 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.reasmoks 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.reasmfails 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.fragoks 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.fragfails 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.fragcreates 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.innoroutes 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.intruncatedpkts 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.inmcastpkts 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.outmcastpkts 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.inbcastpkts 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.outbcastpkts 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.inoctets 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.outoctets 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.inmcastoctets 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.outmcastoctets 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.inbcastoctets 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.outbcastoctets 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.csumerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.noectpkts 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.ect1pkts 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.ect0pkts 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.cepkts 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip.reasmoverlaps 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.inmsgs 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.inerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.indestunreachs 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.intimeexcds 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.inparmprobs 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.insrcquenchs 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.inredirects 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.inechos 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.inechoreps 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.intimestamps 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.intimestampreps 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.inaddrmasks 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.inaddrmaskreps 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.outmsgs 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.outerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.outdestunreachs 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.outtimeexcds 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.outparmprobs 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.outsrcquenchs 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.outredirects 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.outechos 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.outechoreps 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.outtimestamps 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.outtimestampreps 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.outaddrmasks 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.outaddrmaskreps 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp.incsumerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmpmsg.intype 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmpmsg.outtype 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.rtoalgorithm 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.rtomin 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.rtomax 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.maxconn 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.activeopens 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.passiveopens 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.attemptfails 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.estabresets 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.currestab 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.insegs 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.outsegs 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.retranssegs 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.inerrs 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.outrsts 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.incsumerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.syncookiessent 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.syncookiesrecv 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.syncookiesfailed 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.embryonicrsts 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.prunecalled 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.rcvpruned 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.ofopruned 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.outofwindowicmps 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.lockdroppedicmps 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.arpfilter 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.timewaited 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.timewaitrecycled 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.timewaitkilled 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.pawspassiverejected 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.pawsactiverejected 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.pawsestabrejected 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.delayedacks 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.delayedacklocked 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.delayedacklost 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.listenoverflows 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.listendrops 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.prequeued 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.directcopyfrombacklog 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.directcopyfromprequeue 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.prequeueddropped 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.hphits 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.hphitstouser 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.pureacks 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.hpacks 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.renorecovery 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.sackrecovery 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.sackreneging 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.fackreorder 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.sackreorder 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.renoreorder 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tsreorder 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.fullundo 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.partialundo 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.dsackundo 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.lossundo 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.lostretransmit 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.renofailures 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.sackfailures 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.lossfailures 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.fastretrans 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.forwardretrans 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.slowstartretrans 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.timeouts 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.lossprobes 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.lossproberecovery 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.renorecoveryfail 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.sackrecoveryfail 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.schedulerfail 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.rcvcollapsed 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.dsackoldsent 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.dsackofosent 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.dsackrecv 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.dsackoforecv 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.abortondata 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.abortonclose 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.abortonmemory 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.abortontimeout 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.abortonlinger 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.abortfailed 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.memorypressures 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.sackdiscard 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.dsackignoredold 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.dsackignorednoundo 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.spuriousrtos 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.md5notfound 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.md5unexpected 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.sackshifted 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.sackmerged 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.sackshiftfallback 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.backlogdrop 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.minttldrop 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.deferacceptdrop 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.iprpfilter 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.timewaitoverflow 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.reqqfulldocookies 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.reqqfulldrop 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.retransfail 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.rcvcoalesce 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.ofoqueue 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.ofodrop 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.ofomerge 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.challengeack 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.synchallenge 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.fastopenactive 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.fastopenactivefail 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.fastopenpassive 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.fastopenpassivefail 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.fastopenlistenoverflow 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.fastopencookiereqd 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.spuriousrtxhostqueues 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.busypollrxpackets 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.autocorking 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.fromzerowindowadv 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tozerowindowadv 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.wantzerowindowadv 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.synretrans 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.origdatasent 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpbacklogcoalesce 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpmemorypressureschrono 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpmd5failure 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.pfmemallocdrop 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpfastopenactivefail 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpfastopenblackhole 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcphystarttraindetect 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcphystarttraincwnd 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcphystartdelaydetect 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcphystartdelaycwnd 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpackskippedsynrecv 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpackskippedpaws 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpackskippedseq 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpackskippedfinwait2 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpackskippedtimewait 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpackskippedchallenge 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpwinprobe 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpkeepalive 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpmtupfail 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpmtupsuccess 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpdelivered 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpdeliveredce 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpackcompressed 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpzerowindowdrop 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcprcvqdrop 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpwqueuetoobig 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpfastopenpassivealtkey 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcptimeoutrehash 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpduplicatedatarehash 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpdsackrecvsegs 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpdsackignoreddubious 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpmigratereqsuccess 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcpmigratereqfailure 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcp.tcploss 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp.indatagrams 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp.noports 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp.inerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp.outdatagrams 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp.recvbuferrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp.sndbuferrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp.incsumerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp.ignoredmulti 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp.memerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udplite.indatagrams 
+pmnsdel -n /var/lib/pcp/pmns/root network.udplite.noports 
+pmnsdel -n /var/lib/pcp/pmns/root network.udplite.inerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udplite.outdatagrams 
+pmnsdel -n /var/lib/pcp/pmns/root network.udplite.recvbuferrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udplite.sndbuferrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udplite.incsumerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udplite.ignoredmulti 
+pmnsdel -n /var/lib/pcp/pmns/root network.udplite.memerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udpconn.established 
+pmnsdel -n /var/lib/pcp/pmns/root network.udpconn.listen 
+pmnsdel -n /var/lib/pcp/pmns/root network.rawconn.count 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn.established 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn.syn_sent 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn.syn_recv 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn.fin_wait1 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn.fin_wait2 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn.time_wait 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn.close 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn.close_wait 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn.last_ack 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn.listen 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn.closing 
+pmnsdel -n /var/lib/pcp/pmns/root network.softnet.processed 
+pmnsdel -n /var/lib/pcp/pmns/root network.softnet.dropped 
+pmnsdel -n /var/lib/pcp/pmns/root network.softnet.time_squeeze 
+pmnsdel -n /var/lib/pcp/pmns/root network.softnet.cpu_collision 
+pmnsdel -n /var/lib/pcp/pmns/root network.softnet.received_rps 
+pmnsdel -n /var/lib/pcp/pmns/root network.softnet.flow_limit_count 
+pmnsdel -n /var/lib/pcp/pmns/root network.softnet.percpu.processed 
+pmnsdel -n /var/lib/pcp/pmns/root network.softnet.percpu.dropped 
+pmnsdel -n /var/lib/pcp/pmns/root network.softnet.percpu.time_squeeze 
+pmnsdel -n /var/lib/pcp/pmns/root network.softnet.percpu.cpu_collision 
+pmnsdel -n /var/lib/pcp/pmns/root network.softnet.percpu.received_rps 
+pmnsdel -n /var/lib/pcp/pmns/root network.softnet.percpu.flow_limit_count 
+pmnsdel -n /var/lib/pcp/pmns/root network.unix.datagram.count 
+pmnsdel -n /var/lib/pcp/pmns/root network.unix.stream.established 
+pmnsdel -n /var/lib/pcp/pmns/root network.unix.stream.listen 
+pmnsdel -n /var/lib/pcp/pmns/root network.unix.stream.count 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.inreceives 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.inhdrerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.intoobigerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.innoroutes 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.inaddrerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.inunknownprotos 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.intruncatedpkts 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.indiscards 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.indelivers 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.outforwdatagrams 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.outrequests 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.outdiscards 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.outnoroutes 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.reasmtimeout 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.reasmreqds 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.reasmoks 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.reasmfails 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.fragoks 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.fragfails 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.fragcreates 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.inmcastpkts 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.outmcastpkts 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.inoctets 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.outoctets 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.inmcastoctets 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.outmcastoctets 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.inbcastoctets 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.outbcastoctets 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.innoectpkts 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.inect1pkts 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.inect0pkts 
+pmnsdel -n /var/lib/pcp/pmns/root network.ip6.incepkts 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.inmsgs 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.inerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outmsgs 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.incsumerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.indestunreachs 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.inpkttoobigs 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.intimeexcds 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.inparmproblems 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.inechos 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.inechoreplies 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.ingroupmembqueries 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.ingroupmembresponses 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.ingroupmembreductions 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.inroutersolicits 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.inrouteradvertisements 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.inneighborsolicits 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.inneighboradvertisements 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.inredirects 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.inmldv2reports 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outdestunreachs 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outpkttoobigs 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outtimeexcds 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outparmproblems 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outechos 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outechoreplies 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outgroupmembqueries 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outgroupmembresponses 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outgroupmembreductions 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outroutersolicits 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outrouteradvertisements 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outneighborsolicits 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outneighboradvertisements 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outredirects 
+pmnsdel -n /var/lib/pcp/pmns/root network.icmp6.outmldv2reports 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp6.indatagrams 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp6.noports 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp6.inerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp6.outdatagrams 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp6.rcvbuferrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp6.sndbuferrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp6.incsumerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udp6.ignoredmulti 
+pmnsdel -n /var/lib/pcp/pmns/root network.udpconn6.established 
+pmnsdel -n /var/lib/pcp/pmns/root network.udpconn6.listen 
+pmnsdel -n /var/lib/pcp/pmns/root network.udplite6.indatagrams 
+pmnsdel -n /var/lib/pcp/pmns/root network.udplite6.noports 
+pmnsdel -n /var/lib/pcp/pmns/root network.udplite6.inerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udplite6.outdatagrams 
+pmnsdel -n /var/lib/pcp/pmns/root network.udplite6.rcvbuferrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udplite6.sndbuferrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.udplite6.incsumerrors 
+pmnsdel -n /var/lib/pcp/pmns/root network.rawconn6.count 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn6.established 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn6.syn_sent 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn6.syn_recv 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn6.fin_wait1 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn6.fin_wait2 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn6.time_wait 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn6.close 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn6.close_wait 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn6.last_ack 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn6.listen 
+pmnsdel -n /var/lib/pcp/pmns/root network.tcpconn6.closing 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpcapablesynrx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpcapableackrx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpcapablefallbackack 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpcapablefallbacksynack 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mptcpretrans 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpjoinnotokenfound 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpjoinsynrx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpjoinsynackrx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpjoinsynackhmacfailure 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpjoinackrx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpjoinackhmacfailure 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.dssnotmatching 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.infinitemaprx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpcapablesyntx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpcapablesynackrx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpfallbacktokeninit 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.dssnomatchtcp 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.datacsumerr 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.ofoqueuetail 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.ofoqueue 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.ofomerge 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.nodssinwindow 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.duplicatedata 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.addaddr 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.echoadd 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.portadd 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpjoinportsynrx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpjoinportsynackrx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpjoinportackrx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mismatchportsynrx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mismatchportackrx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.rmaddr 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.rmsubflow 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mppriotx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mppriorx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.rcvpruned 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpfailtx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.mpfailrx 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.subflowstale 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.subflowrecover 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.addaddrdrop 
+pmnsdel -n /var/lib/pcp/pmns/root network.mptcp.rmaddrdrop 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.read 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.write 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.total 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.blkread 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.blkwrite 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.blktotal 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.read_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.write_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.total_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.read_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.write_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.avactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.read_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.write_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.total_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.aveq 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.scheduler 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.capacity 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.discard 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.blkdiscard 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.discard_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.discard_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.discard_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.flush 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.flush_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.r_await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.w_await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.d_await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.f_await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.avg_qlen 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.avg_rqsz 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.r_avg_rqsz 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.w_avg_rqsz 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.d_avg_rqsz 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dev.util 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.read 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.write 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.total 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.blkread 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.blkwrite 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.blktotal 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.read_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.write_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.total_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.read_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.write_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.avactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.read_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.write_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.total_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.aveq 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.discard 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.blkdiscard 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.discard_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.discard_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.discard_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.flush 
+pmnsdel -n /var/lib/pcp/pmns/root disk.all.flush_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.read 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.write 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.total 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.blkread 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.blkwrite 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.blktotal 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.read_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.write_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.total_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.read_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.write_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.avactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.aveq 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.read_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.write_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.total_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.capacity 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.discard 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.blkdiscard 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.discard_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.discard_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.discard_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.flush 
+pmnsdel -n /var/lib/pcp/pmns/root disk.partitions.flush_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.read 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.write 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.total 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.blkread 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.blkwrite 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.blktotal 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.read_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.write_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.total_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.read_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.write_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.avactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.aveq 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.read_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.write_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.total_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.capacity 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.discard 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.blkdiscard 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.discard_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.discard_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.discard_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.flush 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.flush_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.r_await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.w_await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.d_await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.f_await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.avg_qlen 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.avg_rqsz 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.r_avg_rqsz 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.w_avg_rqsz 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.d_avg_rqsz 
+pmnsdel -n /var/lib/pcp/pmns/root disk.dm.util 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.read 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.write 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.total 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.blkread 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.blkwrite 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.blktotal 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.read_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.write_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.total_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.read_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.write_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.avactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.aveq 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.read_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.write_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.total_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.status 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.capacity 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.discard 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.blkdiscard 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.discard_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.discard_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.discard_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.flush 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.flush_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.r_await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.w_await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.d_await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.f_await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.avg_qlen 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.avg_rqsz 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.r_avg_rqsz 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.w_avg_rqsz 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.d_avg_rqsz 
+pmnsdel -n /var/lib/pcp/pmns/root disk.md.util 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.scsi_paths 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.read 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.write 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.total 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.blkread 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.blkwrite 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.blktotal 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.read_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.write_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.total_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.read_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.write_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.avactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.read_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.write_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.total_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.aveq 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.scheduler 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.capacity 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.discard 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.blkdiscard 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.discard_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.discard_merge 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.discard_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.flush 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.flush_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.r_await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.w_await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.d_await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.f_await 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.avg_qlen 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.avg_rqsz 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.r_avg_rqsz 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.w_avg_rqsz 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.d_avg_rqsz 
+pmnsdel -n /var/lib/pcp/pmns/root disk.wwid.util 
+pmnsdel -n /var/lib/pcp/pmns/root filesys.capacity 
+pmnsdel -n /var/lib/pcp/pmns/root filesys.used 
+pmnsdel -n /var/lib/pcp/pmns/root filesys.free 
+pmnsdel -n /var/lib/pcp/pmns/root filesys.maxfiles 
+pmnsdel -n /var/lib/pcp/pmns/root filesys.usedfiles 
+pmnsdel -n /var/lib/pcp/pmns/root filesys.freefiles 
+pmnsdel -n /var/lib/pcp/pmns/root filesys.mountdir 
+pmnsdel -n /var/lib/pcp/pmns/root filesys.full 
+pmnsdel -n /var/lib/pcp/pmns/root filesys.blocksize 
+pmnsdel -n /var/lib/pcp/pmns/root filesys.avail 
+pmnsdel -n /var/lib/pcp/pmns/root filesys.readonly 
+pmnsdel -n /var/lib/pcp/pmns/root swapdev.free 
+pmnsdel -n /var/lib/pcp/pmns/root swapdev.length 
+pmnsdel -n /var/lib/pcp/pmns/root swapdev.maxswap 
+pmnsdel -n /var/lib/pcp/pmns/root swapdev.vlength 
+pmnsdel -n /var/lib/pcp/pmns/root swapdev.priority 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.client.rpccnt 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.client.rpcretrans 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.client.rpcauthrefresh 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.client.netcnt 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.client.netudpcnt 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.client.nettcpcnt 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.client.nettcpconn 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.rpccnt 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.rpcerr 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.rpcbadfmt 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.rpcbadauth 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.rpcbadclnt 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.rchits 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.rcmisses 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.rcnocache 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.fh_cached 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.fh_valid 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.fh_fixup 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.fh_lookup 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.fh_stale 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.fh_concurrent 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.netcnt 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.netudpcnt 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.nettcpcnt 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.nettcpconn 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.fh_anon 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.fh_nocache_dir 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.fh_nocache_nondir 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.io_read 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.io_write 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.th_cnt 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.th_fullcnt 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.ra_size 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.ra_hits 
+pmnsdel -n /var/lib/pcp/pmns/root rpc.server.ra_misses 
+pmnsdel -n /var/lib/pcp/pmns/root nfs.client.calls 
+pmnsdel -n /var/lib/pcp/pmns/root nfs.client.reqs 
+pmnsdel -n /var/lib/pcp/pmns/root nfs.server.calls 
+pmnsdel -n /var/lib/pcp/pmns/root nfs.server.reqs 
+pmnsdel -n /var/lib/pcp/pmns/root nfs.server.threads.total 
+pmnsdel -n /var/lib/pcp/pmns/root nfs.server.threads.pools 
+pmnsdel -n /var/lib/pcp/pmns/root nfs.server.threads.requests 
+pmnsdel -n /var/lib/pcp/pmns/root nfs.server.threads.enqueued 
+pmnsdel -n /var/lib/pcp/pmns/root nfs.server.threads.processed 
+pmnsdel -n /var/lib/pcp/pmns/root nfs.server.threads.timedout 
+pmnsdel -n /var/lib/pcp/pmns/root nfs3.client.calls 
+pmnsdel -n /var/lib/pcp/pmns/root nfs3.client.reqs 
+pmnsdel -n /var/lib/pcp/pmns/root nfs3.server.calls 
+pmnsdel -n /var/lib/pcp/pmns/root nfs3.server.reqs 
+pmnsdel -n /var/lib/pcp/pmns/root nfs4.client.calls 
+pmnsdel -n /var/lib/pcp/pmns/root nfs4.client.reqs 
+pmnsdel -n /var/lib/pcp/pmns/root nfs4.server.calls 
+pmnsdel -n /var/lib/pcp/pmns/root nfs4.server.reqs 
+pmnsdel -n /var/lib/pcp/pmns/root pmda.uname 
+pmnsdel -n /var/lib/pcp/pmns/root pmda.version 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.sem.max_semmap 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.sem.max_semid 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.sem.max_sem 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.sem.num_undo 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.sem.max_perid 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.sem.max_ops 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.sem.max_undoent 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.sem.sz_semundo 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.sem.max_semval 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.sem.max_exit 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.sem.used_sem 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.sem.tot_sem 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.sem.key 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.sem.owner 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.sem.perms 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.sem.nsems 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.sz_pool 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.mapent 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.max_msgsz 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.max_defmsgq 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.max_msgqid 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.max_msgseg 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.num_smsghdr 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.max_seg 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.used_queues 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.tot_msg 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.tot_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.key 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.owner 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.perms 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.msgsz 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.messages 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.last_send_pid 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.msg.last_recv_pid 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.max_segsz 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.min_segsz 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.max_seg 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.max_segproc 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.max_shmsys 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.tot 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.rss 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.swp 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.used_ids 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.swap_attempts 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.swap_successes 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.key 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.owner 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.perms 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.segsz 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.nattch 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.status 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.creator_pid 
+pmnsdel -n /var/lib/pcp/pmns/root ipc.shm.last_access_pid 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.files.count 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.files.free 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.files.max 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.inodes.count 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.inodes.free 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.dentry.count 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.dentry.free 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.aio.count 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.aio.max 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.locks.posix.read 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.locks.posix.write 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.locks.posix.count 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.locks.flock.read 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.locks.flock.write 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.locks.flock.count 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.locks.lease.read 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.locks.lease.write 
+pmnsdel -n /var/lib/pcp/pmns/root vfs.locks.lease.count 
+pmnsdel -n /var/lib/pcp/pmns/root tmpfs.capacity 
+pmnsdel -n /var/lib/pcp/pmns/root tmpfs.used 
+pmnsdel -n /var/lib/pcp/pmns/root tmpfs.free 
+pmnsdel -n /var/lib/pcp/pmns/root tmpfs.maxfiles 
+pmnsdel -n /var/lib/pcp/pmns/root tmpfs.usedfiles 
+pmnsdel -n /var/lib/pcp/pmns/root tmpfs.freefiles 
+pmnsdel -n /var/lib/pcp/pmns/root tmpfs.full 
+pmnsdel -n /var/lib/pcp/pmns/root sysfs.kernel.uevent_seqnum 
+pmnsdel -n /var/lib/pcp/pmns/root tape.dev.in_flight 
+pmnsdel -n /var/lib/pcp/pmns/root tape.dev.io_ns 
+pmnsdel -n /var/lib/pcp/pmns/root tape.dev.other_cnt 
+pmnsdel -n /var/lib/pcp/pmns/root tape.dev.read_byte_cnt 
+pmnsdel -n /var/lib/pcp/pmns/root tape.dev.read_cnt 
+pmnsdel -n /var/lib/pcp/pmns/root tape.dev.read_ns 
+pmnsdel -n /var/lib/pcp/pmns/root tape.dev.resid_cnt 
+pmnsdel -n /var/lib/pcp/pmns/root tape.dev.write_byte_cnt 
+pmnsdel -n /var/lib/pcp/pmns/root tape.dev.write_cnt 
+pmnsdel -n /var/lib/pcp/pmns/root tape.dev.write_ns 
+pmnsdel -n /var/lib/pcp/pmns/root tty.serial.tx 
+pmnsdel -n /var/lib/pcp/pmns/root tty.serial.rx 
+pmnsdel -n /var/lib/pcp/pmns/root tty.serial.frame 
+pmnsdel -n /var/lib/pcp/pmns/root tty.serial.parity 
+pmnsdel -n /var/lib/pcp/pmns/root tty.serial.brk 
+pmnsdel -n /var/lib/pcp/pmns/root tty.serial.overrun 
+pmnsdel -n /var/lib/pcp/pmns/root tty.serial.irq 
+pmnsdel -n /var/lib/pcp/pmns/root zram.read 
+pmnsdel -n /var/lib/pcp/pmns/root zram.write 
+pmnsdel -n /var/lib/pcp/pmns/root zram.total 
+pmnsdel -n /var/lib/pcp/pmns/root zram.blkread 
+pmnsdel -n /var/lib/pcp/pmns/root zram.blkwrite 
+pmnsdel -n /var/lib/pcp/pmns/root zram.blktotal 
+pmnsdel -n /var/lib/pcp/pmns/root zram.read_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root zram.write_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root zram.total_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root zram.read_merge 
+pmnsdel -n /var/lib/pcp/pmns/root zram.write_merge 
+pmnsdel -n /var/lib/pcp/pmns/root zram.avactive 
+pmnsdel -n /var/lib/pcp/pmns/root zram.aveq 
+pmnsdel -n /var/lib/pcp/pmns/root zram.read_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root zram.write_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root zram.total_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root zram.capacity 
+pmnsdel -n /var/lib/pcp/pmns/root zram.discard 
+pmnsdel -n /var/lib/pcp/pmns/root zram.blkdiscard 
+pmnsdel -n /var/lib/pcp/pmns/root zram.discard_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root zram.discard_merge 
+pmnsdel -n /var/lib/pcp/pmns/root zram.discard_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root zram.flush 
+pmnsdel -n /var/lib/pcp/pmns/root zram.flush_rawactive 
+pmnsdel -n /var/lib/pcp/pmns/root zram.io_stat.invalid 
+pmnsdel -n /var/lib/pcp/pmns/root zram.io_stat.notify_free 
+pmnsdel -n /var/lib/pcp/pmns/root zram.io_stat.failed.reads 
+pmnsdel -n /var/lib/pcp/pmns/root zram.io_stat.failed.writes 
+pmnsdel -n /var/lib/pcp/pmns/root zram.mm_stat.data_size.original 
+pmnsdel -n /var/lib/pcp/pmns/root zram.mm_stat.data_size.compressed 
+pmnsdel -n /var/lib/pcp/pmns/root zram.mm_stat.mem.used_total 
+pmnsdel -n /var/lib/pcp/pmns/root zram.mm_stat.mem.limit 
+pmnsdel -n /var/lib/pcp/pmns/root zram.mm_stat.mem.max_used 
+pmnsdel -n /var/lib/pcp/pmns/root zram.mm_stat.pages.same 
+pmnsdel -n /var/lib/pcp/pmns/root zram.mm_stat.pages.compacted 
+pmnsdel -n /var/lib/pcp/pmns/root zram.mm_stat.pages.huge 
+pmnsdel -n /var/lib/pcp/pmns/root zram.bd_stat.count 
+pmnsdel -n /var/lib/pcp/pmns/root zram.bd_stat.reads 
+pmnsdel -n /var/lib/pcp/pmns/root zram.bd_stat.writes 
+pmnsdel -n /var/lib/pcp/pmns/root fchost.lip_count 
+pmnsdel -n /var/lib/pcp/pmns/root fchost.nos_count 
+pmnsdel -n /var/lib/pcp/pmns/root fchost.error_frames 
+pmnsdel -n /var/lib/pcp/pmns/root fchost.dumped_frames 
+pmnsdel -n /var/lib/pcp/pmns/root fchost.in.frames 
+pmnsdel -n /var/lib/pcp/pmns/root fchost.in.bytes 
+pmnsdel -n /var/lib/pcp/pmns/root fchost.out.frames 
+pmnsdel -n /var/lib/pcp/pmns/root fchost.out.bytes 
+pmnsdel -n /var/lib/pcp/pmns/root mmv 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.datasize 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.numagents 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.numclients 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.timezone 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.zoneinfo 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.simabi 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.version 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.services 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.openfds 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.build 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.hostname 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.sighups 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pid 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.seqnum 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.labels 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.control.debug 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.control.timeout 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.control.register 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.control.traceconn 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.control.tracepdu 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.control.tracenobuf 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.control.tracebufs 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.control.dumptrace 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.control.dumpconn 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.control.sighup 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.error 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.result 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.profile 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.fetch 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.desc_req 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.desc 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.instance_req 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.instance 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.text_req 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.text 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.control_req 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.creds 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.pmns_ids 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.pmns_names 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.pmns_child 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.total 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.pmns_traverse 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.auth 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.label_req 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.label 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.highres_fetch 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.highres_result 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.desc_ids 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_in.descs 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.error 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.result 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.profile 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.fetch 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.desc_req 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.desc 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.instance_req 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.instance 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.text_req 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.text 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.control_req 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.creds 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.pmns_ids 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.pmns_names 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.pmns_child 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.total 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.pmns_traverse 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.auth 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.label_req 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.label 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.highres_fetch 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.highres_result 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.desc_ids 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pdu_out.descs 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.agent.type 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.agent.status 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.agent.fenced 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.agent.name 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pmlogger.host 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pmlogger.port 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pmlogger.archive 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pmlogger.pmcd_host 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pmie.configfile 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pmie.logfile 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pmie.pmcd_host 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pmie.numrules 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pmie.actions 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pmie.eval.true 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pmie.eval.false 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pmie.eval.unknown 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pmie.eval.expected 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.pmie.eval.actual 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.buf.alloc 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.buf.free 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.client.whoami 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.client.start_date 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.client.container 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.cputime.total 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.cputime.per_pdu_in 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.feature.secure 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.feature.compress 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.feature.ipv6 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.feature.authentication 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.feature.creds_required 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.feature.unix_domain_sockets 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.feature.service_discovery 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.feature.containers 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.feature.local 
+pmnsdel -n /var/lib/pcp/pmns/root pmcd.feature.client_cert_required 
+pmnsdel -n /var/lib/pcp/pmns/root pmproxy 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.subsys.hierarchy 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.subsys.count 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.subsys.num_cgroups 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.subsys.enabled 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.mounts.subsys 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.mounts.count 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpu.stat.user 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpu.stat.system 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpu.stat.usage 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpuset.cpus 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpuset.mems 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpuset.id.container 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpuacct.usage 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpuacct.usage_percpu 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpuacct.stat.user 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpuacct.stat.system 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpuacct.id.container 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpusched.shares 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpusched.periods 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpusched.throttled 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpusched.throttled_time 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpusched.cfs_period 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpusched.cfs_quota 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.cpusched.id.container 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.usage 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.limit 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.failcnt 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.current 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.cache 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.rss 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.rss_huge 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.mapped_file 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.writeback 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.swap 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.pgpgin 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.pgpgout 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.pgfault 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.pgmajfault 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.inactive_anon 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.active_anon 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.inactive_file 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.active_file 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.unevictable 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.anon 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.anon_thp 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.file 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.file_dirty 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.file_mapped 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.file_writeback 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.kernel_stack 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.pgactivate 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.pgdeactivate 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.pglazyfree 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.pglazyfreed 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.pgrefill 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.pgscan 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.pgsteal 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.shmem 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.slab 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.slab_reclaimable 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.slab_unreclaimable 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.sock 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.thp_collapse_alloc 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.thp_fault_alloc 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.total.cache 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.total.rss 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.total.rss_huge 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.total.mapped_file 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.total.writeback 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.total.swap 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.total.pgpgin 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.total.pgpgout 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.total.pgfault 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.total.pgmajfault 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.total.inactive_anon 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.total.active_anon 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.total.inactive_file 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.total.active_file 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.total.unevictable 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.recent.rotated_anon 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.recent.rotated_file 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.recent.scanned_anon 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.recent.scanned_file 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.workingset.activate 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.workingset.nodereclaim 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.stat.workingset.refault 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.memory.id.container 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.netclass.classid 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.netclass.id.container 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.sectors 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.time 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_merged.read 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_merged.write 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_merged.sync 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_merged.async 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_merged.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_queued.read 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_queued.write 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_queued.sync 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_queued.async 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_queued.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_service_bytes.read 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_service_bytes.write 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_service_bytes.sync 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_service_bytes.async 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_service_bytes.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_serviced.read 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_serviced.write 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_serviced.sync 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_serviced.async 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_serviced.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_service_time.read 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_service_time.write 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_service_time.sync 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_service_time.async 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_service_time.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_wait_time.read 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_wait_time.write 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_wait_time.sync 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_wait_time.async 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.io_wait_time.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.throttle.io_service_bytes.read 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.throttle.io_service_bytes.write 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.throttle.io_service_bytes.sync 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.throttle.io_service_bytes.async 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.throttle.io_service_bytes.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.throttle.io_serviced.read 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.throttle.io_serviced.write 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.throttle.io_serviced.sync 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.throttle.io_serviced.async 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.dev.throttle.io_serviced.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.sectors 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.time 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_merged.read 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_merged.write 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_merged.sync 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_merged.async 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_merged.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_queued.read 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_queued.write 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_queued.sync 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_queued.async 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_queued.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_service_bytes.read 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_service_bytes.write 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_service_bytes.sync 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_service_bytes.async 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_service_bytes.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_serviced.read 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_serviced.write 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_serviced.sync 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_serviced.async 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_serviced.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_service_time.read 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_service_time.write 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_service_time.sync 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_service_time.async 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_service_time.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_wait_time.read 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_wait_time.write 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_wait_time.sync 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_wait_time.async 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.io_wait_time.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.throttle.io_service_bytes.read 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.throttle.io_service_bytes.write 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.throttle.io_service_bytes.sync 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.throttle.io_service_bytes.async 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.throttle.io_service_bytes.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.throttle.io_serviced.read 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.throttle.io_serviced.write 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.throttle.io_serviced.sync 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.throttle.io_serviced.async 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.all.throttle.io_serviced.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.blkio.id.container 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.cpu.some.avg10sec 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.cpu.some.avg1min 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.cpu.some.avg5min 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.cpu.some.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.memory.some.avg10sec 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.memory.some.avg1min 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.memory.some.avg5min 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.memory.some.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.memory.full.avg10sec 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.memory.full.avg1min 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.memory.full.avg5min 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.memory.full.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.io.some.avg10sec 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.io.some.avg1min 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.io.some.avg5min 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.io.some.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.io.full.avg10sec 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.io.full.avg1min 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.io.full.avg5min 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.pressure.io.full.total 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.io.stat.rbytes 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.io.stat.wbytes 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.io.stat.rios 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.io.stat.wios 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.io.stat.dbytes 
+pmnsdel -n /var/lib/pcp/pmns/root cgroup.io.stat.dios 
+pmnsdel -n /var/lib/pcp/pmns/root proc.nprocs 
+pmnsdel -n /var/lib/pcp/pmns/root proc.psinfo.age 
+pmnsdel -n /var/lib/pcp/pmns/root proc.memory 
+pmnsdel -n /var/lib/pcp/pmns/root proc.id 
+pmnsdel -n /var/lib/pcp/pmns/root proc.io.total_bytes 
+pmnsdel -n /var/lib/pcp/pmns/root proc.schedstat 
+pmnsdel -n /var/lib/pcp/pmns/root proc.fd 
+pmnsdel -n /var/lib/pcp/pmns/root proc.namespaces 
+pmnsdel -n /var/lib/pcp/pmns/root proc.smaps 
+pmnsdel -n /var/lib/pcp/pmns/root proc.autogroup 
+pmnsdel -n /var/lib/pcp/pmns/root proc.runq.runnable 
+pmnsdel -n /var/lib/pcp/pmns/root proc.runq.blocked 
+pmnsdel -n /var/lib/pcp/pmns/root proc.runq.sleeping 
+pmnsdel -n /var/lib/pcp/pmns/root proc.runq.stopped 
+pmnsdel -n /var/lib/pcp/pmns/root proc.runq.swapped 
+pmnsdel -n /var/lib/pcp/pmns/root proc.runq.defunct 
+pmnsdel -n /var/lib/pcp/pmns/root proc.runq.unknown 
+pmnsdel -n /var/lib/pcp/pmns/root proc.runq.kernel 
+pmnsdel -n /var/lib/pcp/pmns/root proc.control.all.threads 
+pmnsdel -n /var/lib/pcp/pmns/root proc.control.perclient.threads 
+pmnsdel -n /var/lib/pcp/pmns/root proc.control.perclient.cgroups 
+pmnsdel -n /var/lib/pcp/pmns/root proc.hog.cpu 
+pmnsdel -n /var/lib/pcp/pmns/root proc.hog.mem 
+pmnsdel -n /var/lib/pcp/pmns/root proc.hog.disk 
+pmnsdel -n /var/lib/pcp/pmns/root proc.hog.net 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.nprocs 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.psinfo 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.memory 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.id 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.io 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.schedstat 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.fd 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.namespaces 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.smaps 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.autogroup 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.control.refresh 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.control.config 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.control.config_gen 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.control.reload_config 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.total.cpuidle 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.total.cpuburn 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.total.cpuother.transient 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.total.cpuother.not_cpuburn 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.total.cpuother.total 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.total.cpuother.percent 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.predicate.ctxswitch 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.predicate.virtualsize 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.predicate.residentsize 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.predicate.iodemand 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.predicate.iowait 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.predicate.schedwait 
+pmnsdel -n /var/lib/pcp/pmns/root hotproc.predicate.cpuburn 
+pmnsdel -n /var/lib/pcp/pmns/root acct.psinfo.tty 
+pmnsdel -n /var/lib/pcp/pmns/root acct.psinfo.exitcode 
+pmnsdel -n /var/lib/pcp/pmns/root acct.psinfo.pid 
+pmnsdel -n /var/lib/pcp/pmns/root acct.psinfo.ppid 
+pmnsdel -n /var/lib/pcp/pmns/root acct.psinfo.btime 
+pmnsdel -n /var/lib/pcp/pmns/root acct.psinfo.etime 
+pmnsdel -n /var/lib/pcp/pmns/root acct.psinfo.utime 
+pmnsdel -n /var/lib/pcp/pmns/root acct.psinfo.stime 
+pmnsdel -n /var/lib/pcp/pmns/root acct.psinfo.mem 
+pmnsdel -n /var/lib/pcp/pmns/root acct.psinfo.io 
+pmnsdel -n /var/lib/pcp/pmns/root acct.psinfo.rw 
+pmnsdel -n /var/lib/pcp/pmns/root acct.psinfo.minflt 
+pmnsdel -n /var/lib/pcp/pmns/root acct.psinfo.majflt 
+pmnsdel -n /var/lib/pcp/pmns/root acct.psinfo.swaps 
+pmnsdel -n /var/lib/pcp/pmns/root acct.psinfo.ttyname 
+pmnsdel -n /var/lib/pcp/pmns/root acct.id.uid 
+pmnsdel -n /var/lib/pcp/pmns/root acct.id.gid 
+pmnsdel -n /var/lib/pcp/pmns/root acct.id.uid_nm 
+pmnsdel -n /var/lib/pcp/pmns/root acct.id.gid_nm 
+pmnsdel -n /var/lib/pcp/pmns/root acct.flag.fork 
+pmnsdel -n /var/lib/pcp/pmns/root acct.flag.su 
+pmnsdel -n /var/lib/pcp/pmns/root acct.flag.core 
+pmnsdel -n /var/lib/pcp/pmns/root acct.flag.xsig 
+pmnsdel -n /var/lib/pcp/pmns/root acct.control.open_retry_interval 
+pmnsdel -n /var/lib/pcp/pmns/root acct.control.check_acct_interval 
+pmnsdel -n /var/lib/pcp/pmns/root acct.control.file_size_threshold 
+pmnsdel -n /var/lib/pcp/pmns/root acct.control.lifetime 
+pmnsdel -n /var/lib/pcp/pmns/root acct.control.refresh 
+pmnsdel -n /var/lib/pcp/pmns/root acct.control.enable_acct 
+pmnsdel -n /var/lib/pcp/pmns/root containers.engine 
+pmnsdel -n /var/lib/pcp/pmns/root containers.name 
+pmnsdel -n /var/lib/pcp/pmns/root containers.pid 
+pmnsdel -n /var/lib/pcp/pmns/root containers.cgroup 
+pmnsdel -n /var/lib/pcp/pmns/root containers.state.running 
+pmnsdel -n /var/lib/pcp/pmns/root containers.state.paused 
+pmnsdel -n /var/lib/pcp/pmns/root containers.state.restarting 
+pmnsdel -n /var/lib/pcp/pmns/root event.flags 
+pmnsdel -n /var/lib/pcp/pmns/root event.missed 
+pmnsdel -n /var/lib/pcp/pmns/root mssql.buffer_manager.buffer_cache_hit_ratio 
+pmnsdel -n /var/lib/pcp/pmns/root mssql.databases.log_cache_hit_ratio 
+pmnsdel -n /var/lib/pcp/pmns/root mssql.latches.average_latch_wait_time 
+pmnsdel -n /var/lib/pcp/pmns/root mssql.locks.average_wait_time 
+pmnsdel -n /var/lib/pcp/pmns/root mssql.plan_cache.cache_hit_ratio 
 $PCP_RC_DIR/pmcd start
