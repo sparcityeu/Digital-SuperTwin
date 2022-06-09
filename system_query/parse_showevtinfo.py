@@ -126,7 +126,7 @@ def parse_evtinfo():
 if __name__ == "__main__":
 
     event_info = parse_evtinfo()
-    #pprint(event_info)
+    pprint(event_info)
 
     with open("evtinfo.json", "w") as outfile:
         json.dump(event_info, outfile)
