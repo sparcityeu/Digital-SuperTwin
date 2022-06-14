@@ -168,24 +168,24 @@ def print_hardware_dict(hw_dict):
             print('### inner:', inner)
             print(hw_dict[key][inner])
     
-if __name__ == "__main__":
+def main():
 
     hostname = detect_utils.cmd('hostname')[1].strip('\n')
     system_list = system.detect()
     diskinfo_list = diskinfo.detect()
 
-    system = {}
-    disk = {}
+    _system = {}
+    _disk = {}
 
-    system = generate_hardware_dict(system, system_list)
+    _system = generate_hardware_dict(_system, system_list)
     #pprint(system)
     #exit(1)
-    disk = generate_hardware_dict(disk, diskinfo_list)                
+    _disk = generate_hardware_dict(_disk, diskinfo_list)                
     cache_info = parse_cpuid.parse_cpuid()
     socket_groups, domains, cache_topology, gpu_info = parse_likwid_topology.parse_likwid()
     affinity = parse_likwid_topology.parse_affinity()
 
-    info = choose_info(hostname, system, disk, cache_info, socket_groups, domains, cache_topology, affinity, gpu_info)
+    info = choose_info(hostname, _system, _disk, cache_info, socket_groups, domains, cache_topology, affinity, gpu_info)
 
     #print(system)
     #print('#############################')
@@ -203,7 +203,13 @@ if __name__ == "__main__":
     #print('#############################')
     #print(gpu_info)
     #print('#############################')
-    pprint(info)    
+    #pprint(info)    
 
     with open("probing.json", "w") as outfile:
         json.dump(info, outfile)
+
+    return info
+
+if __name__ == "__main__":
+
+    main()
