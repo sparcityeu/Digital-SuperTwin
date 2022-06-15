@@ -205,8 +205,8 @@ def main():
     #print('#############################')
     #pprint(info)    
 
-    with open("probing.json", "w") as outfile:
-        json.dump(info, outfile)
+    #with open("probing.json", "w") as outfile:
+        #json.dump(info, outfile)
 
     return info
 

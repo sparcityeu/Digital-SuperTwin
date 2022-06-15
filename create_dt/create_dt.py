@@ -5,6 +5,7 @@ import probe
 import detect_utils
 
 from pprint import pprint
+import json
 
 def get_main_interface(_id):
     
@@ -180,3 +181,7 @@ if __name__ == "__main__":
 
 
     pprint(dt)
+    
+    with open("dt.json", "w") as outfile:
+        json.dump(dt, outfile)
+    
