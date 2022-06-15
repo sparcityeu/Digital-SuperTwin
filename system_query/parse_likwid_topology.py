@@ -50,9 +50,15 @@ def parse_cache_topology(topol, ret_dict, name, level):
 
 def parse_likwid():
 
-    
 
+    topol = []
+    print("Topology is empty, trying.. ")
     topol = detect_utils.output_lines('sudo likwid-topology --caches -G')
+    if(len(topol) == 0):
+        print("Likwid is not linked with CUPTI..")
+        print("Do not read GPU specs from likwid-topology.. ")
+        topol = detect_utils.output_lines('sudo likwid-topology --caches')
+        
     if(len(topol) == 0):
         topol = detect_utils.output_lines('sudo likwid-topology --caches')
 

@@ -205,11 +205,17 @@ def main():
     #print('#############################')
     #pprint(info)    
 
-    #with open("probing.json", "w") as outfile:
-        #json.dump(info, outfile)
+    with open("probing.json", "w") as outfile:
+        json.dump(info, outfile)
 
+    
+    print("Probing done succesfuly..")
+
+    pprint(info)
+    
     return info
 
 if __name__ == "__main__":
 
     main()
+    
