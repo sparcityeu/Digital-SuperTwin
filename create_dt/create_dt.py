@@ -221,6 +221,26 @@ def add_cpus(models_dict, _sys_dict, top_id, hostname):
                     this_thread["contents"].append(get_telemetry(hostname, m_name, metric[:64], "THREAD"+g(), count, 1))
                 ##add metrics as telemetry
 
+                ##MIND THAT:
+                ##Every different component type need their own global counter like
+                ##instead of g() we need
+                ##g_contains()
+                ##g_thread()
+                ##g_cache()
+                ##g_tlb()
+                ##Later, this information will be used to model these digital twins separately
+                ##adding cache
+                cache_id = get_id(hostname, "cache", cache, "C" + g(), 1)
+                one_cache = get_interface(cache_id, displayname = thread_displayName+" Cache")
+
+                ##add this cache to thread
+                ##LEFT HERE, LINE BELOW IS JUST COPIED
+                models_dict[this_thread_id]["contents"].append(get_relationship(get_id(hostname, "ownership", thread_displayName+g(), "O", 1), "contains"+g(), this_thread_id))
+                ##add this cache to thread
+                
+                ##adding cache
+                
+                
                 ##Add this core thread digital twin
                 models_dict[this_thread_id] = this_thread
                 ##Add this core thread digital twin
