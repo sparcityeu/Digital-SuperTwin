@@ -119,7 +119,8 @@ def add_cpus(models_dict, _sys_dict, top_id, hostname):
         displayName = "socket" + str(socket)
         this_socket_id = get_id(hostname, "socket", socket, "S", 1) #To avoid 0 and conform id req
         this_socket = get_interface(this_socket_id, displayname = displayName)
-                                    
+
+        ##Add some properties
         ##Assumes one type of cpu
         this_socket["contents"].append(get_property(get_id(hostname, "cpuspecs", 1, "C", 1),
                                                     "model", description = _sys_dict["cpu"]["specs"]["model"]))
@@ -138,11 +139,17 @@ def add_cpus(models_dict, _sys_dict, top_id, hostname):
                                                     "max_mhz", description = _sys_dict["cpu"]["specs"]["max_mhz"]))
         this_socket["contents"].append(get_property(get_id(hostname, "cpuspecs", 8, "C", 1),
                                                     "min_mhz", description = _sys_dict["cpu"]["specs"]["min_mhz"]))
+        ##Add some properties
 
-        
+        #Connect socket to the system
         models_dict[top_id]["contents"].append(get_relationship(get_id(hostname, "ownership", 1, "O",1), "contains", this_socket_id))
+        #Connect socket to the system
 
+        #add metrics as properties
+        my_metrics = get_my_metrics(["pernode", "energy"])
+        
         models_dict[this_socket_id] = this_socket
+        
         
         return models_dict
     
