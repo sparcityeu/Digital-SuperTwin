@@ -8,7 +8,16 @@ from pprint import pprint
 import json
 
 context = "dtmi:dtdl:context;2"
-    
+
+globvar = -1
+
+def g():
+
+    global globvar
+    globvar = globvar + 1
+
+    return str(globvar)
+
 
 def get_interface(_id, displayname = "", description = ""):
 
@@ -69,6 +78,20 @@ def get_id(hostname, component, num, letter, version):
     return _id
 
 
+def get_telemetry(hostname, name, displayname, comp, num, version, description = "db pointer"):
+
+    telemetry = {}
+
+    telemetry["@id"] = get_id(hostname, comp+"TEL", num, "T", 1)
+    telemetry["@type"] = "Telemetry"
+    telemetry["schema"] = "string" #For now
+    telemetry["name"] = name
+    
+    telemetry["description"] = description
+    telemetry["displayName"] = displayname
+
+    return telemetry
+    
 
 def _filter(metric):
 
@@ -110,7 +133,9 @@ def get_my_metrics(my_types):
             if(_filter(item) == my_type):
                 my_metrics.append(item)
 
+    return my_metrics
 
+                
 def add_cpus(models_dict, _sys_dict, top_id, hostname):
 
 
@@ -145,10 +170,62 @@ def add_cpus(models_dict, _sys_dict, top_id, hostname):
         models_dict[top_id]["contents"].append(get_relationship(get_id(hostname, "ownership", 1, "O",1), "contains", this_socket_id))
         #Connect socket to the system
 
-        #add metrics as properties
+        #add metrics as telemetry
         my_metrics = get_my_metrics(["pernode", "energy"])
-        
+        for count, metric in enumerate(my_metrics):
+            m_name = "metric" + str(count)
+            this_socket["contents"].append(get_telemetry(hostname, m_name, metric, "SOCKET", count, 1))
+        #add metrics as telemetry
+
+        ##add this socket to digital twin
         models_dict[this_socket_id] = this_socket
+        ##add this socket to digital twin
+        
+        ##Now this socket's cores
+        for core in _sys_dict["affinity"]["socket"][socket]["cores"]:
+        
+            core_displayName = "core" + str(core)
+            this_core_id = get_id(hostname, displayName+"core", core, "C", 1)
+            this_core = get_interface(this_core_id, displayname = core_displayName)
+
+            #Connect core to socket
+            models_dict[this_socket_id]["contents"].append(get_relationship(get_id(hostname, "ownership", displayName+str(core), "O", 1), "contains"+ g(), this_core_id))
+            #Connect core to socket
+            
+            #add metrics as telemetry
+            my_metrics = get_my_metrics(["uncore"])
+            for count, metric in enumerate(my_metrics):
+                m_name = "metric" + str(count)
+                this_core["contents"].append(get_telemetry(hostname, m_name, metric, "CORE", count, 1))
+            #add metrics as telemetry
+
+            ##Add this core to digital twin
+            models_dict[this_core_id] = this_core
+            ##Add this core to digital twin
+
+            ##Now this core's threads
+            for thread in _sys_dict["affinity"]["socket"][socket]["cores"][core]:
+
+                thread_displayName = "thread" + str(thread)
+                this_thread_id = get_id(hostname, "thread", thread, "T" + g(), 1)
+                this_thread = get_interface(this_thread_id, displayname = thread_displayName)
+
+                ##Connect thread to core
+                models_dict[this_core_id]["contents"].append(get_relationship(get_id(hostname, "ownership", thread_displayName+g(), "O", 1), "contains"+g(), this_thread_id))
+                ##Connect thread to core
+                
+                ##add metrics as telemetry
+                my_metrics = get_my_metrics(["percpu", "perfevent.hwcounters"])
+                for count, metric in enumerate(my_metrics):
+                    m_name = "metric" + str(count)
+                    this_thread["contents"].append(get_telemetry(hostname, m_name, metric[:64], "THREAD"+g(), count, 1))
+                ##add metrics as telemetry
+
+                ##Add this core thread digital twin
+                models_dict[this_thread_id] = this_thread
+                ##Add this core thread digital twin
+                
+        
         
         
         return models_dict
