@@ -9,17 +9,45 @@ import json
 
 context = "dtmi:dtdl:context;2"
 
-globvar = -1
+relationvar = -1
+componentvar = -1
+propertyvar = -1
+telemetryvar = -1
 
 metrics = detect_utils.output_lines('pmprobe')                                                  
 metrics = [x.split(" ")[0] for x in metrics]
 
-def g():
+##Enumerate relations
+def r():
 
-    global globvar
-    globvar = globvar + 1
+    global relationvar
+    relationvar = relationvar + 1
 
-    return str(globvar)
+    return str(relationvar)
+
+def c():
+    global componentvar
+    componentvar = componentvar + 1
+
+    return str(componentvar)
+
+def p():
+    global propertyvar
+    propertyvar = propertyvar + 1
+
+    return str(propertyvar)
+
+def t():
+    global telemetryvar
+    telemetryvar = telemetryvar + 1
+
+    return str(telemetryvar)
+    
+
+##g_contains()
+                ##g_thread()
+                ##g_cache()
+                ##g_tlb()
 
 
 def get_interface(_id, displayname = "", description = ""):
@@ -80,12 +108,18 @@ def get_id(hostname, component, num, letter, version):
     _id = "dtmi:dt" + ":" + hostname + ":" + component + ":" + letter + str(num) + ";" + str(version)
     return _id
 
+##Need category here
+def get_uid(hostname, component, version): 
+    
+    _id = "dtmi:dt" + ":" + hostname + ":" + component + ";" + str(version)
+    return _id
 
-def get_telemetry(hostname, name, displayname, comp, num, version, description = "db pointer"):
+
+def get_telemetry(hostname, name, displayname, comp, version, description = "db pointer"):
 
     telemetry = {}
 
-    telemetry["@id"] = get_id(hostname, comp+"TEL", num, "T", 1)
+    telemetry["@id"] = get_uid(hostname, comp + ":telemetry" + t() ,1)
     telemetry["@type"] = "Telemetry"
     telemetry["schema"] = "string" #For now
     telemetry["name"] = name
@@ -135,52 +169,143 @@ def get_my_metrics(my_types):
 
     return my_metrics
 
-                
+def add_my_metrics(models_dict, this_comp_id, hostname, displayname, my_categories):
+
+    my_metrics = get_my_metrics(my_categories)
+    for count, metric in enumerate(my_metrics):
+        m_name = "metric" + str(count)
+        models_dict[this_comp_id]["contents"].append(get_telemetry(hostname, m_name, metric, displayname, 1))
+
+    return models_dict
+
+
+def add_sockets(models_dict, _sys_dict, top_id, hostname, socket):
+
+
+    displayName = "socket" + str(socket)
+    this_socket_id = get_id(hostname, "socket", socket, "S", 1)
+    this_socket = get_interface(this_socket_id, displayname = displayName)
+
+    #################################
+    ##Add this socket to digital twin
+    models_dict[this_socket_id] = this_socket
+    ##Add this socket to digital twin
+    #################################
+    
+    ##############################
+    ##Connect socket to the system
+    contains = c()
+    models_dict[top_id]["contents"].append(get_relationship(get_uid(hostname, "ownership" + contains, 1),  "contains" + contains, this_socket_id))
+    ##Connect socket to the system
+    ##############################
+    
+    #######################
+    ##Add chosen properties
+    ##Assumes every node have same CPU
+    this_socket["contents"].append(get_property(get_uid(hostname, displayName + ":property0", 1),
+                                                "model", description = _sys_dict["cpu"]["specs"]["model"]))
+    
+    this_socket["contents"].append(get_property(get_uid(hostname, displayName + ":property1", 1),
+                                                "cores", description = _sys_dict["cpu"]["specs"]["cores"]))
+    
+    this_socket["contents"].append(get_property(get_uid(hostname, displayName + ":property2", 1),
+                                                "threads", description = _sys_dict["cpu"]["specs"]["threads"]))
+    
+    this_socket["contents"].append(get_property(get_uid(hostname, displayName + ":property3", 1),
+                                                "threads_per_core", description = _sys_dict["cpu"]["specs"]["threads_per_core"]))
+
+    this_socket["contents"].append(get_property(get_uid(hostname, displayName + ":property4", 1),
+                                                "hyperthreading", description = _sys_dict["cpu"]["specs"]["hyperthreading"]))
+    
+    this_socket["contents"].append(get_property(get_uid(hostname, displayName + ":property5", 1),
+                                                "max_mhz", description = _sys_dict["cpu"]["specs"]["max_mhz"]))
+    
+    this_socket["contents"].append(get_property(get_uid(hostname, displayName + ":property6", 1),
+                                                "min_mhz", description = _sys_dict["cpu"]["specs"]["min_mhz"]))
+    
+    ##Add chosen properties
+    #######################
+
+    ##########################
+    ##add metrics as telemetry
+    models_dict = add_my_metrics(models_dict, this_socket_id, hostname, displayName, ["pernode", "energy"])
+    ##add metrics as telemetry
+    ##########################
+    
+    return models_dict, this_socket_id
+
+
+def add_cores(models_dict, _sys_dict, top_id, hostname, socket, core):
+
+    core_displayName = "core" + str(core)
+    this_core_id = get_id(hostname, core_displayName, core, "C", 1)
+    this_core = get_interface(this_core_id, displayname = core_displayName)
+
+    ###############################
+    ##Add this core to digital twin
+    models_dict[this_core_id] = this_core
+    ##Add this core to digital twin
+    ###############################
+    
+    ########################
+    ##Connect core to socket
+    contains = c()
+    models_dict[socket]["contents"].append(get_relationship(get_uid(hostname, "ownership" + contains, 1),  "contains" + contains, this_core_id))
+    ##Connect core to socket
+    ########################
+
+    ##########################
+    ##add metrics as telemetry
+    models_dict = add_my_metrics(models_dict, this_core_id, hostname, core_displayName, ["uncore"])
+    ##add metrics as telemetry
+    ##########################
+
+    return models_dict, this_core_id
+    
+
+def add_threads(models_dict, _sys_dict, top_id, hostname, socket, core, thread):
+
+    thread_displayName = "thread" + str(thread)
+    this_thread_id = get_id(hostname, "thread", thread, "T", 1)
+    this_thread = get_interface(this_thread_id, displayname = thread_displayName)
+
+    ###############################
+    ##Add this thread to digital twin
+    models_dict[this_thread_id] = this_thread
+    ##Add this thread to digital twin
+    ###############################
+    
+    ########################
+    ##Connect thread to core
+    contains = c()
+    models_dict[core]["contents"].append(get_relationship(get_uid(hostname, "ownership" + contains, 1),  "contains" + contains, this_thread_id))
+    ##Connect thread to core
+    ########################
+
+    ##########################
+    ##add metrics as telemetry
+    models_dict = add_my_metrics(models_dict, this_thread_id, hostname, thread_displayName, ["percpu", "perfevent.hwcounters"])
+    ##add metrics as telemetry
+    ##########################
+
+    return models_dict, this_thread_id
+    
+    
 def add_cpus(models_dict, _sys_dict, top_id, hostname):
 
 
     for socket in _sys_dict["affinity"]["socket"]:
-
-        displayName = "socket" + str(socket)
-        this_socket_id = get_id(hostname, "socket", socket, "S", 1) #To avoid 0 and conform id req
-        this_socket = get_interface(this_socket_id, displayname = displayName)
-
-        ##Add some properties
-        ##Assumes one type of cpu
-        this_socket["contents"].append(get_property(get_id(hostname, displayName+"cpuspecs", 1, "C", 1),
-                                                    "model", description = _sys_dict["cpu"]["specs"]["model"]))
-        this_socket["contents"].append(get_property(get_id(hostname, displayName+"cpuspecs", 2, "C", 1),
-                                                    "cores", description = _sys_dict["cpu"]["specs"]["cores"]))
-        this_socket["contents"].append(get_property(get_id(hostname, displayName+"cpuspecs", 3, "C", 1),
-                                                    "threads", description = _sys_dict["cpu"]["specs"]["threads"]))
-        this_socket["contents"].append(get_property(get_id(hostname, displayName+"cpuspecs", 4, "C", 1),
-                                                    "threads_per_core", description = _sys_dict["cpu"]["specs"]["threads_per_core"]))
-        #this_socket["contents"].append(get_property(get_id(hostname, "cpuspecs", 5, "C", 1),
-        #"flags", description = _sys_dict["cpu"]["specs"]["flags"]))
-        ## Out of use for now, need to figure out maximum length problem or "instance problem"
-        this_socket["contents"].append(get_property(get_id(hostname, displayName+"cpuspecs", 6, "C", 1),
-                                                    "hyperthreading", description = _sys_dict["cpu"]["specs"]["hyperthreading"]))
-        this_socket["contents"].append(get_property(get_id(hostname, displayName+"cpuspecs", 7, "C", 1),
-                                                    "max_mhz", description = _sys_dict["cpu"]["specs"]["max_mhz"]))
-        this_socket["contents"].append(get_property(get_id(hostname, displayName+"cpuspecs", 8, "C", 1),
-                                                    "min_mhz", description = _sys_dict["cpu"]["specs"]["min_mhz"]))
-        ##Add some properties
-
-        #Connect socket to the system
-        models_dict[top_id]["contents"].append(get_relationship(get_id(hostname, "ownership", g(), "O",1), "contains"+g(), this_socket_id))
-        #Connect socket to the system
-
-        #add metrics as telemetry
-        my_metrics = get_my_metrics(["pernode", "energy"])
-        for count, metric in enumerate(my_metrics):
-            m_name = "metric" + str(count)
-            this_socket["contents"].append(get_telemetry(hostname, m_name, metric, displayName, count, 1))
-        #add metrics as telemetry
-
-        ##add this socket to digital twin
-        models_dict[this_socket_id] = this_socket
-        ##add this socket to digital twin
         
+        models_dict, this_socket_id = add_sockets(models_dict, _sys_dict, top_id, hostname, socket)
+
+        for core in _sys_dict["affinity"]["socket"][socket]["cores"]:
+
+            models_dict, this_core_id = add_cores(models_dict, _sys_dict, top_id, hostname, this_socket_id, core)
+
+            for thread in _sys_dict["affinity"]["socket"][socket]["cores"][core]:
+                models_dict, this_thread_id = add_threads(models_dict, _sys_dict, top_id, hostname, this_socket_id, this_core_id, thread)
+
+        '''
         ##Now this socket's cores
         for core in _sys_dict["affinity"]["socket"][socket]["cores"]:
         
@@ -254,7 +379,7 @@ def add_cpus(models_dict, _sys_dict, top_id, hostname):
                 models_dict[that_thread_id]["contents"].append(get_relationship(get_id(hostname, "ownership", g(), "O", 1), "contains"+g(), cache_id))
         ##adding caches after sockets are done
                 
-        
+    '''
         
         
     return models_dict
