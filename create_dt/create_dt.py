@@ -109,9 +109,15 @@ def get_id(hostname, component, num, letter, version):
     return _id
 
 ##Need category here
-def get_uid(hostname, component, version): 
+def get_uid(hostname, component, _type, version): 
+
+    _id = ""
     
-    _id = "dtmi:dt" + ":" + hostname + ":" + component + ";" + str(version)
+    if(_type != ""):
+        _id = "dtmi:dt" + ":" + hostname + ":" + component + ":" + _type +";" + str(version)
+    else:
+        _id = "dtmi:dt" + ":" + hostname + ":" + component + ";" + str(version)
+        
     return _id
 
 
@@ -119,13 +125,13 @@ def get_telemetry(hostname, name, displayname, comp, version, description = "db 
 
     telemetry = {}
 
-    telemetry["@id"] = get_uid(hostname, comp + ":telemetry" + t() ,1)
+    telemetry["@id"] = get_uid(hostname, comp, "telemetry" + t() , 1)
     telemetry["@type"] = "Telemetry"
     telemetry["schema"] = "string" #For now
     telemetry["name"] = name
     
     telemetry["description"] = description
-    telemetry["displayName"] = displayname
+    telemetry["displayName"] = displayname[:63]
 
     return telemetry
     
@@ -183,7 +189,7 @@ def add_sockets(models_dict, _sys_dict, top_id, hostname, socket):
 
 
     displayName = "socket" + str(socket)
-    this_socket_id = get_id(hostname, "socket", socket, "S", 1)
+    this_socket_id = get_uid(hostname, displayName, "", 1)
     this_socket = get_interface(this_socket_id, displayname = displayName)
 
     #################################
@@ -195,32 +201,32 @@ def add_sockets(models_dict, _sys_dict, top_id, hostname, socket):
     ##############################
     ##Connect socket to the system
     contains = c()
-    models_dict[top_id]["contents"].append(get_relationship(get_uid(hostname, "ownership" + contains, 1),  "contains" + contains, this_socket_id))
+    models_dict[top_id]["contents"].append(get_relationship(get_uid(hostname, "system", "ownership" + contains, 1),  "contains" + contains, this_socket_id))
     ##Connect socket to the system
     ##############################
     
     #######################
     ##Add chosen properties
     ##Assumes every node have same CPU
-    this_socket["contents"].append(get_property(get_uid(hostname, displayName + ":property0", 1),
+    this_socket["contents"].append(get_property(get_uid(hostname, displayName, "property0", 1),
                                                 "model", description = _sys_dict["cpu"]["specs"]["model"]))
     
-    this_socket["contents"].append(get_property(get_uid(hostname, displayName + ":property1", 1),
+    this_socket["contents"].append(get_property(get_uid(hostname, displayName, "property1", 1),
                                                 "cores", description = _sys_dict["cpu"]["specs"]["cores"]))
     
-    this_socket["contents"].append(get_property(get_uid(hostname, displayName + ":property2", 1),
+    this_socket["contents"].append(get_property(get_uid(hostname, displayName, "property2", 1),
                                                 "threads", description = _sys_dict["cpu"]["specs"]["threads"]))
     
-    this_socket["contents"].append(get_property(get_uid(hostname, displayName + ":property3", 1),
+    this_socket["contents"].append(get_property(get_uid(hostname, displayName, "property3", 1),
                                                 "threads_per_core", description = _sys_dict["cpu"]["specs"]["threads_per_core"]))
 
-    this_socket["contents"].append(get_property(get_uid(hostname, displayName + ":property4", 1),
+    this_socket["contents"].append(get_property(get_uid(hostname, displayName, "property4", 1),
                                                 "hyperthreading", description = _sys_dict["cpu"]["specs"]["hyperthreading"]))
     
-    this_socket["contents"].append(get_property(get_uid(hostname, displayName + ":property5", 1),
+    this_socket["contents"].append(get_property(get_uid(hostname, displayName, "property5", 1),
                                                 "max_mhz", description = _sys_dict["cpu"]["specs"]["max_mhz"]))
     
-    this_socket["contents"].append(get_property(get_uid(hostname, displayName + ":property6", 1),
+    this_socket["contents"].append(get_property(get_uid(hostname, displayName, "property6", 1),
                                                 "min_mhz", description = _sys_dict["cpu"]["specs"]["min_mhz"]))
     
     ##Add chosen properties
@@ -235,10 +241,11 @@ def add_sockets(models_dict, _sys_dict, top_id, hostname, socket):
     return models_dict, this_socket_id
 
 
-def add_cores(models_dict, _sys_dict, top_id, hostname, socket, core):
+def add_cores(models_dict, _sys_dict, top_id, hostname, socket_id, socket_num, core):
 
+    socket_displayName = "socket" + str(socket_num)
     core_displayName = "core" + str(core)
-    this_core_id = get_id(hostname, core_displayName, core, "C", 1)
+    this_core_id = get_uid(hostname, core_displayName, "", 1)
     this_core = get_interface(this_core_id, displayname = core_displayName)
 
     ###############################
@@ -250,7 +257,7 @@ def add_cores(models_dict, _sys_dict, top_id, hostname, socket, core):
     ########################
     ##Connect core to socket
     contains = c()
-    models_dict[socket]["contents"].append(get_relationship(get_uid(hostname, "ownership" + contains, 1),  "contains" + contains, this_core_id))
+    models_dict[socket_id]["contents"].append(get_relationship(get_uid(hostname, socket_displayName, "contains" + contains , 1),  "contains" + contains, this_core_id))
     ##Connect core to socket
     ########################
 
@@ -263,10 +270,12 @@ def add_cores(models_dict, _sys_dict, top_id, hostname, socket, core):
     return models_dict, this_core_id
     
 
-def add_threads(models_dict, _sys_dict, top_id, hostname, socket, core, thread):
+def add_threads(models_dict, _sys_dict, top_id, hostname, socket_id, socket_num, core_id, core_num, thread):
 
+    socket_displayName = "socket" + str(socket_num)
+    core_displayName = "core" + str(core_num)
     thread_displayName = "thread" + str(thread)
-    this_thread_id = get_id(hostname, "thread", thread, "T", 1)
+    this_thread_id = get_uid(hostname, thread_displayName, "", 1)
     this_thread = get_interface(this_thread_id, displayname = thread_displayName)
 
     ###############################
@@ -278,7 +287,7 @@ def add_threads(models_dict, _sys_dict, top_id, hostname, socket, core, thread):
     ########################
     ##Connect thread to core
     contains = c()
-    models_dict[core]["contents"].append(get_relationship(get_uid(hostname, "ownership" + contains, 1),  "contains" + contains, this_thread_id))
+    models_dict[core_id]["contents"].append(get_relationship(get_uid(hostname, core_displayName, "contains" + contains, 1),  "contains" + contains, this_thread_id))
     ##Connect thread to core
     ########################
 
@@ -300,10 +309,11 @@ def add_cpus(models_dict, _sys_dict, top_id, hostname):
 
         for core in _sys_dict["affinity"]["socket"][socket]["cores"]:
 
-            models_dict, this_core_id = add_cores(models_dict, _sys_dict, top_id, hostname, this_socket_id, core)
+            models_dict, this_core_id = add_cores(models_dict, _sys_dict, top_id, hostname, this_socket_id, socket, core)
 
             for thread in _sys_dict["affinity"]["socket"][socket]["cores"][core]:
-                models_dict, this_thread_id = add_threads(models_dict, _sys_dict, top_id, hostname, this_socket_id, this_core_id, thread)
+                
+                models_dict, this_thread_id = add_threads(models_dict, _sys_dict, top_id, hostname, this_socket_id, socket, this_core_id, core, thread)
 
         '''
         ##Now this socket's cores
