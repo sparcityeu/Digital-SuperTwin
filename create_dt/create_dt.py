@@ -312,8 +312,10 @@ def add_caches(models_dict, _sys_dict, top_id, hostname, cache):
     for group in _sys_dict["cpu"]["cache"][cache]["cache_groups"]:
 
         cache_enum = cc()
-        cache_displayName = cache + "_" + cache_enum
-        cache_id = get_uid(hostname, cache_displayName, "", 1)
+        cache_displayName = cache
+        _type = "cc" + cache_enum
+        _added = cache_displayName + ":" + _type
+        cache_id = get_uid(hostname, cache_displayName, _type, 1)
         this_cache = get_interface(cache_id, displayname = cache_displayName)
 
         ################################
@@ -324,10 +326,10 @@ def add_caches(models_dict, _sys_dict, top_id, hostname, cache):
         
         ######################
         ##Add cache properties
-        models_dict[cache_id]["contents"].append(get_property(get_uid(hostname, cache_displayName, "property0", 1), "associativity", description = _sys_dict["cpu"]["cache"][cache]["associativity"]))
-        models_dict[cache_id]["contents"].append(get_property(get_uid(hostname, cache_displayName, "property1", 1), "cache_line_size", description = _sys_dict["cpu"]["cache"][cache]["cache_line_size"]))
-        models_dict[cache_id]["contents"].append(get_property(get_uid(hostname, cache_displayName, "property2", 1), "no_sets", description = _sys_dict["cpu"]["cache"][cache]["no_sets"]))
-        models_dict[cache_id]["contents"].append(get_property(get_uid(hostname, cache_displayName, "property3", 1), "size", description = _sys_dict["cpu"]["cache"][cache]["size"]))
+        models_dict[cache_id]["contents"].append(get_property(get_uid(hostname, _added, "property0", 1), "associativity", description = _sys_dict["cpu"]["cache"][cache]["associativity"]))
+        models_dict[cache_id]["contents"].append(get_property(get_uid(hostname, _added, "property1", 1), "cache_line_size", description = _sys_dict["cpu"]["cache"][cache]["cache_line_size"]))
+        models_dict[cache_id]["contents"].append(get_property(get_uid(hostname, _added, "property2", 1), "no_sets", description = _sys_dict["cpu"]["cache"][cache]["no_sets"]))
+        models_dict[cache_id]["contents"].append(get_property(get_uid(hostname, _added, "property3", 1), "size", description = _sys_dict["cpu"]["cache"][cache]["size"]))
         ##Add cache properties
         ######################
 
@@ -335,13 +337,14 @@ def add_caches(models_dict, _sys_dict, top_id, hostname, cache):
         ##Add caches to it's threads
         for thread in group:
             that_thread_displayName = "thread" + str(thread)
+            print("group: ", group, "thread:", that_thread_displayName)
             that_thread_id = get_uid(hostname, that_thread_displayName, "", 1)
             contains = c()
             models_dict[that_thread_id]["contents"].append(get_relationship(get_uid(hostname, that_thread_displayName, "contains" + contains, 1),  "contains" + contains, cache_id))
         ##Add caches to it's threads
         ############################
 
-        return models_dict
+    return models_dict
         
     
 def add_cpus(models_dict, _sys_dict, top_id, hostname):
