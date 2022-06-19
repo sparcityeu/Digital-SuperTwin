@@ -13,6 +13,7 @@ relationvar = -1
 componentvar = -1
 propertyvar = -1
 telemetryvar = -1
+cachevar = -1
 
 metrics = detect_utils.output_lines('pmprobe')                                                  
 metrics = [x.split(" ")[0] for x in metrics]
@@ -30,6 +31,12 @@ def c():
     componentvar = componentvar + 1
 
     return str(componentvar)
+
+def cc():
+    global cachevar
+    cachevar = cachevar + 1
+
+    return str(cachevar)
 
 def p():
     global propertyvar
@@ -298,7 +305,44 @@ def add_threads(models_dict, _sys_dict, top_id, hostname, socket_id, socket_num,
     ##########################
 
     return models_dict, this_thread_id
-    
+
+
+def add_caches(models_dict, _sys_dict, top_id, hostname, cache):
+
+    for group in _sys_dict["cpu"]["cache"][cache]["cache_groups"]:
+
+        cache_enum = cc()
+        cache_displayName = cache + "_" + cache_enum
+        cache_id = get_uid(hostname, cache_displayName, "", 1)
+        this_cache = get_interface(cache_id, displayname = cache_displayName)
+
+        ################################
+        ##Add this cache to digital twin
+        models_dict[cache_id] = this_cache
+        ##Add this cache to digital twin
+        ################################
+        
+        ######################
+        ##Add cache properties
+        models_dict[cache_id]["contents"].append(get_property(get_uid(hostname, cache_displayName, "property0", 1), "associativity", description = _sys_dict["cpu"]["cache"][cache]["associativity"]))
+        models_dict[cache_id]["contents"].append(get_property(get_uid(hostname, cache_displayName, "property1", 1), "cache_line_size", description = _sys_dict["cpu"]["cache"][cache]["cache_line_size"]))
+        models_dict[cache_id]["contents"].append(get_property(get_uid(hostname, cache_displayName, "property2", 1), "no_sets", description = _sys_dict["cpu"]["cache"][cache]["no_sets"]))
+        models_dict[cache_id]["contents"].append(get_property(get_uid(hostname, cache_displayName, "property3", 1), "size", description = _sys_dict["cpu"]["cache"][cache]["size"]))
+        ##Add cache properties
+        ######################
+
+        ############################
+        ##Add caches to it's threads
+        for thread in group:
+            that_thread_displayName = "thread" + str(thread)
+            that_thread_id = get_uid(hostname, that_thread_displayName, "", 1)
+            contains = c()
+            models_dict[that_thread_id]["contents"].append(get_relationship(get_uid(hostname, that_thread_displayName, "contains" + contains, 1),  "contains" + contains, cache_id))
+        ##Add caches to it's threads
+        ############################
+
+        return models_dict
+        
     
 def add_cpus(models_dict, _sys_dict, top_id, hostname):
 
@@ -314,82 +358,11 @@ def add_cpus(models_dict, _sys_dict, top_id, hostname):
             for thread in _sys_dict["affinity"]["socket"][socket]["cores"][core]:
                 
                 models_dict, this_thread_id = add_threads(models_dict, _sys_dict, top_id, hostname, this_socket_id, socket, this_core_id, core, thread)
-
-        '''
-        ##Now this socket's cores
-        for core in _sys_dict["affinity"]["socket"][socket]["cores"]:
-        
-            core_displayName = "core" + str(core)
-            this_core_id = get_id(hostname, displayName+"core", core, "C", 1)
-            this_core = get_interface(this_core_id, displayname = core_displayName)
-
-            #Connect core to socket
-            models_dict[this_socket_id]["contents"].append(get_relationship(get_id(hostname, "ownership", displayName+str(core), "O", 1), "contains"+ g(), this_core_id))
-            #Connect core to socket
-            
-            #add metrics as telemetry
-            my_metrics = get_my_metrics(["uncore"])
-            for count, metric in enumerate(my_metrics):
-                m_name = "metric" + str(count)
-                this_core["contents"].append(get_telemetry(hostname, m_name, metric, core_displayName+g(), count, 1))
-            #add metrics as telemetry
-
-            ##Add this core to digital twin
-            models_dict[this_core_id] = this_core
-            ##Add this core to digital twin
-
-            ##Now this core's threads
-            for thread in _sys_dict["affinity"]["socket"][socket]["cores"][core]:
-
-                thread_displayName = "thread" + str(thread)
-                this_thread_id = get_id(hostname, "thread", thread, "T", 1)
-                this_thread = get_interface(this_thread_id, displayname = thread_displayName)
-
-                ##Connect thread to core
-                models_dict[this_core_id]["contents"].append(get_relationship(get_id(hostname, "ownership", thread_displayName+g(), "O", 1), "contains"+g(), this_thread_id))
-                ##Connect thread to core
-                
-                ##add metrics as telemetry
-                my_metrics = get_my_metrics(["percpu", "perfevent.hwcounters"])
-                for count, metric in enumerate(my_metrics):
-                    m_name = "metric" + str(count)
-                    this_thread["contents"].append(get_telemetry(hostname, m_name, metric[:64], "THREAD"+g(), count, 1))
-                ##add metrics as telemetry
-
-            
-                ##MIND THAT:
-                ##Every different component type need their own global counter like
-                ##instead of g() we need
-                ##g_contains()
-                ##g_thread()
-                ##g_cache()
-                ##g_tlb()
-                ##Later, this information will be used to model these digital twins separately
                 
                 
-                ##Add this thread to digital twin
-                models_dict[this_thread_id] = this_thread
-                print("Thread id:", this_thread_id, "added")
-                ##Add this thread to digital twin
-
-        ##adding caches after sockets are done
+    ##adding caches after sockets are done
     for cache in _sys_dict["cpu"]["cache"]:
-        for group in _sys_dict["cpu"]["cache"][cache]["cache_groups"]:
-            cache_id = get_id(hostname, "cache", g() , "C" + g(), 1)
-            this_cache = get_interface(cache_id, displayname = cache)
-
-            models_dict[cache_id] = this_cache
-            models_dict[cache_id]["contents"].append(get_property(get_id(hostname, "cache", g(), "C" + g(), 1), "associativity", description = _sys_dict["cpu"]["cache"][cache]["associativity"]))
-            models_dict[cache_id]["contents"].append(get_property(get_id(hostname, "cache", g(), "C" + g(), 1), "cache_line_size", description = _sys_dict["cpu"]["cache"][cache]["cache_line_size"]))
-            models_dict[cache_id]["contents"].append(get_property(get_id(hostname, "cache", g(), "C" + g(), 1), "no_sets", description = _sys_dict["cpu"]["cache"][cache]["no_sets"]))
-            models_dict[cache_id]["contents"].append(get_property(get_id(hostname, "cache", g(), "C" + g(), 1), "size", description = _sys_dict["cpu"]["cache"][cache]["size"]))
-
-            for thread in group:
-                that_thread_id = get_id(hostname, "thread", thread, "T", 1)
-                models_dict[that_thread_id]["contents"].append(get_relationship(get_id(hostname, "ownership", g(), "O", 1), "contains"+g(), cache_id))
-        ##adding caches after sockets are done
-                
-    '''
+        add_caches(models_dict, _sys_dict, top_id, hostname, cache)            
         
         
     return models_dict
