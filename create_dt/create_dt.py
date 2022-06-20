@@ -141,6 +141,20 @@ def get_telemetry(hostname, name, displayname, comp, version, description = "db 
     telemetry["displayName"] = displayname[:63]
 
     return telemetry
+
+def get_telemetry_mapped(hostname, name, field_key, measurement, comp, version):
+
+    telemetry = {}
+
+    telemetry["@id"] = get_uid(hostname, comp , "telemetry" + t(), 1)
+    telemetry["@type"] = "Telemetry"
+    telemetry["schema"] = "string"
+    telemetry["name"] = name
+
+    telemetry["displayName"] = field_key
+    telemetry["description"] = measurement
+
+    return telemetry
     
 
 def _filter(metric):
@@ -191,11 +205,22 @@ def add_my_metrics(models_dict, this_comp_id, hostname, displayname, my_categori
 
     return models_dict
 
+def add_my_metrics_mapped(models_dict, this_comp_id, hostname, displayname, field_key, my_categories):
+
+    my_metrics = get_my_metrics(my_categories)
+    for count, metric in enumerate(my_metrics):
+        m_name = "metric" + str(count)
+        measurement = metric.replace(".", "_")
+        models_dict[this_comp_id]["contents"].append(get_telemetry_mapped(hostname, m_name, field_key, measurement, displayname, 1))
+
+    return models_dict
+
 
 def add_sockets(models_dict, _sys_dict, top_id, hostname, socket):
 
 
     displayName = "socket" + str(socket)
+    field_key = "_node" + str(socket) 
     this_socket_id = get_uid(hostname, displayName, "", 1)
     this_socket = get_interface(this_socket_id, displayname = displayName)
 
@@ -241,7 +266,7 @@ def add_sockets(models_dict, _sys_dict, top_id, hostname, socket):
 
     ##########################
     ##add metrics as telemetry
-    models_dict = add_my_metrics(models_dict, this_socket_id, hostname, displayName, ["pernode", "energy"])
+    models_dict = add_my_metrics_mapped(models_dict, this_socket_id, hostname, displayName, field_key, ["pernode", "energy"])
     ##add metrics as telemetry
     ##########################
     
@@ -270,7 +295,8 @@ def add_cores(models_dict, _sys_dict, top_id, hostname, socket_id, socket_num, c
 
     ##########################
     ##add metrics as telemetry
-    models_dict = add_my_metrics(models_dict, this_core_id, hostname, core_displayName, ["uncore"])
+    #models_dict = add_my_metrics(models_dict, this_core_id, hostname, core_displayName, ["uncore"])
+    ##Uncores are also moved to threads since values reported for them are per thread
     ##add metrics as telemetry
     ##########################
 
@@ -282,6 +308,7 @@ def add_threads(models_dict, _sys_dict, top_id, hostname, socket_id, socket_num,
     socket_displayName = "socket" + str(socket_num)
     core_displayName = "core" + str(core_num)
     thread_displayName = "thread" + str(thread)
+    field_key = "_core" + str(thread) 
     this_thread_id = get_uid(hostname, thread_displayName, "", 1)
     this_thread = get_interface(this_thread_id, displayname = thread_displayName)
 
@@ -300,7 +327,7 @@ def add_threads(models_dict, _sys_dict, top_id, hostname, socket_id, socket_num,
 
     ##########################
     ##add metrics as telemetry
-    models_dict = add_my_metrics(models_dict, this_thread_id, hostname, thread_displayName, ["percpu", "perfevent.hwcounters"])
+    models_dict = add_my_metrics_mapped(models_dict, this_thread_id, hostname, thread_displayName, field_key, ["percpu", "perfevent.hwcounters", "uncore"])
     ##add metrics as telemetry
     ##########################
 
