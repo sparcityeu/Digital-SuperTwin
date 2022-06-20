@@ -172,9 +172,9 @@ def _filter(metric):
     elif(metric.find('mem') != -1):                                                                 
         _type = 'mem'                                                                               
     elif(metric.find('network.interface') != -1):                                                   
-        _type = 'network.interface'                                                                        
+        _type = 'network.interface'   
     elif(metric.find('network') != -1 and metric.find("network.interface") == -1): #Only top level metrics
-        _type = 'network.top'                                                                           
+        _type = 'network.top'    
     elif(metric.find('disk.dev') != -1):
         _type = 'disk.dev'
     elif(metric.find('disk.all') != -1):
@@ -185,6 +185,8 @@ def _filter(metric):
          _type = 'energy'                                                                           
     elif(metric.find('perfevent.hwcounters') != -1):                                                
         _type = 'perfevent.hwcounters'
+    elif(metric.find('proc.') != -1):
+        _type = 'proc'
                                                                                                     
     return _type
 
@@ -632,6 +634,35 @@ def add_network(models_dict, _sys_dict, top_id, hostname):
     add_subnets(models_dict, _sys_dict, top_id, hostname, top_network_id)
 
     return models_dict
+
+def add_proc(models_dict, _sys_dict, top_id, hostname):
+
+    displayName = "process"
+    field_key = "_XXX"
+    proc_id = get_uid(hostname, displayName, "", 1)
+    proc = get_interface(proc_id, displayname = displayName)
+
+    ##################################
+    ##Add this process to digital twin
+    models_dict[proc_id] = proc
+    ##Add this process to digital twin
+    ##################################
+
+    ###############################
+    ##Connect process to the system
+    contains = c()
+    models_dict[top_id]["contents"].append(get_relationship(get_uid(hostname, "system", "ownership" + contains, 1), "contains" + contains, proc_id))
+    ##Connect process to the system
+    ###############################
+
+    ##########################
+    ##Add metrics as telemetry
+    models_dict = add_my_metrics_mapped(models_dict, proc_id, hostname, displayName, field_key, ["proc"])
+    ##Add metrics as telemetry
+    ##########################
+
+    return models_dict
+    
     
 def main():
 
@@ -662,6 +693,7 @@ def main():
     models_dict = add_memory(models_dict, _sys_dict, top_id, hostname)
     models_dict = add_disk(models_dict, _sys_dict, top_id, hostname)
     models_dict = add_network(models_dict, _sys_dict, top_id, hostname)
+    models_dict = add_proc(models_dict, _sys_dict, top_id, hostname)
     
     
     pprint(models_dict)
