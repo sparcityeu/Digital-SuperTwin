@@ -172,11 +172,13 @@ def _filter(metric):
     elif(metric.find('mem') != -1):                                                                 
         _type = 'mem'                                                                               
     elif(metric.find('network.interface') != -1):                                                   
-        _type = 'pernetwork'                                                                        
-    elif(metric.find('network') != -1):                                                             
-        _type = 'network'                                                                           
-    elif(metric.find('disk') != -1):                                                                
-        _type = 'disk'                                                                              
+        _type = 'network.interface'                                                                        
+    elif(metric.find('network') != -1 and metric.find("network.interface") == -1): #Only top level metrics
+        _type = 'network.top'                                                                           
+    elif(metric.find('disk.dev') != -1):
+        _type = 'disk.dev'
+    elif(metric.find('disk.all') != -1):
+        _type = 'disk.all'
     elif(metric.find('hwcounters.UNC') != -1):                                                      
         _type = 'uncore'                                                                            
     elif(metric.find('ENERGY') != -1):                                                              
@@ -199,6 +201,7 @@ def get_my_metrics(my_types):
 def add_my_metrics(models_dict, this_comp_id, hostname, displayname, my_categories):
 
     my_metrics = get_my_metrics(my_categories)
+    
     for count, metric in enumerate(my_metrics):
         m_name = "metric" + str(count)
         models_dict[this_comp_id]["contents"].append(get_telemetry(hostname, m_name, metric, displayname, 1))
@@ -208,6 +211,8 @@ def add_my_metrics(models_dict, this_comp_id, hostname, displayname, my_categori
 def add_my_metrics_mapped(models_dict, this_comp_id, hostname, displayname, field_key, my_categories):
 
     my_metrics = get_my_metrics(my_categories)
+    my_metrics = my_metrics[:250] #Only until migrate to RDF
+    
     for count, metric in enumerate(my_metrics):
         m_name = "metric" + str(count)
         measurement = metric.replace(".", "_")
@@ -396,9 +401,238 @@ def add_cpus(models_dict, _sys_dict, top_id, hostname):
         
         
     return models_dict
+
+
+def add_memory_banks(models_dict, _sys_dict, top_id, hostname, top_memory):
+
+    for bank in _sys_dict["memory"]["banks"]:
+
+        displayName = bank.replace(":", "")
+        this_bank_id = get_uid(hostname, displayName, "", 1)
+        this_bank = get_interface(this_bank_id, displayname = displayName)
+
+        ###############################
+        ##Add this bank to digital twin
+        models_dict[this_bank_id] = this_bank
+        ##Add this bank to digital twin
+        ###############################
+        
+        
+        #######################################
+        ##Connect this bank to top level memory
+        contains = c()
+        models_dict[top_memory]["contents"].append(get_relationship(get_uid(hostname, "memory", "contains" + contains, 1), "contains" + contains, this_bank_id))
+        ##Connect this bank to top level memory
+        #######################################
+
+        #######################
+        ##Add chosen properties
+        this_bank["contents"].append(get_property(get_uid(hostname, displayName, "property0", 1), "id", description = str(_sys_dict["memory"]["banks"][bank]["id"])))
+        this_bank["contents"].append(get_property(get_uid(hostname, displayName, "property1", 1), "size", description = str(_sys_dict["memory"]["banks"][bank]["size"])))
+        this_bank["contents"].append(get_property(get_uid(hostname, displayName, "property2", 1), "slot", description = str(_sys_dict["memory"]["banks"][bank]["slot"])))
+        this_bank["contents"].append(get_property(get_uid(hostname, displayName, "property3", 1), "clock", description = str(_sys_dict["memory"]["banks"][bank]["clock"])))
+        this_bank["contents"].append(get_property(get_uid(hostname, displayName, "property4", 1), "description", description = str(_sys_dict["memory"]["banks"][bank]["description"])))
+        this_bank["contents"].append(get_property(get_uid(hostname, displayName, "property6", 1), "vendor", description = str(_sys_dict["memory"]["banks"][bank]["vendor"])))
+        this_bank["contents"].append(get_property(get_uid(hostname, displayName, "property7", 1), "model", description = str(_sys_dict["memory"]["banks"][bank]["model"])))
+        ##Add chosen properties
+        #######################
+
+    return models_dict
+
+def add_memory(models_dict, _sys_dict, top_id, hostname):
+
+    displayName = "memory"
+    top_memory_id = get_uid(hostname, displayName, "", 1)
+    top_memory = get_interface(top_memory_id, displayname = displayName)
+
+    ######################################
+    ##Add top level memory to digital twin
+    models_dict[top_memory_id] = top_memory
+    ##Add top level memory to digital twin
+    ######################################
+
+    ########################################
+    ##Connect top level memory to the system
+    contains = c()
+    models_dict[top_id]["contents"].append(get_relationship(get_uid(hostname, "system", "ownership" + contains, 1), "contains" + contains, top_memory_id))
+    ##Connect top level memory to the system
+    ########################################
+
+    #######################
+    ##Add chosen properties
+    top_memory["contents"].append(get_property(get_uid(hostname, displayName, "property0", 1),
+                                               "totalsize", description = str(_sys_dict["memory"]["total"]["size"])))
+    top_memory["contents"].append(get_property(get_uid(hostname, displayName, "property1", 1),
+                                               "totalbanks", description = str(_sys_dict["memory"]["total"]["banks"])))
+    ##Add chosen properties
+    #######################
+
+    ##################
+    ##Add memory banks
+    models_dict = add_memory_banks(models_dict, _sys_dict, top_id, hostname, top_memory_id)
+    ##Add memory banks
+    ##################
+
+    return models_dict
+
+def add_phy_disks(models_dict, _sys_dict, top_id, hostname, top_disk_id):
+
+    for disk in _sys_dict["disk"]:
+
+        ##Avoid non-disk top level properties
+        if type(_sys_dict["disk"][disk]) is dict:
+
+            disk_displayName = disk
+            field_key = "_" + disk
+            this_disk_id = get_uid(hostname, "disk:" + disk_displayName, "", 1)
+            this_disk = get_interface(this_disk_id, displayname = disk_displayName)
+
+            ########################################
+            ##Add this physical disk to digital twin
+            models_dict[this_disk_id] = this_disk
+            ##Add this physical disk to digital twin
+            ########################################
+
+            ###########################
+            ##Connect to top level disk
+            contains = c()
+            models_dict[top_disk_id]["contents"].append(get_relationship(get_uid(hostname, disk_displayName, "contains" + contains, 1), "contains" + contains, this_disk_id))
+            ##Connect to top level disk
+            ###########################
+
+            #######################
+            ##Add chosen properties
+            this_disk["contents"].append(get_property(get_uid(hostname, disk_displayName, "property0", 1), "size", description = str(_sys_dict["disk"][disk]["size"])))
+            this_disk["contents"].append(get_property(get_uid(hostname, disk_displayName, "property1", 1), "model", description = str(_sys_dict["disk"][disk]["model"])))
+            this_disk["contents"].append(get_property(get_uid(hostname, disk_displayName, "property2", 1), "rotational", description = str(_sys_dict["disk"][disk]["rotational"])))
+            ##Add chosen properties
+            #######################
+
+            ##########################
+            ##add metrics as telemetry
+            models_dict = add_my_metrics_mapped(models_dict, this_disk_id, hostname, disk_displayName, field_key, ["disk.dev"])
+            ##add metrics as telemetry
+            ##########################
+
+    return models_dict
+
+            
+def add_disk(models_dict, _sys_dict, top_id, hostname):
+
+    top_disk_displayName = "disk"
+    field_key = "_value"
+    top_disk_id = get_uid(hostname, top_disk_displayName, "", 1)
+    top_disk = get_interface(top_disk_id, displayname = top_disk_displayName)
+
+    ##############################
+    ##Add top disk to digital twin
+    models_dict[top_disk_id] = top_disk
+    ##Add top disk to digital twin
+    ##############################
+
+    ######################################
+    ##Connect top level disk to the system
+    contains = c()
+    models_dict[top_id]["contents"].append(get_relationship(get_uid(hostname, "system", "ownership" + contains, 1), "contains" + contains, top_disk_id))
+    ##Connect top level disk to the system
+    ######################################
     
+    #######################
+    ##Add chosen properties
+    top_disk["contents"].append(get_property(get_uid(hostname, top_disk_displayName, "property0", 1), "no_disks", description = str(_sys_dict["disk"]["no_disks"])))
+    ##Add chosen properties
+    #######################
+
+    ##########################
+    ##add metrics as telemetry
+    models_dict = add_my_metrics_mapped(models_dict, top_disk_id, hostname, top_disk_displayName, field_key, ["disk.all"])
+    ##add metrics as telemetry
+    ##########################
+
+    add_phy_disks(models_dict, _sys_dict, top_id, hostname, top_disk_id)
+
+    return models_dict
 
 
+def add_subnets(models_dict, _sys_dict, top_id, hostname, top_network_id):
+
+    for network_key in _sys_dict["network"]:
+        network = _sys_dict["network"][network_key]
+        ##For now, ignore networks that are down and virtual networks
+        if(network["link"] == "yes" and network["virtual"] == "no"):
+
+            network_displayName = network_key
+            field_key = "_" + network_key
+            this_network_id = get_uid(hostname, "network:" + network_displayName, "", 1)
+            this_network = get_interface(this_network_id, displayname = network_displayName)
+
+            ##################################
+            ##Add this network to digital twin
+            models_dict[this_network_id] = this_network
+            ##Add this network to digital twin
+            ##################################
+
+            ###########################################
+            ##Connect this network to top level network
+            contains = c()
+            models_dict[top_network_id]["contents"].append(get_relationship(get_uid(hostname, network_displayName, "contains" + contains, 1), "contains" + contains, this_network_id))
+            ##Connect this network to top level network
+            ###########################################
+
+            #######################
+            ##Add chosen properties
+            this_network["contents"].append(get_property(get_uid(hostname, network_displayName, "property0", 1), "ipv4", description = str(network["ipv4"])))
+            this_network["contents"].append(get_property(get_uid(hostname, network_displayName, "property1", 1), "businfo", description = str(network["businfo"])))
+            this_network["contents"].append(get_property(get_uid(hostname, network_displayName, "property2", 1), "vendor", description = str(network["vendor"])))
+            this_network["contents"].append(get_property(get_uid(hostname, network_displayName, "property3", 1), "model", description = str(network["model"])))
+            this_network["contents"].append(get_property(get_uid(hostname, network_displayName, "property4", 1), "firmware", description = str(network["firmware"])))
+            this_network["contents"].append(get_property(get_uid(hostname, network_displayName, "property5", 1), "virtual", description = str(network["virtual"])))
+            this_network["contents"].append(get_property(get_uid(hostname, network_displayName, "property6", 1), "speed", description = str(network["speed"])))
+            this_network["contents"].append(get_property(get_uid(hostname, network_displayName, "property7", 1), "serial", description = str(network["serial"])))
+            this_network["contents"].append(get_property(get_uid(hostname, network_displayName, "property8", 1), "link", description = str(network["link"])))
+            ##Add chosen properties
+            #######################
+            
+            ##########################
+            ##Add metrics as telemetry
+            models_dict = add_my_metrics_mapped(models_dict, this_network_id, hostname, network_displayName, field_key, ["network.interface"])
+            ##Add metrics as telemetry
+            ##########################
+
+    return models_dict
+            
+        
+
+def add_network(models_dict, _sys_dict, top_id, hostname):
+
+    displayName = "network"
+    field_key = "_value"
+    top_network_id = get_uid(hostname, displayName, "", 1)
+    top_network = get_interface(top_network_id, displayname = displayName)
+
+    #################################
+    ##Add top network to digital twin
+    models_dict[top_network_id] = top_network
+    ##Add top network to digital twin
+    #################################
+
+    ###################################
+    ##Connect top network to the system
+    contains = c()
+    models_dict[top_id]["contents"].append(get_relationship(get_uid(hostname, "system", "ownership" + contains, 1), "contains" + contains, top_network_id))
+    ##Connect top network to the system
+    ###################################
+
+    ##########################
+    ##Add metrics as telemetry
+    models_dict = add_my_metrics_mapped(models_dict, top_network_id, hostname, displayName, field_key, ["network.top"])
+    ##Add metrics as telemetry
+    ##########################
+
+    add_subnets(models_dict, _sys_dict, top_id, hostname, top_network_id)
+
+    return models_dict
+    
 def main():
 
     models_dict = {}
@@ -425,6 +659,9 @@ def main():
 
 
     models_dict = add_cpus(models_dict, _sys_dict, top_id, hostname)
+    models_dict = add_memory(models_dict, _sys_dict, top_id, hostname)
+    models_dict = add_disk(models_dict, _sys_dict, top_id, hostname)
+    models_dict = add_network(models_dict, _sys_dict, top_id, hostname)
     
     
     pprint(models_dict)
@@ -435,9 +672,15 @@ def main():
         models_list.append(models_dict[key])
 
 
+    # now write output to a file
     with open("dt.json", "w") as outfile:
         json.dump(models_list, outfile)
 
+    
+        
+    #wdict = open("sys_dict.json", "w")
+    #wdict.write(json.dumps(_sys_dict, indent=2))
+    #wdict.close()        
     
 if __name__ == "__main__":
 
