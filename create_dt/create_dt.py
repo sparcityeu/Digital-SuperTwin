@@ -194,6 +194,7 @@ def get_my_metrics(my_types):
 
     my_metrics = []
     for my_type in my_types:
+        print("here, len(metrics):", len(metrics))
         for item in metrics:
             if(_filter(item) == my_type):
                 my_metrics.append(item)
@@ -371,7 +372,6 @@ def add_caches(models_dict, _sys_dict, top_id, hostname, cache):
         ##Add caches to it's threads
         for thread in group:
             that_thread_displayName = "thread" + str(thread)
-            print("group: ", group, "thread:", that_thread_displayName)
             that_thread_id = get_uid(hostname, that_thread_displayName, "", 1)
             contains = c()
             models_dict[that_thread_id]["contents"].append(get_relationship(get_uid(hostname, that_thread_displayName, "contains" + contains, 1),  "contains" + contains, cache_id))
@@ -662,10 +662,29 @@ def add_proc(models_dict, _sys_dict, top_id, hostname):
     ##########################
 
     return models_dict
-    
-    
-def main():
 
+
+def prune_tree(config_file):
+
+    global metrics
+
+    print("config file:", config_file)
+    if(config_file != ""):
+
+        print("Pruning!")
+        reader = open(config_file, "r")
+        to_keep = reader.readlines()
+        reader.close()
+        
+        to_keep = [x.strip("\n") for x in to_keep]
+        #metrics = [x for x in metrics if x in to_keep]
+        metrics = to_keep
+        
+    
+def main(config_file):
+
+    prune_tree(config_file)
+        
     models_dict = {}
     _sys_dict = probe.main()
 
@@ -696,7 +715,7 @@ def main():
     models_dict = add_proc(models_dict, _sys_dict, top_id, hostname)
     
     
-    pprint(models_dict)
+    #pprint(models_dict)
 
     #Because digital twin is a set of interfaces
     models_list = []
@@ -705,14 +724,13 @@ def main():
 
 
     # now write output to a file
-    with open("dt.json", "w") as outfile:
-        json.dump(models_list, outfile)
+    #with open("dt.json", "w") as outfile:
+        #json.dump(models_list, outfile)
 
-    
-        
-    #wdict = open("sys_dict.json", "w")
-    #wdict.write(json.dumps(_sys_dict, indent=2))
-    #wdict.close()        
+
+    #return models_list
+    return models_dict
+
     
 if __name__ == "__main__":
 
