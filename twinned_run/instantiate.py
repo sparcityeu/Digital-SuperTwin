@@ -50,7 +50,7 @@ def generate_pcp2influxdb_config(config_file, tag):
     for metric in metrics:
         config_lines.append(metric + " = ,," + "\n")
 
-
+        
     pcp_conf_name = "pcp" + tag + ".conf" 
     writer = open(pcp_conf_name, "w")
     
@@ -135,6 +135,13 @@ def main():
     print("Killed! : ", p0.pid)
     '''
 
+    ##Connect target process metrics
+    pname = "_" + str(p1.pid) + "_sleep"
+    p_dtid = create_dt.get_uid(hostname, "process", "", 1)
+    for item in dt_pruned[p_dtid]["contents"]:
+        item["displayName"] = pname
+    ##Connect target process metrics
+    
     try0 = {
         "hostname": hostname,
         "date": date,
