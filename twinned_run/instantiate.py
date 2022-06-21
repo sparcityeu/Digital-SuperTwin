@@ -27,7 +27,7 @@ def get_date_tag():
 
     date = datetime.datetime.now()
     ##Per run
-    tag_date = date.strftime("%d%m%Y%f")
+    tag_date = date.strftime("%d%m%Y_%f")
 
     return tag_date
 
@@ -116,7 +116,7 @@ def main():
     print("p0_args:", p0_args)
     
     
-    p1_command = "sleep 30"
+    p1_command = "sleep 10"
     p1_args = shlex.split(p1_command)
     
     
