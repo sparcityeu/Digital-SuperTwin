@@ -10,6 +10,7 @@ import json
 import datetime
 import subprocess
 from subprocess import Popen, PIPE
+import shlex
 
 ##databases
 #import influxdb_client
@@ -76,11 +77,11 @@ def get_mongo_database(mongodb_name):
     ##Create a connection for mongodb 
     CONNECTION_STRING = "mongodb://localhost:27017"
     client = MongoClient(CONNECTION_STRING)
-
+    
     ##Create the database for this instance(s)
     return client[mongodb_name]
-    
-    
+
+
 
 def main():
 
@@ -108,16 +109,22 @@ def main():
     influxdb = InfluxDBClient(host="localhost", port=8086)
     influxdb.create_database(influx_db_name)
 
-    
-    command = "sleep 30"
 
-    DETACHED_PROCESS = 0x00000008
+    p0_command = "pcp2influxdb -t 1 -c " + pcp_conf_name + " :configured"
+    print("p0_command:", p0_command)
+    p0_args = shlex.split(p0_command)
+    print("p0_args:", p0_args)
     
-    p0 = Popen(["pcp2influxdb", "-t", "1", "-c", pcp_conf_name, ":configured"], start_new_session=True)
+    
+    p1_command = "sleep 30"
+    p1_args = shlex.split(p1_command)
+    
+    
+    
+    p0 = Popen(p0_args)
 
     print("Will sleep")
-    p1 = Popen(["sleep", "30"], stdin = subprocess.PIPE,
-               stdout = subprocess.PIPE)
+    p1 = Popen(p1_args, stdin = subprocess.PIPE, stdout = subprocess.PIPE)
     p1.wait()
     p0.kill()
     
