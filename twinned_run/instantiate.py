@@ -76,6 +76,7 @@ def get_mongo_database(mongodb_name):
     
     ##Create the database for this instance(s)
     return client[mongodb_name]
+    
 
 def get_influx_database(influxdb_name):
 
@@ -85,13 +86,16 @@ def get_influx_database(influxdb_name):
 
 def run_single(hostname, date, config_file, dt_pruned, command):
 
+    print("Observing:", command)
+    
     conf_prefix = config_file.replace(".", "_")
     same_tag = get_date_tag()
         
     ##Get mongodb
-    mongodb_name = conf_prefix + same_tag
+    #mongodb_name = conf_prefix + same_tag
+    mongodb_name = "digital_twin"
     mongodb = get_mongo_database(mongodb_name)
-    collection = mongodb[mongodb_name + "_0"]
+    collection = mongodb[mongodb_name + "_" + same_tag]
     ##Get mongodb
         
     ##Get influxdb
@@ -124,7 +128,8 @@ def run_single(hostname, date, config_file, dt_pruned, command):
     for item in dt_pruned[p_dtid]["contents"]:
         item["displayName"] = pname
     ##Connect target process metrics
-    
+
+
     metadata = {
         "hostname": hostname,
         "date": date,
@@ -132,7 +137,7 @@ def run_single(hostname, date, config_file, dt_pruned, command):
         "dt_pruned": dt_pruned,
         "influxdb": influxdb_name,
         "command": command,
-        "command_options": p1_args
+        #"command_options": p1_args
     }
     collection.insert_one(metadata)
 
@@ -142,6 +147,14 @@ def run_commands(hostname, date, config_file, dt_pruned, commands):
     for command in commands:
         
         run_single(hostname, date, config_file, dt_pruned, command)
+
+def read_commands(commands_file):
+
+    reader = open(commands_file, "r")
+    reader_lines = reader.readlines()
+    reader_lines = [x.strip("\n") for x in reader_lines]
+
+    return reader_lines
     
     
 def main():
@@ -158,18 +171,8 @@ def main():
     date = date.strftime("%d-%m-%Y")
 
     
-
-    commands = ["sleep 1",
-                "sleep 2",
-                "sleep 3",
-                "sleep 4",
-                "sleep 5",
-                "sleep 6",
-                "sleep 7",
-                "sleep 8",
-                "sleep 9",
-                "sleep 10"]
-    
+    commands = read_commands(sys.argv[2])
+    print("commands:", commands)
     
     run_commands(hostname, date, config_file, dt_pruned, commands)
     
