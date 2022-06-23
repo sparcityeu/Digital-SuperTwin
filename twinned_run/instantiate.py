@@ -42,8 +42,8 @@ def generate_pcp2influxdb_config(config_file, tag):
 
     config_lines = ["[options]" + "\n",
                     "influx_server = http://127.0.0.1:8086" + "\n",
-                    "influx_db = " + "pcp_" + tag + "\n",
-                    #"influx_tags = " + tag + "\n" 
+                    "influx_db = " + "digital_twin" + "\n",
+                    "influx_tags = " + "tag=" +"observation_"+ tag + "\n",
                     "\n\n",
                     "[configured]" + "\n"]
 
@@ -60,7 +60,7 @@ def generate_pcp2influxdb_config(config_file, tag):
     writer.close()
 
 
-    return pcp_conf_name, "pcp_" + tag
+    return pcp_conf_name, "observation_" + tag
 
 
 def run(config_file):
@@ -95,12 +95,13 @@ def run_single(hostname, date, config_file, dt_pruned, command):
     #mongodb_name = conf_prefix + same_tag
     mongodb_name = "digital_twin"
     mongodb = get_mongo_database(mongodb_name)
-    collection = mongodb[mongodb_name + "_" + same_tag]
+    #collection = mongodb[mongodb_name + "_" + same_tag]
+    collection = mongodb["observations"]
     ##Get mongodb
         
     ##Get influxdb
     pcp_conf_name, influxdb_name = generate_pcp2influxdb_config(config_file, same_tag)
-    get_influx_database(influxdb_name)
+    get_influx_database("digital_twin")
     ##Get influxdb
 
     
@@ -135,7 +136,8 @@ def run_single(hostname, date, config_file, dt_pruned, command):
         "date": date,
         #"dt_base": dt_base,
         "dt_pruned": dt_pruned,
-        "influxdb": influxdb_name,
+        "influxdb": "digital_twin",
+        "influxdb_tag": "observation_" + str(same_tag),
         "command": command,
         #"command_options": p1_args
     }
@@ -153,6 +155,7 @@ def read_commands(commands_file):
     reader = open(commands_file, "r")
     reader_lines = reader.readlines()
     reader_lines = [x.strip("\n") for x in reader_lines]
+    reader_lines = [x for x in reader_lines if x.find("#") == -1]
 
     return reader_lines
     
