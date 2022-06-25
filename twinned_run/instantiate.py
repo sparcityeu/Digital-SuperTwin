@@ -63,11 +63,6 @@ def generate_pcp2influxdb_config(config_file, tag):
     return pcp_conf_name, "observation_" + tag
 
 
-def run(config_file):
-
-    command = "sleep 30"
-    
-    
 def get_mongo_database(mongodb_name):
 
     ##Create a connection for mongodb 

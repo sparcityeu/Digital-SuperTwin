@@ -4,13 +4,6 @@ import pymongo
 from pymongo import MongoClient
 
 
-
-
-
-
-
-
-
 def get_mongodb():
 
     ##Create a connection for mongodb
@@ -37,9 +30,17 @@ def main():
 
     #print("InfluxDBS: ", influxdb.get_list_database())
     
-    try0 = mongodb.find({"command": "stress --cpu 8 --io 4 --vm 16 --vm-bytes 128M --timeout 15s"})
+    #try0 = mongodb.find({"command": "stress --cpu 8 --io 4 --vm 16 --vm-bytes 128M --timeout 15s"})
+
+    
+    try0 = mongodb.find({"command": "stress --cpu 12 --io 4 --vm 16 --vm-bytes 512M --timeout 60s"})
+    try1 = mongodb.find({"command": "stress --cpu 4 --io 4 --vm 16 --vm-bytes 512M --timeout 60s"})
+
     for item in try0:
-        print("item", item["_id"], item["influxdb_tag"])
+        print("item0", item["_id"], item["influxdb_tag"])
+
+    for item in try1:
+        print("item1", item["_id"], item["influxdb_tag"])
 
 
 
