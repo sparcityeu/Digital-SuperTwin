@@ -23,6 +23,11 @@ from pymongo import MongoClient
 
 import asyncio
 
+import getpass
+import paramiko
+
+from scp import SCPClient
+
 def get_date_tag():
 
     date = datetime.datetime.now()
@@ -32,7 +37,7 @@ def get_date_tag():
     return tag_date
 
 
-def generate_pcp2influxdb_config(config_file, tag):
+def generate_pcp2influxdb_config(config_file, tag, SShost):
     
     reader = open(config_file, "r")
     metrics = reader.readlines()
@@ -153,15 +158,72 @@ def read_commands(commands_file):
     reader_lines = [x for x in reader_lines if x.find("#") == -1]
 
     return reader_lines
-    
+
+def progress4(filename, size, sent, peername):
+    sys.stdout.write("(%s:%s) %s's progress: %.2f%%   \r" % (peername[0], peername[1], filename, float(sent)/float(size)*100) )
     
 def main():
 
     config_file = sys.argv[1]
+    SSHhost = input("Address of remote system: ")
+    SSHuser = input("User: ")
+    SSHkey = getpass.getpass() ##This should be SSHpass
 
+    print("#####")
+    
+    ##Connect to remote host
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(SSHhost, username = SSHuser, password = SSHkey)
+    stdout = ssh.exec_command("hostname")[1]
+    for line in stdout:
+        print("Remote host name:", line.strip("\n"))
+    #ssh.close() ##Will close the ssh client later
+    ##Connect to remote host
+
+    ##Get this framework's path
+    path = detect_utils.cmd("pwd")[1].strip('\n')
+    path = path[:path.index("Digital-SuperTwin") + 18] ##18 characters for "Digital-SuperTwin" + "/"
+    #path += "!(.*)" ##To avoid .git/ and other hidden folders
+    system_query_path = path + "system_query"
+    pmu_query_path = path + "pmu_event_query"
+    print("Digital SuperTwin local path:", path) 
+    ##Get this framework's path
+    
+
+    ##Setup scp and transmit Digital-Twin probing
+    ####
+    ##Migrate to invoke_shell()
+    ##note that there is also exec_command() but
+    ##exec_command is not viable for every server hence invoke_shell is a more general solution
+    ####
+    scp = SCPClient(ssh.get_transport(), progress4=progress4)
+    transport = ssh.get_transport()
+    session = transport.open_session()
+    session.set_combine_stderr(True)
+    session.get_pty()
+    stdin = session.makefile('wb', -1)
+    stdout = session.makefile('rb', -1)
+    session.exec_command("sudo rm -r /tmp/dt_probing")
+    stdin.write(SSHkey + '\n')
+    stdin.flush()
+    session = transport.open_session()
+    session.set_combine_stderr(True)
+    session.get_pty()
+    stdin = session.makefile('wb', -1)
+    stdout = session.makefile('rb', -1)
+    session.exec_command("mkdir /tmp/dt_probing/")
+    scp.put(system_query_path, recursive=True, remote_path="/tmp/dt_probing")
+    scp.put(pmu_query_path, recursive=True, remote_path="/tmp/dt_probing")
+    #scp.close() #For now
+    ##Setup scp and transmit Digital-Twin probing
+    exit(1)
+    
     #dt_base = create_dt.main("")
     dt_pruned = create_dt.main(config_file)
-
+    print("dt_pruned:", dt_pruned)
+    exit(1)
+    
 
     ##Runs metadata
     hostname = detect_utils.cmd('hostname')[1].strip('\n')
