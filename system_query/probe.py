@@ -205,13 +205,13 @@ def main():
     #print('#############################')
     #pprint(info)    
 
-    with open("probing.json", "w") as outfile:
+    print("Will write to file")
+    with open("/tmp/dt_probing/system_query/probing.json", "w") as outfile:
         json.dump(info, outfile)
-
-    
+    print("Should have write to file")
+        
+    #pprint(info)
     print("Probing done succesfuly..")
-
-    pprint(info)
     
     return info
 

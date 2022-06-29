@@ -161,6 +161,34 @@ def read_commands(commands_file):
 
 def progress4(filename, size, sent, peername):
     sys.stdout.write("(%s:%s) %s's progress: %.2f%%   \r" % (peername[0], peername[1], filename, float(sent)/float(size)*100) )
+
+    
+def run_sudo_command(ssh_client, SSHkey, command):
+
+    transport = ssh_client.get_transport()
+    session = transport.open_session()
+    session.set_combine_stderr(True)
+    session.get_pty()
+    stdin = session.makefile('wb', -1)
+    stdout = session.makefile('rb', -1)
+    ##is it about stdout
+    session.exec_command(command)
+    stdin.write(SSHkey + '\n')
+    stdin.flush()
+
+    print("##################")
+    print("Command:", command)
+    for line in stdout:
+        print("outline:", line)
+    print("##################")
+
+def run_command(ssh_client, command):
+
+    transport = ssh_client.get_transport()
+    session = transport.open_session()
+    session.set_combine_stderr(True)
+    session.get_pty()
+    session.exec_command(command)
     
 def main():
 
@@ -198,31 +226,22 @@ def main():
     ##exec_command is not viable for every server hence invoke_shell is a more general solution
     ####
     scp = SCPClient(ssh.get_transport(), progress4=progress4)
-    transport = ssh.get_transport()
-    session = transport.open_session()
-    session.set_combine_stderr(True)
-    session.get_pty()
-    stdin = session.makefile('wb', -1)
-    stdout = session.makefile('rb', -1)
-    session.exec_command("sudo rm -r /tmp/dt_probing")
-    stdin.write(SSHkey + '\n')
-    stdin.flush()
-    session = transport.open_session()
-    session.set_combine_stderr(True)
-    session.get_pty()
-    stdin = session.makefile('wb', -1)
-    stdout = session.makefile('rb', -1)
-    session.exec_command("mkdir /tmp/dt_probing/")
+    run_sudo_command(ssh, SSHkey, "sudo rm -r /tmp/dt_probing/")
+    run_command(ssh, "mkdir /tmp/dt_probing")
     scp.put(system_query_path, recursive=True, remote_path="/tmp/dt_probing")
     scp.put(pmu_query_path, recursive=True, remote_path="/tmp/dt_probing")
-    #scp.close() #For now
+    run_sudo_command(ssh, SSHkey, "sudo python3 /tmp/dt_probing/system_query/probe.py")
+    run_sudo_command(ssh, SSHkey, "ls /tmp/dt_probing/system_query/")
+    scp.get(recursive=True, remote_path="/tmp/dt_probing/system_query/probing.json")
+    scp.close() #For now
     ##Setup scp and transmit Digital-Twin probing
-    exit(1)
+    
+    
     
     #dt_base = create_dt.main("")
-    dt_pruned = create_dt.main(config_file)
-    print("dt_pruned:", dt_pruned)
-    exit(1)
+    #dt_pruned = create_dt.main(config_file)
+    #print("dt_pruned:", dt_pruned)
+    
     
 
     ##Runs metadata
