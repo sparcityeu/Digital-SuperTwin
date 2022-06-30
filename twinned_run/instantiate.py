@@ -158,37 +158,6 @@ def read_commands(commands_file):
     reader_lines = [x for x in reader_lines if x.find("#") == -1]
 
     return reader_lines
-
-def progress4(filename, size, sent, peername):
-    sys.stdout.write("(%s:%s) %s's progress: %.2f%%   \r" % (peername[0], peername[1], filename, float(sent)/float(size)*100) )
-
-    
-def run_sudo_command(ssh_client, SSHkey, command):
-
-    transport = ssh_client.get_transport()
-    session = transport.open_session()
-    session.set_combine_stderr(True)
-    session.get_pty()
-    stdin = session.makefile('wb', -1)
-    stdout = session.makefile('rb', -1)
-    ##is it about stdout
-    session.exec_command(command)
-    stdin.write(SSHkey + '\n')
-    stdin.flush()
-
-    print("##################")
-    print("Command:", command)
-    for line in stdout:
-        print("outline:", line)
-    print("##################")
-
-def run_command(ssh_client, command):
-
-    transport = ssh_client.get_transport()
-    session = transport.open_session()
-    session.set_combine_stderr(True)
-    session.get_pty()
-    session.exec_command(command)
     
 def main():
 
@@ -245,9 +214,9 @@ def main():
     
 
     ##Runs metadata
-    hostname = detect_utils.cmd('hostname')[1].strip('\n')
-    date = datetime.datetime.now()
-    date = date.strftime("%d-%m-%Y")
+    #hostname = detect_utils.cmd('hostname')[1].strip('\n')
+    #date = datetime.datetime.now()
+    #date = date.strftime("%d-%m-%Y")
 
     
     commands = read_commands(sys.argv[2])
