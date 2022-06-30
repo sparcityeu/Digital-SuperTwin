@@ -4,6 +4,7 @@ sys.path.append("../system_query")
 
 import detect_utils
 import create_dt
+import generate_dt
 from pprint import pprint
 import json
 
@@ -37,7 +38,7 @@ def get_date_tag():
     return tag_date
 
 
-def generate_pcp2influxdb_config(config_file, tag, SShost):
+def generate_pcp2influxdb_config(config_file, tag):
     
     reader = open(config_file, "r")
     metrics = reader.readlines()
@@ -47,8 +48,9 @@ def generate_pcp2influxdb_config(config_file, tag, SShost):
 
     config_lines = ["[options]" + "\n",
                     "influx_server = http://127.0.0.1:8086" + "\n",
-                    "influx_db = " + "digital_twin" + "\n",
-                    "influx_tags = " + "tag=" +"observation_"+ tag + "\n",
+                    "influx_db = " + "dolap_main" + "\n",
+                    "influx_tags = " + "tag=" + tag + "\n",
+                    "source = 10.36.54.195" + "\n",
                     "\n\n",
                     "[configured]" + "\n"]
 
@@ -90,19 +92,6 @@ def run_single(hostname, date, config_file, dt_pruned, command):
     
     conf_prefix = config_file.replace(".", "_")
     same_tag = get_date_tag()
-        
-    ##Get mongodb
-    #mongodb_name = conf_prefix + same_tag
-    mongodb_name = "digital_twin"
-    mongodb = get_mongo_database(mongodb_name)
-    #collection = mongodb[mongodb_name + "_" + same_tag]
-    collection = mongodb["observations"]
-    ##Get mongodb
-        
-    ##Get influxdb
-    pcp_conf_name, influxdb_name = generate_pcp2influxdb_config(config_file, same_tag)
-    get_influx_database("digital_twin")
-    ##Get influxdb
 
     
     ##This is where actual thing happens
@@ -131,19 +120,6 @@ def run_single(hostname, date, config_file, dt_pruned, command):
     ##Connect target process metrics
 
 
-    metadata = {
-        "hostname": hostname,
-        "date": date,
-        #"dt_base": dt_base,
-        "dt_pruned": dt_pruned,
-        "influxdb": "digital_twin",
-        "influxdb_tag": "observation_" + str(same_tag),
-        "command": command,
-        #"command_options": p1_args
-    }
-    collection.insert_one(metadata)
-
-
 def run_commands(hostname, date, config_file, dt_pruned, commands):
     
     for command in commands:
@@ -161,23 +137,44 @@ def read_commands(commands_file):
     
 def main():
 
-    #dt_base = create_dt.main("")
-    #dt_pruned = create_dt.main(config_file)
-    #print("dt_pruned:", dt_pruned)
+    probing = open('probing.json')
+    _sys_dict = json.load(probing)
+    _twin = generate_dt.main(_sys_dict)
 
-    ##Runs metadata
-    #hostname = detect_utils.cmd('hostname')[1].strip('\n')
-    #date = datetime.datetime.now()
-    #date = date.strftime("%d-%m-%Y")
+    hostname = _sys_dict["hostname"]
 
+    date = datetime.datetime.now()
+    date = date.strftime("%d-%m-%Y")
     
+    ##Get mongodb
+    mongodb_name = hostname
+    mongodb = get_mongo_database(mongodb_name)
+    collection = mongodb["twin"]
+    ##Get mongodb
+        
+    ##Get influxdb
+    pcp_conf_name, influxdb_name = generate_pcp2influxdb_config(hostname + "_main.conf", "main")
+    get_influx_database(hostname + "_main")
+    ##Get influxdb
 
+    metadata = {
+        "hostname": hostname,
+        "date": date,
+        "dtdl_twin": _twin,
+        "influxdb": hostname + "_main",
+        "influxdb_tag": "_main",
+    }
+    collection.insert_one(metadata)
+
+    ##This is where actual thing happens
+    #####################################################################
+    p0_command = "pcp2influxdb -t 1 -c " + pcp_conf_name + " :configured"
+    p0_args = shlex.split(p0_command)
     
-    commands = read_commands(sys.argv[2])
-    print("commands:", commands)
-    
-    run_commands(hostname, date, config_file, dt_pruned, commands)
-    
+    p0 = Popen(p0_args)
+    p0.wait(10)
+    p0.kill()
+    #####################################################################
     
 if __name__ == "__main__":
 
