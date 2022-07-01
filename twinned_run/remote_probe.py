@@ -84,24 +84,29 @@ def main():
     ##Get this framework's path
     
     ##Setup scp and transmit Digital-Twin probing
-    scp = SCPClient(ssh.get_transport(), progress4=progress4)
+    #scp = SCPClient(ssh.get_transport(), progress4=progress4) ##Need to resolve carriage return trailing problem
+    scp = SCPClient(ssh.get_transport())
     run_sudo_command(ssh, SSHpass, remotehost_name, "sudo rm -r /tmp/dt_probing/")
     run_command(ssh, remotehost_name, "mkdir /tmp/dt_probing")
+    ##scp
+    print("Copying probing framework to remote system..")
     scp.put(system_query_path, recursive=True, remote_path="/tmp/dt_probing")
     scp.put(pmu_query_path, recursive=True, remote_path="/tmp/dt_probing")
+    print("Probing framework is copied to remote system..")
+    ##scp
     run_sudo_command(ssh, SSHpass, remotehost_name, "sudo python3 /tmp/dt_probing/system_query/probe.py")
-    run_sudo_command(ssh, SSHpass, remotehost_name, "ls /tmp/dt_probing/system_query/")
+    #run_sudo_command(ssh, SSHpass, remotehost_name, "ls /tmp/dt_probing/system_query/")
     scp.get(recursive=True, remote_path="/tmp/dt_probing/system_query/probing.json")
+    print("Remote probing is done..")
     scp.close() #For now
     ##Setup scp and transmit Digital-Twin probing
-    
-    
-    #dt_base = create_dt.main("")
-    #dt_pruned = create_dt.main(config_file)
-    #print("dt_pruned:", dt_pruned)
-    
-    #ssh.close() ##Will close the ssh client later
-    
+
+    ssh.close()
+
+    probfile_name = "probing_" + remotehost_name + ".json"
+    detect_utils.cmd("mv probing.json " + probfile_name)
+
+    return remotehost_name, SSHhost, probfile_name
 
 if __name__ == "__main__":
 

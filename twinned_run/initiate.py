@@ -38,7 +38,7 @@ def get_date_tag():
     return tag_date
 
 
-def generate_pcp2influxdb_config(config_file, tag):
+def generate_pcp2influxdb_config(config_file, tag, sourceIP, source_name):
     
     reader = open(config_file, "r")
     metrics = reader.readlines()
@@ -46,11 +46,13 @@ def generate_pcp2influxdb_config(config_file, tag):
 
     metrics = [x.strip("\n") for x in metrics]
 
+    influx_db_name = source_name + "_main" 
+
     config_lines = ["[options]" + "\n",
                     "influx_server = http://127.0.0.1:8086" + "\n",
-                    "influx_db = " + "dolap_main" + "\n",
+                    "influx_db = " + influx_db_name + "\n",
                     "influx_tags = " + "tag=" + tag + "\n",
-                    "source = 10.36.54.195" + "\n",
+                    "source = " + sourceIP + "\n",
                     "\n\n",
                     "[configured]" + "\n"]
 
@@ -59,7 +61,7 @@ def generate_pcp2influxdb_config(config_file, tag):
         config_lines.append(metric + " = ,," + "\n")
 
         
-    pcp_conf_name = "pcp_" + tag + ".conf" 
+    pcp_conf_name = "pcp_" + source_name + tag + ".conf" 
     writer = open(pcp_conf_name, "w")
     
     for line in config_lines:
@@ -67,7 +69,7 @@ def generate_pcp2influxdb_config(config_file, tag):
     writer.close()
 
 
-    return pcp_conf_name, "observation_" + tag
+    return pcp_conf_name, influx_db_name
 
 
 def get_mongo_database(mongodb_name):
@@ -135,13 +137,14 @@ def read_commands(commands_file):
 
     return reader_lines
     
-def main():
+def main(hostname, hostIP, hostProbFile, monitoringMetricsConf):
 
-    probing = open('probing.json')
-    _sys_dict = json.load(probing)
+    #_sys_dict = json.load(hostProbFile)
+    with open(hostProbFile, 'r') as j:
+        _sys_dict = json.loads(j.read())
     _twin = generate_dt.main(_sys_dict)
-
-    hostname = _sys_dict["hostname"]
+    _tag = "_main"
+    
 
     date = datetime.datetime.now()
     date = date.strftime("%d-%m-%Y")
@@ -153,15 +156,15 @@ def main():
     ##Get mongodb
         
     ##Get influxdb
-    pcp_conf_name, influxdb_name = generate_pcp2influxdb_config(hostname + "_main.conf", "main")
-    get_influx_database(hostname + "_main")
+    pcp_conf_name, influxdb_name = generate_pcp2influxdb_config(monitoringMetricsConf, _tag, hostIP, hostname)
+    get_influx_database(influxdb_name)
     ##Get influxdb
 
     metadata = {
         "hostname": hostname,
         "date": date,
         "dtdl_twin": _twin,
-        "influxdb": hostname + "_main",
+        "influxdb": influxdb_name,
         "influxdb_tag": "_main",
     }
     collection.insert_one(metadata)
@@ -172,13 +175,16 @@ def main():
     p0_args = shlex.split(p0_command)
     
     p0 = Popen(p0_args)
-    p0.wait(10)
-    p0.kill()
+    monitor_pid = p0.pid
+    #p0.wait(10)
+    #p0.kill()
     #####################################################################
+
+    return monitor_pid
     
 if __name__ == "__main__":
 
-    main()
+    main("dolap", "10.36.54.195", "probing_dolap.json", "dolap_main.conf")
     
 
 
