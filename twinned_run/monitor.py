@@ -18,6 +18,8 @@ import json
 import requests
 from os import getenv
 
+import webbrowser
+
 def get_dashboard_json(dashboard, overwrite=False, message="Updated by grafanlib"):
     '''
     get_dashboard_json generates JSON from grafanalib Dashboard object
@@ -52,14 +54,14 @@ def upload_to_grafana(json, server, api_key, verify=True):
 
 def main():
 
-    '''
+    
     hostName, hostIP, hostProbFile = remote_probe.main()
     #print("in m: ", "hostname:", hostName, "hostIP:", hostIP, "hostProbFile:", hostProbFile)
 
     monitoringMetricsConf = input("Monitoring metrics configuration: ")
     monitorPID = initiate.main(hostName, hostIP, hostProbFile, monitoringMetricsConf)
     print("A daemon is sampling", hostName, "with PID", monitorPID)
-    '''
+    
 
 
     grafana_api_key = "eyJrIjoiSVJCMVg2MmdxbDZ3emt5ZDBkM0lNMzZLQm9CNFpwbkQiLCJuIjoicHl0aG9uZW50cnkiLCJpZCI6MX0="
@@ -73,7 +75,8 @@ def main():
     #payload = {"Dashboard": my_dashboard}
     my_dashboard_json_obj = get_dashboard_json(my_dashboard_json, overwrite=True)
     upload_to_grafana(my_dashboard_json_obj, grafana_server, grafana_api_key)
-    
+
+    webbrowser.open('http://127.0.0.1:3000/d/abifsd')
     
 
 if __name__ == "__main__":

@@ -166,6 +166,7 @@ def main(hostname, hostIP, hostProbFile, monitoringMetricsConf):
         "dtdl_twin": _twin,
         "influxdb": influxdb_name,
         "influxdb_tag": "_main",
+        "dashboard_location": "http://127.0.0.1:3000/d/abifsd",
     }
     collection.insert_one(metadata)
 
