@@ -86,12 +86,17 @@ def main():
     ##Setup scp and transmit Digital-Twin probing
     #scp = SCPClient(ssh.get_transport(), progress4=progress4) ##Need to resolve carriage return trailing problem
     scp = SCPClient(ssh.get_transport())
-    run_sudo_command(ssh, SSHpass, remotehost_name, "sudo rm -r /tmp/dt_probing/")
+    run_sudo_command(ssh, SSHpass, remotehost_name, "sudo rm -r /tmp/dt_probing")
     run_command(ssh, remotehost_name, "mkdir /tmp/dt_probing")
     ##scp
     print("Copying probing framework to remote system..")
+    ##Issue is here, scp does not create folder when first called only copies content
+    ##This is why we first scp and delete and scp again
+    ##Need to fix this
     scp.put(system_query_path, recursive=True, remote_path="/tmp/dt_probing")
+    run_sudo_command(ssh, SSHpass, remotehost_name, "sudo rm -r /tmp/dt_probing/*")
     scp.put(pmu_query_path, recursive=True, remote_path="/tmp/dt_probing")
+    scp.put(system_query_path, recursive=True, remote_path="/tmp/dt_probing")
     print("Probing framework is copied to remote system..")
     ##scp
     run_sudo_command(ssh, SSHpass, remotehost_name, "sudo python3 /tmp/dt_probing/system_query/probe.py")
