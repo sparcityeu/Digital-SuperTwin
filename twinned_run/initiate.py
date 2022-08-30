@@ -30,6 +30,10 @@ import paramiko
 from scp import SCPClient
 
 import system_dashboard
+import generate_general_dashboard
+import generate_system_dashboard
+
+from threading import Thread
 
 def get_date_tag():
 
@@ -130,6 +134,21 @@ def run_commands(hostname, date, config_file, dt_pruned, commands):
         
         run_single(hostname, date, config_file, dt_pruned, command)
 
+
+        
+def system_dashboard_prepare(hostname, twin_id):
+
+    system_dashboard.main(hostname, twin_id)     ##Both need threads
+
+
+
+    
+def system_dashboard_launch(comp_dashes):
+    
+    generate_system_dashboard.main(comp_dashes)  ##Both need threads
+
+
+    
 def read_commands(commands_file):
 
     reader = open(commands_file, "r")
@@ -175,10 +194,40 @@ def main(hostname, hostIP, hostProbFile, monitoringMetricsConf):
     result = collection.insert_one(metadata)
     twin_id = str(result.inserted_id)
 
+    metrics = [x.replace(".", "_") for x in metrics]
+    #print("metrics:", metrics)
+    
+    ##individual metrics
+    m_f_d = {}
+    for g_key in _twin:
+        node_dict = _twin[g_key]
+        contents = node_dict['contents']
+
+        telemetries = []
+        field = ""
+        
+        for content in contents:
+            if(content['@type'] == 'Telemetry'):
+                measurement = content['description']
+                #print("measurement:", measurement, "in metrics:", (measurement in metrics))
+                if(measurement in metrics):
+                    telemetries.append(content['description'])
+                if(field == ""):
+                    field = content['displayName']
+        m_f_d[field] = telemetries    
+    ##individual metrics
+    comp_dashes = generate_general_dashboard.main(m_f_d)
+    
     ##Get system dashboard
     ##hostname is the name of database, "twin" is name of the collection and "id" will return
-    ##collection that includes dtdl 
-    system_dashboard.main(hostname, twin_id) 
+    ##collection that includes dtdl
+    thread1 = Thread(target = system_dashboard_prepare, args=(hostname, twin_id))
+    thread2 = Thread(target = system_dashboard_launch, args=(comp_dashes))
+    thread1.start()
+    thread2.start()
+    ######system_dashboard.main(hostname, twin_id)     ##Both need threads
+    ######generate_system_dashboard.main(comp_dashes)  ##Both need threads
+    
     ##Get system dashboard
     
     ###

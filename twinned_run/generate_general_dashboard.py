@@ -6,6 +6,8 @@ import requests
 from grafanalib.core import Dashboard
 from grafanalib._gen import DashboardEncoder
 
+import uuid
+
 ##These should be in a config file
 grafana_api_key = "eyJrIjoiM1JDaHR3Y1VENzFtSXZsNTh0Mzh0ZFpGRWhCdENvTDAiLCJuIjoiZHQwIiwiaWQiOjF9"
 grafana_server = "localhost:3000"
@@ -40,9 +42,9 @@ def upload_to_grafana(json, server, api_key, verify=True):
     # TODO: add error handling
     # TODO: return and read uid and url, add it to observation digital twin
     print(f"{r.status_code} - {r.content}")
+    return dict(r.json())
 
-
-def get_dashboard_json(dashboard, overwrite=False, message="Updated by grafanalib"):
+def get_dashboard_json(dashboard, overwrite=True, message="Updated by grafanalib"):
     '''
     get_dashboard_json generates JSON from grafanalib Dashboard object
     :param dashboard - Dashboard() created via grafanalib
@@ -62,11 +64,13 @@ def template_dict():
 
     _template = {}
 
-    _template["id"] = None ##to_get: id
+    _template["id"] = "null" ##to_get: id
     _template["timepicker"] = {}
     _template["timezone"] = ""
-    _template["title"] = "TEMPLATE" ##param: title
-    _template["uid"] = None ##to_get: uid
+    #_template["title"] = "TEMPLATE" ##param: title
+    _template["title"] = str(uuid.uuid4()) ##param: title
+    _template["uid"] = "null" ##to_get: uid
+    #_template["uid"] = str(uuid.uuid4()) ##to_get: uid
     _template["version"] = 1
     _template["weekStart"] = ""
     _template["schemaVersion"] = 37
@@ -93,7 +97,8 @@ def template_dict():
     lzd["enable"] = True
     lzd["hide"] = True
     lzd["iconColor"] = "rgba(0, 211, 255, 1)"
-    lzd["name"] = "Annotations & Alerts"
+    #lzd["name"] = "Annotations & Alerts"
+    lzd["name"] = str(uuid.uuid4())
     lzd["type"] = "dashboard"
     
     lzd["datasource"] = {}
@@ -118,6 +123,8 @@ def add_query(_pd, measurement, fields):
 
     for field in fields:
 
+        #print("field:", field)
+        
         _qd = {} ##query dictionary
         _qd["alias"] = field.strip("_")
         _qd["measurement"] = measurement
@@ -146,10 +153,9 @@ def add_query(_pd, measurement, fields):
 
         _qd["select"] = [[{"params": [field], "type": "field"}, {"params": [], "type": "last"}]]
         
-
-        next_refid = 65
         _pd["targets"].append(_qd)
-
+    next_refid = 65
+        
     return _pd
 
 
@@ -222,10 +228,10 @@ def add_panel(measurement, fields):
     
     
     #fields = ["_sda"]
-    print("_pd, before:", _pd)
+    #print("_pd, before:", _pd)
     _pd = add_query(_pd, measurement, fields)
-    print("###############################")
-    print("_pd, after:", _pd)
+    #print("###############################")
+    #print("_pd, after:", _pd)
     
     return _pd
 
@@ -233,31 +239,40 @@ def add_panel(measurement, fields):
 ##NEED TO REWRITE SELECT-QUERY PART - PERHAPS IT WAS ELASTIC SEARCH, DATE HISTOGRAM THING
     
     
-def main():
+def main(measurements_fields_dict):
     
     server = grafana_server
     api_key = grafana_api_key
-    
-    empty_dash = template_dict()
-    empty_dash["panels"] = []
 
-    measurement = "disk_dev_write" #param: measurement
-    measurement2 = "disk_dev_read" #param: measurement
-    fields = ["_sda", "_nvme0n1", "_nvme1n1"]
-    
-    empty_dash["panels"].append(add_panel("disk_dev_write", fields))
-    empty_dash["panels"].append(add_panel("disk_dev_write_merge", fields))
-    empty_dash["panels"].append(add_panel("disk_dev_read", fields))
-    empty_dash["panels"].append(add_panel("disk_dev_read_merge", fields))
-    
-    
+    print(measurements_fields_dict)
+    #exit(1)
 
-    #json_dash = json.dumps(empty_dash)
-    #print(type(json_dash))
 
-    json_dash_obj = get_dashboard_json(empty_dash, overwrite = True)
-    print(json_dash_obj)
-    upload_to_grafana(json_dash_obj, grafana_server, grafana_api_key)
+    generated = {}
+    for key in measurements_fields_dict:
+    
+        empty_dash = template_dict()
+        empty_dash["panels"] = []
+
+        for measurement in measurements_fields_dict[key]:
+            empty_dash["panels"].append(add_panel(measurement, [key]))
+
+        if(len(empty_dash["panels"]) != 0):
+            json_dash_obj = get_dashboard_json(empty_dash, overwrite = True)
+            print(json_dash_obj)
+            g_url = upload_to_grafana(json_dash_obj, grafana_server, grafana_api_key)
+            generated[key] = g_url['url']
+
+
+    return generated
+    #measurement = "disk_dev_write" #param: measurement
+    #measurement2 = "disk_dev_read" #param: measurement
+    #fields = ["_sda", "_nvme0n1", "_nvme1n1"]
+    
+    #empty_dash["panels"].append(add_panel("disk_dev_write", fields))
+    #empty_dash["panels"].append(add_panel("disk_dev_write_merge", fields))
+    #empty_dash["panels"].append(add_panel("disk_dev_read", fields))
+    #empty_dash["panels"].append(add_panel("disk_dev_read_merge", fields))
     
 
 if __name__ == "__main__":

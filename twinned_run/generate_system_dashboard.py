@@ -444,7 +444,7 @@ def template_dict():
     return _template
 
 
-def main():
+def main(comp_dashes):
     
     server = grafana_server
     api_key = grafana_api_key
