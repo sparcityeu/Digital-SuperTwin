@@ -10,12 +10,12 @@ from grafanalib._gen import DashboardEncoder
 grafana_api_key = "eyJrIjoiM1JDaHR3Y1VENzFtSXZsNTh0Mzh0ZFpGRWhCdENvTDAiLCJuIjoiZHQwIiwiaWQiOjF9"
 grafana_server = "localhost:3000"
 
-glob_y = -5
+glob_y = -7
 glob_panel_id = 1
 
 def next_y():
     global glob_y
-    glob_y += 5
+    glob_y += 7
     
     return glob_y
 
@@ -153,10 +153,10 @@ def add_query(_pd, measurement, fields):
     return _pd
 
 
-def add_panel():
+def add_panel(measurement, fields):
 
     _pd = {} ##Panel dictionary
-    _pd["title"] = "Generated" ##param: panel title
+    _pd["title"] = measurement ##param: panel title
     _pd["type"] = "timeseries"
     _pd["transparent"] = True
     _pd["description"] = ""
@@ -217,12 +217,11 @@ def add_panel():
 
     _pd["fieldConfig"]["overrides"] = []
 
-    _pd["gridPos"] = {"h": 5, "w": 24, "x": 0, "y": next_y()}
+    _pd["gridPos"] = {"h": 7, "w": 24, "x": 0, "y": next_y()}
     _pd["targets"] = []
     
-    measurement = "disk_dev_write" #param: measurement
-    #fields = ["_sda", "_nvme0n1", "_nvme1n1"]
-    fields = ["_sda"]
+    
+    #fields = ["_sda"]
     print("_pd, before:", _pd)
     _pd = add_query(_pd, measurement, fields)
     print("###############################")
@@ -241,7 +240,18 @@ def main():
     
     empty_dash = template_dict()
     empty_dash["panels"] = []
-    empty_dash["panels"].append(add_panel())
+
+    measurement = "disk_dev_write" #param: measurement
+    measurement2 = "disk_dev_read" #param: measurement
+    fields = ["_sda", "_nvme0n1", "_nvme1n1"]
+    
+    empty_dash["panels"].append(add_panel("disk_dev_write", fields))
+    empty_dash["panels"].append(add_panel("disk_dev_write_merge", fields))
+    empty_dash["panels"].append(add_panel("disk_dev_read", fields))
+    empty_dash["panels"].append(add_panel("disk_dev_read_merge", fields))
+    
+    
+
     #json_dash = json.dumps(empty_dash)
     #print(type(json_dash))
 

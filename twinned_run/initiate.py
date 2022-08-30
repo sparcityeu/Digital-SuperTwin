@@ -29,6 +29,8 @@ import paramiko
 
 from scp import SCPClient
 
+import system_dashboard
+
 def get_date_tag():
 
     date = datetime.datetime.now()
@@ -142,6 +144,7 @@ def main(hostname, hostIP, hostProbFile, monitoringMetricsConf):
     #_sys_dict = json.load(hostProbFile)
     with open(hostProbFile, 'r') as j:
         _sys_dict = json.loads(j.read())
+        
     _twin = generate_dt.main(_sys_dict)
     _tag = "_main"
     
@@ -159,7 +162,7 @@ def main(hostname, hostIP, hostProbFile, monitoringMetricsConf):
     pcp_conf_name, influxdb_name = generate_pcp2influxdb_config(monitoringMetricsConf, _tag, hostIP, hostname)
     get_influx_database(influxdb_name)
     ##Get influxdb
-
+    
     metadata = {
         "hostname": hostname,
         "date": date,
@@ -167,8 +170,21 @@ def main(hostname, hostIP, hostProbFile, monitoringMetricsConf):
         "influxdb": influxdb_name,
         "influxdb_tag": "_main",
         "dashboard_location": "http://127.0.0.1:3000/d/abifsd",
+        "real_dashboard_location": "system_dashboard",
     }
-    collection.insert_one(metadata)
+    result = collection.insert_one(metadata)
+    twin_id = str(result.inserted_id)
+
+    ##Get system dashboard
+    ##hostname is the name of database, "twin" is name of the collection and "id" will return
+    ##collection that includes dtdl 
+    system_dashboard.main(hostname, twin_id) 
+    ##Get system dashboard
+    
+    ###
+    #with open("one_twin.json", "w") as write_file:
+    #    json.dump(_twin, write_file, indent=4)
+    ###
 
     ##This is where actual thing happens
     #####################################################################
@@ -181,7 +197,7 @@ def main(hostname, hostIP, hostProbFile, monitoringMetricsConf):
     #p0.kill()
     #####################################################################
 
-    return monitor_pid
+    return monitor_pid, str(result.inserted_id)
     
 if __name__ == "__main__":
 

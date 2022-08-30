@@ -58,9 +58,9 @@ def run_command(ssh_client, name, command):
 #May migrate to invoke_shell() instead of exec_command() in the future
 #Because they say exec_command() may not be compatible with ALL servers
 #Let's see
-def main():
-
-    SSHhost = input("Address of remote system: ")
+def main(SSHhost):
+    
+    #SSHhost = input("Address of remote system: ")
     SSHuser = input("User: ")
     SSHpass = getpass.getpass() ##This should be SSHpass
     
