@@ -7,7 +7,8 @@ app = Flask(__name__)
 def fetch_graph_fields():
     nodes_fields = [{"field_name": "id", "type": "string"},
                     {"field_name": "title", "type": "string"},
-                    {"field_name": "detail__role", "type": "string"}]
+                    {"field_name": "detail__role", "type": "string"},
+                    {"field_name": "mainStat", "type":"string"}]
 
     ##AND THEN OVERRIDE
                     
@@ -48,4 +49,4 @@ def check_health():
     return "API is working well!"
 
 
-app.run(host='0.0.0.0', port=5001)
+app.run(host='0.0.0.0', port=5002)

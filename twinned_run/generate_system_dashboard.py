@@ -6,6 +6,338 @@ import requests
 from grafanalib.core import Dashboard
 from grafanalib._gen import DashboardEncoder
 
+
+observation_table_panel = {
+  "id": 2,
+  "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 18
+  },
+  "type": "table",
+  "title": "Observations",
+  "datasource": {
+    "type": "hamedkarbasi93-nodegraphapi-datasource",
+    "uid": "Hif9Y8W4k"
+  },
+  "pluginVersion": "9.1.0-beta1",
+  "fieldConfig": {
+    "defaults": {
+      "custom": {
+        "align": "auto",
+        "displayMode": "auto",
+        "inspect": False
+      },
+      "mappings": [],
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          {
+            "color": "green",
+            "value": None
+          },
+          {
+            "color": "red",
+            "value": 80
+          }
+        ]
+      },
+      "color": {
+        "mode": "thresholds"
+      }
+    },
+    "overrides": [
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "Nodes detail__role"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "command"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "Nodes title"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "# of metrics"
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "id": "byName",
+          "options": "Nodes mainStat"
+        },
+        "properties": [
+          {
+            "id": "displayName",
+            "value": "report"
+          }
+        ]
+      }
+    ]
+  },
+  "options": {
+    "showHeader": True,
+    "footer": {
+      "show": False,
+      "reducer": [
+        "sum"
+      ],
+      "fields": ""
+    },
+    "sortBy": [],
+    "frameIndex": 0
+  },
+  "targets": [
+    {
+      "alias": "",
+      "bucketAggs": [
+        {
+          "field": "@timestamp",
+          "id": "2",
+          "settings": {
+            "interval": "auto"
+          },
+          "type": "date_histogram"
+        }
+      ],
+      "datasource": {
+        "type": "hamedkarbasi93-nodegraphapi-datasource",
+        "uid": "Hif9Y8W4k"
+      },
+      "metrics": [
+        {
+          "id": "1",
+          "type": "count"
+        }
+      ],
+      "query": "",
+      "refId": "A",
+      "timeField": "@timestamp"
+    }
+  ],
+    "transparent":True
+}
+
+text_panel_1 = {
+  "id": 4,
+  "gridPos": {
+    "h": 3,
+    "w": 8,
+    "x": 0,
+    "y": 0
+  },
+  "type": "text",
+  "title": "Hostname",
+  "datasource": {
+    "type": "elasticsearch",
+    "uid": "TSVKafhnk"
+  },
+  "pluginVersion": "9.1.0-beta1",
+  "options": {
+    "mode": "markdown",
+    "content": "<center><b><font size=\"+8\">DOLAP</font></b></center>" ##This will change
+  },
+  "targets": [
+    {
+      "alias": "",
+      "bucketAggs": [
+        {
+          "field": "@timestamp",
+          "id": "2",
+          "settings": {
+            "interval": "auto"
+          },
+          "type": "date_histogram"
+        }
+      ],
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "TSVKafhnk"
+      },
+      "metrics": [
+        {
+          "id": "1",
+          "type": "count"
+        }
+      ],
+      "query": "",
+      "refId": "A",
+      "timeField": "@timestamp"
+    }
+  ],
+  "transparent": True
+}
+
+
+text_panel_2 = {
+  "id": 5,
+  "gridPos": {
+    "h": 3,
+    "w": 8,
+    "x": 8,
+    "y": 0
+  },
+  "type": "text",
+  "title": "IP",
+  "datasource": {
+    "type": "elasticsearch",
+    "uid": "TSVKafhnk"
+  },
+  "pluginVersion": "9.1.0-beta1",
+  "options": {
+    "mode": "markdown",
+    "content": "<center><b><font size=\"+8\">10.36.54.195</font></b></center>" ##This will change
+  },
+  "targets": [
+    {
+      "alias": "",
+      "bucketAggs": [
+        {
+          "field": "@timestamp",
+          "id": "2",
+          "settings": {
+            "interval": "auto"
+          },
+          "type": "date_histogram"
+        }
+      ],
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "TSVKafhnk"
+      },
+      "metrics": [
+        {
+          "id": "1",
+          "type": "count"
+        }
+      ],
+      "query": "",
+      "refId": "A",
+      "timeField": "@timestamp"
+    }
+  ],
+  "transparent": True
+}
+
+text_panel_3 = {
+  "id": 6,
+  "gridPos": {
+    "h": 3,
+    "w": 8,
+    "x": 16,
+    "y": 0
+  },
+  "type": "text",
+  "title": "Number of Metrics",
+  "datasource": {
+    "type": "elasticsearch",
+    "uid": "TSVKafhnk"
+  },
+  "pluginVersion": "9.1.0-beta1",
+  "options": {
+    "mode": "markdown",
+    "content": "<center><b><font size=\"+8\">46</font></b></center>" #This will change
+  },
+  "targets": [
+    {
+      "alias": "",
+      "bucketAggs": [
+        {
+          "field": "@timestamp",
+          "id": "2",
+          "settings": {
+            "interval": "auto"
+          },
+          "type": "date_histogram"
+        }
+      ],
+      "datasource": {
+        "type": "elasticsearch",
+        "uid": "TSVKafhnk"
+      },
+      "metrics": [
+        {
+          "id": "1",
+          "type": "count"
+        }
+      ],
+      "query": "",
+      "refId": "A",
+      "timeField": "@timestamp"
+    }
+  ],
+  "transparent": True
+}
+
+system_view_panel = {
+  "id": 7,
+  "gridPos": {
+    "h": 15,
+    "w": 24,
+    "x": 0,
+    "y": 3
+  },
+  "type": "nodeGraph",
+  "title": "System",
+  "datasource": {
+    "type": "hamedkarbasi93-nodegraphapi-datasource",
+    "uid": "hb8KdEWVz"
+  },
+  "links": [
+    {
+      "targetBlank": True,
+      "title": "Google",
+      "url": "google.com"
+    },
+    {
+      "targetBlank": True,
+      "title": "Youtube",
+      "url": "youtube.com"
+    }
+  ],
+  "targets": [
+    {
+      "alias": "",
+      "bucketAggs": [
+        {
+          "field": "@timestamp",
+          "id": "2",
+          "settings": {
+            "interval": "auto"
+          },
+          "type": "date_histogram"
+        }
+      ],
+      "datasource": {
+        "type": "hamedkarbasi93-nodegraphapi-datasource",
+        "uid": "Hif9Y8W4k"
+      },
+      "metrics": [
+        {
+          "id": "1",
+          "type": "count"
+        }
+      ],
+      "query": "",
+      "refId": "A",
+      "timeField": "@timestamp"
+    }
+  ],
+  "transparent": True
+}
+
+
 ##These should be in a config file
 grafana_api_key = "eyJrIjoiM1JDaHR3Y1VENzFtSXZsNTh0Mzh0ZFpGRWhCdENvTDAiLCJuIjoiZHQwIiwiaWQiOjF9"
 grafana_server = "localhost:3000"
@@ -112,143 +444,26 @@ def template_dict():
     return _template
 
 
-def add_query(_pd, measurement, fields):
-
-    next_refid = 65
-
-    for field in fields:
-
-        _qd = {} ##query dictionary
-        _qd["alias"] = field.strip("_")
-        _qd["measurement"] = measurement
-        _qd["orderByTime"] = "ASC"
-        _qd["policy"] = "default"
-        _qd["query"] = ""
-        _qd["resultFormat"] = "time_series"
-        _qd["hide"] = False
-        _qd["tags"] = []
-        _qd["timeField"] = "@timestamp"
-        
-        _qd["refId"] = str(chr(next_refid))
-        next_refid += 1
-
-        _qd["bucketAggs"] = [{"field": "@timestamp", "id": "2",
-                              "settings": {"interval": "auto"},
-                              "type": "date_histogram"}]
-
-        _qd["datasource"] = {}
-        _qd["datasource"]["type"] = "influxdb"
-        _qd["datasource"]["uid"] = _pd["datasource"]["uid"] ##Same with panel, guess why?
-
-        _qd["groupBy"] = [{"params": ["1s"], "type": "time"}, {"params": ["null"], "type": "fill"}]
-
-        _qd["metrics"] = [{"id": "1", "type": "count"}]
-
-        _qd["select"] = [[{"params": [field], "type": "field"}, {"params": [], "type": "last"}]]
-        
-
-        next_refid = 65
-        _pd["targets"].append(_qd)
-
-    return _pd
-
-
-def add_panel(measurement, fields):
-
-    _pd = {} ##Panel dictionary
-    _pd["title"] = measurement ##param: panel title
-    _pd["type"] = "timeseries"
-    _pd["transparent"] = True
-    _pd["description"] = ""
-    _pd["id"] = next_panel_id()
-    
-    _pd["datasource"] = {}
-    _pd["datasource"]["type"] = "influxdb"
-    _pd["datasource"]["uid"] = "54U16937k" ##param: influxdb id, need to get it from 'twin'
-
-
-    _pd["fieldConfig"] = {}
-    _pd["fieldConfig"]["defaults"] = {}
-    _pd["fieldConfig"]["defaults"]["color"] = {}
-    _pd["fieldConfig"]["defaults"]["color"]["mode"] = "palette-classic"
-    
-    _pd["fieldConfig"]["defaults"]["custom"] = {}
-    _pd["fieldConfig"]["defaults"]["custom"]["axisCenteredZero"] = False
-    _pd["fieldConfig"]["defaults"]["custom"]["axisColorMode"] = "text"
-    _pd["fieldConfig"]["defaults"]["custom"]["axisLabel"] = ""
-    _pd["fieldConfig"]["defaults"]["custom"]["axisPlacement"] = "auto"
-    _pd["fieldConfig"]["defaults"]["custom"]["barAlignment"] = 0
-    _pd["fieldConfig"]["defaults"]["custom"]["drawStyle"] = "line"
-    _pd["fieldConfig"]["defaults"]["custom"]["fillOpacity"] = 0
-    _pd["fieldConfig"]["defaults"]["custom"]["gradientMode"] = "none"
-
-    _pd["fieldConfig"]["defaults"]["custom"]["hidefrom"] = {}
-    _pd["fieldConfig"]["defaults"]["custom"]["hidefrom"]["legend"] = False
-    _pd["fieldConfig"]["defaults"]["custom"]["hidefrom"]["tooltip"] = False
-    _pd["fieldConfig"]["defaults"]["custom"]["hidefrom"]["viz"] = False
-
-    _pd["fieldConfig"]["defaults"]["custom"]["lineInterpolation"] = "linear"
-    _pd["fieldConfig"]["defaults"]["custom"]["lineWidth"] = 1
-    _pd["fieldConfig"]["defaults"]["custom"]["pointSize"] = 5
-
-    _pd["fieldConfig"]["defaults"]["custom"]["scaleDistribution"] = {}
-    _pd["fieldConfig"]["defaults"]["custom"]["scaleDistribution"]["type"] = "linear"
-
-    _pd["fieldConfig"]["defaults"]["custom"]["showPoints"] = "auto"
-    _pd["fieldConfig"]["defaults"]["custom"]["spanNulls"] = False
-
-    _pd["fieldConfig"]["defaults"]["custom"]["stacking"] = {}
-    _pd["fieldConfig"]["defaults"]["custom"]["stacking"]["group"] = "A"
-    _pd["fieldConfig"]["defaults"]["custom"]["stacking"]["mode"] = "none"
-
-    _pd["fieldConfig"]["defaults"]["custom"]["thresholdStyle"] = {}
-    _pd["fieldConfig"]["defaults"]["custom"]["thresholdStyle"]["mode"] = "off"
-
-    _pd["fieldConfig"]["defaults"]["mappings"] = []
-
-    _pd["fieldConfig"]["defaults"]["thresholds"] = {}
-    _pd["fieldConfig"]["defaults"]["thresholds"]["mode"] = "absolute"
-    
-    _pd["fieldConfig"]["defaults"]["thresholds"]["steps"] = []
-    _sd0 = {"color": "green", "value": None}
-    _sd1 = {"color": "red", "value": 80}
-    _pd["fieldConfig"]["defaults"]["thresholds"]["steps"].append(_sd0)
-    _pd["fieldConfig"]["defaults"]["thresholds"]["steps"].append(_sd1)
-
-    _pd["fieldConfig"]["overrides"] = []
-
-    _pd["gridPos"] = {"h": 7, "w": 24, "x": 0, "y": next_y()}
-    _pd["targets"] = []
-    
-    
-    #fields = ["_sda"]
-    print("_pd, before:", _pd)
-    _pd = add_query(_pd, measurement, fields)
-    print("###############################")
-    print("_pd, after:", _pd)
-    
-    return _pd
-
-##NEED TO REWRITE PANEL THING
-##NEED TO REWRITE SELECT-QUERY PART - PERHAPS IT WAS ELASTIC SEARCH, DATE HISTOGRAM THING
-    
-    
 def main():
     
     server = grafana_server
     api_key = grafana_api_key
     
     empty_dash = template_dict()
-    empty_dash["panels"] = []
-
-    measurement = "disk_dev_write" #param: measurement
-    measurement2 = "disk_dev_read" #param: measurement
-    fields = ["_sda", "_nvme0n1", "_nvme1n1"]
+    empty_dash["panels"].append(text_panel_1)
+    empty_dash["panels"].append(text_panel_2)
+    empty_dash["panels"].append(text_panel_3)
+    empty_dash["panels"].append(system_view_panel)
+    empty_dash["panels"].append(observation_table_panel)
     
-    empty_dash["panels"].append(add_panel("disk_dev_write", fields))
-    empty_dash["panels"].append(add_panel("disk_dev_write_merge", fields))
-    empty_dash["panels"].append(add_panel("disk_dev_read", fields))
-    empty_dash["panels"].append(add_panel("disk_dev_read_merge", fields))
+    #measurement = "disk_dev_write" #param: measurement
+    #measurement2 = "disk_dev_read" #param: measurement
+    #fields = ["_sda", "_nvme0n1", "_nvme1n1"]
+    
+    #empty_dash["panels"].append(add_panel("disk_dev_write", fields))
+    #empty_dash["panels"].append(add_panel("disk_dev_write_merge", fields))
+    #empty_dash["panels"].append(add_panel("disk_dev_read", fields))
+    #empty_dash["panels"].append(add_panel("disk_dev_read_merge", fields))
     
     
 

@@ -71,7 +71,7 @@ def generate_pcp2influxdb_config(config_file, tag, sourceIP, source_name):
     writer.close()
 
 
-    return pcp_conf_name, influx_db_name
+    return pcp_conf_name, influx_db_name, metrics
 
 
 def get_mongo_database(mongodb_name):
@@ -159,7 +159,7 @@ def main(hostname, hostIP, hostProbFile, monitoringMetricsConf):
     ##Get mongodb
         
     ##Get influxdb
-    pcp_conf_name, influxdb_name = generate_pcp2influxdb_config(monitoringMetricsConf, _tag, hostIP, hostname)
+    pcp_conf_name, influxdb_name, metrics = generate_pcp2influxdb_config(monitoringMetricsConf, _tag, hostIP, hostname)
     get_influx_database(influxdb_name)
     ##Get influxdb
     
