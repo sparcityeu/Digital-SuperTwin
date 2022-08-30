@@ -15,6 +15,8 @@ grafana_server = "localhost:3000"
 glob_y = -7
 glob_panel_id = 1
 
+glob_id = 80
+
 def next_y():
     global glob_y
     glob_y += 7
@@ -26,6 +28,13 @@ def next_panel_id():
     glob_panel_id += 1
 
     return glob_panel_id
+
+def next_dash_id():
+    global glob_id
+
+    glob_id += 1
+
+    return glob_id
 
 
 def upload_to_grafana(json, server, api_key, verify=True):
@@ -65,6 +74,7 @@ def template_dict():
     _template = {}
 
     _template["id"] = "null" ##to_get: id
+    #_template["id"] = next_dash_id() ##to_get: id
     _template["timepicker"] = {}
     _template["timezone"] = ""
     #_template["title"] = "TEMPLATE" ##param: title
@@ -244,7 +254,7 @@ def main(measurements_fields_dict):
     server = grafana_server
     api_key = grafana_api_key
 
-    print(measurements_fields_dict)
+    #print(measurements_fields_dict)
     #exit(1)
 
 
@@ -259,7 +269,7 @@ def main(measurements_fields_dict):
 
         if(len(empty_dash["panels"]) != 0):
             json_dash_obj = get_dashboard_json(empty_dash, overwrite = True)
-            print(json_dash_obj)
+            #print(json_dash_obj)
             g_url = upload_to_grafana(json_dash_obj, grafana_server, grafana_api_key)
             generated[key] = g_url['url']
 

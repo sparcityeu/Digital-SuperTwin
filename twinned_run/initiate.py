@@ -137,14 +137,15 @@ def run_commands(hostname, date, config_file, dt_pruned, commands):
 
         
 def system_dashboard_prepare(hostname, twin_id):
-
+    print("System dashboard.. preparing!")
     system_dashboard.main(hostname, twin_id)     ##Both need threads
 
 
 
     
 def system_dashboard_launch(comp_dashes):
-    
+    print("System dashboard.. launching!")
+    print("comp_dashes:", comp_dashes)
     generate_system_dashboard.main(comp_dashes)  ##Both need threads
 
 
@@ -222,7 +223,7 @@ def main(hostname, hostIP, hostProbFile, monitoringMetricsConf):
     ##hostname is the name of database, "twin" is name of the collection and "id" will return
     ##collection that includes dtdl
     thread1 = Thread(target = system_dashboard_prepare, args=(hostname, twin_id))
-    thread2 = Thread(target = system_dashboard_launch, args=(comp_dashes))
+    thread2 = Thread(target = system_dashboard_launch, args=(comp_dashes,))
     thread1.start()
     thread2.start()
     ######system_dashboard.main(hostname, twin_id)     ##Both need threads

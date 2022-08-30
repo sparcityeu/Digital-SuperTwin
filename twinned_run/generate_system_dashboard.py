@@ -7,6 +7,9 @@ from grafanalib.core import Dashboard
 from grafanalib._gen import DashboardEncoder
 
 
+import webbrowser
+
+
 observation_table_panel = {
   "id": 2,
   "gridPos": {
@@ -280,7 +283,14 @@ text_panel_3 = {
   "transparent": True
 }
 
-system_view_panel = {
+def ret_system_view_panel(comp_dashes):
+
+    parameterized_links = []
+    for key in comp_dashes:
+        comp_dict = {"targetBlank": True, "title": key, "url": comp_dashes[key]}
+        parameterized_links.append(comp_dict)
+    
+    system_view_panel = {
   "id": 7,
   "gridPos": {
     "h": 15,
@@ -294,18 +304,7 @@ system_view_panel = {
     "type": "hamedkarbasi93-nodegraphapi-datasource",
     "uid": "hb8KdEWVz"
   },
-  "links": [
-    {
-      "targetBlank": True,
-      "title": "Google",
-      "url": "google.com"
-    },
-    {
-      "targetBlank": True,
-      "title": "Youtube",
-      "url": "youtube.com"
-    }
-  ],
+  "links": parameterized_links,
   "targets": [
     {
       "alias": "",
@@ -336,6 +335,7 @@ system_view_panel = {
   ],
   "transparent": True
 }
+    return system_view_panel
 
 
 ##These should be in a config file
@@ -372,9 +372,9 @@ def upload_to_grafana(json, server, api_key, verify=True):
     # TODO: add error handling
     # TODO: return and read uid and url, add it to observation digital twin
     print(f"{r.status_code} - {r.content}")
+    return dict(r.json())
 
-
-def get_dashboard_json(dashboard, overwrite=False, message="Updated by grafanalib"):
+def get_dashboard_json(dashboard, overwrite=True, message="Updated by grafanalib"):
     '''
     get_dashboard_json generates JSON from grafanalib Dashboard object
     :param dashboard - Dashboard() created via grafanalib
@@ -453,7 +453,7 @@ def main(comp_dashes):
     empty_dash["panels"].append(text_panel_1)
     empty_dash["panels"].append(text_panel_2)
     empty_dash["panels"].append(text_panel_3)
-    empty_dash["panels"].append(system_view_panel)
+    empty_dash["panels"].append(ret_system_view_panel(comp_dashes))
     empty_dash["panels"].append(observation_table_panel)
     
     #measurement = "disk_dev_write" #param: measurement
@@ -471,9 +471,10 @@ def main(comp_dashes):
     #print(type(json_dash))
 
     json_dash_obj = get_dashboard_json(empty_dash, overwrite = True)
-    print(json_dash_obj)
-    upload_to_grafana(json_dash_obj, grafana_server, grafana_api_key)
+    #print(json_dash_obj)
+    g_url = upload_to_grafana(json_dash_obj, grafana_server, grafana_api_key)
     
+    webbrowser.open_new_tab("http://localhost:3000" + g_url['url'])
 
 if __name__ == "__main__":
 
