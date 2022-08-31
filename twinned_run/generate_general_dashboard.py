@@ -53,7 +53,7 @@ def upload_to_grafana(json, server, api_key, verify=True):
     print(f"{r.status_code} - {r.content}")
     return dict(r.json())
 
-def get_dashboard_json(dashboard, overwrite=True, message="Updated by grafanalib"):
+def get_dashboard_json(dashboard, overwrite, message="Updated by grafanalib"):
     '''
     get_dashboard_json generates JSON from grafanalib Dashboard object
     :param dashboard - Dashboard() created via grafanalib
@@ -73,15 +73,15 @@ def template_dict():
 
     _template = {}
 
-    _template["id"] = "null" ##to_get: id
+    _template["id"] = None ##to_get: id
     #_template["id"] = next_dash_id() ##to_get: id
     _template["timepicker"] = {}
     _template["timezone"] = ""
-    #_template["title"] = "TEMPLATE" ##param: title
-    _template["title"] = str(uuid.uuid4()) ##param: title
-    _template["uid"] = "null" ##to_get: uid
+    _template["title"] = "TEMPLATE-" + str(uuid.uuid4()) ##param: title
+    #_template["title"] = str(uuid.uuid4()) ##param: title
+    _template["uid"] = None ##to_get: uid
     #_template["uid"] = str(uuid.uuid4()) ##to_get: uid
-    _template["version"] = 1
+    _template["version"] = 0
     _template["weekStart"] = ""
     _template["schemaVersion"] = 37
     _template["style"] = "dark"
@@ -91,7 +91,7 @@ def template_dict():
     _template["links"] = []
     _template["fiscalYearStartMonth"] = 0
     _template["liveNow"] = False
-    #_template["refresh"] = "1s" ##Not exist in example
+    _template["refresh"] = "1s" ##Not exist in example
     
     _template["templating"] = {}
     _template["templating"]["list"] = []
@@ -268,7 +268,7 @@ def main(measurements_fields_dict):
             empty_dash["panels"].append(add_panel(measurement, [key]))
 
         if(len(empty_dash["panels"]) != 0):
-            json_dash_obj = get_dashboard_json(empty_dash, overwrite = True)
+            json_dash_obj = get_dashboard_json(empty_dash, overwrite = False)
             #print(json_dash_obj)
             g_url = upload_to_grafana(json_dash_obj, grafana_server, grafana_api_key)
             generated[key] = g_url['url']
