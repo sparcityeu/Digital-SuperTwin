@@ -173,4 +173,5 @@ def main(SSHhost, command):
 
 if __name__ == "__main__":
 
-    main("10.36.54.195", "stress --cpu 44 --io 4 --vm 2 --vm-bytes 128M --timeout 30s")
+    #main("10.36.54.195", "stress --cpu 44 --io 4 --vm 2 --vm-bytes 128M --timeout 30s")
+    main("10.36.54.195", "taskset -c 0 ./spmv/rcm spmv/garon2/garon2.mtx")
