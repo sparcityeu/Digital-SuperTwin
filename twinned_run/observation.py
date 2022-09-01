@@ -11,6 +11,13 @@ import shlex
 
 from threading import Thread
 
+import pymongo
+from pymongo import MongoClient
+
+import datetime
+import time
+
+import generate_observation_dashboard
 
 def run_command(ssh_client, command):
 
@@ -55,12 +62,65 @@ def generate_pcp2influxdb_config(config_file, sourceIP, source_name, observation
     writer.close()
 
 
-    return pcp_conf_name
+    return pcp_conf_name, metrics
 
 
-#def launch_sampling()
+def launch_sampling(pcp_conf_name, command, ssh_instance, SSHhost):
+
+    ##Launch sampler
+    sampling_command = "pcp2influxdb -t 1 -c " + pcp_conf_name + " :configured"
+    sampling_args = shlex.split(sampling_command)
+    sampling_process = Popen(sampling_args)
+    ##Launch sampler
+
+    ##Launch remote process
+    command = 'echo $$; exec ' + command
+    stdin, stdout, stderr = ssh_instance.exec_command(command)
+    pid = int(stdout.readline())
+    print("Executing command: ", command, "on:", SSHhost, "pid:", pid)
+    exit_status = stdout.channel.recv_exit_status()
+    ##Launch remote process
+
+    ##Stop sampler
+    sampling_process.kill()
+    ##Stop sampler
 
 
+def get_mongo_database(mongodb_name):
+
+    ##Create a connection for mongodb
+    CONNECTION_STRING = "mongodb://localhost:27017"
+    client = MongoClient(CONNECTION_STRING)
+
+    ##Create the database for this instance(s)
+    return client[mongodb_name]
+
+    
+def add_to_mongodb(remotehost_name, observation_id, command, metrics):
+
+    ##Get mongodb
+    mongodb = get_mongo_database(remotehost_name)
+    collection = mongodb["observations"]
+    ##Get mongodb
+
+    date = datetime.datetime.now()
+    date = date.strftime("%d-%m-%Y")
+
+    tag = "_observation_" + observation_id
+    
+    metadata = {
+        "date": date,
+        "observation_id": observation_id,
+        "command": command,
+        "influxdb_tag": tag,
+        "no metrics": len(metrics),
+        "metrics": metrics,
+        "report location": "report"
+    }
+
+    collection.insert_one(metadata)
+
+    
 def main(SSHhost, command):
 
     config_file = input("Metrics configuration file: ")
@@ -81,28 +141,33 @@ def main(SSHhost, command):
 
     ##observation_id
     this_observation_id = str(uuid.uuid4())
-    print(this_observation_id)
+    print("Observation id:", this_observation_id)
 
 
-    pcp_conf_name = generate_pcp2influxdb_config(config_file, SSHhost, remotehost_name, this_observation_id)
+    pcp_conf_name, metrics = generate_pcp2influxdb_config(config_file, SSHhost, remotehost_name, this_observation_id)
+
+    ##change metrics from pcp to influx
+    metrics = [x.replace(".", "_") for x in metrics]
+
+    time_from = time.time_ns()
+    launch_sampling(pcp_conf_name, command, ssh, remotehost_name)
+    time_to = time.time_ns()
+    add_to_mongodb(remotehost_name, this_observation_id, command, metrics)
+
+    #time_from = time_from.strftime("%Y-%m-%dT%H:%M:%fZ")
+    #time_to = time_to.strftime("%Y-%m-%dT%H:%M:%fZ")
+
+    #print(time_from)
+    #print(time_to)
+    #exit(1)
     
-    ##Launch sampler
-    sampling_command = "pcp2influxdb -t 1 -c " + pcp_conf_name + " :configured"
-    sampling_args = shlex.split(sampling_command)
-    sampling_process = Popen(sampling_args)
-    ##Launch sampler
+    m_s_a = []
+    for item in metrics:
+        m_s_a.append([item, "*"])
+        
 
-    ##Launch remote process
-    command = 'echo $$; exec ' + command
-    stdin, stdout, stderr = ssh.exec_command(command)
-    pid = int(stdout.readline())
-    print("Executing command: ", command, "on:", SSHhost, "pid:", pid)
-    exit_status = stdout.channel.recv_exit_status()
-    ##Launch remote process
-
-    ##Stop sampler
-    sampling_process.kill()
-    ##Stop sampler
+    ret = generate_observation_dashboard.main(m_s_a, this_observation_id, time_from, time_to)
+    #print("ret:", ret)
     
 
 if __name__ == "__main__":
