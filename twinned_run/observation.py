@@ -149,17 +149,11 @@ def main(SSHhost, command):
     ##change metrics from pcp to influx
     metrics = [x.replace(".", "_") for x in metrics]
 
-    time_from = time.time_ns()
+    time_from = round(time.time()*1000)
     launch_sampling(pcp_conf_name, command, ssh, remotehost_name)
-    time_to = time.time_ns()
+    time_to = round(time.time()*1000)
     add_to_mongodb(remotehost_name, this_observation_id, command, metrics)
 
-    #time_from = time_from.strftime("%Y-%m-%dT%H:%M:%fZ")
-    #time_to = time_to.strftime("%Y-%m-%dT%H:%M:%fZ")
-
-    #print(time_from)
-    #print(time_to)
-    #exit(1)
     
     m_s_a = []
     for item in metrics:
@@ -167,9 +161,16 @@ def main(SSHhost, command):
         
 
     ret = generate_observation_dashboard.main(m_s_a, this_observation_id, time_from, time_to)
-    #print("ret:", ret)
+    print("ret:", ret)
+    print("window:", round((time_to - time_from)/2))
+    print("time:", round((time_from + time_to) /2))
+
+    _time_window = str(round((time_to - time_from)))
+    _time = str(round((time_from + time_to) /2))
     
+    url = "http://localhost:3000" + ret['url'] + "?" + "time=" + _time + "&" + "time.window=" + _time_window
+    print("url:", url)
 
 if __name__ == "__main__":
 
-    main("10.36.54.195", "stress --cpu 44 --io 4 --vm 2 --vm-bytes 128M --timeout 10s")
+    main("10.36.54.195", "stress --cpu 44 --io 4 --vm 2 --vm-bytes 128M --timeout 30s")
