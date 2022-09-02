@@ -2,6 +2,8 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
+import pymongo
+from pymongo import MongoClient
 
 @app.route('/api/graph/fields')
 def fetch_graph_fields():
@@ -44,9 +46,25 @@ def fetch_graph_data():
     return jsonify(result)
 
 
+
+
 @app.route('/api/health')
 def check_health():
     return "API is working well!"
 
 
-app.run(host='0.0.0.0', port=5002)
+def main(hostname):
+
+    CONNECTION_STRING = "mongodb://localhost:27017"
+    client = MongoClient(CONNECTION_STRING)
+    db = client[hostname]
+    observations = db["observations"]
+    for item in observations:
+        print(item)
+
+    #app.run(host='0.0.0.0', port=5002)
+    
+if "__name__" == "__main__":
+
+    main("scout")
+    

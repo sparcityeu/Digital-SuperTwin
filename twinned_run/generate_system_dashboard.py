@@ -133,6 +133,8 @@ observation_table_panel = {
 }
 
 text_panel_1 = {
+
+    
   "id": 4,
   "gridPos": {
     "h": 3,
@@ -250,7 +252,7 @@ text_panel_3 = {
   "pluginVersion": "9.1.0-beta1",
   "options": {
     "mode": "markdown",
-    "content": "<center><b><font size=\"+8\">46</font></b></center>" #This will change
+    "content": "<center><b><font size=\"+8\">39</font></b></center>" #This will change with mongodb query
   },
   "targets": [
     {
@@ -454,7 +456,7 @@ def main(comp_dashes):
     empty_dash["panels"].append(text_panel_2)
     empty_dash["panels"].append(text_panel_3)
     empty_dash["panels"].append(ret_system_view_panel(comp_dashes))
-    empty_dash["panels"].append(observation_table_panel)
+    #empty_dash["panels"].append(observation_table_panel)
     
     #measurement = "disk_dev_write" #param: measurement
     #measurement2 = "disk_dev_read" #param: measurement

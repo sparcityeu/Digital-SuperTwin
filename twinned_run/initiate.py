@@ -189,8 +189,8 @@ def main(hostname, hostIP, hostProbFile, monitoringMetricsConf):
         "dtdl_twin": _twin,
         "influxdb": influxdb_name,
         "influxdb_tag": "_main",
-        "dashboard_location": "http://127.0.0.1:3000/d/abifsd",
-        "real_dashboard_location": "system_dashboard",
+        "dashboard_location": "http://localhost:3000/d/hnYCSYZ4k"
+        #"real_dashboard_location": "system_dashboard",
     }
     result = collection.insert_one(metadata)
     twin_id = str(result.inserted_id)

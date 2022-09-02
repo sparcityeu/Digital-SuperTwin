@@ -265,7 +265,7 @@ def main(measurements_fields_array, observation_id, time_from, time_to):
     #print(measurements_fields_dict)
     #exit(1)
 
-    print("measurements_fields_array:", measurements_fields_array)
+    #print("measurements_fields_array:", measurements_fields_array)
 
     '''
     generated = {}

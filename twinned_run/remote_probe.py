@@ -52,6 +52,17 @@ def run_command(ssh_client, name, command):
     session.exec_command(command)
 
     print("Executing command on", name, ":", command)
+
+
+def observation_command(ssh_client, command):
+    
+    transport = ssh_client.get_transport()
+    session = transport.open_session()
+    session.set_combine_stderr(True)
+    session.get_pty()
+    session.exec_command(command)
+
+    print("Executing command on", name, ":", command)
     
 
 

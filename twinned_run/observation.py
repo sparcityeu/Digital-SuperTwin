@@ -68,16 +68,20 @@ def generate_pcp2influxdb_config(config_file, sourceIP, source_name, observation
 def launch_sampling(pcp_conf_name, command, ssh_instance, SSHhost):
 
     ##Launch sampler
-    sampling_command = "pcp2influxdb -t 1 -c " + pcp_conf_name + " :configured"
+    sampling_command = "pcp2influxdb -t 0.5 -c " + pcp_conf_name + " :configured"
     sampling_args = shlex.split(sampling_command)
     sampling_process = Popen(sampling_args)
     ##Launch sampler
 
+    #time.sleep(5)
+
     ##Launch remote process
-    command = 'echo $$; exec ' + command
+    #command = 'echo $$; exec ' + command
     stdin, stdout, stderr = ssh_instance.exec_command(command)
-    pid = int(stdout.readline())
-    print("Executing command: ", command, "on:", SSHhost, "pid:", pid)
+    #print('stdout:', stdout.readlines())
+    #pid = int(stdout.readline())
+    #print("Executing command: ", command, "on:", SSHhost, "pid:", pid)
+    print("Executing command: ", command, "on:", SSHhost)
     exit_status = stdout.channel.recv_exit_status()
     ##Launch remote process
 
@@ -96,7 +100,7 @@ def get_mongo_database(mongodb_name):
     return client[mongodb_name]
 
     
-def add_to_mongodb(remotehost_name, observation_id, command, metrics):
+def add_to_mongodb(remotehost_name, observation_id, command, metrics, url):
 
     ##Get mongodb
     mongodb = get_mongo_database(remotehost_name)
@@ -115,7 +119,7 @@ def add_to_mongodb(remotehost_name, observation_id, command, metrics):
         "influxdb_tag": tag,
         "no metrics": len(metrics),
         "metrics": metrics,
-        "report location": "report"
+        "report location": url
     }
 
     collection.insert_one(metadata)
@@ -152,7 +156,7 @@ def main(SSHhost, command):
     time_from = round(time.time()*1000)
     launch_sampling(pcp_conf_name, command, ssh, remotehost_name)
     time_to = round(time.time()*1000)
-    add_to_mongodb(remotehost_name, this_observation_id, command, metrics)
+    
 
     
     m_s_a = []
@@ -161,17 +165,32 @@ def main(SSHhost, command):
         
 
     ret = generate_observation_dashboard.main(m_s_a, this_observation_id, time_from, time_to)
-    print("ret:", ret)
-    print("window:", round((time_to - time_from)/2))
-    print("time:", round((time_from + time_to) /2))
+    #print("ret:", ret)
+    #print("window:", round((time_to - time_from)/2))
+    #print("time:", round((time_from + time_to) /2))
 
     _time_window = str(round((time_to - time_from)))
     _time = str(round((time_from + time_to) /2))
     
     url = "http://localhost:3000" + ret['url'] + "?" + "time=" + _time + "&" + "time.window=" + _time_window
+    add_to_mongodb(remotehost_name, this_observation_id, command, metrics, url)
     print("url:", url)
 
 if __name__ == "__main__":
 
+    command = input("Observation command: ")
+    address = input("Remote address: ")
+    
     #main("10.36.54.195", "stress --cpu 44 --io 4 --vm 2 --vm-bytes 128M --timeout 30s")
-    main("10.36.54.195", "taskset -c 0 ./spmv/rcm spmv/garon2/garon2.mtx")
+    #main("10.36.54.195", command)
+    main(address, command)
+    #main("10.36.54.195", "taskset -c 0 ./dt_latest/Digital-SuperTwin/spmv/degree dt_latest/Digital-SuperTwin/spmv/mixtank_new/mixtank_new.mtx")
+    #thread1 = Thread(target = main, args=("10.36.54.195", "taskset -c 0 ./dt_latest/Digital-SuperTwin/spmv/degree dt_latest/Digital-SuperTwin/spmv/mixtank_new/mixtank_new.mtx"))
+    #thread2 = Thread(target = main, args=("10.36.54.195", "taskset -c 1 ./dt_latest/Digital-SuperTwin/spmv/rcm dt_latest/Digital-SuperTwin/spmv/mixtank_new/mixtank_new.mtx"))
+    #thread3 = Thread(target = main, args=("10.36.54.195", "taskset -c 2 ./dt_latest/Digital-SuperTwin/spmv/none dt_latest/Digital-SuperTwin/spmv/mixtank_new/mixtank_new.mtx"))
+    #thread4 = Thread(target = main, args=("10.36.54.195", "taskset -c 3 ./dt_latest/Digital-SuperTwin/spmv/random dt_latest/Digital-SuperTwin/spmv/mixtank_new/mixtank_new.mtx"))
+
+    #thread1.start()
+    #thread2.start()
+    #thread3.start()
+    #thread4.start()
