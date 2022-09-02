@@ -18,6 +18,7 @@ import datetime
 import time
 
 import generate_observation_dashboard
+import generate_spmv_observation_dashboard
 
 def run_command(ssh_client, command):
 
@@ -165,7 +166,7 @@ def main(SSHhost, SSHuser, SSHpass, config_file, command, master):
             m_s_a.append([item, "*"])
         
 
-        ret = generate_observation_dashboard.main(m_s_a, this_observation_id, time_from, time_to)
+        ret = generate_spmv_observation_dashboard.main(m_s_a, this_observation_id, time_from, time_to)
         url = "http://localhost:3000" + ret['url'] + "?" + "time=" + _time + "&" + "time.window=" + _time_window
         print("Report generated at:", url)
 
