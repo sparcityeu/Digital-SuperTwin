@@ -3,6 +3,13 @@ from flask_cors import CORS, cross_origin
 
 import pandas as pd
 
+import pprint
+
+import pymongo
+from pymongo import MongoClient
+
+from bson.objectid import ObjectId
+
 app = Flask(__name__)
 
 cors = CORS(app)
@@ -10,157 +17,24 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 methods = ('GET', 'POST')
 
-metric_finders= {}
-metric_readers = {}
-annotation_readers = {}
-panel_readers = {}
+
+dummy_time = 1450754160000 ##Dummy time works, but for a better solution, "time_from" and "time_to" from incoming query could be used
 
 
-def add_reader(name, reader):
-    metric_readers[name] = reader
-
-
-def add_finder(name, finder):
-    metric_finders[name] = finder
-
-
-def add_annotation_reader(name, reader):
-    annotation_readers[name] = reader
-
-
-def add_panel_reader(name, reader):
-    panel_readers[name] = reader
+data = {}
 
 
 @app.route('/', methods=methods)
 @cross_origin()
 def hello_world():
-    return 'Jether\'s python Grafana datasource, used for rendering HTML panels and timeseries data.'
+    return 'OK'
 
 @app.route('/search', methods=methods)
 @cross_origin()
 def find_metrics():
-    print(request.headers, request.get_json())
-    req = request.get_json()
-
-    target = req.get('target', '*')
-
-    if ':' in target:
-        finder, target = target.split(':', 1)
-    else:
-        finder = target
-
-    if not target or finder not in metric_finders:
-        metrics = []
-        if target == '*':
-            metrics += metric_finders.keys() + metric_readers.keys()
-        else:
-            metrics.append(target)
-
-        return jsonify(metrics)
-    else:
-        return jsonify(list(metric_finders[finder](target)))
-
-
-def dataframe_to_response(target, df, freq=None):
-    response = []
-
-    if df.empty:
-        return response
-
-    if freq is not None:
-        orig_tz = df.index.tz
-        df = df.tz_convert('UTC').resample(rule=freq, label='right', closed='right', how='mean').tz_convert(orig_tz)
-
-    if isinstance(df, pd.Series):
-        response.append(_series_to_response(df, target))
-    elif isinstance(df, pd.DataFrame):
-        for col in df:
-            response.append(_series_to_response(df[col], target))
-    else:
-        abort(404, Exception('Received object is not a dataframe or series.'))
-
-    return response
-
-
-def dataframe_to_json_table(target, df):
-    response = []
-
-    if df.empty:
-        return response
-
-    if isinstance(df, pd.DataFrame):
-        response.append({'type': 'table',
-                         'columns': df.columns.map(lambda col: {"text": col}).tolist(),
-                         'rows': df.where(pd.notnull(df), None).values.tolist()})
-    else:
-        abort(404, Exception('Received object is not a dataframe.'))
-
-    return response
-
-
-def annotations_to_response(target, df):
-    response = []
-
-    # Single series with DatetimeIndex and values as text
-    if isinstance(df, pd.Series):
-        for timestamp, value in df.iteritems():
-            response.append({
-                "annotation": target, # The original annotation sent from Grafana.
-                "time": timestamp.value // 10 ** 6, # Time since UNIX Epoch in milliseconds. (required)
-                "title": value, # The title for the annotation tooltip. (required)
-                #"tags": tags, # Tags for the annotation. (optional)
-                #"text": text # Text for the annotation. (optional)
-            })
-    # Dataframe with annotation text/tags for each entry
-    elif isinstance(df, pd.DataFrame):
-        for timestamp, row in df.iterrows():
-            annotation = {
-                "annotation": target,  # The original annotation sent from Grafana.
-                "time": timestamp.value // 10 ** 6,  # Time since UNIX Epoch in milliseconds. (required)
-                "title": row.get('title', ''),  # The title for the annotation tooltip. (required)
-            }
-
-            if 'text' in row:
-                annotation['text'] = str(row.get('text'))
-            if 'tags' in row:
-                annotation['tags'] = str(row.get('tags'))
-
-            response.append(annotation)
-    else:
-        abort(404, Exception('Received object is not a dataframe or series.'))
-
-    return response
-
-def _series_to_annotations(df, target):
-    if df.empty:
-        return {'target': '%s' % (target),
-                'datapoints': []}
-
-    sorted_df = df.dropna().sort_index()
-    timestamps = (sorted_df.index.astype(pd.np.int64) // 10 ** 6).values.tolist()
-    values = sorted_df.values.tolist()
-
-    return {'target': '%s' % (df.name),
-            'datapoints': zip(values, timestamps)}
-
-
-def _series_to_response(df, target):
-    if df.empty:
-        return {'target': '%s' % (target),
-                'datapoints': []}
-
-    sorted_df = df.dropna().sort_index()
-
-    try:
-        timestamps = (sorted_df.index.astype(pd.np.int64) // 10 ** 6).values.tolist() # New pandas version
-    except:
-        timestamps = (sorted_df.index.astype(pd.np.int64) // 10 ** 6).tolist()
-
-    values = sorted_df.values.tolist()
-
-    return {'target': '%s' % (df.name),
-            'datapoints': zip(values, timestamps)}
+    #print('/search:', request.headers, request.get_json())
+    return jsonify(list(data))
+    
 
 
 @app.route('/query', methods=methods)
@@ -168,83 +42,202 @@ def _series_to_response(df, target):
 def query_metrics():
     print(request.headers, request.get_json())
     req = request.get_json()
+    print("############")
+    print("Request Targets:", req["targets"])
+    print("############")
+    pprint.pprint(req["targets"][0]["target"])
 
-    results = []
-
-    ts_range = {'$gt': pd.Timestamp(req['range']['from']).to_pydatetime(),
-                '$lte': pd.Timestamp(req['range']['to']).to_pydatetime()}
-
-    if 'intervalMs' in req:
-        freq = str(req.get('intervalMs')) + 'ms'
-    else:
-        freq = None
-
-    for target in req['targets']:
-        if ':' not in target.get('target', ''):
-            abort(404, Exception('Target must be of type: <finder>:<metric_query>, got instead: ' + target['target']))
-
-        req_type = target.get('type', 'timeserie')
-
-        finder, target = target['target'].split(':', 1)
-        query_results = metric_readers[finder](target, ts_range)
-
-        if req_type == 'table':
-            results.extend(dataframe_to_json_table(target, query_results))
-        else:
-            results.extend(dataframe_to_response(target, query_results, freq=freq))
-
-    return jsonify(results)
+    target = req["targets"][0]["target"]
+    print("TARGET:", target, "DATA:", data[target])
+    answer = [{"target": target, "datapoints": [[data[target], dummy_time]]}]
+    
+    
+    return jsonify(answer)
 
 
-@app.route('/annotations', methods=methods)
-@cross_origin(max_age=600)
-def query_annotations():
-    print(request.headers, request.get_json())
-    req = request.get_json()
-
-    results = []
-
-    ts_range = {'$gt': pd.Timestamp(req['range']['from']).to_pydatetime(),
-                '$lte': pd.Timestamp(req['range']['to']).to_pydatetime()}
-
-    query = req['annotation']['query']
-
-    if ':' not in query:
-        abort(404, Exception('Target must be of type: <finder>:<metric_query>, got instead: ' + query))
-
-    finder, target = query.split(':', 1)
-    results.extend(annotations_to_response(query, annotation_readers[finder](target, ts_range)))
-
-    return jsonify(results)
 
 
-@app.route('/panels', methods=methods)
-@cross_origin()
-def get_panel():
-    print(request.headers, request.get_json())
-    req = request.args
 
-    ts_range = {'$gt': pd.Timestamp(int(req['from']), unit='ms').to_pydatetime(),
-                '$lte': pd.Timestamp(int(req['to']), unit='ms').to_pydatetime()}
+def fill_data(data, hostname, hostip):
 
-    query = req['query']
+    system_hostname = hostname
+    system_ip = hostip
+    system_os = ""
+    system_no_numa_nodes = 0
+    system_no_disks = 0
 
-    if ':' not in query:
-        abort(404, Exception('Target must be of type: <finder>:<metric_query>, got instead: ' + query))
+    cpu_model = ""
+    cpu_cores = 0
+    cpu_threads = 0
+    cpu_hyperthreading = ""
+    cpu_maxmhz = 0
+    cpu_minmhx = 0
+    
+    
+    l1dcache_size = 0
+    l1dcache_associativity = 0
+    l1dcache_linesize = 0
+    l1dcache_nosets = 0
 
-    finder, target = query.split(':', 1)
-    return panel_readers[finder](target, ts_range)
+    l2cache_size = 0 ##MegaBytes
+    l2cache_associativity = 0 
+    l2cache_linesize = 0 ##Bytes
+    l2cache_nosets = 0
+
+    l3cache_size = 0
+    l3cache_associativity = 0
+    l3cache_linesize = 0
+    l3cache_nosets = 0
+
+    cpu = True
+    l1d_cache = True
+    l2_cache = True
+    l3_cache = True
+    
+    #Get all data in one loop, using 'cases'
+    for key in data:
+        print("key:", key)
+
+        ##SYSTEM
+        if(key.find("system") != -1):
+            subdata = data[key]["contents"]
+            #print("subdata:", subdata)
+
+            for content in subdata:
+                if(content["@id"].find("os") != -1):
+                    system_os = content["description"]
+
+        ##CPU
+        if(key.find("socket") != -1 and cpu):
+            subdata = data[key]["contents"]
+
+            for content in subdata:
+                if(content["name"] == "model"):
+                    cpu_model = content["description"]
+                if(content["name"] == "cores"):
+                    cpu_cores = int(content["description"])
+                if(content["name"] == "threads"):
+                    cpu_threads = int(content["description"])
+                if(content["name"] == "hyperthreading"):
+                    cpu_hyperthreading = content["description"]
+                if(content["name"] == "max_mhz"):
+                    cpu_maxmhz = float(content["description"])
+                if(content["name"] == "min_mhz"):
+                    cpu_minmhz = float(content["description"])
+                
+            cpu = False
+
+
+        #l1dcache
+        if(key.find("L1D") != -1 and l1d_cache):
+            subdata = data[key]["contents"]
+
+            for content in subdata:
+                if(content["name"] == "associativity"):
+                    l1dcache_associativity = content["description"]
+                if(content["name"] == "size"):
+                    l1dcache_size = content["description"]
+                if(content["name"] == "no_sets"):
+                    l1dcache_nosets = content["description"]
+                if(content["name"] == "cache_line_size"):
+                    l1dcache_linesize = content["description"]
+
+            l1d_cache = False
+
+
+        #l2cache
+        if(key.find("L2") != -1 and l2_cache):
+            subdata = data[key]["contents"]
+
+            for content in subdata:
+                if(content["name"] == "associativity"):
+                    l2cache_associativity = content["description"]
+                if(content["name"] == "size"):
+                    l2cache_size = content["description"]
+                if(content["name"] == "no_sets"):
+                    l2cache_nosets = content["description"]
+                if(content["name"] == "cache_line_size"):
+                    l2cache_linesize = content["description"]
+
+            l2_cache = False
+
+
+
+        #l3cache
+        if(key.find("L3") != -1 and l3_cache):
+            subdata = data[key]["contents"]
+
+            for content in subdata:
+                if(content["name"] == "associativity"):
+                    l3cache_associativity = content["description"]
+                if(content["name"] == "size"):
+                    l3cache_size = content["description"]
+                if(content["name"] == "no_sets"):
+                    l3cache_nosets = content["description"]
+                if(content["name"] == "cache_line_size"):
+                    l3cache_linesize = content["description"]
+
+            l3_cache = False
+                    
+        ##NO_NUMA_NODES
+        if(key.find("socket") != -1):
+            system_no_numa_nodes += 1
+            
+
+        ##disks
+        if(key.find("disk;1") != -1):
+            system_no_disks = int(data[key]["contents"][0]["description"])
+
+            
+
+    
+    data = {"system_hostname": system_hostname,
+            "system_ip": system_ip,
+            "system_os": system_os,
+            "system_no_numa_nodes": system_no_numa_nodes,
+            "system_no_disks": system_no_disks,
+            "cpu_model" : cpu_model,
+            "cpu_cores": cpu_cores,
+            "cpu_threads": cpu_threads,
+            "cpu_hyperthreading": cpu_hyperthreading,
+            "cpu_maxmhz": cpu_maxmhz,
+            "cpu_minmhz": cpu_minmhz,
+            "l1dcache_size": l1dcache_size,
+            "l1dcache_associativity": l1dcache_associativity,
+            "l1dcache_linesize": l1dcache_linesize,
+            "l1dcache_nosets": l1dcache_nosets,
+            "l2cache_size": l2cache_size,
+            "l2cache_associativity": l2cache_associativity,
+            "l2cache_linesize": l2cache_linesize,
+            "l2cache_nosets": l2cache_nosets,
+            "l3cache_size": l3cache_size,
+            "l3cache_associativity": l3cache_associativity,
+            "l3cache_linesize": l3cache_linesize,
+            "l3cache_nosets": l3cache_nosets}
+    
+    return data
+
+
+def main(hostname, hostip):
+    
+    global data
+    
+    CONNECTION_STRING = "mongodb://localhost:27017"
+    client = MongoClient(CONNECTION_STRING)
+
+    db = client[hostname]
+    collection = db["twin"]
+
+    print("collection:", collection)
+
+    response = collection.find_one({'_id': ObjectId("6311d56ba3f0c3bce0173ee6")})
+
+    #print("response:", response)
+    data = fill_data(response["dtdl_twin"], hostname, hostip)
+    print("DATA:", data)
+    app.run(host='0.0.0.0', port=5052, debug=True)
 
 
 if __name__ == '__main__':
-    # Sample annotation reader : add_annotation_reader('midnights', lambda query_string, ts_range: pd.Series(index=pd.date_range(ts_range['$gt'], ts_range['$lte'], freq='D', normalize=True)).fillna('Text for annotation - midnight'))
-    # Sample timeseries reader : 
-    #    def get_sine(freq, ts_range):
-    #            freq = int(freq)
-    #            ts = pd.date_range(ts_range['$gt'], ts_range['$lte'], freq='H')
-    #            return pd.Series(np.sin(np.arange(len(ts)) * np.pi * freq * 2 / float(len(ts))), index=ts).to_frame('value')
-    #    add_reader('sine_wave', get_sine)
 
-    # To query the wanted reader, use `<reader_name>:<query_string>`, e.g. 'sine_wave:24' 
-
-    app.run(host='0.0.0.0', port=5052, debug=True)
+    main("dolap", "10.36.54.195")
