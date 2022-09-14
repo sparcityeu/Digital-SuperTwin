@@ -189,7 +189,7 @@ def detect(output=None):
                     nic_id = nic_id.replace(':', '')
 
                 detect_utils.get_ethtool_status(hw_lst, name.text)
-                detect_utils.get_lld_status(hw_lst, name.text)
+                #detect_utils.get_lld_status(hw_lst, name.text)
 
         detect_utils.fix_bad_serial(hw_lst, uuid, mobo_id, nic_id)
 
@@ -232,5 +232,5 @@ if __name__ == "__main__":
 
     out = detect()
 
-    for item in out:
-        print(item)
+    #for item in out:
+        #print(item)

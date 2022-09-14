@@ -53,6 +53,7 @@ def parse_likwid():
 
     topol = []
     print("Topology is empty, trying.. ")
+    '''
     topol = detect_utils.output_lines('sudo likwid-topology --caches -G')
     if(len(topol) == 0):
         print("Likwid is not linked with CUPTI..")
@@ -60,7 +61,8 @@ def parse_likwid():
         topol = detect_utils.output_lines('sudo likwid-topology --caches')
         
     if(len(topol) == 0):
-        topol = detect_utils.output_lines('sudo likwid-topology --caches')
+    '''
+    topol = detect_utils.output_lines('sudo likwid-topology --caches')
 
     #print('topol:', topol)
     
@@ -117,6 +119,7 @@ def parse_likwid():
 
     ##GPUS 
     gpu_info = {}
+    '''
     gpu_info['GPU_count'] = int(topol[start].split('\t')[3])
     gpu_info['GPUs'] = []
 
@@ -144,7 +147,7 @@ def parse_likwid():
         my_dict['max_grid_sizes'] = topol[start + 20].split('\t')[1]
         
         gpu_info['GPUs'].append(my_dict)
-        
+    '''
     
     return [socket_groups, domains, cache_topology, gpu_info]
 
