@@ -5,6 +5,7 @@ import smart_utils_info
 import detect_utils
 import parse_cpuid
 import parse_likwid_topology
+import parse_lshw
 import json
 from pprint import pprint
 
@@ -12,13 +13,13 @@ from pprint import pprint
 def pretty_print_info(info):
     pprint(info)
 
-def choose_info(hostname, system, disk, cache_info, socket_groups, domains, cache_topology, affinity, gpu_info):
+def choose_info(hostname, system, cache_info, socket_groups, domains, cache_topology, affinity, gpu_info):
     ##Chosen info to generate dtdl twin
     chosen_info = {}
     chosen_info['hostname'] = hostname
     chosen_info['os'] = system['system']['os']['version']
     chosen_info['arch']  =  system['system']['kernel']['arch']
-    chosen_info['uuid'] = system['system']['product']['uuid']
+    chosen_info['uuid'] = system['uuid']
     
     chosen_info['system'] = {}
     
@@ -37,7 +38,7 @@ def choose_info(hostname, system, disk, cache_info, socket_groups, domains, cach
     chosen_info['memory'] = {}
     chosen_info['memory']['total'] = {}
     chosen_info['memory']['total']['size'] = int(system['memory']['total']['size'])
-    chosen_info['memory']['total']['banks'] = int(system['memory']['banks']['count'])
+    chosen_info['memory']['total']['banks'] = int(system['memory']['total']['banks'])
     
     chosen_info['memory']['banks'] = {}
 
@@ -96,13 +97,13 @@ def choose_info(hostname, system, disk, cache_info, socket_groups, domains, cach
     
 
     chosen_info['disk'] = {}
-    chosen_info['disk']['no_disks'] = disk['disk']['logical']['count']
-    for key in disk['disk']:
+    chosen_info['disk']['no_disks'] = system['disk']['logical']['count']
+    for key in system['disk']:
         if(key != 'logical'):
             chosen_info['disk'][key] = {}
-            chosen_info['disk'][key]['size'] = disk['disk'][key]['size']
-            chosen_info['disk'][key]['model'] = disk['disk'][key]['model']
-            chosen_info['disk'][key]['rotational'] = int(disk['disk'][key]['rotational'])
+            chosen_info['disk'][key]['size'] = system['disk'][key]['size']
+            chosen_info['disk'][key]['model'] = system['disk'][key]['model']
+            #chosen_info['disk'][key]['rotational'] = int(disk['disk'][key]['rotational'])
     
     ##Note that this info here is "to be expanded" for all cpus, all includes all specs and events
     chosen_info['cpu'] = {}
@@ -175,17 +176,16 @@ def main():
     diskinfo_list = diskinfo.detect()
 
     _system = {}
-    _disk = {}
+    #_disk = {}
 
-    _system = generate_hardware_dict(_system, system_list)
-    #pprint(system)
-    #exit(1)
-    _disk = generate_hardware_dict(_disk, diskinfo_list)                
+    #_system = generate_hardware_dict(_system, system_list)
+    #_disk = generate_hardware_dict(_disk, diskinfo_list)
+    _system = parse_lshw.parse_lshw()
     cache_info = parse_cpuid.parse_cpuid()
     socket_groups, domains, cache_topology, gpu_info = parse_likwid_topology.parse_likwid()
     affinity = parse_likwid_topology.parse_affinity()
 
-    info = choose_info(hostname, _system, _disk, cache_info, socket_groups, domains, cache_topology, affinity, gpu_info)
+    info = choose_info(hostname, _system, cache_info, socket_groups, domains, cache_topology, affinity, gpu_info)
 
     #print(system)
     #print('#############################')
