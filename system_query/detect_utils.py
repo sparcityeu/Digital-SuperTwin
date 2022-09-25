@@ -355,7 +355,7 @@ def get_cpus(hw_lst):
             value = None
             if d_key in lscpu:
                 value = lscpu[d_key]
-                print('value:', value, 'conv:', conv)
+                #print('value:', value, 'conv:', conv)
                 if conv:
                     try:
                         value = conv(value)

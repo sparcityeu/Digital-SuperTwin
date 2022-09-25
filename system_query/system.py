@@ -23,6 +23,7 @@ import detect_utils
 
 SIOCGIFNETMASK = 0x891b
 
+import pprint
 
 def detect(output=None):
     """Detect system characteristics from the output of lshw."""
@@ -199,7 +200,7 @@ def detect(output=None):
 
 
     #print('####### hw_lst:')
-    #print(hw_lst)
+    
     #exit(1)
     
     detect_utils.get_cpus(hw_lst)
@@ -225,6 +226,9 @@ def detect(output=None):
     for line in cmdline_cmd:
         hw_lst.append(('system', 'kernel', 'cmdline',
                        line.rstrip('\n').strip()))
+
+
+    pprint.pprint(hw_lst)
     return hw_lst
 
 

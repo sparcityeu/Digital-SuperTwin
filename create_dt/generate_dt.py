@@ -506,7 +506,8 @@ def add_phy_disks(models_dict, _sys_dict, top_id, hostname, top_disk_id):
             ##Add chosen properties
             this_disk["contents"].append(get_property(get_uid(hostname, disk_displayName, "property0", 1), "size", description = str(_sys_dict["disk"][disk]["size"])))
             this_disk["contents"].append(get_property(get_uid(hostname, disk_displayName, "property1", 1), "model", description = str(_sys_dict["disk"][disk]["model"])))
-            this_disk["contents"].append(get_property(get_uid(hostname, disk_displayName, "property2", 1), "rotational", description = str(_sys_dict["disk"][disk]["rotational"])))
+            ##This feature is removed
+            #this_disk["contents"].append(get_property(get_uid(hostname, disk_displayName, "property2", 1), "rotational", description = str(_sys_dict["disk"][disk]["rotational"])))
             ##Add chosen properties
             #######################
 

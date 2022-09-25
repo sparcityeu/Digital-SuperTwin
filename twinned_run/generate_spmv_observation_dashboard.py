@@ -390,7 +390,7 @@ def quick_panel(measurement, observation_id_raw):
                 "tags": [
                     {
                         "key": "tag",
-                        "value": observation_id,
+                        "value": observation_id + "_0",
                         "operator": "="
                     }
                 ],
@@ -456,7 +456,7 @@ def quick_panel(measurement, observation_id_raw):
                 "tags": [
                     {
                         "key": "tag",
-                        "value": observation_id,
+                        "value": observation_id + "_1",
                         "operator": "="
                     }
                 ],
@@ -522,7 +522,7 @@ def quick_panel(measurement, observation_id_raw):
                 "tags": [
                     {
                         "key": "tag",
-                        "value": observation_id,
+                        "value": observation_id + "_2",
                         "operator": "="
                     }
                 ],
@@ -588,7 +588,7 @@ def quick_panel(measurement, observation_id_raw):
                 "tags": [
                     {
                         "key": "tag",
-                        "value": observation_id,
+                        "value": observation_id + "_3",
                         "operator": "="
                     }
                 ],
