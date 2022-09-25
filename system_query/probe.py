@@ -8,6 +8,9 @@ import parse_likwid_topology
 import json
 from pprint import pprint
 
+import sys
+sys.path.append("../pmu_event_query")
+import parse_evtinfo
 
 def pretty_print_info(info):
     pprint(info)
@@ -102,7 +105,7 @@ def choose_info(hostname, system, disk, cache_info, socket_groups, domains, cach
             chosen_info['disk'][key] = {}
             chosen_info['disk'][key]['size'] = disk['disk'][key]['size']
             chosen_info['disk'][key]['model'] = disk['disk'][key]['model']
-            chosen_info['disk'][key]['rotational'] = int(disk['disk'][key]['rotational'])
+            #chosen_info['disk'][key]['rotational'] = int(disk['disk'][key]['rotational'])
     
     ##Note that this info here is "to be expanded" for all cpus, all includes all specs and events
     chosen_info['cpu'] = {}
@@ -178,13 +181,14 @@ def main():
     _disk = {}
 
     _system = generate_hardware_dict(_system, system_list)
-    #pprint(system)
-    #exit(1)
+    pprint(system_list)
+    exit(1)
     _disk = generate_hardware_dict(_disk, diskinfo_list)                
     cache_info = parse_cpuid.parse_cpuid()
     socket_groups, domains, cache_topology, gpu_info = parse_likwid_topology.parse_likwid()
     affinity = parse_likwid_topology.parse_affinity()
-
+    pmus = parse_evtinfo()
+    
     info = choose_info(hostname, _system, _disk, cache_info, socket_groups, domains, cache_topology, affinity, gpu_info)
 
     #print(system)

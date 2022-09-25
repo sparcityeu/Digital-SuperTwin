@@ -110,6 +110,11 @@ def main(SSHhost):
     scp.put(system_query_path, recursive=True, remote_path="/tmp/dt_probing")
     print("Probing framework is copied to remote system..")
     ##scp
+    run_sudo_command(ssh, SSHpass, remotehost_name, "sudo rm /tmp/dt_probing/pmu_event_query/out.txt")
+    run_sudo_command(ssh, SSHpass, remotehost_name, "sudo rm /tmp/dt_probing/pmu_event_query/out_emp.txt")
+    run_command(ssh, remotehost_name, "make -C /tmp/dt_probing/pmu_event_query")
+    run_sudo_command(ssh, SSHpass, remotehost_name, "sudo ./tmp/dt_probing/pmu_event_query/showevtinfo -L -D &>> out.txt")
+    run_sudo_command(ssh, SSHpass, remotehost_name, "sudo ./tmp/dt_probing/pmu_event_query/showevtinfo &>> out_emp.txt")
     run_sudo_command(ssh, SSHpass, remotehost_name, "sudo python3 /tmp/dt_probing/system_query/probe.py")
     #run_sudo_command(ssh, SSHpass, remotehost_name, "ls /tmp/dt_probing/system_query/")
     scp.get(recursive=True, remote_path="/tmp/dt_probing/system_query/probing.json")
