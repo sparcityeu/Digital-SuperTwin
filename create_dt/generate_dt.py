@@ -7,6 +7,8 @@ import detect_utils
 from pprint import pprint
 import json
 
+from difflib import SequenceMatcher
+
 context = "dtmi:dtdl:context;2"
 
 relationvar = -1
@@ -15,8 +17,9 @@ propertyvar = -1
 telemetryvar = -1
 cachevar = -1
 
-metrics = detect_utils.output_lines('pmprobe')                                                  
-metrics = [x.split(" ")[0] for x in metrics]
+#metrics = detect_utils.output_lines('pmprobe')                                                  
+#metrics = [x.split(" ")[0] for x in metrics]
+metrics = []
 
 ##Enumerate relations
 def r():
@@ -165,8 +168,10 @@ def _filter(metric):
         _type = 'percpu'                                                                            
     elif(metric.find('pernode') != -1):                                                             
         _type = 'pernode'                                                                           
-    elif(metric.find('kernel') != -1):                                                              
-        _type = 'kernel'                                                                            
+    elif(metric.find('kernel') != -1 and metric.find("kernel.all") == -1):                                                              
+        _type = 'kernel'
+    elif(metric.find('kernel.all') != -1):
+        _type = 'kernel.all'
     elif(metric.find('numa') != -1):                                                                
         _type = 'pernode'                                                                           
     elif(metric.find('mem') != -1):                                                                 
@@ -182,12 +187,14 @@ def _filter(metric):
     elif(metric.find('hwcounters.UNC') != -1):                                                      
         _type = 'uncore'                                                                            
     elif(metric.find('ENERGY') != -1):                                                              
-         _type = 'energy'                                                                           
-    elif(metric.find('perfevent.hwcounters') != -1):                                                
+        _type = 'energy'                                                                           
+    elif(metric.find('perfevent.hwcounters') != -1 and metric.find('UNC') == -1):                                               
         _type = 'perfevent.hwcounters'
     elif(metric.find('proc.') != -1):
         _type = 'proc'
-                                                                                                    
+
+    #To see what metrics are classified and supported by SuperTwin: 
+    #print("Metric:", metric, "Returning:", _type)
     return _type
 
 def get_my_metrics(my_types):
@@ -223,12 +230,28 @@ def add_my_metrics_mapped(models_dict, this_comp_id, hostname, displayname, fiel
 
     return models_dict
 
+def add_my_metrics_mapped_socket(models_dict, this_comp_id, hostname, displayname, field_key_kernel, field_key_hw, my_categories):
+
+    my_metrics = get_my_metrics(my_categories)
+    #my_metrics = my_metrics[:250] #Only until migrate to RDF ##Not yet migrated to RDF but also not use Azure services. So, go for it. UNLIMITED POWER
+    
+    for count, metric in enumerate(my_metrics):
+        m_name = "metric" + str(count)
+        measurement = metric.replace(".", "_")
+        if(_filter(metric) == "pernode"):
+            models_dict[this_comp_id]["contents"].append(get_telemetry_mapped(hostname, m_name, field_key_kernel, measurement, displayname, 1))
+        else:
+            models_dict[this_comp_id]["contents"].append(get_telemetry_mapped(hostname, m_name, field_key_hw, measurement, displayname, 1))
+            
+    return models_dict
+
 
 def add_sockets(models_dict, _sys_dict, top_id, hostname, socket):
 
 
     displayName = "socket" + str(socket)
-    field_key = "_node" + str(socket) 
+    field_key_kernel = "_node" + str(socket)
+    field_key_hw = "_core" + str(_sys_dict["numa"][str(socket)]["processors"][0])
     this_socket_id = get_uid(hostname, displayName, "", 1)
     this_socket = get_interface(this_socket_id, displayname = displayName)
 
@@ -268,13 +291,14 @@ def add_sockets(models_dict, _sys_dict, top_id, hostname, socket):
     
     this_socket["contents"].append(get_property(get_uid(hostname, displayName, "property6", 1),
                                                 "min_mhz", description = _sys_dict["cpu"]["specs"]["min_mhz"]))
-    
+
+    #def get_relationship(_id, name, target, displayname = "", description = ""):
     ##Add chosen properties
     #######################
 
     ##########################
     ##add metrics as telemetry
-    models_dict = add_my_metrics_mapped(models_dict, this_socket_id, hostname, displayName, field_key, ["pernode", "energy"])
+    models_dict = add_my_metrics_mapped_socket(models_dict, this_socket_id, hostname, displayName, field_key_kernel, field_key_hw, ["pernode", "energy", "uncore"])
     ##add metrics as telemetry
     ##########################
     
@@ -335,7 +359,7 @@ def add_threads(models_dict, _sys_dict, top_id, hostname, socket_id, socket_num,
 
     ##########################
     ##add metrics as telemetry
-    models_dict = add_my_metrics_mapped(models_dict, this_thread_id, hostname, thread_displayName, field_key, ["percpu", "perfevent.hwcounters", "uncore"])
+    models_dict = add_my_metrics_mapped(models_dict, this_thread_id, hostname, thread_displayName, field_key, ["percpu", "perfevent.hwcounters"])
     ##add metrics as telemetry
     ##########################
 
@@ -399,10 +423,15 @@ def add_cpus(models_dict, _sys_dict, top_id, hostname):
                 
     ##adding caches after sockets are done
     for cache in _sys_dict["cpu"]["cache"]:
-        add_caches(models_dict, _sys_dict, top_id, hostname, cache)            
+        models_dict = add_caches(models_dict, _sys_dict, top_id, hostname, cache)            
         
-        
+
+    ##adding pmus after threads are done
+    #for pmu in _sys_dict["PMUs"]:
+        #add_pmus(models_dict, _sys_dict, top_id, hostname)
+    
     return models_dict
+        
 
 
 def add_memory_banks(models_dict, _sys_dict, top_id, hostname, top_memory):
@@ -625,7 +654,7 @@ def add_network(models_dict, _sys_dict, top_id, hostname):
     models_dict[top_id]["contents"].append(get_relationship(get_uid(hostname, "system", "ownership" + contains, 1), "contains" + contains, top_network_id))
     ##Connect top network to the system
     ###################################
-
+    
     ##########################
     ##Add metrics as telemetry
     models_dict = add_my_metrics_mapped(models_dict, top_network_id, hostname, displayName, field_key, ["network.top"])
@@ -635,6 +664,13 @@ def add_network(models_dict, _sys_dict, top_id, hostname):
     add_subnets(models_dict, _sys_dict, top_id, hostname, top_network_id)
 
     return models_dict
+
+
+#def add_pmus(models_dict, _sys_dict, top_id, hostname):
+#    
+#    displayName = "PMU"
+#    field_key = "metadata"
+    
 
 def add_proc(models_dict, _sys_dict, top_id, hostname):
 
@@ -680,13 +716,44 @@ def prune_tree(config_file):
         to_keep = [x.strip("\n") for x in to_keep]
         #metrics = [x for x in metrics if x in to_keep]
         metrics = to_keep
+
+
+def should_add(added, pmu):
+
+    #Core PMUs are per dev and have exact same metrics, to avoid multiplication, add only one to metric namespace
+    
+    for key in added:
+        if(SequenceMatcher(None, key, pmu).ratio() > 0.8):
+            return False
         
+    return True
+
+
+def pmu_to_pcp(PMUs, metrics):
+    
+    #pprint(PMUs)
+    added = []
+    for key in PMUs:
+        if(key.find("perf") == -1):
+            if(should_add(added, key)):
+                for event in PMUs[key]["events"]:
+                    metric = event[0]
+                    metric = "perfevent.hwcounters." + metric.replace(":", "_")
+                    metrics.append(metric)
+                added.append(key)
+                    
+
+    return metrics
     
 def main(_sys_dict):
 
     #prune_tree(config_file)
     #_sys_dict = probe.main()
     #pprint(_sys_dict)
+
+    global metrics
+    metrics = _sys_dict["metrics_avail"]
+    metrics = pmu_to_pcp(_sys_dict["PMUs"], metrics)
 
     models_dict = {}
     
@@ -704,11 +771,22 @@ def main(_sys_dict):
                                                         "arch", description = _sys_dict["arch"]))
     models_dict[top_id]["contents"].append(get_property(get_id(hostname, "kernel", 1, "K",1),
                                                         "kernel", description = _sys_dict["system"]["kernel"]["version"]))
+
+    ##########################
+    ##Add system level metrics as telemetry
+    displayName = "system"
+    field_key = "value"
+    models_dict = add_my_metrics_mapped(models_dict, top_id, hostname, displayName, field_key, ["kernel.all"])
+    ##Add system level metrics as telemetry
+    ##########################
+    
     ##Top level arrangements
 
 
 
     models_dict = add_cpus(models_dict, _sys_dict, top_id, hostname)
+    ##TO DO
+    #models_dict = add_pmus(models_dict, _sys_dict, top_id, hostname)
     models_dict = add_memory(models_dict, _sys_dict, top_id, hostname)
     models_dict = add_disk(models_dict, _sys_dict, top_id, hostname)
     models_dict = add_network(models_dict, _sys_dict, top_id, hostname)

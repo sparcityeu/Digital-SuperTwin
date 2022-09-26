@@ -3,7 +3,6 @@ sys.path.append("../create_dt")
 sys.path.append("../system_query")
 
 import detect_utils
-import create_dt
 import generate_dt
 from pprint import pprint
 import json
@@ -164,11 +163,14 @@ def main(hostname, hostIP, hostProbFile, monitoringMetricsConf):
     #_sys_dict = json.load(hostProbFile)
     with open(hostProbFile, 'r') as j:
         _sys_dict = json.loads(j.read())
+
+
+    #pprint(_sys_dict)
         
     _twin = generate_dt.main(_sys_dict)
     _tag = "_main"
     
-
+    
     date = datetime.datetime.now()
     date = date.strftime("%d-%m-%Y")
     

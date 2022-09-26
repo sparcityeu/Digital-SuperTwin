@@ -10,13 +10,14 @@ import json
 from pprint import pprint
 
 import sys
-sys.path.append("../pmu_event_query")
+sys.path.append("/tmp/dt_probing/pmu_event_query") ##For remote probing
+sys.path.append("../pmu_event_query") ##For local structure
 import parse_evtinfo
 
 def pretty_print_info(info):
     pprint(info)
 
-def choose_info(hostname, system, cache_info, socket_groups, domains, cache_topology, affinity, gpu_info):
+def choose_info(hostname, system, cache_info, socket_groups, domains, cache_topology, affinity, gpu_info, PMUs, pmprobe):
     ##Chosen info to generate dtdl twin
     chosen_info = {}
     chosen_info['hostname'] = hostname
@@ -131,6 +132,8 @@ def choose_info(hostname, system, cache_info, socket_groups, domains, cache_topo
     chosen_info['affinity'] = affinity
     
     chosen_info['gpus'] = gpu_info
+    chosen_info['PMUs'] = PMUs
+    chosen_info['metrics_avail'] = pmprobe
 
     return chosen_info
     
@@ -171,7 +174,27 @@ def print_hardware_dict(hw_dict):
         for inner in hw_dict[key]:
             print('### inner:', inner)
             print(hw_dict[key][inner])
+
+            
+def get_pmprobe():
+
+    metrics_avail = []
     
+    metric_lines = detect_utils.output_lines("pmprobe")
+    metric_lines = [x.strip("\n") for x in metric_lines]
+
+    for metric_line in metric_lines:
+
+        fields = metric_line.split(" ")
+        metric = fields[0]
+        instances = int(fields[1])
+
+        if(instances > 0): ##Do not include metrics that are not available
+            metrics_avail.append(metric)
+
+    return metrics_avail
+            
+
 def main():
 
     hostname = detect_utils.cmd('hostname')[1].strip('\n')
@@ -187,8 +210,10 @@ def main():
     cache_info = parse_cpuid.parse_cpuid()
     socket_groups, domains, cache_topology, gpu_info = parse_likwid_topology.parse_likwid()
     affinity = parse_likwid_topology.parse_affinity()
-
-    info = choose_info(hostname, _system, cache_info, socket_groups, domains, cache_topology, affinity, gpu_info)
+    PMUs = parse_evtinfo.main()
+    pmprobe = get_pmprobe()
+    
+    info = choose_info(hostname, _system, cache_info, socket_groups, domains, cache_topology, affinity, gpu_info, PMUs, pmprobe)
 
 
     #print(system)
