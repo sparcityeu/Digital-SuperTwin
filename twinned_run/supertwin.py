@@ -79,8 +79,9 @@ def main():
     if(mode == "start" and state == -1):
         hostName, hostIP, hostProbFile = remote_probe.main(SSHhost)
         monitoringMetricsConf = input("Monitoring metrics configuration: ")
+        #monitoringMetricsConf = "constant_metrics.txt"
         monitorPID, twinDocument_id = initiate.main(hostName, hostIP, hostProbFile, monitoringMetricsConf)
-        print("A daemon is sampling", hostName, "with PID", monitorPID)
+        print("A daemon is sampling for constant metrics", hostName, "with PID", monitorPID)
         makestate(SSHhost, twinDocument_id, monitorPID)
 
     elif(mode == "start" and state != -1):
