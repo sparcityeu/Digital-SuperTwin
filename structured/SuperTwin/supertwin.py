@@ -73,7 +73,7 @@ class SuperTwin:
             self._id = str(uuid.uuid4())
             print("Creating a new digital twin with id:", self._id)
         
-            #self.name, self.prob_file = remote_probe.main(self.addr)
+            self.name, self.prob_file, self.SSHuser, self.SSHpass = remote_probe.main(self.addr)
             
             ##Debug
             self.name = "dolap"
@@ -143,9 +143,15 @@ class SuperTwin:
 
 
     def add_stream_benchmark(self):
-
+        
         stream_benchmark.generate_stream_bench_sh(self)
+        stream_benchmark.execute_stream_bench(self)
+        #stream_benchmark.parse_stream_bench(self)
 
+    def add_hpcg_benchmark(self):
+
+        #hpcg_benchmark.generate_generate_hpcg_bench_sh(self)
+        #hpcg_benchmark.execute_hpcg_bench(self)
         
     def generate_system_dashboard(self):
         x = 1
@@ -174,24 +180,3 @@ if __name__ == "__main__":
 
     myTwin = SuperTwin()
     #myTwin.update_twin_document__new_monitor_pid()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

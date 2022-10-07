@@ -25,46 +25,8 @@ def get_influx_database(address, influxdb_name):
     fields = fields.split(":")
     host = fields[0]
     port = fields[1]
-    print("host:", host, "port:", port)
+    #print("host:", host, "port:", port)
     influxdb = InfluxDBClient(host=host, port=port)
-    
-
-def get_twin_description(hostProbFile):
-
-    with open(hostProbFile, "r") as j:
-        _sys_dict = json.loads(j.read())
-
-    _twin = generate_dt.main(_sys_dict)
-    return _twin
-
-
-def insert_twin_description(_twin, supertwin):
-
-    date = datetime.datetime.now()
-    date = date.strftime("%d-%m-%Y")
-
-    hostname = supertwin.name
-    CONNECTION_STRING = supertwin.mongodb_addr
-    
-    mongodb = get_mongo_database(hostname, CONNECTION_STRING)
-    collection = mongodb["twin"]
-    
-    metadata = {
-        "id": supertwin._id,
-        "hostname": supertwin.name,
-        "date": date,
-        "twin_description": _twin,
-        "influxdb_name": supertwin.influxdb_name,
-        "influxdb_tag": supertwin.monitor_tag,
-        "monitor_pid": supertwin.monitor_pid,
-        "prob_file": supertwin.prob_file,
-        "system_dashboard": "to be added",
-        "monitoring_dashboard": "to be added"}
-
-    result = collection.insert_one(metadata)
-    twin_id = str(result.inserted_id)
-
-    return twin_id
     
 def read_env():
     reader = open("env.txt", "r")
