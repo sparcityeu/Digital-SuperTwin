@@ -46,7 +46,7 @@ def generate_pcp2influxdb_config(config_file, tag, SShost):
     metrics = [x.strip("\n") for x in metrics]
 
     config_lines = ["[options]" + "\n",
-                    "influx_server = http://127.0.0.1:8086" + "\n",
+                    "influx_server = http://host.docker.internal:8086" + "\n",
                     "influx_db = " + "digital_twin" + "\n",
                     "influx_tags = " + "tag=" +"observation_"+ tag + "\n",
                     "\n\n",
@@ -71,7 +71,7 @@ def generate_pcp2influxdb_config(config_file, tag, SShost):
 def get_mongo_database(mongodb_name):
 
     ##Create a connection for mongodb 
-    CONNECTION_STRING = "mongodb://localhost:27017"
+    CONNECTION_STRING = "mongodb://host.docker.internal:27017"
     client = MongoClient(CONNECTION_STRING)
     
     ##Create the database for this instance(s)
@@ -80,7 +80,7 @@ def get_mongo_database(mongodb_name):
 
 def get_influx_database(influxdb_name):
 
-    influxdb = InfluxDBClient(host="localhost", port=8086)
+    influxdb = InfluxDBClient(host="host.docker.internal", port=8086)
     influxdb.create_database(influxdb_name)
 
 

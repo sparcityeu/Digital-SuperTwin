@@ -64,8 +64,8 @@ def main():
     
 
 
-    grafana_api_key = "eyJrIjoiSVJCMVg2MmdxbDZ3emt5ZDBkM0lNMzZLQm9CNFpwbkQiLCJuIjoicHl0aG9uZW50cnkiLCJpZCI6MX0="
-    grafana_server = "localhost:3000"
+    grafana_api_key = "eyJrIjoiVTFGMnd2Z3Axb1BwdldOZ2IzYUFoSVdzMThRVW81aGEiLCJuIjoiZHRkbC1kb2NrZXIiLCJpZCI6MX0="
+    grafana_server = "host.docker.internal:3000"
     
     #my_dashboard = Dashboard(title="dolap" + "--created via API", uid='abifsd')
     #my_dashboard_json = get_dashboard_json(my_dashboard, overwrite=True)
@@ -76,7 +76,7 @@ def main():
     my_dashboard_json_obj = get_dashboard_json(my_dashboard_json, overwrite=True)
     upload_to_grafana(my_dashboard_json_obj, grafana_server, grafana_api_key)
 
-    webbrowser.open('http://127.0.0.1:3000/d/abifsd')
+    webbrowser.open('http://host.docker.internal:3000/d/abifsd')
     
 
 if __name__ == "__main__":

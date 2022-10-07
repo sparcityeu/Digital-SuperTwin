@@ -7,7 +7,7 @@ from pymongo import MongoClient
 def get_mongodb():
 
     ##Create a connection for mongodb
-    connection_string = "mongodb://localhost:27017"
+    connection_string = "mongodb://host.docker.internal:27017"
     client = MongoClient(connection_string)
     
     return client["digital_twin"]
@@ -15,7 +15,7 @@ def get_mongodb():
 def get_influxdb():
 
     ##Create a connection for influxdb
-    influxdb = InfluxDBClient(host="localhost", port=8086)
+    influxdb = InfluxDBClient(host="host.docker.internal", port=8086)
 
     return influxdb
     
