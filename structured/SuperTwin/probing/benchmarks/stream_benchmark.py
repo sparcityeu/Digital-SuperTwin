@@ -10,6 +10,7 @@ from bson.objectid import ObjectId
 import paramiko
 from scp import SCPClient
 
+import glob
 #Hyperthreading, on-off?
 def get_multithreading_info(data):
 
@@ -118,5 +119,54 @@ def execute_stream_bench(SuperTwin):
     scp.put(path, recursive=True, remote_path="/tmp/dt_probing/benchmarks/")
     remote_probe.run_command(ssh, SuperTwin.name, "mkdir /tmp/dt_probing/benchmarks/STREAM/STREAM_res/")
     remote_probe.run_sudo_command(ssh, SuperTwin.SSHpass, SuperTwin.name, "sh /tmp/dt_probing/benchmarks/STREAM/gen_bench.sh")
-    scp.get(recursive=True, remote_path = "/tmp/dt_probing/benchmarks/STREAM/STREAM_res")
+    scp.get(recursive=True, remote_path = "/tmp/dt_probing/benchmarks/STREAM/STREAM_res", local_path = "probing/benchmarks/")
     ##TO DO: fix location on local host
+
+
+def parse_one_stream_res(res_mt_scale, one_res):
+
+    thread = one_res.split("/t")[1]
+    thread = int(thread.split(".")[0])
+    print("file:", one_res, "threads:", thread)
+
+    reader = open(one_res, "r")
+    lines = reader.readlines()
+    reader.close()
+
+    run_max = 0.0
+    for line in lines:
+        if(line.find("Copy") != -1 or
+           line.find("Scale") != -1 or
+           line.find("Add") != -1 or
+           line.find("Triad") != -1):
+
+            fields = line.split(" ")
+            fields = [x for x in fields if x != ""]
+            fields = [x.strip(":") for x in fields]
+            res = float(fields[1])
+            print("file:", one_res, "field:", fields[0], "res:", res)
+
+            res_mt_scale[fields[0]][str(thread)] = res
+            if(res > run_max):
+                run_max = res
+
+    res_mt_scale["Max_Thr"][str(thread)] = run_max
+    
+    return res_mt_scale
+    
+def parse_stream_bench(SuperTwin):
+
+    res_base = "STREAM_res/"
+    files = glob.glob(res_base + "*.txt")
+
+    res_mt_scale = {}
+    res_mt_scale["Copy"] = {}
+    res_mt_scale["Scale"] = {}
+    res_mt_scale["Add"] = {}
+    res_mt_scale["Triad"] = {}
+    res_mt_scale["Max_Thr"] = {}
+
+    for _file in files:
+        res_mt_scale = parse_one_stream_res(res_mt_scale, _file)
+
+    print("res_mt_scale:", res_mt_scale)
