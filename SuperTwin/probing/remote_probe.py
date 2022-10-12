@@ -87,12 +87,13 @@ def main(SSHhost):
 
     ##Get this framework's path
     path = detect_utils.cmd("pwd")[1].strip('\n')
-    path = path[:path.index("Digital-SuperTwin") + 18] ##18 characters for "Digital-SuperTwin" + "/"
-    system_query_path = path + "system_query"
-    pmu_query_path = path + "pmu_event_query"
-    print("Digital SuperTwin local path:", path)
-    print("system_query_path:", system_query_path)
-    print("pmu_query_path:", pmu_query_path)
+    #path = path[:path.index("Digital-SuperTwin/SuperTwin") + 29] ##18 characters for "Digital-SuperTwin" + "/"
+    #print("path:", path)
+    system_query_path = path + "/probing/system_query"
+    pmu_query_path = path + "/probing/pmu_event_query"
+    #print("Digital SuperTwin local path:", path)
+    #print("system_query_path:", system_query_path)
+    #print("pmu_query_path:", pmu_query_path)
     ##Get this framework's path
     
     ##Setup scp and transmit Digital-Twin probing

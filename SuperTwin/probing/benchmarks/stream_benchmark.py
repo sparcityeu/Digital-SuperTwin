@@ -40,7 +40,8 @@ def get_multithreading_info(data):
 ##Can use the same architecture for creating mpi benchmarks
 def generate_stream_bench_sh(SuperTwin):
 
-    print("Hey there, it's a me: ", SuperTwin.name)
+    modifiers = {}
+    modifiers["environment"] = []
 
     db = utils.get_mongo_database(SuperTwin.name, SuperTwin.mongodb_addr)["twin"]
     data = db.find_one({'_id': ObjectId(SuperTwin.mongodb_id)})["twin_description"]
@@ -81,15 +82,24 @@ def generate_stream_bench_sh(SuperTwin):
              "source /opt/intel/oneapi/setvars.sh \n",
              "make -C " + base + " \n\n"
              "KMP_AFFINITY=granularity=fine,compact,1,0 \n\n"]
-
+    
+    modifiers["environment"].append("KMP_AFFINITY=granularity=fine,compact,1,0")
+    
     for thread in thread_set:
+
+        if str(thread) not in modifiers.keys():
+            modifiers[str(thread)] = []
+        
         line1 = "export OMP_NUM_THREADS=" + str(thread) + " \n"
         line2 = ""
         if(thread == 1):
             line2 = "likwid-pin -c N:" + str(thread - 1) + " " + base + "./stream.omp.AVX512.80M.20x.icc &>> " + base + "STREAM_res/t" + str(thread) + ".txt \n\n"
         else:
             line2 = "likwid-pin -c N:0-" + str(thread - 1) + " " + base + "./stream.omp.AVX512.80M.20x.icc &>> " + base + "STREAM_res/t" + str(thread) + ".txt \n\n"
-        ##Need to get these as "modifiers"
+
+        modifiers[str(thread)].append("export OMP_NUM_THREADS=" + str(thread))
+        modifiers[str(thread)].append("likwid-pin -c N:0-" + str(thread - 1))
+        
 
         lines.append(line1)
         lines.append(line2)
@@ -102,12 +112,14 @@ def generate_stream_bench_sh(SuperTwin):
 
     print("STREAM benchmark script generated..")
 
+    return modifiers
+
 
 def execute_stream_bench(SuperTwin):
 
     ##This will be common together with hpcg ?
     path = detect_utils.cmd("pwd")[1].strip("\n")
-    print("path:", path)
+    #print("path:", path)
     path += "/probing/benchmarks/STREAM"
     
     ssh = paramiko.SSHClient()
@@ -127,7 +139,7 @@ def parse_one_stream_res(res_mt_scale, one_res):
 
     thread = one_res.split("/t")[1]
     thread = int(thread.split(".")[0])
-    print("file:", one_res, "threads:", thread)
+    #print("file:", one_res, "threads:", thread)
 
     reader = open(one_res, "r")
     lines = reader.readlines()
@@ -144,8 +156,8 @@ def parse_one_stream_res(res_mt_scale, one_res):
             fields = [x for x in fields if x != ""]
             fields = [x.strip(":") for x in fields]
             res = float(fields[1])
-            print("file:", one_res, "field:", fields[0], "res:", res)
-
+            #print("file:", one_res, "field:", fields[0], "res:", res)
+            
             res_mt_scale[fields[0]][str(thread)] = res
             if(res > run_max):
                 run_max = res
@@ -156,7 +168,7 @@ def parse_one_stream_res(res_mt_scale, one_res):
     
 def parse_stream_bench(SuperTwin):
 
-    res_base = "STREAM_res/"
+    res_base = "probing/benchmarks/STREAM_res/"
     files = glob.glob(res_base + "*.txt")
 
     res_mt_scale = {}
@@ -169,4 +181,11 @@ def parse_stream_bench(SuperTwin):
     for _file in files:
         res_mt_scale = parse_one_stream_res(res_mt_scale, _file)
 
-    print("res_mt_scale:", res_mt_scale)
+    max_global = 0
+    for key in res_mt_scale["Max_Thr"]:
+        if res_mt_scale["Max_Thr"][key] > max_global:
+            max_global = res_mt_scale["Max_Thr"][key]
+
+    res_mt_scale["Max_Glob"] = max_global
+    
+    return res_mt_scale

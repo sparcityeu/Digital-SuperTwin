@@ -14,15 +14,15 @@ Each kernel will be executed 20 times.
 [0m[1;34m[pthread wrapper] MAIN -> 0
 [0m[1;34m[pthread wrapper] PIN_MASK: [0m[1;34m0->1  [0m[1;34m1->2  [0m[1;34m2->3  [0m[1;34m
 [pthread wrapper] SKIP MASK: 0x0
-[0m[1;34m	threadid 140464872023936 -> hwthread 1 - OK[0m[1;34m
-[0m[1;34m	threadid 140464863627264 -> hwthread 2 - OK[0m[1;34m
-[0m[1;34m	threadid 140464855230592 -> hwthread 3 - OK[0m[1;34m
+[0m[1;34m	threadid 139848421656448 -> hwthread 1 - OK[0m[1;34m
+[0m[1;34m	threadid 139848413259776 -> hwthread 2 - OK[0m[1;34m
+[0m[1;34m	threadid 139848404863104 -> hwthread 3 - OK[0m[1;34m
 [0mNumber of Threads requested = 4
 Number of Threads counted = 4
 -------------------------------------------------------------
 Your clock granularity/precision appears to be 1 microseconds.
-Each test below will take on the order of 273365 microseconds.
-   (= 273365 clock ticks)
+Each test below will take on the order of 281265 microseconds.
+   (= 281265 clock ticks)
 Increase the size of the arrays if this shows that
 you are not getting at least 20 clock ticks per test.
 -------------------------------------------------------------
@@ -31,10 +31,10 @@ For best results, please be sure you know the
 precision of your system timer.
 -------------------------------------------------------------
 Function    Best Rate MB/s  Avg time     Min time     Max time
-Copy:            7151.4     0.205856     0.196885     0.214396
-Scale:           6933.5     0.209287     0.203073     0.223525
-Add:             7259.1     0.294957     0.290947     0.302838
-Triad:           7092.5     0.300745     0.297781     0.306478
+Copy:            6957.8     0.212233     0.202363     0.231624
+Scale:           6856.0     0.213904     0.205367     0.237989
+Add:             7104.0     0.302711     0.297296     0.315000
+Triad:           6949.9     0.310056     0.303889     0.328316
 -------------------------------------------------------------
 Solution Validates: avg error less than 1.000000e-13 on all three arrays
 -------------------------------------------------------------

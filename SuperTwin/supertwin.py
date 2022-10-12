@@ -73,11 +73,11 @@ class SuperTwin:
             self._id = str(uuid.uuid4())
             print("Creating a new digital twin with id:", self._id)
         
-            #self.name, self.prob_file, self.SSHuser, self.SSHpass = remote_probe.main(self.addr)
+            self.name, self.prob_file, self.SSHuser, self.SSHpass = remote_probe.main(self.addr)
             
             ##Debug
-            self.name = "dolap"
-            self.prob_file = "probing_dolap.json"
+            #self.name = "dolap"
+            #self.prob_file = "probing_dolap.json"
             ##Debug
         
             self.influxdb_name = self.name + "_main"
@@ -93,6 +93,10 @@ class SuperTwin:
             print("Collection id:", self.mongodb_id)
             utils.update_state(self.addr, self._id, self.mongodb_id)
             self.resurrect_and_clear_monitors() ##If there is any zombie monitor sampler
+
+            ##benchmark members
+            self.benchmarks = 0
+            self.benchmark_results = 0
             self.add_stream_benchmark()
 
         else:
@@ -119,8 +123,8 @@ class SuperTwin:
                     state = fields[17]
                     conf_file = int(fields[30])
                 except:
-                    pid = int(fields[5])
-                    
+                    return
+                                    
                 #print("pid:", pid, "state:", state, "conf_file:", conf_file)
                 if(pid != self.monitor_pid):
                     print("Killing zombie monitoring sampler with pid:", pid)
@@ -142,11 +146,91 @@ class SuperTwin:
         self.monitor_pid = new_pid
 
 
+    def prepare_stream_content(self, modifiers, stream_res):
+        
+        benchmark_id = str(self.benchmarks)
+        benchmark_result_id = self.benchmark_results ##Note that benchmark_id is str but this one is int, since we will keep incrementing this one
+
+        id_base = "dtmi:dt:" + self.name + ":"
+        
+        content = {}
+        content["@id"] = id_base + "benchmark:B" + benchmark_id + ";1"
+        content["@type"] = "benchmark"
+        content["@name"] = "STREAM"
+        content["@environment"] = modifiers['environment']
+        
+        content["@mvres"] = stream_res["Max_Glob"]
+        content["@mvres_name"] = "Global Max"
+        content["@mvres_unit"] = "MB/s"
+        
+        content["@contents"] = []
+        
+        for _field_key in stream_res:
+            try: ##Field key is a thread
+                for _thread_key in stream_res[_field_key]: 
+                    _dict = {}
+                    _dict["@id"] = id_base + "benchmark_res:B" + str(benchmark_result_id) + ";1"
+                    _dict["@type"] = "benchmark result"
+                    _dict["@field"] = _field_key
+                    _dict["@threads"] = int(_thread_key)
+                    _dict["@modifier"] = modifiers[_thread_key]
+                    _dict["@result"] = stream_res[_field_key][_thread_key]
+                    _dict["@unit"] = "MB/s" #We know that beforehand
+
+                    content["@contents"].append(_dict)
+                    benchmark_result_id += 1
+            except: ##Field key is a global or local max
+                continue
+
+        self.benchmarks += 1
+        self.benchmark_results = benchmark_result_id
+
+        return content
+
+        
+        
+    def update_twin_document__add_stream_benchmark(self, modifiers, stream_res):
+
+        db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
+        meta_with_twin = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
+        new_twin = meta_with_twin["twin_description"]
+
+        for key in new_twin:
+            if(key.find("system") != -1): ##Get the system interface and add the benchmarks
+                content = self.prepare_stream_content(modifiers, stream_res)
+                new_twin[key]["contents"].append(content)
+
+        meta_with_twin["twin_description"] = new_twin
+        db.replace_one({"_id": ObjectId(self.mongodb_id)}, meta_with_twin)
+        print("STREAM benchmark result added to Digital Twin")
+        
+        
     def add_stream_benchmark(self):
         
-        #stream_benchmark.generate_stream_bench_sh(self)
-        #stream_benchmark.execute_stream_bench(self)
-        stream_benchmark.parse_stream_bench(self)
+        stream_modifiers = stream_benchmark.generate_stream_bench_sh(self)
+        stream_benchmark.execute_stream_bench(self)
+        stream_res = stream_benchmark.parse_stream_bench(self)
+
+        ##debug##
+        #with open("stream_modifiers.json", "w") as outfile:
+            #json.dump(modifiers, outfile)
+
+        #with open("stream_res.json", "w") as outfile:
+            #json.dump(stream_res, outfile)
+
+        #with open("stream_modifiers.json", "r") as j:
+            #stream_modifiers = json.loads(j.read())
+
+        #with open("stream_res.json", "r") as j:
+            #stream_res = json.loads(j.read())
+
+        #print("modifiers:", stream_modifiers)
+        #print("stream_res", stream_res)
+        ##debug##
+
+        self.update_twin_document__add_stream_benchmark(stream_modifiers, stream_res)
+        
+        
 
     def add_hpcg_benchmark(self):
 
