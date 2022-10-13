@@ -11,31 +11,6 @@ import paramiko
 from scp import SCPClient
 
 import glob
-#Hyperthreading, on-off?
-def get_multithreading_info(data):
-
-    mt_info = {}
-    mt_info["no_sockets"] = 0
-
-    for key in data:
-        
-        if(key.find("socket") != -1):
-            subdata = data[key]["contents"]
-            mt_info["no_sockets"] = mt_info["no_sockets"] + 1
-            
-            for content in subdata:
-                if(content["name"] == "cores"):
-                    mt_info["no_cores_per_socket"] = int(content["description"])
-                if(content["name"] == "threads"):
-                    mt_info["no_threads_per_socket"] = int(content["description"])
-                    
-
-    mt_info["total_cores"] = mt_info["no_cores_per_socket"] * mt_info["no_sockets"]
-    mt_info["total_threads"] = mt_info["no_threads_per_socket"] * mt_info["no_sockets"]
-            
-
-    return mt_info
-    
 
 ##Can use the same architecture for creating mpi benchmarks
 def generate_stream_bench_sh(SuperTwin):
@@ -46,7 +21,7 @@ def generate_stream_bench_sh(SuperTwin):
     db = utils.get_mongo_database(SuperTwin.name, SuperTwin.mongodb_addr)["twin"]
     data = db.find_one({'_id': ObjectId(SuperTwin.mongodb_id)})["twin_description"]
 
-    mt_info = get_multithreading_info(data)
+    mt_info = utils.get_multithreading_info(data)
     
     no_sockets = mt_info["no_sockets"]
     no_cores_per_socket = mt_info["no_cores_per_socket"]
@@ -74,7 +49,7 @@ def generate_stream_bench_sh(SuperTwin):
         thread_set.append(total_threads)
 
     thread_set = list(sorted(thread_set))
-    print("Benchmark thread set:", thread_set)
+    print("STREAM Benchmark thread set:", thread_set)
 
     base = "/tmp/dt_probing/benchmarks/STREAM/"
     
@@ -119,20 +94,30 @@ def execute_stream_bench(SuperTwin):
 
     ##This will be common together with hpcg ?
     path = detect_utils.cmd("pwd")[1].strip("\n")
-    #print("path:", path)
+    print("path:", path)
     path += "/probing/benchmarks/STREAM"
+    print("path:", path)
     
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(SuperTwin.addr, username = SuperTwin.SSHuser, password = SuperTwin.SSHpass)
     
     scp = SCPClient(ssh.get_transport())
-    remote_probe.run_command(ssh, SuperTwin.name, "mkdir /tmp/dt_probing/benchmarks/")
-    scp.put(path, recursive=True, remote_path="/tmp/dt_probing/benchmarks/")
+
+    try:
+        scp.put(path, recursive=True, remote_path="/tmp/dt_probing/benchmarks/")
+        remote_probe.run_sudo_command(ssh, SuperTwin.SSHpass, SuperTwin.name, "sudo rm -r /tmp/dt_probing/benchmarks/*")
+        scp.put(path, recursive=True, remote_path="/tmp/dt_probing/benchmarks/")
+    except:
+        remote_probe.run_command(ssh, SuperTwin.name, "mkdir /tmp/dt_probing/benchmarks/")
+        scp.put(path, recursive=True, remote_path="/tmp/dt_probing/benchmarks/")
+        remote_probe.run_sudo_command(ssh, SuperTwin.SSHpass, SuperTwin.name, "sudo rm -r /tmp/dt_probing/benchmarks/*")
+        scp.put(path, recursive=True, remote_path="/tmp/dt_probing/benchmarks/")
+        
     remote_probe.run_command(ssh, SuperTwin.name, "mkdir /tmp/dt_probing/benchmarks/STREAM/STREAM_res/")
     remote_probe.run_sudo_command(ssh, SuperTwin.SSHpass, SuperTwin.name, "sh /tmp/dt_probing/benchmarks/STREAM/gen_bench.sh")
     scp.get(recursive=True, remote_path = "/tmp/dt_probing/benchmarks/STREAM/STREAM_res", local_path = "probing/benchmarks/")
-    ##TO DO: fix location on local host
+    
 
 
 def parse_one_stream_res(res_mt_scale, one_res):

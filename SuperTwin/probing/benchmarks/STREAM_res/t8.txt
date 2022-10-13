@@ -14,19 +14,19 @@ Each kernel will be executed 20 times.
 [0m[1;34m[pthread wrapper] MAIN -> 0
 [0m[1;34m[pthread wrapper] PIN_MASK: [0m[1;34m0->1  [0m[1;34m1->2  [0m[1;34m2->3  [0m[1;34m3->4  [0m[1;34m4->5  [0m[1;34m5->6  [0m[1;34m6->7  [0m[1;34m
 [pthread wrapper] SKIP MASK: 0x0
-[0m[1;34m	threadid 140039783372672 -> hwthread 1 - OK[0m[1;34m
-[0m[1;34m	threadid 140039774976000 -> hwthread 2 - OK[0m[1;34m
-[0m[1;34m	threadid 140039766579328 -> hwthread 3 - OK[0m[1;34m
-[0m[1;34m	threadid 140039556163840 -> hwthread 4 - OK[0m[1;34m
-[0m[1;34m	threadid 140039547767168 -> hwthread 5 - OK[0m[1;34m
-[0m[1;34m	threadid 140039539370496 -> hwthread 6 - OK[0m[1;34m
-[0m[1;34m	threadid 140039530973824 -> hwthread 7 - OK[0m[1;34m
+[0m[1;34m	threadid 139890131982208 -> hwthread 1 - OK[0m[1;34m
+[0m[1;34m	threadid 139890123585536 -> hwthread 2 - OK[0m[1;34m
+[0m[1;34m	threadid 139890115188864 -> hwthread 3 - OK[0m[1;34m
+[0m[1;34m	threadid 139889903397120 -> hwthread 4 - OK[0m[1;34m
+[0m[1;34m	threadid 139889895000448 -> hwthread 5 - OK[0m[1;34m
+[0m[1;34m	threadid 139889886603776 -> hwthread 6 - OK[0m[1;34m
+[0m[1;34m	threadid 139889878207104 -> hwthread 7 - OK[0m[1;34m
 [0mNumber of Threads requested = 8
 Number of Threads counted = 8
 -------------------------------------------------------------
 Your clock granularity/precision appears to be 1 microseconds.
-Each test below will take on the order of 296643 microseconds.
-   (= 296643 clock ticks)
+Each test below will take on the order of 297177 microseconds.
+   (= 297177 clock ticks)
 Increase the size of the arrays if this shows that
 you are not getting at least 20 clock ticks per test.
 -------------------------------------------------------------
@@ -35,10 +35,10 @@ For best results, please be sure you know the
 precision of your system timer.
 -------------------------------------------------------------
 Function    Best Rate MB/s  Avg time     Min time     Max time
-Copy:            6601.9     0.220411     0.213272     0.236715
-Scale:           6457.9     0.225351     0.218028     0.232236
-Add:             6700.1     0.321071     0.315217     0.325167
-Triad:           6560.8     0.328637     0.321913     0.345753
+Copy:            6731.2     0.217785     0.209176     0.229312
+Scale:           6589.8     0.223968     0.213664     0.246034
+Add:             6767.1     0.317355     0.312096     0.327899
+Triad:           6646.1     0.323491     0.317778     0.341855
 -------------------------------------------------------------
 Solution Validates: avg error less than 1.000000e-13 on all three arrays
 -------------------------------------------------------------

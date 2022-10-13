@@ -14,13 +14,13 @@ Each kernel will be executed 20 times.
 [0m[1;34m[pthread wrapper] MAIN -> 0
 [0m[1;34m[pthread wrapper] PIN_MASK: [0m[1;34m0->1  [0m[1;34m
 [pthread wrapper] SKIP MASK: 0x0
-[0m[1;34m	threadid 140234280580992 -> hwthread 1 - OK[0m[1;34m
+[0m[1;34m	threadid 139712565626752 -> hwthread 1 - OK[0m[1;34m
 [0mNumber of Threads requested = 2
 Number of Threads counted = 2
 -------------------------------------------------------------
 Your clock granularity/precision appears to be 1 microseconds.
-Each test below will take on the order of 265202 microseconds.
-   (= 265202 clock ticks)
+Each test below will take on the order of 251408 microseconds.
+   (= 251408 clock ticks)
 Increase the size of the arrays if this shows that
 you are not getting at least 20 clock ticks per test.
 -------------------------------------------------------------
@@ -29,10 +29,10 @@ For best results, please be sure you know the
 precision of your system timer.
 -------------------------------------------------------------
 Function    Best Rate MB/s  Avg time     Min time     Max time
-Copy:            7431.8     0.199588     0.189456     0.219898
-Scale:           7284.1     0.206495     0.193299     0.230445
-Add:             7501.1     0.300194     0.281557     0.323832
-Triad:           7434.9     0.299103     0.284066     0.321229
+Copy:           19781.7     0.125199     0.071177     0.220200
+Scale:          19351.3     0.138020     0.072760     0.232926
+Add:            24730.7     0.175432     0.085400     0.307723
+Triad:          24297.7     0.170761     0.086922     0.303542
 -------------------------------------------------------------
 Solution Validates: avg error less than 1.000000e-13 on all three arrays
 -------------------------------------------------------------

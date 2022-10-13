@@ -88,6 +88,29 @@ def check_state(addr):
             return exist, twin_id, collection_id
             
     return exist, twin_id, collection_id
-    
-#def update_twin_document__add_benchmark(SuperTwin):
-#def update_twin_document__monitor_metrics(SuperTwin):
+
+
+#Hyperthreading, on-off?
+def get_multithreading_info(data):
+
+    mt_info = {}
+    mt_info["no_sockets"] = 0
+
+    for key in data:
+        
+        if(key.find("socket") != -1):
+            subdata = data[key]["contents"]
+            mt_info["no_sockets"] = mt_info["no_sockets"] + 1
+            
+            for content in subdata:
+                if(content["name"] == "cores"):
+                    mt_info["no_cores_per_socket"] = int(content["description"])
+                if(content["name"] == "threads"):
+                    mt_info["no_threads_per_socket"] = int(content["description"])
+                    
+
+    mt_info["total_cores"] = mt_info["no_cores_per_socket"] * mt_info["no_sockets"]
+    mt_info["total_threads"] = mt_info["no_threads_per_socket"] * mt_info["no_sockets"]
+            
+
+    return mt_info
