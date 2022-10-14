@@ -315,8 +315,8 @@ def get_stream_scaling_panel(SuperTwin):
 
     
     for item in thread_set:
-        print("item:", item)
-        print("results:", results)
+        #print("item:", item)
+        #print("results:", results)
         add_result.append(results["Add"][str(item)])
         copy_result.append(results["Copy"][str(item)])
         triad_result.append(results["Triad"][str(item)])
@@ -327,7 +327,7 @@ def get_stream_scaling_panel(SuperTwin):
     copy_result_string = ""
     scale_result_string = ""
     triad_result_string = ""
-    for i in range(len(thread_set) - 2):
+    for i in range(len(thread_set) - 1):
         add_result_string += (str(add_result[i]) + ",")
         copy_result_string += (str(copy_result[i]) + ",")
         scale_result_string += (str(scale_result[i]) + ",")
@@ -341,12 +341,12 @@ def get_stream_scaling_panel(SuperTwin):
     #tickvals: [\"1\", \"2\", \"4\", \"8\", \"16\", \"22\", \"32\", \"44\", \"64\", \"88\"]
 
     tickvals_string = ""
-    for i in range(len(thread_set) - 2):
+    for i in range(len(thread_set) - 1):
         tickvals_string += ('\"' + str(thread_set[i]) + '\",')
     tickvals_string +=  ('\"' + str(thread_set[_len]) + '"')
 
     thread_set_string = ""
-    for i in range(len(thread_set) - 2):
+    for i in range(len(thread_set) - 1):
         thread_set_string += (str(thread_set[i]) + ",")
     thread_set_string += str(thread_set[_len])
     
@@ -414,6 +414,140 @@ def get_stream_scaling_panel(SuperTwin):
 
     return stream_scaling_panel
     
+
+def get_hpcg_results(twin):
+
+    results = {}
+    results["ddot"] = {}
+    results["spmv"] = {}
+    results["waxpby"] = {}
+    thread_set = []
+
+    for key in twin:
+        if(key.find(":system:") != -1):
+            for content in twin[key]["contents"]:
+                if(content["@type"] == "benchmark" and content["@name"] == "HPCG"):
+                    for result in content["@contents"]:
+                        if(result["@field"] == "Max_Thr"):
+                            continue
+                        thread = result["@threads"]
+                        _result = float(result["@result"])
+
+                        if(thread not in thread_set):
+                            thread_set.append(thread)
+
+                        results[result["@field"]][str(thread)] = _result
+
+    thread_set = list(sorted(thread_set))
+    return results, thread_set
+
+
+
+def get_hpcg_scaling_panel(SuperTwin):
+
+    db = utils.get_mongo_database(SuperTwin.name, SuperTwin.mongodb_addr)["twin"]
+    meta_with_twin = loads(dumps(db.find({"_id": ObjectId(SuperTwin.mongodb_id)})))[0]
+    twin = meta_with_twin["twin_description"]
+
+    ddot_result = []
+    spmv_result = []
+    waxpby_result = []
+    tickvals = 1
+
+    results, thread_set = get_hpcg_results(twin)
+
+    for item in thread_set:
+        ddot_result.append(results["ddot"][str(item)])
+        spmv_result.append(results["spmv"][str(item)])
+        waxpby_result.append(results["waxpby"][str(item)])
+
+    ddot_result_string = ""
+    spmv_result_string = ""
+    waxpby_result_string = ""
+    for i in range(len(thread_set) - 1):
+        ddot_result_string += (str(ddot_result[i]) + ",")
+        spmv_result_string += (str(spmv_result[i]) + ",")
+        waxpby_result_string += (str(waxpby_result[i]) + ",")
+    _len = len(thread_set) - 1
+    ddot_result_string += str(ddot_result[_len])
+    spmv_result_string += str(spmv_result[_len])
+    waxpby_result_string += str(waxpby_result[_len])
+
+    
+    tickvals_string = ""
+    for i in range(len(thread_set) - 1):
+        tickvals_string += ('\"' + str(thread_set[i]) + '\",')
+    tickvals_string +=  ('\"' + str(thread_set[_len]) + '"')
+
+    thread_set_string = ""
+    for i in range(len(thread_set) - 1):
+        thread_set_string += (str(thread_set[i]) + ",")
+    thread_set_string += str(thread_set[_len])
+    
+
+    templated_script = Template("console.log(data)\n\nvar trace_ddot = {\n  type: \"scatter\",\n  mode: \"lines\",\n  x: [$thread_set],\n  y: [$ddot_result],\n  line: {color: 'magenta'},\n  name: \"DDOT\"\n};\n\nvar trace_spmv = {\n  type: \"scatter\",\n  mode: \"lines\",\n  x: [$thread_set],\n  y: [$spmv_result],\n  line: {color: 'blue'},\n  name: \"SPmV\"\n};\n\nvar trace_waxpby = {\n  type: \"scatter\",\n  mode: \"lines\",\n  x: [$thread_set],\n  y: [$waxpby_result],\n  line: {color: 'red'},\n  name: \"WAXPBY\"\n};\n\nvar data = [trace_spmv, trace_ddot, trace_waxpby];\n\nvar layout = {\n\txaxis: {title: 'Number of Threads',\n          tickvals: [$tickvals],\n          nticks: 5,\n          type: \"category\"},\n\tyaxis: {title: 'Performance [GFlop/s]',\n          rangemode: \"tozero\"},\n  margin: { l: 50, r: 35, t: 10, b: 40},\n  legend: { orientation: \"h\",\n            y:1.1 },\n  width: 600,\n  height: 450,\n};\n\nvar config = {locale: 'en'};\n\nreturn {data:data,layout:layout,config:config};")
+
+    templated_script = templated_script.substitute(thread_set=thread_set_string,
+                                                   ddot_result=ddot_result_string,
+                                                   spmv_result=spmv_result_string,
+                                                   waxpby_result=waxpby_result_string,
+                                                   tickvals=tickvals_string)
+    
+    hpcg_scaling_panel = {
+        "id": next_panel_id(),
+        "gridPos": {
+            "h": 14,
+            "w": 8,
+            "x": 8,
+            "y": 13
+        },
+        "type": "ae3e-plotly-panel",
+        "title": "HPCG Multicore Scaling",
+        "datasource": {
+            "type": "simpod-json-datasource",
+            "uid": "yjaMegMVk"
+        },
+        "options": {
+            "script": templated_script,
+            "onclick": "console.log(data)\nwindow.updateVariables({query:{'var-project':'test'}, partial: true})",
+            "data": "",
+            "layout": ""
+        },
+        "targets": [
+            {
+                "alias": "",
+                "bucketAggs": [
+                    {
+                        "field": "@timestamp",
+                        "id": "2",
+                        "settings": {
+                            "interval": "auto"
+                        },
+                        "type": "date_histogram"
+                    }
+                ],
+                "datasource": {
+                    "type": "simpod-json-datasource",
+                    "uid": "yjaMegMVk"
+                },
+                "metrics": [
+                    {
+                        "id": "1",
+                        "type": "count"
+                    }
+                ],
+                "payload": "",
+                "query": "",
+                "refId": "A",
+                "target": "system_ip",
+                "timeField": "@timestamp"
+            }
+        ],
+        "transparent": True
+    }
+
+    return hpcg_scaling_panel
+    
     
 def generate_roofline_dashboard(SuperTwin):
 
@@ -446,7 +580,7 @@ def generate_roofline_dashboard(SuperTwin):
     ##Plotly panels
     dashboard["panels"].append(get_dram_roofline_panel(SuperTwin))
     dashboard["panels"].append(get_stream_scaling_panel(SuperTwin))
-    #dashboard["panels"].append(get_hpcg_scaling_panel(SuperTwin))
+    dashboard["panels"].append(get_hpcg_scaling_panel(SuperTwin))
 
     
     json_dash_obj = utils.get_dashboard_json(dashboard, overwrite = False)

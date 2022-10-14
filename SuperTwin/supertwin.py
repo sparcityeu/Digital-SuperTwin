@@ -14,6 +14,7 @@ import sampling
 import stream_benchmark
 import hpcg_benchmark
 import roofline_dashboard
+import static_data
 
 import uuid
 
@@ -316,12 +317,19 @@ class SuperTwin:
         self.update_twin_document__add_hpcg_benchmark(hpcg_modifiers, hpcg_res)
 
     def update_twin_document__add_roofline_dashboard(self, url):
-        x = 1
-        print("URL:", url)
-        print("Roofline dashboard added..")
+
+        db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
+        print("Killing existed monitor sampler with pid:", self.monitor_pid)
+        #detect_utils.cmd("sudo kill " + str(self.monitor_pid))
+        
+        to_new = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
+        to_new["system_dashboard"] = "http://localhost:3000" + url
+        db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
+        print("Roofline dashboard added to Digital Twin")
         
     def generate_roofline_dashboard(self):
         url = roofline_dashboard.generate_roofline_dashboard(self)
+        static_data.main(self)
         self.update_twin_document__add_roofline_dashboard(url)
 
         
