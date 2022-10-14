@@ -4,6 +4,7 @@ sys.path.append("probing/benchmarks")
 sys.path.append("observation")
 sys.path.append("twin_description")
 sys.path.append("sampling")
+sys.path.append("dashboards")
 
 import utils
 import remote_probe
@@ -12,6 +13,8 @@ import generate_dt
 import sampling
 import stream_benchmark
 import hpcg_benchmark
+import roofline_dashboard
+
 import uuid
 
 #from influxdb import InfluxDBClient
@@ -61,7 +64,7 @@ def insert_twin_description(_twin, supertwin):
         "influxdb_tag": supertwin.monitor_tag,
         "monitor_pid": supertwin.monitor_pid,
         "prob_file": supertwin.prob_file,
-        "system_dashboard": "to be added",
+        "roofline_dashboard": "to be added",
         "monitoring_dashboard": "to be added"}
 
     result = collection.insert_one(metadata)
@@ -73,21 +76,21 @@ def insert_twin_description(_twin, supertwin):
 class SuperTwin:
 
     def __init__(self):
-        self.addr = input("Address of the remote system: ")
-        #self.addr = "10.36.54.195"
+        #self.addr = input("Address of the remote system: ")
+        self.addr = "10.36.54.195"
         exist, twin_id, collection_id = utils.check_state(self.addr)
         if(not exist or exist):
         
             self._id = str(uuid.uuid4())
             print("Creating a new digital twin with id:", self._id)
         
-            self.name, self.prob_file, self.SSHuser, self.SSHpass = remote_probe.main(self.addr)
+            #self.name, self.prob_file, self.SSHuser, self.SSHpass = remote_probe.main(self.addr)
             
             ##Debug
-            #self.name = "dolap"
-            #self.prob_file = "probing_dolap.json"
-            #self.SSHuser = "ftasyaran"
-            #self.SSHpass = "kemaliye"
+            self.name = "dolap"
+            self.prob_file = "probing_dolap.json"
+            self.SSHuser = "ftasyaran"
+            self.SSHpass = "kemaliye"
             ##Debug
         
             self.influxdb_name = self.name + "_main"
@@ -108,6 +111,7 @@ class SuperTwin:
             self.benchmark_results = 0
             self.add_stream_benchmark()
             self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
+            self.generate_roofline_dashboard()
 
         else:
 
@@ -264,7 +268,7 @@ class SuperTwin:
     def add_stream_benchmark(self):
         
         stream_modifiers = stream_benchmark.generate_stream_bench_sh(self)
-        stream_benchmark.execute_stream_bench(self)
+        #stream_benchmark.execute_stream_bench(self)
         stream_res = stream_benchmark.parse_stream_bench(self)
 
         ##debug##
@@ -306,19 +310,29 @@ class SuperTwin:
     def add_hpcg_benchmark(self, HPCG_PARAM):
 
         hpcg_modifiers = hpcg_benchmark.generate_hpcg_bench_sh(self, HPCG_PARAM)
-        hpcg_benchmark.execute_hpcg_bench(self)
+        #hpcg_benchmark.execute_hpcg_bench(self)
         hpcg_res = hpcg_benchmark.parse_hpcg_bench(self)
 
         self.update_twin_document__add_hpcg_benchmark(hpcg_modifiers, hpcg_res)
-        
-        
-    def generate_system_dashboard(self):
+
+    def update_twin_document__add_roofline_dashboard(self, url):
         x = 1
+        print("URL:", url)
+        print("Roofline dashboard added..")
         
-    def generate_observation_dashboard_type1(self):
+    def generate_roofline_dashboard(self):
+        url = roofline_dashboard.generate_roofline_dashboard(self)
+        self.update_twin_document__add_roofline_dashboard(url)
+
+        
+    def generate_observation_dashboard_type1(self): ##Applications runs on different threads at the same time
         x = 1
+
         
-    #def generate_observation_dashboard_type2():
+    def generate_observation_dashboard_type2(self): ##Applications runs at different times then overlapped
+        x = 1
+
+        
     #def generate_inescid_dashboard_type1():
     #def generate_inescid_dashboard_type2():
 
