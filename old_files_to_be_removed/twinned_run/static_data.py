@@ -189,8 +189,8 @@ def fill_data(data, hostname, hostip):
             system_no_disks = int(data[key]["contents"][0]["description"])
 
             
-
-    
+    cpu_ghz = cpu_model.split("@")[1].strip("Ghz")
+            
     data = {"system_hostname": system_hostname,
             "system_ip": system_ip,
             "system_os": system_os,
@@ -200,6 +200,7 @@ def fill_data(data, hostname, hostip):
             "cpu_cores": cpu_cores,
             "cpu_threads": cpu_threads,
             "cpu_hyperthreading": cpu_hyperthreading,
+            "cpu_ghz": cpu_ghz,
             "cpu_maxmhz": cpu_maxmhz,
             "cpu_minmhz": cpu_minmhz,
             "l1dcache_size": l1dcache_size,
@@ -230,7 +231,7 @@ def main(hostname, hostip):
 
     print("collection:", collection)
 
-    response = collection.find_one({'_id': ObjectId("6340259cfb579de4f3e45c67")})
+    response = collection.find_one({'_id': ObjectId("63487b2e0b23fadfac2c53c2")})
 
     #print("response:", response)
     data = fill_data(response["twin_description"], hostname, hostip)

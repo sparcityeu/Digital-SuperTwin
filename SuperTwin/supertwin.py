@@ -344,17 +344,7 @@ class SuperTwin:
     #def generate_inescid_dashboard_type1():
     #def generate_inescid_dashboard_type2():
 
-    def reconfigure_perf(self):
-        x = 1
-        
-    def update_state(self): ##Add yourself to the state file
-        x = 1
-        
-    def read_monitor_metrics(self):
-        x = 1
-        
-    def observation(self):
-        x = 1
+    
                 
 
 if __name__ == "__main__":
