@@ -77,23 +77,15 @@ def insert_twin_description(_twin, supertwin):
 class SuperTwin:
 
     def __init__(self):
-        #self.addr = input("Address of the remote system: ")
-        self.addr = "10.36.54.195"
+        self.addr = input("Address of the remote system: ")
         exist, twin_id, collection_id = utils.check_state(self.addr)
         if(not exist or exist):
         
             self._id = str(uuid.uuid4())
             print("Creating a new digital twin with id:", self._id)
         
-            #self.name, self.prob_file, self.SSHuser, self.SSHpass = remote_probe.main(self.addr)
+            self.name, self.prob_file, self.SSHuser, self.SSHpass = remote_probe.main(self.addr)
             
-            ##Debug
-            self.name = "dolap"
-            self.prob_file = "probing_dolap.json"
-            self.SSHuser = "ftasyaran"
-            self.SSHpass = "kemaliye"
-            ##Debug
-        
             self.influxdb_name = self.name + "_main"
             self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
             utils.get_influx_database(self.influxdb_addr, self.influxdb_name)
@@ -269,25 +261,8 @@ class SuperTwin:
     def add_stream_benchmark(self):
         
         stream_modifiers = stream_benchmark.generate_stream_bench_sh(self)
-        #stream_benchmark.execute_stream_bench(self)
+        stream_benchmark.execute_stream_bench(self)
         stream_res = stream_benchmark.parse_stream_bench(self)
-
-        ##debug##
-        #with open("stream_modifiers.json", "w") as outfile:
-            #json.dump(modifiers, outfile)
-
-        #with open("stream_res.json", "w") as outfile:
-            #json.dump(stream_res, outfile)
-
-        #with open("stream_modifiers.json", "r") as j:
-            #stream_modifiers = json.loads(j.read())
-
-        #with open("stream_res.json", "r") as j:
-            #stream_res = json.loads(j.read())
-
-        #print("modifiers:", stream_modifiers)
-        #print("stream_res", stream_res)
-        ##debug##
 
         self.update_twin_document__add_stream_benchmark(stream_modifiers, stream_res)
         
@@ -311,7 +286,7 @@ class SuperTwin:
     def add_hpcg_benchmark(self, HPCG_PARAM):
 
         hpcg_modifiers = hpcg_benchmark.generate_hpcg_bench_sh(self, HPCG_PARAM)
-        #hpcg_benchmark.execute_hpcg_bench(self)
+        hpcg_benchmark.execute_hpcg_bench(self)
         hpcg_res = hpcg_benchmark.parse_hpcg_bench(self)
 
         self.update_twin_document__add_hpcg_benchmark(hpcg_modifiers, hpcg_res)
