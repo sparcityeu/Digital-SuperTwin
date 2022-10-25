@@ -14,33 +14,33 @@ Each kernel will be executed 20 times.
 [0m[1;34m[pthread wrapper] MAIN -> 0
 [0m[1;34m[pthread wrapper] PIN_MASK: [0m[1;34m0->1  [0m[1;34m1->2  [0m[1;34m2->3  [0m[1;34m3->4  [0m[1;34m4->5  [0m[1;34m5->6  [0m[1;34m6->7  [0m[1;34m7->8  [0m[1;34m8->9  [0m[1;34m9->10  [0m[1;34m10->11  [0m[1;34m11->12  [0m[1;34m12->13  [0m[1;34m13->14  [0m[1;34m14->15  [0m[1;34m15->16  [0m[1;34m16->17  [0m[1;34m17->18  [0m[1;34m18->19  [0m[1;34m19->20  [0m[1;34m20->21  [0m[1;34m
 [pthread wrapper] SKIP MASK: 0x0
-[0m[1;34m	threadid 140241157220224 -> hwthread 1 - OK[0m[1;34m
-[0m[1;34m	threadid 140241148823552 -> hwthread 2 - OK[0m[1;34m
-[0m[1;34m	threadid 140241140426880 -> hwthread 3 - OK[0m[1;34m
-[0m[1;34m	threadid 140241132030208 -> hwthread 4 - OK[0m[1;34m
-[0m[1;34m	threadid 140241123633536 -> hwthread 5 - OK[0m[1;34m
-[0m[1;34m	threadid 140241115236864 -> hwthread 6 - OK[0m[1;34m
-[0m[1;34m	threadid 140241106840192 -> hwthread 7 - OK[0m[1;34m
-[0m[1;34m	threadid 140241098443520 -> hwthread 8 - OK[0m[1;34m
-[0m[1;34m	threadid 140240614321024 -> hwthread 9 - OK[0m[1;34m
-[0m[1;34m	threadid 140240605924352 -> hwthread 10 - OK[0m[1;34m
-[0m[1;34m	threadid 140240597527680 -> hwthread 11 - OK[0m[1;34m
-[0m[1;34m	threadid 140240589131008 -> hwthread 12 - OK[0m[1;34m
-[0m[1;34m	threadid 140240580734336 -> hwthread 13 - OK[0m[1;34m
-[0m[1;34m	threadid 140240572337664 -> hwthread 14 - OK[0m[1;34m
-[0m[1;34m	threadid 140240563940992 -> hwthread 15 - OK[0m[1;34m
-[0m[1;34m	threadid 140240010342144 -> hwthread 16 - OK[0m[1;34m
-[0m[1;34m	threadid 140240001945472 -> hwthread 17 - OK[0m[1;34m
-[0m[1;34m	threadid 140239993548800 -> hwthread 18 - OK[0m[1;34m
-[0m[1;34m	threadid 140239985152128 -> hwthread 19 - OK[0m[1;34m
-[0m[1;34m	threadid 140239976755456 -> hwthread 20 - OK[0m[1;34m
-[0m[1;34m	threadid 140239968358784 -> hwthread 21 - OK[0m[1;34m
+[0m[1;34m	threadid 140377071867776 -> hwthread 1 - OK[0m[1;34m
+[0m[1;34m	threadid 140377063471104 -> hwthread 2 - OK[0m[1;34m
+[0m[1;34m	threadid 140377055074432 -> hwthread 3 - OK[0m[1;34m
+[0m[1;34m	threadid 140376845314304 -> hwthread 4 - OK[0m[1;34m
+[0m[1;34m	threadid 140376836917632 -> hwthread 5 - OK[0m[1;34m
+[0m[1;34m	threadid 140376828520960 -> hwthread 6 - OK[0m[1;34m
+[0m[1;34m	threadid 140376820124288 -> hwthread 7 - OK[0m[1;34m
+[0m[1;34m	threadid 140376811727616 -> hwthread 8 - OK[0m[1;34m
+[0m[1;34m	threadid 140376803330944 -> hwthread 9 - OK[0m[1;34m
+[0m[1;34m	threadid 140376794934272 -> hwthread 10 - OK[0m[1;34m
+[0m[1;34m	threadid 140376308444288 -> hwthread 11 - OK[0m[1;34m
+[0m[1;34m	threadid 140376300047616 -> hwthread 12 - OK[0m[1;34m
+[0m[1;34m	threadid 140376291650944 -> hwthread 13 - OK[0m[1;34m
+[0m[1;34m	threadid 140376283254272 -> hwthread 14 - OK[0m[1;34m
+[0m[1;34m	threadid 140376274857600 -> hwthread 15 - OK[0m[1;34m
+[0m[1;34m	threadid 140376266460928 -> hwthread 16 - OK[0m[1;34m
+[0m[1;34m	threadid 140376258064256 -> hwthread 17 - OK[0m[1;34m
+[0m[1;34m	threadid 140375771574272 -> hwthread 18 - OK[0m[1;34m
+[0m[1;34m	threadid 140375763177600 -> hwthread 19 - OK[0m[1;34m
+[0m[1;34m	threadid 140375754780928 -> hwthread 20 - OK[0m[1;34m
+[0m[1;34m	threadid 140375746384256 -> hwthread 21 - OK[0m[1;34m
 [0mNumber of Threads requested = 22
 Number of Threads counted = 22
 -------------------------------------------------------------
 Your clock granularity/precision appears to be 1 microseconds.
-Each test below will take on the order of 324783 microseconds.
-   (= 324783 clock ticks)
+Each test below will take on the order of 42609 microseconds.
+   (= 42609 clock ticks)
 Increase the size of the arrays if this shows that
 you are not getting at least 20 clock ticks per test.
 -------------------------------------------------------------
@@ -49,10 +49,10 @@ For best results, please be sure you know the
 precision of your system timer.
 -------------------------------------------------------------
 Function    Best Rate MB/s  Avg time     Min time     Max time
-Copy:            5764.2     0.251486     0.244267     0.255111
-Scale:           5568.7     0.262049     0.252842     0.267073
-Add:             5605.2     0.385359     0.376795     0.411017
-Triad:           5602.7     0.385985     0.376963     0.397301
+Copy:           30191.2     0.076782     0.046636     0.257532
+Scale:          30257.4     0.080981     0.046534     0.269564
+Add:            33631.1     0.113977     0.062799     0.387437
+Triad:          33538.2     0.108737     0.062973     0.404409
 -------------------------------------------------------------
 Solution Validates: avg error less than 1.000000e-13 on all three arrays
 -------------------------------------------------------------

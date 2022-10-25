@@ -14,27 +14,27 @@ Each kernel will be executed 20 times.
 [0m[1;34m[pthread wrapper] MAIN -> 0
 [0m[1;34m[pthread wrapper] PIN_MASK: [0m[1;34m0->1  [0m[1;34m1->2  [0m[1;34m2->3  [0m[1;34m3->4  [0m[1;34m4->5  [0m[1;34m5->6  [0m[1;34m6->7  [0m[1;34m7->8  [0m[1;34m8->9  [0m[1;34m9->10  [0m[1;34m10->11  [0m[1;34m11->12  [0m[1;34m12->13  [0m[1;34m13->14  [0m[1;34m14->15  [0m[1;34m
 [pthread wrapper] SKIP MASK: 0x0
-[0m[1;34m	threadid 140242956806016 -> hwthread 1 - OK[0m[1;34m
-[0m[1;34m	threadid 140242948409344 -> hwthread 2 - OK[0m[1;34m
-[0m[1;34m	threadid 140242940012672 -> hwthread 3 - OK[0m[1;34m
-[0m[1;34m	threadid 140242931616000 -> hwthread 4 - OK[0m[1;34m
-[0m[1;34m	threadid 140242923219328 -> hwthread 5 - OK[0m[1;34m
-[0m[1;34m	threadid 140242914822656 -> hwthread 6 - OK[0m[1;34m
-[0m[1;34m	threadid 140242906425984 -> hwthread 7 - OK[0m[1;34m
-[0m[1;34m	threadid 140242426260224 -> hwthread 8 - OK[0m[1;34m
-[0m[1;34m	threadid 140242417863552 -> hwthread 9 - OK[0m[1;34m
-[0m[1;34m	threadid 140242409466880 -> hwthread 10 - OK[0m[1;34m
-[0m[1;34m	threadid 140242401070208 -> hwthread 11 - OK[0m[1;34m
-[0m[1;34m	threadid 140242392673536 -> hwthread 12 - OK[0m[1;34m
-[0m[1;34m	threadid 140242384276864 -> hwthread 13 - OK[0m[1;34m
-[0m[1;34m	threadid 140242375880192 -> hwthread 14 - OK[0m[1;34m
-[0m[1;34m	threadid 140241889390208 -> hwthread 15 - OK[0m[1;34m
+[0m[1;34m	threadid 140074349889408 -> hwthread 1 - OK[0m[1;34m
+[0m[1;34m	threadid 140074341492736 -> hwthread 2 - OK[0m[1;34m
+[0m[1;34m	threadid 140074333096064 -> hwthread 3 - OK[0m[1;34m
+[0m[1;34m	threadid 140074117228800 -> hwthread 4 - OK[0m[1;34m
+[0m[1;34m	threadid 140074108832128 -> hwthread 5 - OK[0m[1;34m
+[0m[1;34m	threadid 140074100435456 -> hwthread 6 - OK[0m[1;34m
+[0m[1;34m	threadid 140074092038784 -> hwthread 7 - OK[0m[1;34m
+[0m[1;34m	threadid 140074083642112 -> hwthread 8 - OK[0m[1;34m
+[0m[1;34m	threadid 140074075245440 -> hwthread 9 - OK[0m[1;34m
+[0m[1;34m	threadid 140074066848768 -> hwthread 10 - OK[0m[1;34m
+[0m[1;34m	threadid 140073580358784 -> hwthread 11 - OK[0m[1;34m
+[0m[1;34m	threadid 140073571962112 -> hwthread 12 - OK[0m[1;34m
+[0m[1;34m	threadid 140073563565440 -> hwthread 13 - OK[0m[1;34m
+[0m[1;34m	threadid 140073555168768 -> hwthread 14 - OK[0m[1;34m
+[0m[1;34m	threadid 140073546772096 -> hwthread 15 - OK[0m[1;34m
 [0mNumber of Threads requested = 16
 Number of Threads counted = 16
 -------------------------------------------------------------
 Your clock granularity/precision appears to be 1 microseconds.
-Each test below will take on the order of 315815 microseconds.
-   (= 315815 clock ticks)
+Each test below will take on the order of 43149 microseconds.
+   (= 43149 clock ticks)
 Increase the size of the arrays if this shows that
 you are not getting at least 20 clock ticks per test.
 -------------------------------------------------------------
@@ -43,10 +43,10 @@ For best results, please be sure you know the
 precision of your system timer.
 -------------------------------------------------------------
 Function    Best Rate MB/s  Avg time     Min time     Max time
-Copy:           30612.8     0.098486     0.045994     0.245624
-Scale:          30673.4     0.099799     0.045903     0.258458
-Add:            34046.4     0.141509     0.062033     0.374756
-Triad:          34016.9     0.142764     0.062087     0.373986
+Copy:           30517.9     0.164300     0.046137     0.241366
+Scale:          30570.8     0.166236     0.046057     0.252541
+Add:            33966.4     0.205372     0.062179     0.361105
+Triad:          34014.0     0.207536     0.062092     0.370477
 -------------------------------------------------------------
 Solution Validates: avg error less than 1.000000e-13 on all three arrays
 -------------------------------------------------------------
