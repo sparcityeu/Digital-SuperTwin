@@ -8,13 +8,13 @@ const DashboardLinks = () => {
   const [x, setX] = useState(mockAPICall());
 
   const columnDefs = [
-    {
-      headerName: "#",
-      field: "ID",
-      maxWidth: 150,
-    },
     { headerName: "Dashboard", field: "DashboardName" },
-    { headerName: "Link", field: "DashboardLink", maxWidth: 400 },
+    {
+      headerName: "Dashboard Type",
+      field: "dashboard_type",
+      maxWidth: 200,
+    },
+    { headerName: "Link", field: "DashboardLink", maxWidth: 100 },
   ];
 
   const defaultColDef = {
@@ -143,21 +143,25 @@ const mockAPICall = () => {
     {
       ID: 1,
       DashboardName: "CPU Monitoring Dashboard",
+      dashboard_type: "Heatmap",
       DashboardLink: "Link",
     },
     {
       ID: 2,
       DashboardName: "GPU Monitoring Dashboard",
+      dashboard_type: "Graph",
       DashboardLink: "Link",
     },
     {
       ID: 3,
       DashboardName: "NUMA Monitoring Dashboard",
+      dashboard_type: "etc",
       DashboardLink: "Link",
     },
     {
       ID: 4,
       DashboardName: "Network Traffic Dashboard",
+      dashboard_type: "....",
       DashboardLink: "Link",
     },
     {
