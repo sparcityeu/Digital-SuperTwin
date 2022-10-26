@@ -57,25 +57,27 @@ const PerformExperiment = () => {
             marginBottom: "3%",
           }}
         >
-          Send Command to the Remote Machine
+          Setup the experiment
         </p>
         <div
           style={{
             textAlign: "center",
+            height: "83%",
           }}
         >
           <label
             for="message"
             class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
-            style={{
-              height: "70%",
-            }}
           ></label>
           <textarea
-            id="message"
+            id="none"
             rows="20"
             class="block p-2.5 w-full h-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Enter a shell command"
+            placeholder="Input the experimental code block"
+            style={{
+              height: "100%",
+              resize: "none",
+            }}
           ></textarea>
 
           <TooltipComponent content="Submit" position="BottomCenter">
@@ -87,7 +89,7 @@ const PerformExperiment = () => {
                 marginTop: "7%",
               }}
             >
-              Send
+              Submit
             </button>
           </TooltipComponent>
         </div>
