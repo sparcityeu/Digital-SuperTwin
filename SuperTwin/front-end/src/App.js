@@ -10,6 +10,7 @@ import { useStateContext } from "./context/ContextProvider";
 
 import "./App.css";
 import { Button } from "@syncfusion/ej2/buttons";
+import PerformExperiment from "./pages/PerformExperiment";
 
 const App = () => {
   const { activeMenu } = useStateContext();
@@ -56,6 +57,10 @@ const App = () => {
                 element={<MonitoringMetrics />}
               />
               <Route path="/DashboardLinks" element={<DashboardLinks />} />
+              <Route
+                path="/PerformExperiment"
+                element={<PerformExperiment />}
+              />
             </Routes>
           </div>
         </div>
