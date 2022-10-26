@@ -41,7 +41,7 @@ const PerformExperiment = () => {
         class="col-span-6"
         style={{
           height: "100vh",
-          backgroundColor: "#F6DDCC",
+          backgroundColor: "#4A235A",
           borderRadius: "3%",
           marginLeft: "6%",
           marginBottom: "7%",
@@ -55,6 +55,7 @@ const PerformExperiment = () => {
             fontWeight: "bold",
             marginTop: "",
             marginBottom: "3%",
+            color: "white",
           }}
         >
           Setup the experiment
@@ -62,7 +63,7 @@ const PerformExperiment = () => {
         <div
           style={{
             textAlign: "center",
-            height: "83%",
+            height: "80%",
           }}
         >
           <label
@@ -99,7 +100,7 @@ const PerformExperiment = () => {
         class="col-span-5"
         style={{
           height: "100vh",
-          backgroundColor: "#F6DDCC",
+          backgroundColor: "#4A235A",
           borderRadius: "3%",
           marginRight: "6%",
           marginBottom: "7%",
@@ -113,6 +114,7 @@ const PerformExperiment = () => {
             fontWeight: "bold",
             marginTop: "",
             marginBottom: "3%",
+            color: "white",
           }}
         >
           Experiment Metrics

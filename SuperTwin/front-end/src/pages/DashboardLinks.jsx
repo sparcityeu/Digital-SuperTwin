@@ -42,7 +42,7 @@ const DashboardLinks = () => {
         class="col-span-6"
         style={{
           height: "100vh",
-          backgroundColor: "#F6DDCC",
+          backgroundColor: "#4A235A",
           borderRadius: "3%",
           marginLeft: "6%",
           marginBottom: "7%",
@@ -56,6 +56,7 @@ const DashboardLinks = () => {
             fontWeight: "bold",
             marginTop: "",
             marginBottom: "3%",
+            color: "white",
           }}
         >
           Dashboard Links
@@ -80,7 +81,7 @@ const DashboardLinks = () => {
         class="col-span-5"
         style={{
           height: "100vh",
-          backgroundColor: "#F6DDCC",
+          backgroundColor: "#4A235A",
           borderRadius: "3%",
           marginRight: "6%",
           marginBottom: "7%",
@@ -94,6 +95,7 @@ const DashboardLinks = () => {
             fontWeight: "bold",
             marginTop: "",
             marginBottom: "3%",
+            color: "white",
           }}
         >
           Send Command to the Remote Machine

@@ -19,12 +19,12 @@ import styled from "styled-components";
 const CardWrapper = styled.div`
   justify-content: center;
   padding: 2rem 1rem 2rem 1rem;
-  background: #f6ddcc;
+  background: #4a235a;
 `;
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    background: "red",
+    background: "black",
     color: "#black",
   },
 
@@ -60,11 +60,12 @@ const AnimatedCard = (group_id, extra_info, metrics) => {
           className={classes.root}
           variant="outlined"
           style={{
+            borderColor: "#4A235A",
             backgroundColor: "whitesmoke",
           }}
         >
           <CardContent>
-            <Typography style={{ paddingBottom: "1rem", color: "#D35400" }}>
+            <Typography style={{ paddingBottom: "1rem", color: "#212329" }}>
               Metric Group-{group_id}
             </Typography>
             <Typography variant="body2" component="p">
@@ -74,10 +75,11 @@ const AnimatedCard = (group_id, extra_info, metrics) => {
           <CardActions
             disableSpacing
             style={{
-              backgroundColor: "#DC7633",
+              backgroundColor: "#212329 ",
             }}
           >
-            Metric
+            <Typography color="common.white">Metric</Typography>
+
             <IconButton
               style={{ color: "black" }}
               className={clsx(classes.expand, {
@@ -93,13 +95,17 @@ const AnimatedCard = (group_id, extra_info, metrics) => {
           <Collapse in={expanded} timeout="auto" unmountOnExit>
             <CardContent
               style={{
-                backgroundColor: "#E59866",
+                backgroundColor: "#212329",
               }}
             >
               <Typography paragraph>
                 {metrics.map((metric) => {
                   return (
-                    <Typography varian="body1" key={metric}>
+                    <Typography
+                      varian="body1"
+                      color="common.white"
+                      key={metric}
+                    >
                       {metric}
                     </Typography>
                   );
@@ -119,4 +125,3 @@ const AnimatedCard = (group_id, extra_info, metrics) => {
 };
 
 export default AnimatedCard;
-

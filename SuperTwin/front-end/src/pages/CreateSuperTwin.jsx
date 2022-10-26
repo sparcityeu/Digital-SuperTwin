@@ -48,7 +48,7 @@ const CreateSuperTwin = () => {
         class="col-span-3"
         style={{
           height: "100vh",
-          backgroundColor: "#F6DDCC",
+          backgroundColor: "#4A235A",
           borderRadius: "3%",
           marginLeft: "10%",
           marginBottom: "10%",
@@ -61,6 +61,7 @@ const CreateSuperTwin = () => {
             textAlign: "center",
             fontWeight: "bolder",
             marginTop: "3%",
+            color: "white",
           }}
         >
           SuperTwin
@@ -81,6 +82,7 @@ const CreateSuperTwin = () => {
             fontWeight: "bold",
             marginTop: "5%",
             fontSize: "17px",
+            color: "white",
           }}
         >
           Real-time Supercomputer Monitoring Tool
@@ -101,6 +103,7 @@ const CreateSuperTwin = () => {
               fontWeight: "lighter",
               fontSize: "15px",
               padding: "30px",
+              color: "white",
             }}
           >
             SuperTwin creates a structured data representation over an HPC
@@ -146,7 +149,7 @@ const CreateSuperTwin = () => {
         style={{
           height: "100vh",
           width: "auto",
-          backgroundColor: "#F6DDCC",
+          backgroundColor: "#4A235A",
           borderRadius: "3%",
           marginRight: "10%",
           marginBottom: "10%",
@@ -160,6 +163,7 @@ const CreateSuperTwin = () => {
               textAlign: "center",
               fontWeight: "bolder",
               marginTop: "130px",
+              color: "white",
             }}
           >
             Create a SuperTwin
@@ -175,6 +179,7 @@ const CreateSuperTwin = () => {
                 fontWeight: "bold",
                 marginTop: "7%",
                 fontSize: "15px",
+                color: "white",
               }}
             >
               Remote Machine Address
@@ -203,6 +208,7 @@ const CreateSuperTwin = () => {
                 fontWeight: "bold",
                 marginTop: "7%",
                 fontSize: "15px",
+                color: "white",
               }}
             >
               User Name
@@ -231,6 +237,7 @@ const CreateSuperTwin = () => {
                 fontWeight: "bold",
                 marginTop: "7%",
                 fontSize: "15px",
+                color: "white",
               }}
             >
               User Password
