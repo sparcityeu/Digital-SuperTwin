@@ -11,12 +11,12 @@ const MonitoringMetrics = () => {
   const [x, setX] = useState(mockAPICall());
 
   const columnDefs = [
-    {
-      headerName: "#",
-      field: "ID",
-      maxWidth: 150,
-    },
     { headerName: "Metric", field: "MetricName" },
+    {
+      headerName: "Metric Type",
+      field: "metric_type",
+      maxWidth: 200,
+    },
   ];
 
   const defaultColDef = {
@@ -174,201 +174,123 @@ const mockAPICall = () => {
 
 const metricData = [
   {
-    ID: 1,
-    MetricName: "Metric-1",
+    metric_type: "CPU",
+    MetricName: "CPU Metric-1",
   },
   {
-    ID: 2,
-    MetricName: "Metric-2",
+    metric_type: "Network",
+    MetricName: "Network Metric-1",
   },
   {
-    ID: 3,
-    MetricName: "Metric-3",
+    metric_type: "NUMA",
+    MetricName: "NUMA Metric-1",
   },
   {
-    ID: 4,
-    MetricName: "Metric-4",
+    metric_type: "GPU",
+    MetricName: "GPU Metric-1",
   },
   {
-    ID: 5,
-    MetricName: "Metric-5",
+    metric_type: "Disk",
+    MetricName: "Disk Metric-1",
   },
   {
-    ID: 1,
-    MetricName: "Metric-1",
+    metric_type: "CPU",
+    MetricName: "CPU Metric-2",
   },
   {
-    ID: 2,
-    MetricName: "Metric-2",
+    metric_type: "Network",
+    MetricName: "Network Metric-2",
   },
   {
-    ID: 3,
-    MetricName: "Metric-3",
+    metric_type: "NUMA",
+    MetricName: "NUMA Metric-2",
   },
   {
-    ID: 4,
-    MetricName: "Metric-4",
+    metric_type: "GPU",
+    MetricName: "GPU Metric-2",
   },
   {
-    ID: 5,
-    MetricName: "Metric-5",
+    metric_type: "Disk",
+    MetricName: "Disk Metric-2",
   },
   {
-    ID: 1,
-    MetricName: "Metric-1",
+    metric_type: "CPU",
+    MetricName: "CPU Metric-3",
   },
   {
-    ID: 2,
-    MetricName: "Metric-2",
+    metric_type: "Network",
+    MetricName: "Network Metric-3",
   },
   {
-    ID: 3,
-    MetricName: "Metric-3",
+    metric_type: "NUMA",
+    MetricName: "NUMA Metric-3",
   },
   {
-    ID: 4,
-    MetricName: "Metric-4",
+    metric_type: "GPU",
+    MetricName: "GPU Metric-3",
   },
   {
-    ID: 5,
-    MetricName: "Metric-5",
+    metric_type: "Disk",
+    MetricName: "Disk Metric-3",
   },
   {
-    ID: 1,
-    MetricName: "Metric-1",
+    metric_type: "CPU",
+    MetricName: "CPU Metric-4",
   },
   {
-    ID: 2,
-    MetricName: "Metric-2",
+    metric_type: "Network",
+    MetricName: "Network Metric-4",
   },
   {
-    ID: 3,
-    MetricName: "Metric-3",
+    metric_type: "NUMA",
+    MetricName: "NUMA Metric-4",
   },
   {
-    ID: 4,
-    MetricName: "Metric-4",
+    metric_type: "GPU",
+    MetricName: "GPU Metric-4",
   },
   {
-    ID: 5,
-    MetricName: "Metric-5",
+    metric_type: "Disk",
+    MetricName: "Disk Metric-4",
   },
   {
-    ID: 1,
-    MetricName: "Metric-1",
+    metric_type: "CPU",
+    MetricName: "CPU Metric-5",
   },
   {
-    ID: 2,
-    MetricName: "Metric-2",
+    metric_type: "Network",
+    MetricName: "Network Metric-5",
   },
   {
-    ID: 3,
-    MetricName: "Metric-3",
+    metric_type: "NUMA",
+    MetricName: "NUMA Metric-5",
   },
   {
-    ID: 4,
-    MetricName: "Metric-4",
+    metric_type: "GPU",
+    MetricName: "GPU Metric-5",
   },
   {
-    ID: 5,
-    MetricName: "Metric-5",
+    metric_type: "Disk",
+    MetricName: "Disk Metric-5",
   },
   {
-    ID: 1,
-    MetricName: "Metric-1",
+    metric_type: "CPU",
+    MetricName: "CPU Metric-6",
   },
   {
-    ID: 2,
-    MetricName: "Metric-2",
+    metric_type: "Network",
+    MetricName: "Network Metric-6",
   },
   {
-    ID: 3,
-    MetricName: "Metric-3",
+    metric_type: "NUMA",
+    MetricName: "NUMA Metric-6",
   },
   {
-    ID: 4,
-    MetricName: "Metric-4",
+    metric_type: "GPU",
+    MetricName: "GPU Metric-6",
   },
   {
-    ID: 5,
-    MetricName: "Metric-5",
-  },
-  {
-    ID: 1,
-    MetricName: "Metric-1",
-  },
-  {
-    ID: 2,
-    MetricName: "Metric-2",
-  },
-  {
-    ID: 3,
-    MetricName: "Metric-3",
-  },
-  {
-    ID: 4,
-    MetricName: "Metric-4",
-  },
-  {
-    ID: 5,
-    MetricName: "Metric-5",
-  },
-  {
-    ID: 1,
-    MetricName: "Metric-1",
-  },
-  {
-    ID: 2,
-    MetricName: "Metric-2",
-  },
-  {
-    ID: 3,
-    MetricName: "Metric-3",
-  },
-  {
-    ID: 4,
-    MetricName: "Metric-4",
-  },
-  {
-    ID: 5,
-    MetricName: "Metric-5",
+    metric_type: "Disk",
+    MetricName: "Disk Metric-6",
   },
 ];
-
-{
-  /*}<GridComponent
-          dataSource={metricData}
-          width="100%"
-          height="100%"
-          allowPaging
-          allowSorting
-          rowSelection={"multiple"}
-          rowMultiSelectWithClick={true}
-          pageSettings={{ pageCount: 5 }}
-          editSettings={editing}
-          toolbar={toolbarOptions}
-          style={{
-            marginBottom: "50%",
-          }}
-        >
-          <ColumnsDirective>
-            {employeesGrid.map((item, index) => (
-              <ColumnDirective key={index} {...item} />
-            ))}
-          </ColumnsDirective>
-          <Inject
-            services={[
-              Search,
-              Page,
-              Resize,
-              Sort,
-              ContextMenu,
-              Filter,
-              ExcelExport,
-              Edit,
-              PdfExport,
-            ]}
-          />
-        </GridComponent>
-          {*/
-}
