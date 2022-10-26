@@ -48,7 +48,10 @@ const MonitoringMetrics = () => {
           borderRadius: "3%",
           marginLeft: "6%",
           marginBottom: "7%",
-          padding: "3%",
+          paddingTop: "3%",
+          paddingLeft: "3%",
+          paddingRight: "3%",
+          paddingBottom: "6%",
         }}
       >
         <p

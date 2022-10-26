@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AnimatedCard = (group_id, extra_info, metrics) => {
+const AnimatedStatusCard = (group_id, extra_info, status) => {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
   const [checked, setChecked] = useState(false);
@@ -99,26 +99,11 @@ const AnimatedCard = (group_id, extra_info, metrics) => {
               }}
             >
               <Typography paragraph>
-                {metrics.map((metric) => {
-                  return (
-                    <Typography
-                      varian="body1"
-                      color="common.white"
-                      key={metric}
-                    >
-                      {metric}
-                    </Typography>
-                  );
-                })}
+                <Typography varian="body1" color="common.white" key={status}>
+                  {status}
+                </Typography>
               </Typography>
             </CardContent>
-            <div style={{ }}>
-              <Checkbox
-                checked={checked}
-                onChange={handleChange}
-                inputProps={{ "aria-label": "controlled" }}
-              />
-            </div>
           </Collapse>
         </Card>
       </CardWrapper>
@@ -126,4 +111,4 @@ const AnimatedCard = (group_id, extra_info, metrics) => {
   );
 };
 
-export default AnimatedCard;
+export default AnimatedStatusCard;

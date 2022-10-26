@@ -4,6 +4,8 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 
+import AnimatedStatusCard from "../components/StatusCard";
+
 const DashboardLinks = () => {
   const [x, setX] = useState(mockAPICall());
 
@@ -46,7 +48,10 @@ const DashboardLinks = () => {
           borderRadius: "3%",
           marginLeft: "6%",
           marginBottom: "7%",
-          padding: "3%",
+          paddingTop: "3%",
+          paddingLeft: "3%",
+          paddingRight: "3%",
+          paddingBottom: "6%",
         }}
       >
         <p
@@ -98,7 +103,7 @@ const DashboardLinks = () => {
             color: "white",
           }}
         >
-          Send Command to the Remote Machine
+          Monitoring Daemon Status
         </p>
         <div
           style={{
@@ -112,12 +117,7 @@ const DashboardLinks = () => {
               height: "70%",
             }}
           ></label>
-          <textarea
-            id="message"
-            rows="20"
-            class="block p-2.5 w-full h-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Enter a shell command"
-          ></textarea>
+          {AnimatedStatusCard("orhun", "orhun", "orhun")}
 
           <TooltipComponent content="Submit" position="BottomCenter">
             <button

@@ -20,7 +20,7 @@ const links = [
         location: "DashboardLinks",
       },
       {
-        name: "Perform an Experiment",
+        name: "Perform Experiment",
         location: "PerformExperiment",
       },
     ],
