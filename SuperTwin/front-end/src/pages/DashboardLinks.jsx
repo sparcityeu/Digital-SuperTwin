@@ -8,6 +8,7 @@ import AnimatedStatusCard from "../components/StatusCard";
 
 const DashboardLinks = () => {
   const [x, setX] = useState(mockAPICall());
+  const [daemonStatus, setDaemonStatus] = useState(true);
 
   const columnDefs = [
     { headerName: "Dashboard", field: "DashboardName" },
@@ -117,20 +118,18 @@ const DashboardLinks = () => {
               height: "70%",
             }}
           ></label>
-          {AnimatedStatusCard("orhun", "orhun", "orhun")}
-
-          <TooltipComponent content="Submit" position="BottomCenter">
-            <button
-              type="submit"
-              class="bg-white hover:bg-gray-100 text-gray-800 py-3 px-5 text-xl border border-gray-400 rounded shadow"
-              style={{
-                textAlign: "center",
-                marginTop: "7%",
-              }}
-            >
-              Send
-            </button>
-          </TooltipComponent>
+          {AnimatedStatusCard(
+            "abcd-efgh-1234-5678",
+            "2576",
+            daemonStatus === true && daemonStatus !== false
+              ? "Probing"
+              : "Not connected",
+            {
+              machineAddress: "10.36.54.195",
+              userName: "mgale",
+              grafanaAPIKey: "fasdfasdfasdfasdfadsf",
+            }
+          )}
         </div>
       </div>
     </div>
