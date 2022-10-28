@@ -127,6 +127,7 @@ const DashboardLinks = () => {
             {
               machineAddress: "10.36.54.195",
               userName: "mgale",
+              mongodbID: "id312312412312",
               grafanaAPIKey: "fasdfasdfasdfasdfadsf",
             }
           )}
