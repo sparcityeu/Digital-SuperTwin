@@ -7,6 +7,7 @@
     "@emotion/styled": "^11.10.4",
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
+    "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.10",
     "@syncfusion/ej2": "^19.4.48",
     "@syncfusion/ej2-react-calendars": "^19.4.48",
