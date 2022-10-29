@@ -13,6 +13,7 @@ import generate_dt
 import sampling
 import stream_benchmark
 import hpcg_benchmark
+import adcarm_benchmark
 import roofline_dashboard
 import static_data
 
@@ -35,6 +36,7 @@ HPCG_PARAM["nx"] = 104
 HPCG_PARAM["ny"] = 104
 HPCG_PARAM["nz"] = 104
 HPCG_PARAM["time"] = 60
+##HPCG benchmark parameters
 
 def get_twin_description(hostProbFile):
 
@@ -77,14 +79,25 @@ def insert_twin_description(_twin, supertwin):
 class SuperTwin:
 
     def __init__(self):
-        self.addr = input("Address of the remote system: ")
+        #self.addr = input("Address of the remote system: ")
+
+        ##debug
+        self.addr = "10.36.54.195"
+        ##debug
+        
         exist, twin_id, collection_id = utils.check_state(self.addr)
         if(not exist or exist):
         
             self._id = str(uuid.uuid4())
             print("Creating a new digital twin with id:", self._id)
         
-            self.name, self.prob_file, self.SSHuser, self.SSHpass = remote_probe.main(self.addr)
+            #self.name, self.prob_file, self.SSHuser, self.SSHpass = remote_probe.main(self.addr)
+            ##debug
+            self.name = "dolap"
+            self.prob_file = "probing_dolap.json"
+            self.SSHuser = "ftasyaran"
+            self.SSHpass = "kemaliye"
+            ##debug
             
             self.influxdb_name = self.name + "_main"
             self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
@@ -92,9 +105,12 @@ class SuperTwin:
             self.monitor_metrics = utils.read_monitor_metrics() ##These are the continuously sampled metrics
             self.monitor_tag = "_monitor"
             self.monitor_pid = sampling.main(self.name, self.addr, self.influxdb_name, self.monitor_tag, self.monitor_metrics)
-            self.mongodb_id = insert_twin_description(get_twin_description(self.prob_file),
-                                                            self)
-        
+            self.mongodb_id = insert_twin_description(get_twin_description(self.prob_file),self)
+
+            ##debug
+            #self.mongodb_id = "6357c92ea887736a6f0c0f21"
+            ##debug
+            
             print("Collection id:", self.mongodb_id)
             utils.update_state(self.addr, self._id, self.mongodb_id)
             self.resurrect_and_clear_monitors() ##If there is any zombie monitor sampler
@@ -104,7 +120,8 @@ class SuperTwin:
             self.benchmark_results = 0
             self.add_stream_benchmark()
             self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
-            self.generate_roofline_dashboard()
+            self.add_adcarm_bencmark()
+            #self.generate_roofline_dashboard()
 
         else:
 
@@ -179,7 +196,7 @@ class SuperTwin:
                 for _thread_key in stream_res[_field_key]: 
                     _dict = {}
                     _dict["@id"] = id_base + "benchmark_res:B" + str(benchmark_result_id) + ";1"
-                    _dict["@type"] = "benchmark result"
+                    _dict["@type"] = "benchmark_result"
                     _dict["@field"] = _field_key
                     _dict["@threads"] = int(_thread_key)
                     _dict["@modifier"] = stream_modifiers[_thread_key]
@@ -210,7 +227,7 @@ class SuperTwin:
         content["@date"] = datetime.datetime.now().strftime("%d-%m-%Y")
         content["@name"] = "HPCG"
         content["@environment"] = hpcg_modifiers['environment']
-        content["@parameters"] = hpcg_res["parameters"] 
+        content["@global_parameters"] = hpcg_res["parameters"] 
         
         content["@mvres"] = hpcg_res["Max_Glob"] 
         content["@mvres_name"] = "Global Max"
@@ -223,7 +240,7 @@ class SuperTwin:
                 for _thread_key in hpcg_res[_field_key]: 
                     _dict = {}
                     _dict["@id"] = id_base + "benchmark_res:B" + str(benchmark_result_id) + ";1"
-                    _dict["@type"] = "benchmark result"
+                    _dict["@type"] = "benchmark_result"
                     _dict["@field"] = _field_key
                     _dict["@threads"] = int(_thread_key)
                     _dict["@modifier"] = hpcg_modifiers[_thread_key]
@@ -240,7 +257,83 @@ class SuperTwin:
 
         return content
 
+    
+    def prepare_adcarm_content(self, adcarm_modifiers, adcarm_res):
+        ##We are not probably using adcarm_modifiers here
+        ##It only contains global environment variable changes in the system
+        ##Since it is also exist in adcarm_res, in contrary to other benchmarks
+
+        def max_threads():
+            threads = adcarm_res["threads"].keys()
+            threads = [int(x) for x in threads]
+            max_thread = max(threads)
+            return str(max_thread)
+
+        def which():
+            runs = adcarm_res["threads"][max_threads()]
+
+            for i in range(len(runs)):
+                if("binding" not in runs[i].keys()):
+                    return i
         
+        benchmark_id = str(self.benchmarks) ##These may get GLOBAL (including other systems) later
+        benchmark_result_id = self.benchmark_results
+
+        id_base = "dtmi:dt:" + self.name + ":"
+
+        content = {}
+        content["@id"] = id_base + "benchmark:B" + benchmark_id + ";1"
+        content["@type"] = "benchmark"
+        content["@date"] = datetime.datetime.now().strftime("%d-%m-%Y")
+        content["@name"] = "CARM"
+        
+        if(adcarm_modifiers["environment"] != []):
+            content["@environment"] = adcarm_modifiers["environment"]
+            
+        #content["@global_parameters"] = carm config values, L1size, L2size, Frequency?
+        content["@mvres"] = adcarm_res["threads"][max_threads()][which()]["FP"]
+        content["@mvres_name"] = "Max threads ridge point, without modifiers"
+        content["@mvres_unit"] = "GFlop/s"
+
+        content["@contents"] = []
+
+        for _thread_key in adcarm_res["threads"]:
+            for i in range(len(adcarm_res["threads"][_thread_key])):
+                _run_dict = adcarm_res["threads"][_thread_key][i]
+                _dict = {}
+                _dict["@id"] = id_base + "benchmark_res:B" + str(benchmark_result_id) + ";1"
+                _dict["@type"] = "benchmark_result"
+                _dict["@threads"] = int(_thread_key)
+                if("binding" in _run_dict.keys()):
+                    _dict["@modifier"] = _run_dict["binding"]
+
+                _dict["@local_parameters"] = []
+                _dict["@local_parameters"].append({'inst': _run_dict["inst"]})
+                _dict["@local_parameters"].append({'isa': _run_dict["isa"]})
+                _dict["@local_parameters"].append({'precision': _run_dict["precision"]})
+                _dict["@local_parameters"].append({'ld_st_ratio': int(_run_dict["ldstratio"])})
+                _dict["@local_parameters"].append({'only_ld': bool(_run_dict["onlyld"])})
+                _dict["@local_parameters"].append({'interleaved': bool(_run_dict["interleaved"])})
+                _dict["@local_parameters"].append({'numops': int(_run_dict["numops"])})
+                _dict["@local_parameters"].append({'dram_bytes': int(_run_dict["drambytes"])})
+                
+                _dict["@result"] = []
+                _dict["@result"].append({"L1": _run_dict["L1"]})
+                _dict["@result"].append({"L2": _run_dict["L2"]})
+                _dict["@result"].append({"L3": _run_dict["L3"]})
+                _dict["@result"].append({"DRAM": _run_dict["DRAM"]})
+                _dict["@result"].append({"FP": _run_dict["FP"]})
+
+                _dict["@unit"] = "GFLOPs/s"
+
+                content["@contents"].append(_dict)
+                benchmark_result_id += 1
+
+            
+        self.benchmarks += 1
+        self.benchmark_results = benchmark_result_id
+
+        return content
         
     def update_twin_document__add_stream_benchmark(self, stream_modifiers, stream_res):
 
@@ -261,7 +354,7 @@ class SuperTwin:
     def add_stream_benchmark(self):
         
         stream_modifiers = stream_benchmark.generate_stream_bench_sh(self)
-        stream_benchmark.execute_stream_bench(self)
+        #stream_benchmark.execute_stream_bench(self)
         stream_res = stream_benchmark.parse_stream_bench(self)
 
         self.update_twin_document__add_stream_benchmark(stream_modifiers, stream_res)
@@ -286,27 +379,67 @@ class SuperTwin:
     def add_hpcg_benchmark(self, HPCG_PARAM):
 
         hpcg_modifiers = hpcg_benchmark.generate_hpcg_bench_sh(self, HPCG_PARAM)
-        hpcg_benchmark.execute_hpcg_bench(self)
+        #hpcg_benchmark.execute_hpcg_bench(self)
         hpcg_res = hpcg_benchmark.parse_hpcg_bench(self)
 
         self.update_twin_document__add_hpcg_benchmark(hpcg_modifiers, hpcg_res)
 
+    def update_twin_document__add_adcarm_benchmark(self, adcarm_modifiers, adcarm_res):
+        ##Different from stream and hpcg benchmarks, adcarm have it's modifiers in result
+
+        db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
+        meta_with_twin = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
+        new_twin = meta_with_twin["twin_description"]
+
+                
+        for key in new_twin:
+            if(key.find("system") != -1): ##Get the system interface and add the benchmarks
+                content = self.prepare_adcarm_content(adcarm_modifiers, adcarm_res)
+                new_twin[key]["contents"].append(content)
+
+        meta_with_twin["twin_description"] = new_twin
+        db.replace_one({"_id": ObjectId(self.mongodb_id)}, meta_with_twin)
+        print("CARM benchmark result added to Digital Twin")
+        
+
+    def add_adcarm_bencmark(self):
+        adcarm_config = adcarm_benchmark.generate_adcarm_config(self)
+        adcarm_modifiers = adcarm_benchmark.generate_adcarm_bench_sh(self, adcarm_config)
+        #adcarm_benchmark.execute_adcarm_bench(self)
+        adcarm_res = adcarm_benchmark.parse_adcarm_bench()
+                        
+        self.update_twin_document__add_adcarm_benchmark(adcarm_modifiers, adcarm_res)
+        
+
     def update_twin_document__add_roofline_dashboard(self, url):
 
         db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
-        print("Killing existed monitor sampler with pid:", self.monitor_pid)
-        #detect_utils.cmd("sudo kill " + str(self.monitor_pid))
-        
+                
         to_new = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
         to_new["system_dashboard"] = "http://localhost:3000" + url
         db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
         print("Roofline dashboard added to Digital Twin")
+        
         
     def generate_roofline_dashboard(self):
         url = roofline_dashboard.generate_roofline_dashboard(self)
         static_data.main(self)
         self.update_twin_document__add_roofline_dashboard(url)
 
+    def generate_bench_info_dashboard(self):
+        ##This will parse digital twin to get benchmark information
+        x = 1
+
+    def generate_monitor_dashboard(self):
+        ##This will generate monitor dashboard panels.
+        ##However monitor dashboard panels should be called by observation panels
+
+        x = 1
+
+    def execute_observation(self):
+
+        x = 1
+        
         
     def generate_observation_dashboard_type1(self): ##Applications runs on different threads at the same time
         x = 1
@@ -315,9 +448,6 @@ class SuperTwin:
     def generate_observation_dashboard_type2(self): ##Applications runs at different times then overlapped
         x = 1
 
-        
-    #def generate_inescid_dashboard_type1():
-    #def generate_inescid_dashboard_type2():
 
     
                 

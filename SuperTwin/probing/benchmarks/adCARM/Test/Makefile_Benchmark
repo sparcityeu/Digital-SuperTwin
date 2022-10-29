@@ -1,0 +1,6 @@
+COMPILER = gcc
+CFLAGS = -g -Wall -Wextra -Ofast -march=native
+CFLAGS += -pthread
+
+all:
+	$(COMPILER) $(CFLAGS) Test/main_test.c -o bin/test -lm
