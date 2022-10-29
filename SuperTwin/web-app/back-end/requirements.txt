@@ -13,6 +13,7 @@ MarkupSafe==2.1.1
 pipenv==2022.10.25
 platformdirs==2.5.2
 pymongo==4.3.2
+python-dotenv==0.21.0
 python-env==1.0.0
 six==1.16.0
 virtualenv==20.16.6
