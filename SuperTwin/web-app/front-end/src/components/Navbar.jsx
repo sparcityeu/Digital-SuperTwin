@@ -93,7 +93,7 @@ const Navbar = () => {
           style={{
             marginLeft: "30px",
             fontSize: "26px",
-            color: "#DC7633",
+            color: "white",
           }}
         >
           {GetLocationName()}
