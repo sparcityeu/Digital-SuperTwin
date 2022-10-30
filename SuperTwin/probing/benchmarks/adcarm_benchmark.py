@@ -30,7 +30,7 @@ def get_fields(data):
                 
                 if(content["name"] == "model"):
                     string = content["description"]
-                    nominal_frequency = float(string.split("@")[1].strip("GHz").strip(""))
+                    nominal_frequency = str(float(string.split("@")[1].strip("GHz").strip("")))
 
         if(key.find("L1D") != -1):
             contents = data[key]["contents"]
@@ -72,12 +72,12 @@ def generate_adcarm_config(SuperTwin):
 
     nominal_frequency, l1_cache, l2_cache, l3_cache = get_fields(data)
 
-    base = "/probing/benchmarks/adCARM/config/"
+    base = "probing/benchmarks/adCARM/config/"
     config_name = SuperTwin.name + "_gen.conf"
     local_path_and_name = "config/" + config_name
     
 
-    writer = open(base + config_name, "w")
+    writer = open(base + config_name, "w+")
     writer.write("name=" + SuperTwin.name + "\n")
     writer.write("nominal_frequency=" + nominal_frequency + "\n")
     writer.write("l1_cache=" + l1_cache + "\n")

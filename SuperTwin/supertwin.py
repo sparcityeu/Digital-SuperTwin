@@ -14,7 +14,8 @@ import sampling
 import stream_benchmark
 import hpcg_benchmark
 import adcarm_benchmark
-import roofline_dashboard
+#import roofline_dashboard
+
 import static_data
 
 import uuid
@@ -60,6 +61,7 @@ def insert_twin_description(_twin, supertwin):
     
     metadata = {
         "id": supertwin._id,
+        "address": supertwin.addr,
         "hostname": supertwin.name,
         "date": date,
         "twin_description": _twin,
@@ -75,30 +77,70 @@ def insert_twin_description(_twin, supertwin):
 
     return twin_id
 
+
+def register_twin_state(SuperTwin):
+
+    db = utils.get_mongo_database(SuperTwin.name, SuperTwin.mongodb_addr)["twin"]
+    meta = loads(dumps(db.find({"_id": ObjectId(SuperTwin.mongodb_id)})))[0]
+
+    
+    meta["twin_state"] = {}
+    meta["twin_state"]["SSHuser"] = SuperTwin.SSHuser
+    meta["twin_state"]["SSHpass"] = utils.obscure(str.encode(SuperTwin.SSHpass))
+    meta["twin_state"]["monitor_tag"] = SuperTwin.monitor_tag
+    meta["twin_state"]["benchmarks"] = SuperTwin.benchmarks
+    meta["twin_state"]["benchmark_results"] = SuperTwin.benchmark_results
+
+    db.replace_one({"_id": ObjectId(SuperTwin.mongodb_id)}, meta)
+    
+    print("Twin state is registered to db..")
+
+
+def query_twin_state(name, mongodb_id, mongodb_addr):
+
+    db = utils.get_mongo_database(name, mongodb_addr)["twin"]
+    meta = loads(dumps(db.find({"_id": ObjectId(mongodb_id)})))[0]
+    print("Found db..")
+    
+    return meta["twin_state"]
+
             
 class SuperTwin:
 
-    def __init__(self):
-        #self.addr = input("Address of the remote system: ")
+    def __init__(self, *args):
 
-        ##debug
-        self.addr = "10.36.54.195"
-        ##debug
+        exist = False
+        name = None
+        exist = None
+        twin_id = None
+        collection_id =None
         
-        exist, twin_id, collection_id = utils.check_state(self.addr)
-        if(not exist or exist):
+        if(len(args) > 0):
+            exist, name, twin_id, collection_id = utils.check_state(args[0])
         
+        if(len(args) > 0 or exist):
+
+            self.name = name
+            self.mongodb_id = collection_id
+            self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
+            self.monitor_metrics = utils.read_monitor_metrics()
+            meta = query_twin_state(self.name, self.mongodb_id, self.mongodb_addr)
+            self.SSHUser = meta["SSHuser"]
+            self.SSHpass = utils.unobscure(meta["SSHpass"]).decode()
+            self.monitor_tag = meta["monitor_tag"]
+            self.benchmarks = meta["benchmarks"]
+            self.benchmark_results = meta["benchmark_results"]
+
+            print("SuperTwin is instantiated from db..")
+
+        else:
+            
+            self.addr = input("Address of the remote system: ")
             self._id = str(uuid.uuid4())
             print("Creating a new digital twin with id:", self._id)
-        
-            #self.name, self.prob_file, self.SSHuser, self.SSHpass = remote_probe.main(self.addr)
-            ##debug
-            self.name = "dolap"
-            self.prob_file = "probing_dolap.json"
-            self.SSHuser = "ftasyaran"
-            self.SSHpass = "kemaliye"
-            ##debug
             
+            self.name, self.prob_file, self.SSHuser, self.SSHpass = remote_probe.main(self.addr)
+                        
             self.influxdb_name = self.name + "_main"
             self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
             utils.get_influx_database(self.influxdb_addr, self.influxdb_name)
@@ -106,13 +148,9 @@ class SuperTwin:
             self.monitor_tag = "_monitor"
             self.monitor_pid = sampling.main(self.name, self.addr, self.influxdb_name, self.monitor_tag, self.monitor_metrics)
             self.mongodb_id = insert_twin_description(get_twin_description(self.prob_file),self)
-
-            ##debug
-            #self.mongodb_id = "6357c92ea887736a6f0c0f21"
-            ##debug
             
             print("Collection id:", self.mongodb_id)
-            utils.update_state(self.addr, self._id, self.mongodb_id)
+            utils.update_state(self.name, self.addr, self._id, self.mongodb_id)
             self.resurrect_and_clear_monitors() ##If there is any zombie monitor sampler
             
             ##benchmark members
@@ -122,15 +160,9 @@ class SuperTwin:
             self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
             self.add_adcarm_bencmark()
             #self.generate_roofline_dashboard()
-
-        else:
-
-            print("A digital twin with")
-            print("--twin_id:", twin_id)
-            print("--collection_id:", collection_id)
-            print("--monitor_pid:", monitor_pid)
-            print("Is already exists")
-
+            
+            register_twin_state(self)
+            
             
     def resurrect_and_clear_monitors(self):
         
@@ -154,7 +186,6 @@ class SuperTwin:
                 if(pid != self.monitor_pid):
                     print("Killing zombie monitoring sampler with pid:", pid)
                     detect_utils.cmd("sudo kill " + str(pid))
-
 
 
     def update_twin_document__new_monitor_pid(self):
@@ -437,7 +468,7 @@ class SuperTwin:
         x = 1
 
     def execute_observation(self):
-
+        print("This is observed")
         x = 1
         
         
@@ -455,4 +486,6 @@ class SuperTwin:
 if __name__ == "__main__":
 
     myTwin = SuperTwin()
+    #otherTwin = SuperTwin("10.36.54.195")
+    #otherTwin.execute_observation()
     #myTwin.update_twin_document__new_monitor_pid()

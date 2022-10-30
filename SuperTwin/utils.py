@@ -14,6 +14,17 @@ import requests
 from grafanalib.core import Dashboard
 from grafanalib._gen import DashboardEncoder
 
+import secrets
+from base64 import urlsafe_b64encode as b64e, urlsafe_b64decode as b64d
+
+from cryptography.fernet import Fernet
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+
+import zlib
+from base64 import urlsafe_b64encode as b64e, urlsafe_b64decode as b64d
+
 def get_mongo_database(mongodb_name, CONNECTION_STRING):
 
     ##Create a connection for mongodb
@@ -21,6 +32,7 @@ def get_mongo_database(mongodb_name, CONNECTION_STRING):
 
     ##Create the database for this instance(s)
     return client[mongodb_name]
+
 
 def get_influx_database(address, influxdb_name):
 
@@ -63,18 +75,19 @@ def read_monitor_metrics():
 
     return metrics
 
-def update_state(addr, twin_id, collection_id):
+def update_state(name, addr, twin_id, collection_id):
 
     writer = open("supertwin.state", "a")
     #writer.write("#--------------------------------------------------#")
     #writer.write("\n")
-    writer.write(addr + "|" + twin_id + "|" + collection_id)
+    writer.write(name + "|" + addr + "|" + twin_id + "|" + collection_id)
     writer.write("\n")
     writer.close()
 
 def check_state(addr):
 
     exist = False
+    name = None
     twin_id = None
     collection_id = None
         
@@ -84,14 +97,15 @@ def check_state(addr):
     for line in lines:
         #if(line.find("#---") == -1):
         fields = line.strip("\n").split("|")
-        if(addr == fields[0]):
+        if(addr == fields[1]):
             exist = True
-            addr = fields[0]
-            twin_id = fields[1]
-            collection_id = fields[2]
-            return exist, twin_id, collection_id
+            name = fields[0]
+            addr = fields[1]
+            twin_id = fields[2]
+            collection_id = fields[3]
+            return exist, name, twin_id, collection_id
             
-    return exist, twin_id, collection_id
+        return exist, name, twin_id, collection_id
 
 
 #Hyperthreading, on-off?
@@ -373,3 +387,10 @@ def fill_data(data, hostname, hostip):
             "max_vector_size": 512} ##change this with vector extension look-up
     
     return data
+
+
+def obscure(data: bytes) -> bytes:
+    return b64e(zlib.compress(data, 9))
+
+def unobscure(obscured: bytes) -> bytes:
+    return zlib.decompress(b64d(obscured))
