@@ -14,6 +14,7 @@ import sampling
 import stream_benchmark
 import hpcg_benchmark
 import adcarm_benchmark
+import observation
 #import roofline_dashboard
 
 import static_data
@@ -483,7 +484,9 @@ class SuperTwin:
         this_observation_id = observation_id + "_" + str(element_id)
 
     def execute_observation_batch(self, commands, metrics):
+        
         observation_id = str(uuid.uuid4())
+        reconfigure_perfevent(metrics)
         
         
         

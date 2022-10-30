@@ -1,0 +1,14 @@
+perfevent.hwcounters.CPU_CLK_THREAD_UNHALTED_THREAD_P.dutycycle
+perfevent.hwcounters.CPU_CLK_THREAD_UNHALTED_THREAD_P.value
+perfevent.hwcounters.MEM_INST_RETIRED_ALL_LOADS.dutycycle
+perfevent.hwcounters.MEM_INST_RETIRED_ALL_LOADS.value
+perfevent.hwcounters.MEM_INST_RETIRED_ALL_STORES.dutycycle
+perfevent.hwcounters.MEM_INST_RETIRED_ALL_STORES.value
+perfevent.hwcounters.L1D_REPLACEMENT.dutycycle
+perfevent.hwcounters.L1D_REPLACEMENT.value
+perfevent.hwcounters.MEM_LOAD_RETIRED.L1_HIT
+perfevent.hwcounters.MEM_LOAD_RETIRED.L2_HIT
+perfevent.hwcounters.MEM_LOAD_RETIRED.L3_HIT
+perfevent.hwcounters.MEM_LOAD_RETIRED.L1_MISS
+perfevent.hwcounters.MEM_LOAD_RETIRED.L2_MISS
+perfevent.hwcounters.MEM_LOAD_RETIRED.L3_MISS
