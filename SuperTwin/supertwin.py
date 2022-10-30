@@ -111,29 +111,34 @@ class SuperTwin:
 
         exist = False
         name = None
-        exist = None
         twin_id = None
         collection_id =None
         
-        if(len(args) > 0):
-            exist, name, twin_id, collection_id = utils.check_state(args[0])
+        if(len(args) > 0): ##Check if existed and wanted to be reconstructed from non-existed
+            try:
+                exist, name, twin_id, collection_id = utils.check_state(args[0])
+            except:
+                print("A SuperTwin instance is tried to be reconstructed from address", args[0])
+                print("However, there is no such twin with that address..")
+                exit(1)
         
-        if(len(args) > 0 or exist):
+        if(len(args) > 0 or exist): ##Reconstruct from db
 
+            self.addr = args[0]
             self.name = name
             self.mongodb_id = collection_id
             self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
             self.monitor_metrics = utils.read_monitor_metrics()
             meta = query_twin_state(self.name, self.mongodb_id, self.mongodb_addr)
-            self.SSHUser = meta["SSHuser"]
+            self.SSHuser = meta["SSHuser"]
             self.SSHpass = utils.unobscure(meta["SSHpass"]).decode()
             self.monitor_tag = meta["monitor_tag"]
             self.benchmarks = meta["benchmarks"]
             self.benchmark_results = meta["benchmark_results"]
 
-            print("SuperTwin is instantiated from db..")
+            print("SuperTwin is reconstructed from db..")
 
-        else:
+        else: ##Construct from scratch
             
             self.addr = input("Address of the remote system: ")
             self._id = str(uuid.uuid4())
@@ -158,7 +163,7 @@ class SuperTwin:
             self.benchmark_results = 0
             self.add_stream_benchmark()
             self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
-            self.add_adcarm_bencmark()
+            self.add_adcarm_benchmark()
             #self.generate_roofline_dashboard()
             
             register_twin_state(self)
@@ -385,9 +390,9 @@ class SuperTwin:
     def add_stream_benchmark(self):
         
         stream_modifiers = stream_benchmark.generate_stream_bench_sh(self)
-        #stream_benchmark.execute_stream_bench(self)
+        stream_benchmark.execute_stream_bench(self)
         stream_res = stream_benchmark.parse_stream_bench(self)
-
+        
         self.update_twin_document__add_stream_benchmark(stream_modifiers, stream_res)
         
 
@@ -410,7 +415,7 @@ class SuperTwin:
     def add_hpcg_benchmark(self, HPCG_PARAM):
 
         hpcg_modifiers = hpcg_benchmark.generate_hpcg_bench_sh(self, HPCG_PARAM)
-        #hpcg_benchmark.execute_hpcg_bench(self)
+        hpcg_benchmark.execute_hpcg_bench(self)
         hpcg_res = hpcg_benchmark.parse_hpcg_bench(self)
 
         self.update_twin_document__add_hpcg_benchmark(hpcg_modifiers, hpcg_res)
@@ -433,10 +438,10 @@ class SuperTwin:
         print("CARM benchmark result added to Digital Twin")
         
 
-    def add_adcarm_bencmark(self):
+    def add_adcarm_benchmark(self):
         adcarm_config = adcarm_benchmark.generate_adcarm_config(self)
         adcarm_modifiers = adcarm_benchmark.generate_adcarm_bench_sh(self, adcarm_config)
-        #adcarm_benchmark.execute_adcarm_bench(self)
+        adcarm_benchmark.execute_adcarm_bench(self)
         adcarm_res = adcarm_benchmark.parse_adcarm_bench()
                         
         self.update_twin_document__add_adcarm_benchmark(adcarm_modifiers, adcarm_res)
@@ -467,15 +472,24 @@ class SuperTwin:
 
         x = 1
 
-    def execute_observation(self):
-        print("This is observed")
+    def reconfigure_perfevent(self):
+
         x = 1
+
+    def execute_observation(self, command, metrics):
+        observation_id = str(uuid.uuid4())
+        
+    def execute_observation_batch_element(self, command, observation_id, element_id):
+        this_observation_id = observation_id + "_" + str(element_id)
+
+    def execute_observation_batch(self, commands, metrics):
+        observation_id = str(uuid.uuid4())
+        
         
         
     def generate_observation_dashboard_type1(self): ##Applications runs on different threads at the same time
         x = 1
 
-        
     def generate_observation_dashboard_type2(self): ##Applications runs at different times then overlapped
         x = 1
 
@@ -485,7 +499,8 @@ class SuperTwin:
 
 if __name__ == "__main__":
 
-    myTwin = SuperTwin()
-    #otherTwin = SuperTwin("10.36.54.195")
+    #myTwin = SuperTwin()
+    otherTwin = SuperTwin("10.36.54.195")
+    otherTwin.add_adcarm_benchmark()
     #otherTwin.execute_observation()
     #myTwin.update_twin_document__new_monitor_pid()

@@ -87,7 +87,7 @@ def generate_adcarm_config(SuperTwin):
 
     print("CARM config generated..")
     
-    return config_name
+    return local_path_and_name
     
     
 
@@ -132,6 +132,9 @@ def generate_adcarm_bench_sh(SuperTwin, adcarm_config):
     base = "/tmp/dt_probing/benchmarks/adCARM/"
 
     lines = ["#!/bin/bash \n\n\n", "cd " + base + "\n\n\n"]
+
+    ##for debug purposes
+    ##thread_set = [1, 88]
 
     for thread in thread_set:
 
@@ -204,6 +207,7 @@ def generate_adcarm_bench_sh(SuperTwin, adcarm_config):
             
 def execute_adcarm_bench(SuperTwin):
 
+    
     path = detect_utils.cmd("pwd")[1].strip("\n")
     path += "/probing/benchmarks/adCARM"
 
@@ -212,7 +216,7 @@ def execute_adcarm_bench(SuperTwin):
     ssh.connect(SuperTwin.addr, username = SuperTwin.SSHuser, password = SuperTwin.SSHpass)
 
     scp = SCPClient(ssh.get_transport())
-
+    '''
     try:
         scp.put(path, recursive=True, remote_path="/tmp/dt_probing/benchmarks/")
         remote_probe.run_sudo_command(ssh, SuperTwin.SSHpass, SuperTwin.name, "sudo rm -r /tmp/dt_probing/benchmarks/*")
@@ -225,11 +229,14 @@ def execute_adcarm_bench(SuperTwin):
         
 
     remote_probe.run_sudo_command(ssh, SuperTwin.SSHpass, SuperTwin.name, "sh /tmp/dt_probing/benchmarks/adCARM/gen_bench.sh")
+    '''
+    scp.get(recursive=True, remote_path = "/tmp/dt_probing/benchmarks/adCARM/Results", local_path = "probing/benchmarks/")
 
-    scp.get(recursive=True, remote_path = "/tmp/dt_probing/benchmarks/adCARM/", local_path = "probing/benchmarks/")
-
-    detect_utils.cmd("mv probing/benchmarks/Results probing/benchmarks/adCARM_RES") ##On local
-
+    try:
+        detect_utils.cmd("mv probing/benchmarks/Results probing/benchmarks/adCARM_RES") ##On local
+    except:
+        detect_utils.cmd("rm -r probing/benchmarks/adCARM_RES") ##On local
+        detect_utils.cmd("mv probing/benchmarks/Results probing/benchmarks/adCARM_RES") ##On local
 
 
 def pretty_binding(ugly_binding):

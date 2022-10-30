@@ -14,43 +14,43 @@ Each kernel will be executed 20 times.
 [0m[1;34m[pthread wrapper] MAIN -> 0
 [0m[1;34m[pthread wrapper] PIN_MASK: [0m[1;34m0->1  [0m[1;34m1->2  [0m[1;34m2->3  [0m[1;34m3->4  [0m[1;34m4->5  [0m[1;34m5->6  [0m[1;34m6->7  [0m[1;34m7->8  [0m[1;34m8->9  [0m[1;34m9->10  [0m[1;34m10->11  [0m[1;34m11->12  [0m[1;34m12->13  [0m[1;34m13->14  [0m[1;34m14->15  [0m[1;34m15->16  [0m[1;34m16->17  [0m[1;34m17->18  [0m[1;34m18->19  [0m[1;34m19->20  [0m[1;34m20->21  [0m[1;34m21->22  [0m[1;34m22->23  [0m[1;34m23->24  [0m[1;34m24->25  [0m[1;34m25->26  [0m[1;34m26->27  [0m[1;34m27->28  [0m[1;34m28->29  [0m[1;34m29->30  [0m[1;34m30->31  [0m[1;34m
 [pthread wrapper] SKIP MASK: 0x0
-[0m[1;34m	threadid 140289885190016 -> hwthread 1 - OK[0m[1;34m
-[0m[1;34m	threadid 140289805117440 -> hwthread 2 - OK[0m[1;34m
-[0m[1;34m	threadid 140289796720768 -> hwthread 3 - OK[0m[1;34m
-[0m[1;34m	threadid 140289788324096 -> hwthread 4 - OK[0m[1;34m
-[0m[1;34m	threadid 140289779927424 -> hwthread 5 - OK[0m[1;34m
-[0m[1;34m	threadid 140289771530752 -> hwthread 6 - OK[0m[1;34m
-[0m[1;34m	threadid 140289763134080 -> hwthread 7 - OK[0m[1;34m
-[0m[1;34m	threadid 140289754737408 -> hwthread 8 - OK[0m[1;34m
-[0m[1;34m	threadid 140289268247424 -> hwthread 9 - OK[0m[1;34m
-[0m[1;34m	threadid 140289259850752 -> hwthread 10 - OK[0m[1;34m
-[0m[1;34m	threadid 140289251454080 -> hwthread 11 - OK[0m[1;34m
-[0m[1;34m	threadid 140289243057408 -> hwthread 12 - OK[0m[1;34m
-[0m[1;34m	threadid 140289234660736 -> hwthread 13 - OK[0m[1;34m
-[0m[1;34m	threadid 140289226264064 -> hwthread 14 - OK[0m[1;34m
-[0m[1;34m	threadid 140289217867392 -> hwthread 15 - OK[0m[1;34m
-[0m[1;34m	threadid 140288731377408 -> hwthread 16 - OK[0m[1;34m
-[0m[1;34m	threadid 140288722980736 -> hwthread 17 - OK[0m[1;34m
-[0m[1;34m	threadid 140288714584064 -> hwthread 18 - OK[0m[1;34m
-[0m[1;34m	threadid 140288706187392 -> hwthread 19 - OK[0m[1;34m
-[0m[1;34m	threadid 140288697790720 -> hwthread 20 - OK[0m[1;34m
-[0m[1;34m	threadid 140288689394048 -> hwthread 21 - OK[0m[1;34m
-[0m[1;34m	threadid 140288680997376 -> hwthread 22 - OK[0m[1;34m
-[0m[1;34m	threadid 140288194507392 -> hwthread 23 - OK[0m[1;34m
-[0m[1;34m	threadid 140288186110720 -> hwthread 24 - OK[0m[1;34m
-[0m[1;34m	threadid 140288177714048 -> hwthread 25 - OK[0m[1;34m
-[0m[1;34m	threadid 140288169317376 -> hwthread 26 - OK[0m[1;34m
-[0m[1;34m	threadid 140288160920704 -> hwthread 27 - OK[0m[1;34m
-[0m[1;34m	threadid 140288152524032 -> hwthread 28 - OK[0m[1;34m
-[0m[1;34m	threadid 140288144127360 -> hwthread 29 - OK[0m[1;34m
-[0m[1;34m	threadid 140287657637376 -> hwthread 30 - OK[0m[1;34m
-[0m[1;34m	threadid 140287649240704 -> hwthread 31 - OK[0m[1;34m
+[0m[1;34m	threadid 139905400956800 -> hwthread 1 - OK[0m[1;34m
+[0m[1;34m	threadid 139905392560128 -> hwthread 2 - OK[0m[1;34m
+[0m[1;34m	threadid 139905384163456 -> hwthread 3 - OK[0m[1;34m
+[0m[1;34m	threadid 139905375766784 -> hwthread 4 - OK[0m[1;34m
+[0m[1;34m	threadid 139905367370112 -> hwthread 5 - OK[0m[1;34m
+[0m[1;34m	threadid 139905358973440 -> hwthread 6 - OK[0m[1;34m
+[0m[1;34m	threadid 139905350576768 -> hwthread 7 - OK[0m[1;34m
+[0m[1;34m	threadid 139904868674304 -> hwthread 8 - OK[0m[1;34m
+[0m[1;34m	threadid 139904860277632 -> hwthread 9 - OK[0m[1;34m
+[0m[1;34m	threadid 139904851880960 -> hwthread 10 - OK[0m[1;34m
+[0m[1;34m	threadid 139904843484288 -> hwthread 11 - OK[0m[1;34m
+[0m[1;34m	threadid 139904835087616 -> hwthread 12 - OK[0m[1;34m
+[0m[1;34m	threadid 139904826690944 -> hwthread 13 - OK[0m[1;34m
+[0m[1;34m	threadid 139904818294272 -> hwthread 14 - OK[0m[1;34m
+[0m[1;34m	threadid 139904331804288 -> hwthread 15 - OK[0m[1;34m
+[0m[1;34m	threadid 139904323407616 -> hwthread 16 - OK[0m[1;34m
+[0m[1;34m	threadid 139904315010944 -> hwthread 17 - OK[0m[1;34m
+[0m[1;34m	threadid 139904306614272 -> hwthread 18 - OK[0m[1;34m
+[0m[1;34m	threadid 139904298217600 -> hwthread 19 - OK[0m[1;34m
+[0m[1;34m	threadid 139904289820928 -> hwthread 20 - OK[0m[1;34m
+[0m[1;34m	threadid 139904281424256 -> hwthread 21 - OK[0m[1;34m
+[0m[1;34m	threadid 139903794934272 -> hwthread 22 - OK[0m[1;34m
+[0m[1;34m	threadid 139903786537600 -> hwthread 23 - OK[0m[1;34m
+[0m[1;34m	threadid 139903778140928 -> hwthread 24 - OK[0m[1;34m
+[0m[1;34m	threadid 139903769744256 -> hwthread 25 - OK[0m[1;34m
+[0m[1;34m	threadid 139903761347584 -> hwthread 26 - OK[0m[1;34m
+[0m[1;34m	threadid 139903752950912 -> hwthread 27 - OK[0m[1;34m
+[0m[1;34m	threadid 139903744554240 -> hwthread 28 - OK[0m[1;34m
+[0m[1;34m	threadid 139903258064256 -> hwthread 29 - OK[0m[1;34m
+[0m[1;34m	threadid 139903249667584 -> hwthread 30 - OK[0m[1;34m
+[0m[1;34m	threadid 139903241270912 -> hwthread 31 - OK[0m[1;34m
 [0mNumber of Threads requested = 32
 Number of Threads counted = 32
 -------------------------------------------------------------
 Your clock granularity/precision appears to be 1 microseconds.
-Each test below will take on the order of 223043 microseconds.
-   (= 223043 clock ticks)
+Each test below will take on the order of 225653 microseconds.
+   (= 225653 clock ticks)
 Increase the size of the arrays if this shows that
 you are not getting at least 20 clock ticks per test.
 -------------------------------------------------------------
@@ -59,10 +59,10 @@ For best results, please be sure you know the
 precision of your system timer.
 -------------------------------------------------------------
 Function    Best Rate MB/s  Avg time     Min time     Max time
-Copy:           44019.3     0.069507     0.031986     0.176495
-Scale:          43971.4     0.070728     0.032021     0.183123
-Add:            49045.6     0.100726     0.043062     0.264836
-Triad:          48882.1     0.106654     0.043206     0.273146
+Copy:           44222.6     0.094388     0.031839     0.192878
+Scale:          44133.7     0.102756     0.031903     0.190921
+Add:            48894.5     0.154956     0.043195     0.293274
+Triad:          48607.5     0.135752     0.043450     0.293448
 -------------------------------------------------------------
 Solution Validates: avg error less than 1.000000e-13 on all three arrays
 -------------------------------------------------------------
