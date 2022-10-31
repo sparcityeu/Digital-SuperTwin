@@ -41,7 +41,7 @@ CORS(app)
 
 
 
-@app.route('/setDB', methods=['GET', 'POST'])
+@app.route('/api/setDB', methods=['GET', 'POST'])
 def setDB():
     try:
         global collection
@@ -62,14 +62,14 @@ def setDB():
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
 
-@app.route('/startSuperTwin', methods=['GET'])
+@app.route('/api/startSuperTwin', methods=['GET'])
 def startSuperTwin():
     global twin
     twin = callSuperTwin({"flag": True, "address" : "10.36.54.195"})
     return twin.addr
 
 
-@app.route('/getMetrics/monitoring/<uid>', methods=['GET'])
+@app.route('/api/getMetrics/monitoring/<uid>', methods=['GET'])
 def getMonitoringMetrics(uid):
     try:
         twin_data = loads(dumps((collection.find({"_id": ObjectId(uid)})), default=json_util.default))
@@ -156,7 +156,7 @@ def getMonitoringMetrics(uid):
 
 
 
-@app.route('/getMetrics/experiment/<uid>', methods=['GET'])
+@app.route('/api/getMetrics/experiment/<uid>', methods=['GET'])
 def getExperimentalMetrics(uid):
     try:
         twin_data = loads(dumps((collection.find({"_id": ObjectId(uid)})), default=json_util.default))
@@ -243,14 +243,14 @@ def getExperimentalMetrics(uid):
 
 
 
-@app.route('/appendMetrics/monitoring', methods=['GET'])
+@app.route('/api/appendMetrics/monitoring', methods=['POST'])
 def appendMonitoringMetrics():
     try:
         data = request.get_json()
         metric_list = data['monitoringMetrics']
 
         file_object = open('monitor_metrics.txt', 'a')
-        file_object.write('\n')
+        file_object.write("\n##USER METRICS##\n")
 
 
         for metric in metric_list:
@@ -259,22 +259,22 @@ def appendMonitoringMetrics():
 
         file_object.close()
     
-        return make_response(200)
+        return make_response(jsonify({'OK': "OK"}), 200)
 
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
     
 
 
-@app.route('/appendMetrics/experiment', methods=['GET'])
+@app.route('/api/appendMetrics/experiment', methods=['POST'])
 def appendExperimentalMetrics():
 
     try:
         data = request.get_json()
-        metric_list = data['monitoringMetrics']
+        metric_list = data['experimentMetrics']
 
-        file_object = open('experiment_metrics.txt', 'a')
-        file_object.write('\n')
+        file_object = open('monitor_metrics.txt', 'a')
+        file_object.write("\n##EXPERIMENT METRICS##\n")
 
 
         for metric in metric_list:
@@ -283,13 +283,13 @@ def appendExperimentalMetrics():
 
         file_object.close()
 
-        return make_response(200)
+        return make_response(jsonify({'OK': "OK"}), 200)
 
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
 
 
-@app.route('/getMonitoringStatus', methods=['GET'])
+@app.route('/api/getMonitoringStatus', methods=['GET'])
 def getMonitoringStatus():
     try:
         p0_command = 'ps aux | grep mongodb'
@@ -303,7 +303,7 @@ def getMonitoringStatus():
         return make_response(jsonify({'error': error}), 400)
 
 
-@app.route('/getDashboards/<uid>', methods=['GET'])
+@app.route('/api/getDashboards/<uid>', methods=['GET'])
 def getDashboards(uid):
     try:
         twin_data = loads(dumps((collection.find({"_id": ObjectId(uid)})), default=json_util.default))

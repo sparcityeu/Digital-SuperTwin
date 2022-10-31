@@ -1,17 +1,52 @@
 import React, { useEffect, useState } from "react";
+import { Route, useNavigate } from "react-router-dom";
+import axios from "axios";
+
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 
 const PerformExperiment = () => {
-  const [x, setX] = useState(mockAPICall());
+  const [experimentMetrics, setExperimentMetrics] = useState(undefined);
+  const [container, setContainer] = useState([]);
+  const navigate = useNavigate();
+
+  const getExperimentMetrics = async () => {
+    try {
+      const res = await axios.get(
+        "http://127.0.0.1:5000/api/getMetrics/monitoring/63427bdbda23eb00a1dcb808"
+      );
+      console.log(res.data);
+      setExperimentMetrics(res.data["monitoringMetrics"]);
+      return res.data;
+    } catch (err) {}
+  };
+
+  function sendExperiment(e) {
+    e.preventDefault();
+    axios
+      .post("http://127.0.0.1:5000/api/appendMetrics/experiment", {
+        experimentMetrics: container,
+      })
+      .then((response) => this.myFunction(response.status))
+      .catch(function (error) {
+        if (error.response) {
+        }
+      });
+    console.log("aaaaa");
+    navigate("/DashboardLinks");
+  }
+
+  useEffect(() => {
+    getExperimentMetrics();
+  }, []);
 
   const columnDefs = [
-    { headerName: "Metric", field: "MetricName" },
+    { headerName: "Metric", field: "metric" },
     {
       headerName: "Metric Type",
-      field: "metric_type",
+      field: "type",
       maxWidth: 200,
     },
   ];
@@ -27,10 +62,11 @@ const PerformExperiment = () => {
 
   //function will trigger once selection changed
   const onSelectionChanged = (event) => {
-    console.log(event.api.getSelectedRows());
+    setContainer(event.api.getSelectedRows());
+    console.log(container);
   };
 
-  return x !== undefined && x !== undefined ? (
+  return getExperimentMetrics !== undefined ? (
     <div
       className="grid grid-cols-11"
       style={{
@@ -84,6 +120,7 @@ const PerformExperiment = () => {
           <TooltipComponent content="Submit" position="BottomCenter">
             <button
               type="submit"
+              onClick={(e) => sendExperiment(e)}
               class="bg-white hover:bg-gray-100 text-gray-800 py-3 px-5 text-xl border border-gray-400 rounded shadow"
               style={{
                 textAlign: "center",
@@ -130,7 +167,7 @@ const PerformExperiment = () => {
             masterDetail={true}
             columnDefs={columnDefs}
             defaultColDef={defaultColDef}
-            rowData={metricData}
+            rowData={experimentMetrics}
             rowSelection={rowSelectionType}
             onSelectionChanged={onSelectionChanged}
             rowMultiSelectWithClick={true}
@@ -144,158 +181,3 @@ const PerformExperiment = () => {
   );
 };
 export default PerformExperiment;
-
-const mockAPICall = () => {
-  var mockData = [
-    {
-      ID: 1,
-      DashboardName: "CPU Monitoring Dashboard",
-      DashboardLink: "Link",
-    },
-    {
-      ID: 2,
-      DashboardName: "GPU Monitoring Dashboard",
-      DashboardLink: "Link",
-    },
-    {
-      ID: 3,
-      DashboardName: "NUMA Monitoring Dashboard",
-      DashboardLink: "Link",
-    },
-    {
-      ID: 4,
-      DashboardName: "Network Traffic Dashboard",
-      DashboardLink: "Link",
-    },
-    {
-      ID: 5,
-      DashboardName: ".........",
-      DashboardLink: "Link",
-    },
-  ];
-
-  return mockData;
-};
-
-const metricData = [
-  {
-    metric_type: "CPU",
-    MetricName: "CPU Metric-1",
-  },
-  {
-    metric_type: "Network",
-    MetricName: "Network Metric-1",
-  },
-  {
-    metric_type: "NUMA",
-    MetricName: "NUMA Metric-1",
-  },
-  {
-    metric_type: "GPU",
-    MetricName: "GPU Metric-1",
-  },
-  {
-    metric_type: "Disk",
-    MetricName: "Disk Metric-1",
-  },
-  {
-    metric_type: "CPU",
-    MetricName: "CPU Metric-2",
-  },
-  {
-    metric_type: "Network",
-    MetricName: "Network Metric-2",
-  },
-  {
-    metric_type: "NUMA",
-    MetricName: "NUMA Metric-2",
-  },
-  {
-    metric_type: "GPU",
-    MetricName: "GPU Metric-2",
-  },
-  {
-    metric_type: "Disk",
-    MetricName: "Disk Metric-2",
-  },
-  {
-    metric_type: "CPU",
-    MetricName: "CPU Metric-3",
-  },
-  {
-    metric_type: "Network",
-    MetricName: "Network Metric-3",
-  },
-  {
-    metric_type: "NUMA",
-    MetricName: "NUMA Metric-3",
-  },
-  {
-    metric_type: "GPU",
-    MetricName: "GPU Metric-3",
-  },
-  {
-    metric_type: "Disk",
-    MetricName: "Disk Metric-3",
-  },
-  {
-    metric_type: "CPU",
-    MetricName: "CPU Metric-4",
-  },
-  {
-    metric_type: "Network",
-    MetricName: "Network Metric-4",
-  },
-  {
-    metric_type: "NUMA",
-    MetricName: "NUMA Metric-4",
-  },
-  {
-    metric_type: "GPU",
-    MetricName: "GPU Metric-4",
-  },
-  {
-    metric_type: "Disk",
-    MetricName: "Disk Metric-4",
-  },
-  {
-    metric_type: "CPU",
-    MetricName: "CPU Metric-5",
-  },
-  {
-    metric_type: "Network",
-    MetricName: "Network Metric-5",
-  },
-  {
-    metric_type: "NUMA",
-    MetricName: "NUMA Metric-5",
-  },
-  {
-    metric_type: "GPU",
-    MetricName: "GPU Metric-5",
-  },
-  {
-    metric_type: "Disk",
-    MetricName: "Disk Metric-5",
-  },
-  {
-    metric_type: "CPU",
-    MetricName: "CPU Metric-6",
-  },
-  {
-    metric_type: "Network",
-    MetricName: "Network Metric-6",
-  },
-  {
-    metric_type: "NUMA",
-    MetricName: "NUMA Metric-6",
-  },
-  {
-    metric_type: "GPU",
-    MetricName: "GPU Metric-6",
-  },
-  {
-    metric_type: "Disk",
-    MetricName: "Disk Metric-6",
-  },
-];
