@@ -68,7 +68,7 @@ def insert_twin_description(_twin, supertwin):
         "twin_description": _twin,
         "influxdb_name": supertwin.influxdb_name,
         "influxdb_tag": supertwin.monitor_tag,
-        "monitor_pid": supertwin.monitor_pid,
+        "monitor_pid": "",
         "prob_file": supertwin.prob_file,
         "roofline_dashboard": "to be added",
         "monitoring_dashboard": "to be added"}
@@ -91,7 +91,9 @@ def register_twin_state(SuperTwin):
     meta["twin_state"]["monitor_tag"] = SuperTwin.monitor_tag
     meta["twin_state"]["benchmarks"] = SuperTwin.benchmarks
     meta["twin_state"]["benchmark_results"] = SuperTwin.benchmark_results
-
+    meta["twin_state"]["monitor_metrics"] = SuperTwin.monitor_metrics
+    meta["twin_state"]["observation_metrics"] = SuperTwin.observation_metrics
+    
     db.replace_one({"_id": ObjectId(SuperTwin.mongodb_id)}, meta)
     
     print("Twin state is registered to db..")
@@ -129,9 +131,9 @@ class SuperTwin:
             self.name = name
             self.mongodb_id = collection_id
             self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
-            self.monitor_metrics = utils.read_monitor_metrics()
             meta = query_twin_state(self.name, self.mongodb_id, self.mongodb_addr)
-            #print("meta:", meta)
+            self.monitor_metrics = meta["twin_state"]["monitor_metrics"]
+            self.observation_metrics = meta["twin_state"]["observation_metrics"]
             self.SSHuser = meta["twin_state"]["SSHuser"]
             self.SSHpass = utils.unobscure(meta["twin_state"]["SSHpass"]).decode()
             self.monitor_tag = meta["twin_state"]["monitor_tag"]
@@ -160,11 +162,13 @@ class SuperTwin:
             self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
             utils.get_influx_database(self.influxdb_addr, self.influxdb_name)
             self.monitor_metrics = utils.read_monitor_metrics() ##These are the continuously sampled metrics
+            self.observation_metrics = utils.read_observation_metrics()
             self.monitor_tag = "_monitor"
-            self.monitor_pid = sampling.main(self.name, self.addr, self.influxdb_name, self.monitor_tag, self.monitor_metrics)
             self.mongodb_id = insert_twin_description(get_twin_description(self.prob_file),self)
-            
             print("Collection id:", self.mongodb_id)
+            self.reconfigure_perfevent()
+            self.monitor_pid = sampling.main(self.name, self.addr, self.influxdb_name, self.monitor_tag, self.monitor_metrics)
+            
             utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
             self.resurrect_and_clear_monitors() ##If there is any zombie monitor sampler
             
@@ -203,7 +207,9 @@ class SuperTwin:
                     detect_utils.cmd("sudo kill " + str(pid))
 
 
-    def update_twin_document__new_monitor_pid(self):
+                    
+                    
+    def update_twin_document__assert_new_monitor_pid(self):
         
         db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
         print("Killing existed monitor sampler with pid:", self.monitor_pid)
@@ -213,6 +219,14 @@ class SuperTwin:
         to_new = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
         #print(to_new)
         to_new["monitor_pid"] = new_pid        
+        db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
+        self.monitor_pid = new_pid
+
+    def update_twin_document__update_new_monitor_pid(self):
+        
+        db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
+        to_new = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
+        to_new["monitor_pid"] = self.monitor_pid
         db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
         self.monitor_pid = new_pid
 
@@ -382,7 +396,7 @@ class SuperTwin:
         return content
         
     def update_twin_document__add_stream_benchmark(self, stream_modifiers, stream_res):
-
+        
         db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
         meta_with_twin = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
         new_twin = meta_with_twin["twin_description"]
@@ -484,10 +498,16 @@ class SuperTwin:
 
     def reconfigure_perfevent(self):
 
-        x = 1
+        sampling.generate_perfevent_conf(self)
+        sampling.reconfigure_perfevent(self)
+        
 
     def execute_observation(self, command, metrics):
         observation_id = str(uuid.uuid4())
+        reconfigure_perfevent()
+        obs_conf = generate_pcp2influxdb_config_observation(self, observation_id)
+        #observation.start_observation(SuperTwin, obs_conf)
+        
         
     def execute_observation_batch_element(self, command, observation_id, element_id):
         this_observation_id = observation_id + "_" + str(element_id)
@@ -511,8 +531,8 @@ class SuperTwin:
 
 if __name__ == "__main__":
 
-    #my_SuperTwin = SuperTwin()
-    otherTwin = SuperTwin("10.36.54.195")
-    mongodb_id = insert_twin_description(get_twin_description(otherTwin.prob_file),otherTwin)
+    my_SuperTwin = SuperTwin()
+    #otherTwin = SuperTwin("10.36.54.195")
+    
     
     

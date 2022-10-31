@@ -37,7 +37,7 @@ def get_mongo_database(mongodb_name, CONNECTION_STRING):
 def get_influx_database(address, influxdb_name):
 
     fields = address.split("//")[1]
-    print("fields:", fields)
+    #print("fields:", fields)
     fields = fields.split(":")
     host = fields[0]
     port = fields[1]
@@ -71,8 +71,26 @@ def read_monitor_metrics():
 
     for line in lines:
         if(line.find("#") == -1):
-            metrics.append(line.strip("\n"))
+            if(line.find("perfevent.hwcounter") == -1):
+                metrics.append(line.strip("\n"))
+            if(line.find("perfevent.hwcounter") != -1):
+                metrics.append(line.strip("\n") + ".value")
+                metrics.append(line.strip("\n") + ".dutycycle")
+                
+    return metrics
 
+def read_observation_metrics():
+
+    reader = open("last_observation_metrics.txt", "r")
+    lines = reader.readlines()
+    reader.close()
+
+    metrics = []
+
+    for line in lines:
+        if(line.find("#") == -1):
+            metrics.append(line.strip("\n"))
+                            
     return metrics
 
 def update_state(name, addr, twin_id, collection_id):

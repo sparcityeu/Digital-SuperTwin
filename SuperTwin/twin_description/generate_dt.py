@@ -151,13 +151,14 @@ def get_telemetry_mapped(hostname, name, field_key, measurement, comp, version):
     telemetry = {}
 
     telemetry["@id"] = get_uid(hostname, comp , "telemetry" + t(), 1)
-    telemetry["@type"] = "Telemetry"
+    telemetry["@type"] = "SWTelemetry"
     telemetry["schema"] = "string"
     telemetry["name"] = name
 
     telemetry["displayName"] = field_key
-    telemetry["description"] = measurement
-
+    telemetry["SamplerName"] = measurement
+    telemetry["DBName"] = measurement.replace(".", "_")
+    
     return telemetry
 
 def get_supertwin_telemetry_mapped(hostname, name, field_key, measurement, comp, version):
@@ -171,8 +172,9 @@ def get_supertwin_telemetry_mapped(hostname, name, field_key, measurement, comp,
     
     st_telemetry["displayName"] = field_key
     st_telemetry["SamplerName"] = measurement[0]
+    st_telemetry["DBName"] = measurement[0].replace("perfevent.hwcounters.", "perfevent_hwcounters_")
     st_telemetry["PMUName"] = measurement[1]
-    st_telemetry["description"] = measurement[2]
+    #st_telemetry["description"] = measurement[2]
 
     return st_telemetry
     
@@ -220,7 +222,7 @@ def _filter(param_metric):
         _type = 'proc'
         
     #To see what metrics are classified and supported by SuperTwin: 
-    print("Metric:", f_metric, "Returning:", _type)
+    #print("Metric:", f_metric, "Returning:", _type)
     return _type
 
 def get_my_metrics(my_types):
@@ -251,14 +253,18 @@ def add_my_metrics_mapped(models_dict, this_comp_id, hostname, displayname, fiel
     
     for count, my_metric in enumerate(my_metrics):
         m_name = "metric" + str(count)
+
+        measurement = my_metric
         
+        '''
         if(type(my_metric) == list):
             measurement = my_metric
             measurement[0] = measurement[0].replace(".", "_")
         else:
             #measurement = my_metric
             measurement = my_metric.replace(".", "_")
-
+        '''
+        
         if(type(my_metric) == list):
             models_dict[this_comp_id]["contents"].append(get_supertwin_telemetry_mapped(hostname, m_name, field_key, measurement, displayname, 1))
         else:
@@ -273,14 +279,15 @@ def add_my_metrics_mapped_socket(models_dict, this_comp_id, hostname, displaynam
             
     for count, my_metric in enumerate(my_metrics):
         m_name = "metric" + str(count)
-        back_up = my_metric
+        measurement = my_metric
+        '''
         if(type(my_metric) == list):
             measurement = my_metric
             measurement[0] = measurement[0].replace(".", "_")
         else:
             #measurement = my_metric
             measurement = my_metric.replace(".", "_")
-        
+        '''
         if(_filter(my_metric) == "pernode"):
             if(type(my_metric) == list):
                 models_dict[this_comp_id]["contents"].append(get_supertwin_telemetry_mapped(hostname, m_name, field_key_kernel, measurement, displayname, 1))
@@ -777,6 +784,10 @@ def should_add(added, pmu):
     return True
 
 
+def pmu_to_pcp_single(s_metric):
+
+    x = 1
+
 def pmu_to_pcp(PMUs, metrics):
     
     added = []
@@ -870,6 +881,7 @@ def main(_sys_dict):
 
 
     #return models_list
+    #pprint(models_dict)
     return models_dict
 
     

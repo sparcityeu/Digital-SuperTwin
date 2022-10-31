@@ -12,10 +12,6 @@ import subprocess
 from subprocess import Popen, PIPE
 import shlex
 
-##databases
-#import influxdb_client
-#from influxdb_client.client.write_api import SYNCHRONOUS
-
 from influxdb import InfluxDBClient
 
 import pymongo
@@ -27,12 +23,29 @@ import getpass
 import paramiko
 
 from scp import SCPClient
-
-#import system_dashboard
-#import generate_general_dashboard
-#import generate_system_dashboard
-
 from threading import Thread
+
+import sys
+sys.path.append("../")
+sys.path.append("../probing")
+import remote_probe
+import utils
+
+from bson.objectid import ObjectId
+from bson.json_util import dumps
+from bson.json_util import loads
+
+
+ALWAYS_HAVE_MONITOR = ["perfevent.hwcounters.RAPL_ENERGY_PKG.value",
+                       "perfevent.hwcounters.RAPL_ENERGY_PKG.dutycycle",
+                       "perfevent.hwcounters.RAPL_ENERGY_DRAM.value",
+                       "perfevent.hwcounters.RAPL_ENERGY_DRAM.dutycycle"]
+
+ALWAYS_HAVE_OBSERVATION = ["RAPL:ENERGY_PKG node",
+                           "RAPL_ENERGY_DRAM node"]
+
+##These may increase or increse
+##TO DO: Add AMD energy PMUs
 
 def get_date_tag():
 
@@ -45,6 +58,9 @@ def get_date_tag():
 
 def generate_pcp2influxdb_config(db_name, db_tag, sourceIP, source_name, metrics):
     
+    for item in ALWAYS_HAVE_MONITOR:
+        if item not in metrics:
+            metrics.append(item)
     
     config_lines = ["[options]" + "\n",
                     "influx_server = http://127.0.0.1:8086" + "\n",
@@ -69,6 +85,97 @@ def generate_pcp2influxdb_config(db_name, db_tag, sourceIP, source_name, metrics
 
     return pcp_conf_name
 
+def generate_pcp2influxdb_config_observation(SuperTwin, observation_id):
+
+    db_tag = observation_id
+    db_name = SuperTwin.influxdb_name
+    sourceIP = SuperTwin.addr
+    source_name = SuperTwin.name
+    
+    for item in ALWAYS_HAVE_MONITOR:
+        if item not in metrics:
+            metrics.append(item)
+    
+    config_lines = ["[options]" + "\n",
+                    "influx_server = http://127.0.0.1:8086" + "\n",
+                    "influx_db = " + db_name + "\n",
+                    "influx_tags = " + "tag=" + db_tag + "\n",
+                    "source = " + sourceIP + "\n",
+                    "\n\n",
+                    "[configured]" + "\n"]
+
+    
+    for metric in metrics:
+        config_lines.append(metric + " = ,," + "\n")
+        
+    pcp_conf_name = "pcp_" + source_name + db_tag + ".conf" 
+    writer = open(pcp_conf_name, "w")
+    
+    for line in config_lines:
+        writer.write(line)
+    writer.close()
+
+
+    return pcp_conf_name
+
+def get_msr(SuperTwin):
+
+    db = utils.get_mongo_database(SuperTwin.name, SuperTwin.mongodb_addr)["twin"]
+    meta_with_twin = loads(dumps(db.find({"_id": ObjectId(SuperTwin.mongodb_id)})))[0]
+    twin = meta_with_twin["twin_description"]                  
+
+    for key in twin.keys():
+        if(key.find("system:S1") != -1):
+            contents = twin[key]["contents"]
+            for content in contents:
+                print("Content:", content)
+                print("?:", content["@id"].find("MSR"))
+                if(content["@id"].find("MSR") != -1):
+                    return content["description"]
+
+
+def generate_perfevent_conf(SuperTwin):
+
+    metrics = SuperTwin.observation_metrics
+
+    for item in ALWAYS_HAVE_OBSERVATION:
+        if item not in metrics:
+            metrics.append(item)
+
+    for item in metrics:
+        if(item.find("numa") != -1 or item.find("node") != -1):
+            metrics.remove(item)
+            metrics.append(item)
+    
+    
+    msr = get_msr(SuperTwin)
+
+    writer = open("perfevent.conf", "w+")
+    writer.write("[" + msr + "]" + "\n")
+    for item in metrics:
+        writer.write(item + "\n")
+    writer.close()
+
+    print("Generated new perfevent pmda configuration..")
+
+def reconfigure_perfevent(SuperTwin):
+
+    SSHuser = SuperTwin.SSHuser
+    SSHpass = SuperTwin.SSHpass
+
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(SuperTwin.addr, username = SSHuser, password = SSHpass)
+
+    scp = SCPClient(ssh.get_transport())
+
+    ##scp to a location that is writable then copy to real path with sudo
+    
+    scp.put("perfevent.conf", remote_path="/var/lib/pcp/pmdas/perfevent")
+    remote_probe.run_sudo_command(ssh, SSHPass, SuperTwin.name, "/var/lib/pcp/pmdas/perfevent/./Remove")
+    remote_probe.run_sudo_command(ssh, SSHPass, SuperTwin.name, "/var/lib/pcp/pmdas/perfevent/./Install")
+
+    print("Reconfigured remote perfevent pmda")
 
 def main(hostname, hostIP, db_name, db_tag, metrics):
 

@@ -36,7 +36,7 @@ def run_sudo_command(ssh_client, SSHkey, name, command):
     print("Executing command on", name, ":", command)
 
     ##This is really weird
-    ##Need to process the stdout somehow
+    ##Need to process the stdout somehow for command to be executed
     ##Will migrate to invoke_shell() or learn in a more in-depth manner
     for line in stdout:
         x = line
