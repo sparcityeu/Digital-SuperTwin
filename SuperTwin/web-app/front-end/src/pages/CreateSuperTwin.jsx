@@ -18,6 +18,7 @@ const CreateSuperTwin = () => {
     };
 
     console.log(registered);
+    navigate("/MonitoringMetrics");
   }
 
   function changeAddress(e) {
