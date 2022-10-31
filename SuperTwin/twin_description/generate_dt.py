@@ -8,6 +8,7 @@ from pprint import pprint
 import json
 
 from difflib import SequenceMatcher
+import copy
 
 context = "dtmi:dtdl:context;2"
 
@@ -158,58 +159,84 @@ def get_telemetry_mapped(hostname, name, field_key, measurement, comp, version):
     telemetry["description"] = measurement
 
     return telemetry
+
+def get_supertwin_telemetry_mapped(hostname, name, field_key, measurement, comp, version):
+
+    st_telemetry = {}
+
+    st_telemetry["@id"] = get_uid(hostname, comp, "telemetry" + t(), 1)
+    st_telemetry["@type"] = "HWTelemetry"
+    st_telemetry["schema"] = "string"
+    st_telemetry["name"] = name
+    
+    st_telemetry["displayName"] = field_key
+    st_telemetry["SamplerName"] = measurement[0]
+    st_telemetry["PMUName"] = measurement[1]
+    st_telemetry["description"] = measurement[2]
+
+    return st_telemetry
     
 
-def _filter(metric):
+def _filter(param_metric):
 
     _type = ''
 
-    if(metric.find('percpu') != -1):                                                                
-        _type = 'percpu'                                                                            
-    elif(metric.find('pernode') != -1):                                                             
-        _type = 'pernode'                                                                           
-    elif(metric.find('kernel') != -1 and metric.find("kernel.all") == -1):                                                              
-        _type = 'kernel'
-    elif(metric.find('kernel.all') != -1):
-        _type = 'kernel.all'
-    elif(metric.find('numa') != -1):                                                                
-        _type = 'pernode'                                                                           
-    elif(metric.find('mem') != -1):                                                                 
-        _type = 'mem'                                                                               
-    elif(metric.find('network.interface') != -1):                                                   
-        _type = 'network.interface'   
-    elif(metric.find('network') != -1 and metric.find("network.interface") == -1): #Only top level metrics
-        _type = 'network.top'    
-    elif(metric.find('disk.dev') != -1):
-        _type = 'disk.dev'
-    elif(metric.find('disk.all') != -1):
-        _type = 'disk.all'
-    elif(metric.find('hwcounters.UNC') != -1):                                                      
-        _type = 'uncore'                                                                            
-    elif(metric.find('ENERGY') != -1):                                                              
-        _type = 'energy'                                                                           
-    elif(metric.find('perfevent.hwcounters') != -1 and metric.find('UNC') == -1):                                               
-        _type = 'perfevent.hwcounters'
-    elif(metric.find('proc.') != -1):
-        _type = 'proc'
+    f_metric = ''
+    if(type(param_metric) == list):
+        f_metric = param_metric[0]
+    else:
+        f_metric = param_metric
 
+
+    if(f_metric.find('percpu') != -1):                                                                
+        _type = 'percpu'                                                                            
+    elif(f_metric.find('pernode') != -1):                                                             
+        _type = 'pernode'                                                                           
+    elif(f_metric.find('kernel') != -1 and f_metric.find("kernel.all") == -1):                                                              
+        _type = 'kernel'
+    elif(f_metric.find('kernel.all') != -1):
+        _type = 'kernel.all'
+    elif(f_metric.find('numa') != -1):                                                                
+        _type = 'pernode'                                                                           
+    elif(f_metric.find('mem') != -1):                                                                 
+        _type = 'mem'                                                                               
+    elif(f_metric.find('network.interface') != -1):                                                   
+        _type = 'network.interface'   
+    elif(f_metric.find('network') != -1 and f_metric.find("network.interface") == -1): #Only top level metrics
+        _type = 'network.top'    
+    elif(f_metric.find('disk.dev') != -1):
+        _type = 'disk.dev'
+    elif(f_metric.find('disk.all') != -1):
+        _type = 'disk.all'
+    elif(f_metric.find('hwcounters.UNC') != -1):                                                      
+        _type = 'uncore'
+    elif(f_metric.find('hwcounters.OFFC') != -1):                                                      
+        _type = 'offcore'                                                                            
+    elif(f_metric.find('ENERGY') != -1):                                                              
+        _type = 'energy'                                                                           
+    elif(f_metric.find('perfevent.hwcounters') != -1 and f_metric.find('UNC') == -1 and f_metric.find('OFFC') == -1):                                               
+        _type = 'perfevent.hwcounters'
+    elif(f_metric.find('proc.') != -1):
+        _type = 'proc'
+        
     #To see what metrics are classified and supported by SuperTwin: 
-    #print("Metric:", metric, "Returning:", _type)
+    print("Metric:", f_metric, "Returning:", _type)
     return _type
 
 def get_my_metrics(my_types):
-
+    
     my_metrics = []
+
     for my_type in my_types:
-        #print("here, len(metrics):", len(metrics))
-        for item in metrics:
+        for item in copy.deepcopy(metrics): ##One need to be real careful when using global variables
             if(_filter(item) == my_type):
                 my_metrics.append(item)
-
+                
+                
     return my_metrics
 
 def add_my_metrics(models_dict, this_comp_id, hostname, displayname, my_categories):
-
+    
     my_metrics = get_my_metrics(my_categories)
     
     for count, metric in enumerate(my_metrics):
@@ -221,28 +248,50 @@ def add_my_metrics(models_dict, this_comp_id, hostname, displayname, my_categori
 def add_my_metrics_mapped(models_dict, this_comp_id, hostname, displayname, field_key, my_categories):
 
     my_metrics = get_my_metrics(my_categories)
-    my_metrics = my_metrics[:250] #Only until migrate to RDF
     
-    for count, metric in enumerate(my_metrics):
+    for count, my_metric in enumerate(my_metrics):
         m_name = "metric" + str(count)
-        measurement = metric.replace(".", "_")
-        models_dict[this_comp_id]["contents"].append(get_telemetry_mapped(hostname, m_name, field_key, measurement, displayname, 1))
+        
+        if(type(my_metric) == list):
+            measurement = my_metric
+            measurement[0] = measurement[0].replace(".", "_")
+        else:
+            #measurement = my_metric
+            measurement = my_metric.replace(".", "_")
 
+        if(type(my_metric) == list):
+            models_dict[this_comp_id]["contents"].append(get_supertwin_telemetry_mapped(hostname, m_name, field_key, measurement, displayname, 1))
+        else:
+            models_dict[this_comp_id]["contents"].append(get_telemetry_mapped(hostname, m_name, field_key, measurement, displayname, 1))
+
+                
     return models_dict
 
 def add_my_metrics_mapped_socket(models_dict, this_comp_id, hostname, displayname, field_key_kernel, field_key_hw, my_categories):
-
-    my_metrics = get_my_metrics(my_categories)
-    #my_metrics = my_metrics[:250] #Only until migrate to RDF ##Not yet migrated to RDF but also not use Azure services. So, go for it. UNLIMITED POWER
     
-    for count, metric in enumerate(my_metrics):
-        m_name = "metric" + str(count)
-        measurement = metric.replace(".", "_")
-        if(_filter(metric) == "pernode"):
-            models_dict[this_comp_id]["contents"].append(get_telemetry_mapped(hostname, m_name, field_key_kernel, measurement, displayname, 1))
-        else:
-            models_dict[this_comp_id]["contents"].append(get_telemetry_mapped(hostname, m_name, field_key_hw, measurement, displayname, 1))
+    my_metrics = get_my_metrics(my_categories)
             
+    for count, my_metric in enumerate(my_metrics):
+        m_name = "metric" + str(count)
+        back_up = my_metric
+        if(type(my_metric) == list):
+            measurement = my_metric
+            measurement[0] = measurement[0].replace(".", "_")
+        else:
+            #measurement = my_metric
+            measurement = my_metric.replace(".", "_")
+        
+        if(_filter(my_metric) == "pernode"):
+            if(type(my_metric) == list):
+                models_dict[this_comp_id]["contents"].append(get_supertwin_telemetry_mapped(hostname, m_name, field_key_kernel, measurement, displayname, 1))
+            else:
+                models_dict[this_comp_id]["contents"].append(get_telemetry_mapped(hostname, m_name, field_key_kernel, measurement, displayname, 1))
+        else:
+            if(type(my_metric) == list):
+                models_dict[this_comp_id]["contents"].append(get_supertwin_telemetry_mapped(hostname, m_name, field_key_hw, measurement, displayname, 1))
+            else:
+                models_dict[this_comp_id]["contents"].append(get_telemetry_mapped(hostname, m_name, field_key_hw, measurement, displayname, 1))
+
     return models_dict
 
 
@@ -298,7 +347,7 @@ def add_sockets(models_dict, _sys_dict, top_id, hostname, socket):
 
     ##########################
     ##add metrics as telemetry
-    models_dict = add_my_metrics_mapped_socket(models_dict, this_socket_id, hostname, displayName, field_key_kernel, field_key_hw, ["pernode", "energy", "uncore"])
+    models_dict = add_my_metrics_mapped_socket(models_dict, this_socket_id, hostname, displayName, field_key_kernel, field_key_hw, ["pernode", "energy", "uncore", "offcore"])
     ##add metrics as telemetry
     ##########################
     
@@ -721,7 +770,6 @@ def prune_tree(config_file):
 def should_add(added, pmu):
 
     #Core PMUs are per dev and have exact same metrics, to avoid multiplication, add only one to metric namespace
-    
     for key in added:
         if(SequenceMatcher(None, key, pmu).ratio() > 0.8):
             return False
@@ -731,20 +779,30 @@ def should_add(added, pmu):
 
 def pmu_to_pcp(PMUs, metrics):
     
-    #pprint(PMUs)
     added = []
     for key in PMUs:
         if(key.find("perf") == -1):
             if(should_add(added, key)):
                 for event in PMUs[key]["events"]:
+                    #print("key:", key, "event:", event)
                     metric = event[0]
                     metric = "perfevent.hwcounters." + metric.replace(":", "_")
-                    metrics.append(metric)
+                    metrics.append([metric, event[0], event[1]])
                 added.append(key)
                     
 
     return metrics
-    
+
+def get_msr(PMUs):
+
+    MSRs = ["snb", "snb_ep", "ivb", "bdw", "bdw_ep", "knc", "knl", "glm", "hsw", "hsw_ep", "slm", "skx", "skl", "icl", "knm", "clx", "tmt", "icx", "spl"]
+
+    for key in PMUs.keys():
+        if key in MSRs:
+            return key
+
+    return None
+
 def main(_sys_dict):
 
     #prune_tree(config_file)
@@ -771,6 +829,11 @@ def main(_sys_dict):
                                                         "arch", description = _sys_dict["arch"]))
     models_dict[top_id]["contents"].append(get_property(get_id(hostname, "kernel", 1, "K",1),
                                                         "kernel", description = _sys_dict["system"]["kernel"]["version"]))
+
+    ##Add MSR
+    msr = get_msr(_sys_dict["PMUs"])
+    models_dict[top_id]["contents"].append(get_property(get_id(hostname, "MSR", 1, "M",1),
+                                                        "MSR", description = msr))
 
     ##########################
     ##Add system level metrics as telemetry
