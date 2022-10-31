@@ -1,6 +1,7 @@
 import collections
 import sys
-
+from subprocess import Popen, PIPE
+import shlex
 
 from flask import Flask, jsonify, make_response, request
 from pymongo import MongoClient
@@ -26,7 +27,10 @@ import generate_dt
 import sampling
 import stream_benchmark
 import hpcg_benchmark
-import roofline_dashboard
+import adcarm_benchmark
+import observation
+#import roofline_dashboard
+
 import static_data
 
 
@@ -63,6 +67,7 @@ def startSuperTwin():
     global twin
     twin = callSuperTwin({"flag": True, "address" : "10.36.54.195"})
     return twin.addr
+
 
 @app.route('/getMetrics/monitoring/<uid>', methods=['GET'])
 def getMonitoringMetrics(uid):
@@ -284,6 +289,31 @@ def appendExperimentalMetrics():
         return make_response(jsonify({'error': error}), 400)
 
 
+@app.route('/getMonitoringStatus', methods=['GET'])
+def getMonitoringStatus():
+    try:
+        p0_command = 'ps aux | grep mongodb'
+        
+        p0 = Popen(p0_command, shell=True)
+        monitor_pid = p0.pid
+
+        print("\n\n",monitor_pid,"\n\n")
+        return "aaaaaa"
+    except Exception as error:
+        return make_response(jsonify({'error': error}), 400)
+
+
+@app.route('/getDashboards/<uid>', methods=['GET'])
+def getDashboards(uid):
+    try:
+        twin_data = loads(dumps((collection.find({"_id": ObjectId(uid)})), default=json_util.default))
+        dtdl_twin = twin_data[0]['dashboard_location']
+        
+        #for loop to get other dashboard links
+        #for key, values in dtdl_twin.items():
+
+    except Exception as error:
+        return make_response(jsonify({'error': error}), 400)
 
 
 
@@ -330,10 +360,8 @@ def get_type(param_metric):
         _type = 'perfevent.hwcounters'
     elif(f_metric.find('proc.') != -1):
         _type = 'proc'
-        
-    #To see what metrics are classified and supported by SuperTwin: 
-    #print("Metric:", f_metric, "Returning:", _type)
     return _type
+
 
     
 if __name__ == '__main__':
