@@ -117,7 +117,7 @@ class SuperTwin:
         twin_id = None
         collection_id =None
         
-        if(len(args) > 0): ##Check if existed and wanted to be reconstructed from non-existed
+        if(len(args) == 1): ##Check if existed and wanted to be reconstructed from non-existed
             try:
                 exist, name, twin_id, collection_id = utils.check_state(args[0])
             except:
@@ -125,7 +125,7 @@ class SuperTwin:
                 print("However, there is no such twin with that address..")
                 exit(1)
         
-        if(len(args) > 0 or exist): ##Reconstruct from db
+        if(len(args) == 1 or exist): ##Reconstruct from db
 
             self.addr = args[0]
             self.name = name
@@ -151,13 +151,21 @@ class SuperTwin:
             print("SuperTwin is reconstructed from db..")
 
         else: ##Construct from scratch
-            
-            self.addr = input("Address of the remote system: ")
+
+            if(len(args) == 3):
+                self.addr = args[0]
+                self.SSHuser = args[1]
+                self.SSHpass = args[2]
+                self.name, self.prob_file  = remote_probe.main(self.addr, self.SSHuser, self.SSHpass)
+                
+            else:
+                self.addr = input("Address of the remote system: ")
+                self.name, self.prob_file, self.SSHuser, self.SSHpass = remote_probe.main(self.addr)
+
+                
             self.uid = str(uuid.uuid4())
             print("Creating a new digital twin with id:", self.uid)
-            
-            self.name, self.prob_file, self.SSHuser, self.SSHpass = remote_probe.main(self.addr)
-                        
+                    
             self.influxdb_name = self.name + "_main"
             self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
             utils.get_influx_database(self.influxdb_addr, self.influxdb_name)
@@ -166,7 +174,7 @@ class SuperTwin:
             self.monitor_tag = "_monitor"
             self.mongodb_id = insert_twin_description(get_twin_description(self.prob_file),self)
             print("Collection id:", self.mongodb_id)
-            self.reconfigure_perfevent()
+            #self.reconfigure_perfevent()
             self.monitor_pid = sampling.main(self.name, self.addr, self.influxdb_name, self.monitor_tag, self.monitor_metrics)
             
             utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
@@ -531,7 +539,13 @@ class SuperTwin:
 
 if __name__ == "__main__":
 
-    my_SuperTwin = SuperTwin()
+    print("#######First SuperTwin, no args")
+    #my_SuperTwin = SuperTwin()
+    print("#######Second SuperTwin, 3 args")
+    addr = "10.36.54.195"
+    user_name = "ftasyaran"
+    password = "kemaliye"
+    my_SuperTwin = SuperTwin(addr, user_name, password)
     #otherTwin = SuperTwin("10.36.54.195")
     
     
