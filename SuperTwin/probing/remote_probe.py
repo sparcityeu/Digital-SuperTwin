@@ -68,11 +68,17 @@ def observation_command(ssh_client, command):
 #May migrate to invoke_shell() instead of exec_command() in the future
 #Because they say exec_command() may not be compatible with ALL servers
 #Let's see
-def main(SSHhost):
+def main(*args):
+
+    SSHhost = args[0]
     
-    #SSHhost = input("Address of remote system: ")
-    SSHuser = input("User: ")
-    SSHpass = getpass.getpass() ##This should be SSHpass
+    if(len(args) == 1):
+        SSHuser = input("User: ")
+        SSHpass = getpass.getpass() ##This should be SSHpass
+    
+    else:
+        SSHuser = args[1]
+        SSHpass = args[2]
     
     ##Connect to remote host
     ssh = paramiko.SSHClient()
@@ -129,8 +135,11 @@ def main(SSHhost):
     probfile_name = "probing_" + remotehost_name + ".json"
     detect_utils.cmd("mv probing.json " + probfile_name)
 
-    #return remotehost_name, SSHhost, probfile_name
-    return remotehost_name, probfile_name, SSHuser, SSHpass
+
+    if(len(args) == 3):
+        return remotehost_name, probfile_name
+    else:
+        return remotehost_name, probfile_name, SSHuser, SSHpass
 
 if __name__ == "__main__":
 
