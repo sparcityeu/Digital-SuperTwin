@@ -10,22 +10,28 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 const PerformExperiment = () => {
   const [experimentMetrics, setExperimentMetrics] = useState(undefined);
   const [container, setContainer] = useState([]);
+  const [cmd, setCMD] = useState(undefined);
+
   const navigate = useNavigate();
+
+  function handleChange(event) {
+    setCMD(event.target.value);
+  }
 
   const getExperimentMetrics = async () => {
     try {
       const res = await axios.get(
-        "http://127.0.0.1:5000/api/getMetrics/monitoring/63427bdbda23eb00a1dcb808"
+        "http://127.0.0.1:5000/api/getMetrics/experiment"
       );
       console.log(res.data);
-      setExperimentMetrics(res.data["monitoringMetrics"]);
+      setExperimentMetrics(res.data["experimentMetrics"]);
       return res.data;
     } catch (err) {}
   };
 
-  function sendExperiment(e) {
+  async function sendExperiment(e) {
     e.preventDefault();
-    axios
+    await axios
       .post("http://127.0.0.1:5000/api/appendMetrics/experiment", {
         experimentMetrics: container,
       })
@@ -34,7 +40,19 @@ const PerformExperiment = () => {
         if (error.response) {
         }
       });
-    console.log("aaaaa");
+    console.log("Experiment metrics set");
+
+    await axios
+      .post("http://127.0.0.1:5000/api/runExperiment", {
+        cmd,
+      })
+      .then((response) => this.myFunction(response.status))
+      .catch(function (error) {
+        if (error.response) {
+        }
+      });
+    console.log("Experiment has run");
+
     navigate("/DashboardLinks");
   }
 
@@ -47,7 +65,7 @@ const PerformExperiment = () => {
     {
       headerName: "Metric Type",
       field: "type",
-      maxWidth: 200,
+      maxWidth: 130,
     },
   ];
 
@@ -74,7 +92,7 @@ const PerformExperiment = () => {
       }}
     >
       <div
-        class="col-span-6"
+        class="col-span-5"
         style={{
           height: "100vh",
           backgroundColor: "#4A235A",
@@ -111,6 +129,7 @@ const PerformExperiment = () => {
             rows="20"
             class="block p-2.5 w-full h-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Input the experimental code block"
+            onChange={handleChange}
             style={{
               height: "100%",
               resize: "none",
@@ -134,7 +153,7 @@ const PerformExperiment = () => {
       </div>
 
       <div
-        class="col-span-5"
+        class="col-span-6"
         style={{
           height: "100vh",
           backgroundColor: "#4A235A",

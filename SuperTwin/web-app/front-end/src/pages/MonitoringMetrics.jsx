@@ -18,7 +18,7 @@ const MonitoringMetrics = () => {
   const getMonitoringMetrics = async () => {
     try {
       const res = await axios.get(
-        "http://127.0.0.1:5000/api/getMetrics/monitoring/63427bdbda23eb00a1dcb808"
+        "http://127.0.0.1:5000/api/getMetrics/monitoring"
       );
       console.log(res.data);
       setmonitoringMetrics(res.data["monitoringMetrics"]);
@@ -26,9 +26,9 @@ const MonitoringMetrics = () => {
     } catch (err) {}
   };
 
-  function startMonitor(e) {
+  async function startMonitor(e) {
     e.preventDefault();
-    axios
+    await axios
       .post("http://127.0.0.1:5000/api/appendMetrics/monitoring", {
         monitoringMetrics: container,
       })
@@ -39,19 +39,18 @@ const MonitoringMetrics = () => {
       });
     console.log("aaaaa");
     navigate("/DashboardLinks");
-
   }
 
   useEffect(() => {
     getMonitoringMetrics();
-  }, []);
+  }, [monitoringMetrics]);
 
   const columnDefs = [
     { headerName: "Metric", field: "metric" },
     {
       headerName: "Metric Type",
       field: "type",
-      maxWidth: 200,
+      maxWidth: 130,
     },
   ];
 

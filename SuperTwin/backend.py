@@ -1,7 +1,9 @@
 import collections
 import sys
+import subprocess
 from subprocess import Popen, PIPE
 import shlex
+import time
 
 from flask import Flask, jsonify, make_response, request
 from pymongo import MongoClient
@@ -35,7 +37,6 @@ import static_data
 
 
 app = Flask(__name__)
-
 db_client = MongoClient('localhost', 27017)
 CORS(app)
 
@@ -45,7 +46,7 @@ CORS(app)
 def setDB():
     try:
         global collection
-        db = db_client['dolap']
+        db = db_client[twin.name]
 
         collection = db['twin']
         response = dumps((collection.find({})), default=json_util.default)
@@ -62,24 +63,33 @@ def setDB():
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
 
-@app.route('/api/startSuperTwin', methods=['GET'])
+@app.route('/api/startSuperTwin', methods=['POST'])
 def startSuperTwin():
-    global twin
-    #twin = callSuperTwin({"flag": True, "address" : "10.36.54.195"})
-    addr = "10.36.54.195"                                                                           
-    user_name = "ftasyaran"                                                                         
-    password = "kemaliye"
-    twin = supertwin.SuperTwin(addr, user_name, password)
-
     
-    return twin.mongodb_id
+    try:
+        global twin
+
+        data = request.get_json()
+        info = data['registration']
+
+        addr = info["remoteAddress"]
+        user_name = info["username"]
+        password = info["password"]
+        twin = supertwin.SuperTwin(addr, user_name, password)
+        time.sleep(2)
+
+        return make_response(jsonify({'OK': "OK"}), 200)
+
+    except Exception as error:
+        return make_response(jsonify({'error': error}), 400)
 
 
 @app.route('/api/getMetrics/monitoring', methods=['GET'])
 def getMonitoringMetrics():
     try:
-        twin_data = loads(dumps((collection.find({"_id": ObjectId(twin.mongodb_id)})), default=json_util.default))
-        dtdl_twin = twin_data[0]['dtdl_twin']
+        #replace with twin.ObjectID
+        twin_data = loads(dumps((collection.find({"_id": twin.mongodb_id})), default=json_util.default))
+        dtdl_twin = twin_data[0]['twin_description']
 
         raw_metrics = []
         thread_count_flag = False
@@ -95,16 +105,16 @@ def getMonitoringMetrics():
                     thread_count_flag = True
                     for metric in values['contents']:
 
-                        if metric['@type'] == "Telemetry" and metric['description'].find("perfevent") == -1:
-                            raw_metrics.append(metric['description'])
+                        if metric['@type'] == "SWTelemetry":
+                            raw_metrics.append(metric['SamplerName'])
 
             elif values['@id'].find("core") != -1:
                 if core_count_flag == False:
                     core_count_flag = True
                     for metric in values['contents']:
 
-                        if metric['@type'] == "Telemetry" and metric['description'].find("perfevent") == -1:
-                            raw_metrics.append(metric['description'])
+                        if metric['@type'] == "SWTelemetry":
+                            raw_metrics.append(metric['SamplerName'])
 
 
 
@@ -112,23 +122,23 @@ def getMonitoringMetrics():
                 if L1D_count_flag == False:
                     L1D_count_flag = True
                     for metric in values['contents']:
-                        if metric['@type'] == "Telemetry" and metric['description'].find("perfevent") == -1:
-                            raw_metrics.append(metric['description'])
+                        if metric['@type'] == "SWTelemetry":
+                            raw_metrics.append(metric['SamplerName'])
 
 
             elif values['@id'].find("L2") != -1:
                 if L2_count_flag == False:
                     L2_count_flag = True
                     for metric in values['contents']:
-                        if metric['@type'] == "Telemetry" and metric['description'].find("perfevent") == -1:
-                            raw_metrics.append(metric['description'])
+                        if metric['@type'] == "SWTelemetry":
+                            raw_metrics.append(metric['SamplerName'])
 
             elif values['@id'].find("L3") != -1:
                 if L3_count_flag == False:
                     L3_count_flag = True
                     for metric in values['contents']:
-                        if metric['@type'] == "Telemetry" and metric['description'].find("perfevent") == -1:
-                            raw_metrics.append(metric['description'])
+                        if metric['@type'] == "SWTelemetry":
+                            raw_metrics.append(metric['SamplerName'])
 
 
             elif values['@id'].find("bank") != -1:
@@ -136,14 +146,14 @@ def getMonitoringMetrics():
                     bank_count_flag = True
                     for metric in values['contents']:
 
-                        if metric['@type'] == "Telemetry" and metric['description'].find("perfevent") == -1:
-                            raw_metrics.append(metric['description'])
+                        if metric['@type'] == "SWTelemetry":
+                            raw_metrics.append(metric['SamplerName'])
 
             else:
                 for metric in values['contents']:
 
-                        if metric['@type'] == "Telemetry" and metric['description'].find("perfevent") == -1:
-                            raw_metrics.append(metric['description'])
+                        if metric['@type'] == "SWTelemetry":
+                            raw_metrics.append(metric['SamplerName'])
         
 
         metrics = []
@@ -154,7 +164,7 @@ def getMonitoringMetrics():
             metrics.append(metric_with_type)
 
 
-
+        time.sleep(1)
         return make_response(jsonify({"monitoringMetrics":metrics}), 200)
 
     except Exception as error:
@@ -162,11 +172,12 @@ def getMonitoringMetrics():
 
 
 
-@app.route('/api/getMetrics/experiment/<uid>', methods=['GET'])
-def getExperimentalMetrics(uid):
+@app.route('/api/getMetrics/experiment', methods=['GET'])
+def getExperimentalMetrics():
     try:
-        twin_data = loads(dumps((collection.find({"_id": ObjectId(uid)})), default=json_util.default))
-        dtdl_twin = twin_data[0]['dtdl_twin']
+        #replace with twin.ObjectID
+        twin_data = loads(dumps((collection.find({"_id": twin.mongodb_id})), default=json_util.default))
+        dtdl_twin = twin_data[0]['twin_description']
 
         raw_metrics = []
         thread_count_flag = False
@@ -182,16 +193,16 @@ def getExperimentalMetrics(uid):
                     thread_count_flag = True
                     for metric in values['contents']:
 
-                        if metric['@type'] == "Telemetry" and metric['description'].find("perfevent") != -1:
-                            raw_metrics.append(metric['description'])
+                        if metric['@type'] == "HWTelemetry":
+                            raw_metrics.append(metric['PMUName'])
 
             elif values['@id'].find("core") != -1:
                 if core_count_flag == False:
                     core_count_flag = True
                     for metric in values['contents']:
 
-                        if metric['@type'] == "Telemetry" and metric['description'].find("perfevent") != -1:
-                            raw_metrics.append(metric['description'])
+                        if metric['@type'] == "HWTelemetry":
+                            raw_metrics.append(metric['PMUName'])
 
 
 
@@ -199,23 +210,23 @@ def getExperimentalMetrics(uid):
                 if L1D_count_flag == False:
                     L1D_count_flag = True
                     for metric in values['contents']:
-                        if metric['@type'] == "Telemetry" and metric['description'].find("perfevent") != -1:
-                            raw_metrics.append(metric['description'])
+                        if metric['@type'] == "HWTelemetry":
+                            raw_metrics.append(metric['PMUName'])
 
 
             elif values['@id'].find("L2") != -1:
                 if L2_count_flag == False:
                     L2_count_flag = True
                     for metric in values['contents']:
-                        if metric['@type'] == "Telemetry" and metric['description'].find("perfevent") != -1:
-                            raw_metrics.append(metric['description'])
+                        if metric['@type'] == "HWTelemetry":
+                            raw_metrics.append(metric['PMUName'])
 
             elif values['@id'].find("L3") != -1:
                 if L3_count_flag == False:
                     L3_count_flag = True
                     for metric in values['contents']:
-                        if metric['@type'] == "Telemetry" and metric['description'].find("perfevent") != -1:
-                            raw_metrics.append(metric['description'])
+                        if metric['@type'] == "HWTelemetry":
+                            raw_metrics.append(metric['PMUName'])
 
 
             elif values['@id'].find("bank") != -1:
@@ -223,24 +234,20 @@ def getExperimentalMetrics(uid):
                     bank_count_flag = True
                     for metric in values['contents']:
 
-                        if metric['@type'] == "Telemetry" and metric['description'].find("perfevent") != -1:
-                            raw_metrics.append(metric['description'])
+                        if metric['@type'] == "HWTelemetry":
+                            raw_metrics.append(metric['PMUName'])
 
             else:
                 for metric in values['contents']:
 
-                        if metric['@type'] == "Telemetry" and metric['description'].find("perfevent") != -1:
-                            raw_metrics.append(metric['description'])
-
-
+                        if metric['@type'] == "HWTelemetry":
+                            raw_metrics.append(metric['PMUName'])
         metrics = []
 
         for metric in raw_metrics:
             metric_type = get_type(metric)
             metric_with_type = {"metric": metric, "type": metric_type}
             metrics.append(metric_with_type)
-
-
 
         return make_response(jsonify({"experimentMetrics":metrics}), 200)
 
@@ -259,14 +266,16 @@ def appendMonitoringMetrics():
         file_object.write("\n##USER METRICS##\n")
 
 
+        x = 0
         for metric in metric_list:
-            file_object.write(metric['metric']+"\n")
+            file_object.write(metric['metric'])
+            if x != len(metric_list) -1:
+                file_object.write("\n")
 
 
         file_object.close()
-    
-        return make_response(jsonify({'OK': "OK"}), 200)
 
+        return "OK"
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
     
@@ -279,17 +288,18 @@ def appendExperimentalMetrics():
         data = request.get_json()
         metric_list = data['experimentMetrics']
 
-        file_object = open('monitor_metrics.txt', 'a')
-        file_object.write("\n##EXPERIMENT METRICS##\n")
+        file_object = open('perfevent.conf', 'a')
 
 
+        x = 0
         for metric in metric_list:
-            file_object.write(metric['metric']+"\n")
-
-
+            file_object.write(metric['metric'])
+            if x != len(metric_list) -1:
+                file_object.write("\n")
+            
         file_object.close()
 
-        return make_response(jsonify({'OK': "OK"}), 200)
+        return "OK"
 
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
@@ -298,31 +308,75 @@ def appendExperimentalMetrics():
 @app.route('/api/getMonitoringStatus', methods=['GET'])
 def getMonitoringStatus():
     try:
-        p0_command = 'ps aux | grep mongodb'
-        
-        p0 = Popen(p0_command, shell=True)
-        monitor_pid = p0.pid
+        p0_command = 'ps aux | grep pcp2influxdb'
 
-        print("\n\n",monitor_pid,"\n\n")
-        return "aaaaaa"
+        cmd_output = output_lines(p0_command)
+        cmd_output = cmd_output[1].split()
+        status = cmd_output[1]
+        dir = cmd_output[11]
+        config = cmd_output[15]
+        per = cmd_output[16]
+
+        monitor_info ={
+            "address":twin.addr,
+            "mongodb": twin.mongodb_id,
+            "grafana": twin.grafana_token,
+            "user": twin.SSHuser,
+            "uid": twin.uid,
+            "pid":status,
+            "dir":dir,
+            "config":config,
+            "per":per,
+        }
+
+        return make_response(monitor_info, 200)
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
 
 
-@app.route('/api/getDashboards/<uid>', methods=['GET'])
-def getDashboards(uid):
+@app.route('/api/getDashboards', methods=['GET'])
+def getDashboards():
     try:
-        twin_data = loads(dumps((collection.find({"_id": ObjectId(uid)})), default=json_util.default))
-        dtdl_twin = twin_data[0]['dashboard_location']
+        dashborads = []
+
+        twin_data = loads(dumps((collection.find({"_id": twin.mongodb_id})), default=json_util.default))
         
-        #for loop to get other dashboard links
-        #for key, values in dtdl_twin.items():
+        roofline_dashboard_link = twin_data[0]['roofline_dashboard']
+        roofline_dashboard_name = twin.name +" roofline dashborad"
+
+        monitoring_dashboard_link = twin_data[0]['monitoring_dashboard']
+        monitoring_dashboard_name = twin.name +" monitoring dashborad"
+
+        dashborads.append({"dashboard_name":roofline_dashboard_name, "dashboard_link": roofline_dashboard_link})
+        dashborads.append({"dashboard_name":monitoring_dashboard_name, "dashboard_link": monitoring_dashboard_link})
+        #observationCollection = db_client['observation']
+        #observation_data = loads(dumps((observationCollection.find()), default=json_util.default))
+        #for obs in observation_data:
+        #    observation_name = twin.name + obs['_id']
+        #    observation_link = obs['dashboard_link']
+        #    dashborads.append({"dashboard_name":observation_name, "dashboard_link": observation_link})
+
+        time.sleep(1)
+        
+        return make_response(jsonify({"dashboards":dashborads}), 200)
+
 
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
 
 
+@app.route('/api/runExperiment', methods=['POST'])
+def sendCommands():
+    try:
+        data = request.get_json()
+        cmd = data['cmd']
 
+
+        
+
+        return "OK"
+    except Exception as error:
+        return make_response(jsonify({'error': error}), 400)
 
 
 def get_type(param_metric):
@@ -356,19 +410,25 @@ def get_type(param_metric):
         _type = 'disk.dev'
     elif(f_metric.find('disk.all') != -1):
         _type = 'disk.all'
-    elif(f_metric.find('hwcounters.UNC') != -1):                                                      
-        _type = 'uncore'
-    elif(f_metric.find('hwcounters.OFFC') != -1):                                                      
-        _type = 'offcore'                                                                            
+    elif(f_metric.find('UNC') != -1):                                                      
+        _type = 'uncore PMU'
+    elif(f_metric.find('OFFC') != -1):                                                      
+        _type = 'offcore PMU'                                                                            
     elif(f_metric.find('ENERGY') != -1):                                                              
         _type = 'energy'                                                                           
-    elif(f_metric.find('perfevent.hwcounters') != -1 and f_metric.find('UNC') == -1 and f_metric.find('OFFC') == -1):                                               
-        _type = 'perfevent.hwcounters'
+    elif(f_metric.find(':') != -1 and f_metric.find('UNC') == -1 and f_metric.find('OFFC') == -1):                                               
+        _type = 'core PMU'
     elif(f_metric.find('proc.') != -1):
         _type = 'proc'
     return _type
 
 
+def output_lines(cmdline):
+    """Run a shell command and returns the output as lines."""
+    proc = subprocess.Popen(cmdline, shell=True, stdout=subprocess.PIPE,
+                            universal_newlines=True)
+    stdout = proc.communicate()[0]
+    return stdout.splitlines()
     
 if __name__ == '__main__':
     app.run(port=5000,debug=True)

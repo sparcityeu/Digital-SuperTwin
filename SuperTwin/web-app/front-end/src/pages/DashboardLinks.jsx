@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
+import axios from "axios";
+
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
@@ -7,17 +9,49 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import AnimatedStatusCard from "../components/StatusCard";
 
 const DashboardLinks = () => {
-  const [x, setX] = useState(mockAPICall());
-  const [daemonStatus, setDaemonStatus] = useState(true);
+  const [dashboards, setDashboards] = useState(undefined);
+  const [monitoringStatus, setMonitoringStatus] = useState([]);
+
+  const getDashboards = async () => {
+    try {
+      const res = await axios.get("http://127.0.0.1:5000/api/getDashboards");
+      console.log(res.data);
+      setDashboards(res.data["dashboards"]);
+      return res.data;
+    } catch (err) {}
+  };
+
+  const getMonitoringStatus = async () => {
+    try {
+      const res = await axios.get(
+        "http://127.0.0.1:5000/api/getMonitoringStatus"
+      );
+      console.log(res.data);
+      setMonitoringStatus(res.data);
+      return res.data;
+    } catch (err) {}
+  };
+
+  useEffect(() => {
+    getDashboards();
+    getMonitoringStatus();
+  }, [dashboards]);
+
+  function LinkCellRenderer(props) {
+    const onClick = () => {
+      window.open(props.value, "_blank");
+    };
+    return <button onClick={onClick}>Show Dashboard</button>;
+  }
 
   const columnDefs = [
-    { headerName: "Dashboard", field: "DashboardName" },
+    { headerName: "Dashboard", field: "dashboard_name" },
     {
-      headerName: "Dashboard Type",
-      field: "dashboard_type",
-      maxWidth: 200,
+      headerName: "Link",
+      field: "dashboard_link",
+      maxWidth: 150,
+      cellRenderer: "LinkCellRenderer",
     },
-    { headerName: "Link", field: "DashboardLink", maxWidth: 100 },
   ];
 
   const defaultColDef = {
@@ -34,7 +68,7 @@ const DashboardLinks = () => {
     console.log(event.api.getSelectedRows());
   };
 
-  return x !== undefined && x !== undefined ? (
+  return dashboards !== [] ? (
     <div
       className="grid grid-cols-11"
       style={{
@@ -75,8 +109,11 @@ const DashboardLinks = () => {
             masterDetail={true}
             columnDefs={columnDefs}
             defaultColDef={defaultColDef}
-            rowData={x}
+            rowData={dashboards}
             rowSelection={rowSelectionType}
+            frameworkComponents={{
+              LinkCellRenderer,
+            }}
             onSelectionChanged={onSelectionChanged}
             pagination={true}
           ></AgGridReact>
@@ -104,7 +141,7 @@ const DashboardLinks = () => {
             color: "white",
           }}
         >
-          Monitoring Daemon Status
+          Monitoring Status
         </p>
         <div
           style={{
@@ -119,16 +156,16 @@ const DashboardLinks = () => {
             }}
           ></label>
           {AnimatedStatusCard(
-            "abcd-efgh-1234-5678",
-            "2576",
-            daemonStatus === true && daemonStatus !== false
-              ? "Probing"
-              : "Not connected",
+            //Send from twin object
+            monitoringStatus["uid"],
+            monitoringStatus["pid"],
+            monitoringStatus !== undefined ? "Monitoring" : "Not connected",
             {
-              machineAddress: "10.36.54.195",
-              userName: "mgale",
-              mongodbID: "id312312412312",
-              grafanaAPIKey: "fasdfasdfasdfasdfadsf",
+              //Send from twin object
+              machineAddress: monitoringStatus["address"],
+              userName: monitoringStatus["user"],
+              mongodbID: monitoringStatus["mongodb"],
+              grafanaAPIKey: monitoringStatus["grafana"],
             }
           )}
         </div>
@@ -139,39 +176,3 @@ const DashboardLinks = () => {
   );
 };
 export default DashboardLinks;
-
-const mockAPICall = () => {
-  var mockData = [
-    {
-      ID: 1,
-      DashboardName: "CPU Monitoring Dashboard",
-      dashboard_type: "Heatmap",
-      DashboardLink: "Link",
-    },
-    {
-      ID: 2,
-      DashboardName: "GPU Monitoring Dashboard",
-      dashboard_type: "Graph",
-      DashboardLink: "Link",
-    },
-    {
-      ID: 3,
-      DashboardName: "NUMA Monitoring Dashboard",
-      dashboard_type: "etc",
-      DashboardLink: "Link",
-    },
-    {
-      ID: 4,
-      DashboardName: "Network Traffic Dashboard",
-      dashboard_type: "....",
-      DashboardLink: "Link",
-    },
-    {
-      ID: 5,
-      DashboardName: ".........",
-      DashboardLink: "Link",
-    },
-  ];
-
-  return mockData;
-};

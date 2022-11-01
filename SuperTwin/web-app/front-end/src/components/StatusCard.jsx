@@ -54,10 +54,10 @@ const AnimatedStatusCard = (sampler_id, process_id, status, extra_info) => {
   const handleClick = (e) => {
     e.preventDefault();
     var x = "";
-    if (probingStatus === "Probing") {
+    if (probingStatus === "Monitoring") {
       x = "Disconnected";
     } else {
-      x = "Probing";
+      x = "Monitoring";
     }
 
     setProbingStatus(x);
@@ -94,7 +94,7 @@ const AnimatedStatusCard = (sampler_id, process_id, status, extra_info) => {
                     textAlign: "left",
                   }}
                 >
-                  Sampler ID
+                  Digital Twin ID
                 </Typography>
               </div>
               <div class="col-span-6">
@@ -122,7 +122,7 @@ const AnimatedStatusCard = (sampler_id, process_id, status, extra_info) => {
                     textAlign: "left",
                   }}
                 >
-                  Remote Machine PID
+                  Monitoring PID
                 </Typography>
               </div>
               <div class="col-span-6">
@@ -187,8 +187,7 @@ const AnimatedStatusCard = (sampler_id, process_id, status, extra_info) => {
                 backgroundColor: "#212329",
               }}
             >
-              {probingStatus === "Disconnected" &&
-              probingStatus === "Disconnected" ? (
+              {probingStatus === "Disconnected" ? (
                 <Typography paragraph>
                   <Typography
                     varian="body1"
