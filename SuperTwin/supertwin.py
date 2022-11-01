@@ -15,6 +15,7 @@ import stream_benchmark
 import hpcg_benchmark
 import adcarm_benchmark
 import observation
+import influx_help
 #import roofline_dashboard
 
 import static_data
@@ -31,6 +32,11 @@ from bson.json_util import loads
 
 import datetime
 import json
+
+#sys.path.append("quick_dashboard")
+#import unique ##delete dis
+
+import influxdb_client
 
 ##HPCG benchmark parameters are set to be separate from classes, so hpcg is repeatable and easily mutable
 HPCG_PARAM = {}
@@ -580,18 +586,28 @@ class SuperTwin:
 
     def execute_observation(self, command):
         observation_id = str(uuid.uuid4())
-        self.reconfigure_perfevent()
-        obs_conf = generate_pcp2influxdb_config_observation(self, observation_id)
-        #observation.start_observation(SuperTwin, obs_conf)
+        obs_conf = sampling.generate_pcp2influxdb_config_observation(self, observation_id)
+        observation.observe_single(self, observation_id, command, obs_conf)
+        print("Observation", observation_id, "is completed..")
         
         
     def execute_observation_batch_element(self, command, observation_id, element_id):
+        
         this_observation_id = observation_id + "_" + str(element_id)
+        obs_conf = sampling.generate_pcp2influxdb_config_observation(self, this_observation_id)
+        observation.observe_single(self, this_observation_id, command, obs_conf)
+        print("Observation", this_observation_id, "is completed..")
 
+        
     def execute_observation_batch(self, commands):
         
         observation_id = str(uuid.uuid4())
-        #reconfigure_perfevent(metrics)
+        for i in range(len(commands)):
+            self.execute_observation_batch_element(commands[i], observation_id, i)
+        
+        ##for every observation tag there exist;
+        ##subtract difference between first observation's first timestamp from other's first
+        influx_help.normalize_tag(self, observation_id, len(commands))
         
         
     def generate_observation_dashboard_type1(self): ##Applications runs on different threads at the same time
@@ -607,15 +623,32 @@ class SuperTwin:
 if __name__ == "__main__":
 
 
-    my_SuperTwin = SuperTwin() ##From scratch
-    #my_superTwin = SuperTwin(address) ##Re-construct
+    addr = "10.36.54.195"
+    #user_name = "ftasyaran"
+    
+    
+    #my_SuperTwin = SuperTwin() ##From scratch
+    my_superTwin = SuperTwin(addr) ##Re-construct
+    #my_superTwin.execute_observation("likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s")
+    my_superTwin.execute_observation_batch(["likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s",
+                                            "likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s"]),
+                                            #"likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s",
+                                            #"likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s"])  
+    #my_superTwin.update_twin_document__assert_new_monitor_pid()
     #my_SuperTwin = SuperTwin(addr, user_name, password) ##From scratch
 
-    
-    #addr = "10.36.54.195"
-    #user_name = "ftasyaran"
-    #password = "OHPASSWORDNOTHISISASECURITYBREACH!!!1!!11"
-    
-        
-    
-    
+    #########
+    #########
+    #my_superTwin.kill_zombie_monitors()
+    #my_superTwin.update_twin_document__assert_new_monitor_pid()
+    #my_superTwin.update_twin_document__update_monitor_pid()
+    #my_superTwin.update_twin_document__add_roofline_dashboard(url)
+    #my_superTwin.add_stream_benchmark()
+    #my_superTwin.add_hpcg_benchmark(HPCG_PARAM) 
+    #my_superTwin.add_adcarm_benchmark()
+    #my_superTwin.reconfigure_observation_events(metrics)
+    #my_superTwin.reconfigure_monitor_events(metrics)
+    #my_superTwin.execute_observation(command):
+    #my_superTwin.execute_observation_batch(commands):
+    #########
+    #########

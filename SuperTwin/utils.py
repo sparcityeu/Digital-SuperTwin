@@ -43,6 +43,8 @@ def get_influx_database(address, influxdb_name):
     port = fields[1]
     #print("host:", host, "port:", port)
     influxdb = InfluxDBClient(host=host, port=port)
+
+    return influxdb
     
 def read_env():
     reader = open("env.txt", "r")

@@ -108,10 +108,14 @@ def generate_pcp2influxdb_config_observation(SuperTwin, observation_id):
     db_name = SuperTwin.influxdb_name
     sourceIP = SuperTwin.addr
     source_name = SuperTwin.name
+    metrics = SuperTwin.observation_metrics
     
     for item in ALWAYS_HAVE_OBSERVATION:
         if item not in metrics:
             metrics.append(item)
+
+    metrics = [x.strip("node").strip(" ") for x in metrics]
+    metrics = ["perfevent.hwcounters." + x.replace(":", "_") + ".value" for x in metrics]
     
     config_lines = ["[options]" + "\n",
                     "influx_server = http://127.0.0.1:8086" + "\n",
@@ -125,7 +129,7 @@ def generate_pcp2influxdb_config_observation(SuperTwin, observation_id):
     for metric in metrics:
         config_lines.append(metric + " = ,," + "\n")
         
-    pcp_conf_name = "pcp_" + source_name + db_tag + ".conf" 
+    pcp_conf_name = "pcp_" + source_name + "_" + db_tag + ".conf" 
     writer = open(pcp_conf_name, "w")
     
     for line in config_lines:
@@ -158,9 +162,9 @@ def generate_perfevent_conf(SuperTwin):
             metrics.append(item)
 
     for item in metrics:
-        if(item.find("numa") != -1 or item.find("node") != -1):
+        if((item.find("numa") != -1 or item.find("node") != -1) and item.find("energy") == -1):
             metrics.remove(item)
-            metrics.append(item)
+            metrics.append(item + " node") ##
     
     
     msr = get_msr(SuperTwin)
