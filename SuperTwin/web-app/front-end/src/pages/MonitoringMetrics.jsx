@@ -18,7 +18,7 @@ const MonitoringMetrics = () => {
   const getMonitoringMetrics = async () => {
     try {
       const res = await axios.get(
-        "http://127.0.0.1:5000/api/getMetrics/monitoring/63427bdbda23eb00a1dcb808"
+        "http://127.0.0.1:5000/api/getMetrics/monitoring"
       );
       console.log(res.data);
       setmonitoringMetrics(res.data["monitoringMetrics"]);
@@ -39,7 +39,6 @@ const MonitoringMetrics = () => {
       });
     console.log("aaaaa");
     navigate("/DashboardLinks");
-
   }
 
   useEffect(() => {
@@ -51,7 +50,7 @@ const MonitoringMetrics = () => {
     {
       headerName: "Metric Type",
       field: "type",
-      maxWidth: 200,
+      maxWidth: 130,
     },
   ];
 

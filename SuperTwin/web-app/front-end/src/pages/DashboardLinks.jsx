@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
+import axios from "axios";
+
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
@@ -7,17 +9,25 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import AnimatedStatusCard from "../components/StatusCard";
 
 const DashboardLinks = () => {
-  const [x, setX] = useState(mockAPICall());
+  const [dashboards, setDashboards] = useState(undefined);
   const [daemonStatus, setDaemonStatus] = useState(true);
 
+  const getDashboards = async () => {
+    try {
+      const res = await axios.get("http://127.0.0.1:5000/api/getDashboards");
+      console.log(res.data);
+      setDashboards(res.data["dashboards"]);
+      return res.data;
+    } catch (err) {}
+  };
+
+  useEffect(() => {
+    getDashboards();
+  }, []);
+
   const columnDefs = [
-    { headerName: "Dashboard", field: "DashboardName" },
-    {
-      headerName: "Dashboard Type",
-      field: "dashboard_type",
-      maxWidth: 200,
-    },
-    { headerName: "Link", field: "DashboardLink", maxWidth: 100 },
+    { headerName: "Dashboard", field: "dashboard_name" },
+    { headerName: "Link", field: "dashboard_link", maxWidth: 150 },
   ];
 
   const defaultColDef = {
@@ -34,7 +44,7 @@ const DashboardLinks = () => {
     console.log(event.api.getSelectedRows());
   };
 
-  return x !== undefined && x !== undefined ? (
+  return dashboards !== [] ? (
     <div
       className="grid grid-cols-11"
       style={{
@@ -75,7 +85,7 @@ const DashboardLinks = () => {
             masterDetail={true}
             columnDefs={columnDefs}
             defaultColDef={defaultColDef}
-            rowData={x}
+            rowData={dashboards}
             rowSelection={rowSelectionType}
             onSelectionChanged={onSelectionChanged}
             pagination={true}
@@ -139,39 +149,3 @@ const DashboardLinks = () => {
   );
 };
 export default DashboardLinks;
-
-const mockAPICall = () => {
-  var mockData = [
-    {
-      ID: 1,
-      DashboardName: "CPU Monitoring Dashboard",
-      dashboard_type: "Heatmap",
-      DashboardLink: "Link",
-    },
-    {
-      ID: 2,
-      DashboardName: "GPU Monitoring Dashboard",
-      dashboard_type: "Graph",
-      DashboardLink: "Link",
-    },
-    {
-      ID: 3,
-      DashboardName: "NUMA Monitoring Dashboard",
-      dashboard_type: "etc",
-      DashboardLink: "Link",
-    },
-    {
-      ID: 4,
-      DashboardName: "Network Traffic Dashboard",
-      dashboard_type: "....",
-      DashboardLink: "Link",
-    },
-    {
-      ID: 5,
-      DashboardName: ".........",
-      DashboardLink: "Link",
-    },
-  ];
-
-  return mockData;
-};

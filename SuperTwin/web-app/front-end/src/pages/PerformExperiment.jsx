@@ -15,17 +15,17 @@ const PerformExperiment = () => {
   const getExperimentMetrics = async () => {
     try {
       const res = await axios.get(
-        "http://127.0.0.1:5000/api/getMetrics/monitoring/63427bdbda23eb00a1dcb808"
+        "http://127.0.0.1:5000/api/getMetrics/experiment"
       );
       console.log(res.data);
-      setExperimentMetrics(res.data["monitoringMetrics"]);
+      setExperimentMetrics(res.data["experimentMetrics"]);
       return res.data;
     } catch (err) {}
   };
 
-  function sendExperiment(e) {
+  async function sendExperiment(e) {
     e.preventDefault();
-    axios
+    await axios
       .post("http://127.0.0.1:5000/api/appendMetrics/experiment", {
         experimentMetrics: container,
       })
@@ -47,7 +47,7 @@ const PerformExperiment = () => {
     {
       headerName: "Metric Type",
       field: "type",
-      maxWidth: 200,
+      maxWidth: 130,
     },
   ];
 
@@ -74,7 +74,7 @@ const PerformExperiment = () => {
       }}
     >
       <div
-        class="col-span-6"
+        class="col-span-5"
         style={{
           height: "100vh",
           backgroundColor: "#4A235A",
@@ -134,7 +134,7 @@ const PerformExperiment = () => {
       </div>
 
       <div
-        class="col-span-5"
+        class="col-span-6"
         style={{
           height: "100vh",
           backgroundColor: "#4A235A",
