@@ -10,7 +10,7 @@ import AnimatedStatusCard from "../components/StatusCard";
 
 const DashboardLinks = () => {
   const [dashboards, setDashboards] = useState(undefined);
-  const [daemonStatus, setDaemonStatus] = useState(true);
+  const [monitoringStatus, setMonitoringStatus] = useState([]);
 
   const getDashboards = async () => {
     try {
@@ -21,13 +21,37 @@ const DashboardLinks = () => {
     } catch (err) {}
   };
 
+  const getMonitoringStatus = async () => {
+    try {
+      const res = await axios.get(
+        "http://127.0.0.1:5000/api/getMonitoringStatus"
+      );
+      console.log(res.data);
+      setMonitoringStatus(res.data);
+      return res.data;
+    } catch (err) {}
+  };
+
   useEffect(() => {
     getDashboards();
+    getMonitoringStatus();
   }, []);
+
+  function LinkCellRenderer(props) {
+    const onClick = () => {
+      window.open(props.value, "_blank");
+    };
+    return <button onClick={onClick}>Show Dashboard</button>;
+  }
 
   const columnDefs = [
     { headerName: "Dashboard", field: "dashboard_name" },
-    { headerName: "Link", field: "dashboard_link", maxWidth: 150 },
+    {
+      headerName: "Link",
+      field: "dashboard_link",
+      maxWidth: 150,
+      cellRenderer: "LinkCellRenderer",
+    },
   ];
 
   const defaultColDef = {
@@ -87,6 +111,9 @@ const DashboardLinks = () => {
             defaultColDef={defaultColDef}
             rowData={dashboards}
             rowSelection={rowSelectionType}
+            frameworkComponents={{
+              LinkCellRenderer,
+            }}
             onSelectionChanged={onSelectionChanged}
             pagination={true}
           ></AgGridReact>
@@ -114,7 +141,7 @@ const DashboardLinks = () => {
             color: "white",
           }}
         >
-          Monitoring Daemon Status
+          Monitoring Status
         </p>
         <div
           style={{
@@ -129,12 +156,12 @@ const DashboardLinks = () => {
             }}
           ></label>
           {AnimatedStatusCard(
+            //Send from twin object
             "abcd-efgh-1234-5678",
-            "2576",
-            daemonStatus === true && daemonStatus !== false
-              ? "Probing"
-              : "Not connected",
+            monitoringStatus["pid"],
+            monitoringStatus !== undefined ? "Monitoring" : "Not connected",
             {
+              //Send from twin object
               machineAddress: "10.36.54.195",
               userName: "mgale",
               mongodbID: "id312312412312",
