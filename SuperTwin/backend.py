@@ -65,14 +65,20 @@ def setDB():
 @app.route('/api/startSuperTwin', methods=['GET'])
 def startSuperTwin():
     global twin
-    twin = callSuperTwin({"flag": True, "address" : "10.36.54.195"})
-    return twin.addr
+    #twin = callSuperTwin({"flag": True, "address" : "10.36.54.195"})
+    addr = "10.36.54.195"                                                                           
+    user_name = "ftasyaran"                                                                         
+    password = "kemaliye"
+    twin = supertwin.SuperTwin(addr, user_name, password)
+
+    
+    return twin.mongodb_id
 
 
-@app.route('/api/getMetrics/monitoring/<uid>', methods=['GET'])
-def getMonitoringMetrics(uid):
+@app.route('/api/getMetrics/monitoring', methods=['GET'])
+def getMonitoringMetrics():
     try:
-        twin_data = loads(dumps((collection.find({"_id": ObjectId(uid)})), default=json_util.default))
+        twin_data = loads(dumps((collection.find({"_id": ObjectId(twin.mongodb_id)})), default=json_util.default))
         dtdl_twin = twin_data[0]['dtdl_twin']
 
         raw_metrics = []

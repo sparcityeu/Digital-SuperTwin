@@ -2,7 +2,6 @@
 kernel.all.pressure.cpu.some.total
 ##CLOCK AND THROTTLE##
 hinv.cpu.clock
-hinv.cpu.thermal_throttle.core.time
 ##TEMPERATURE##
 lmsensors.coretemp_isa_0000.package_id_0
 lmsensors.coretemp_isa_0001.package_id_1
@@ -23,3 +22,15 @@ disk.all.total
 disk.all.read_bytes
 disk.all.write_bytes
 disk.all.total_bytes
+##MEM
+mem.util.used
+mem.util.free
+swap.pagesin
+mem.numa.util.free
+mem.numa.util.used
+mem.numa.alloc.hit
+mem.numa.alloc.miss
+mem.numa.alloc.local_node
+mem.numa.alloc.other_node
+network.all.in.bytes
+network.all.out.bytes

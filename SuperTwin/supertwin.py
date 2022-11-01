@@ -40,6 +40,31 @@ HPCG_PARAM["nz"] = 104
 HPCG_PARAM["time"] = 60
 ##HPCG benchmark parameters
 
+ALWAYS_HAVE_MONITOR = ["perfevent.hwcounters.RAPL_ENERGY_PKG.value",
+                       "perfevent.hwcounters.RAPL_ENERGY_PKG.dutycycle",
+                       "perfevent.hwcounters.RAPL_ENERGY_DRAM.value",
+                       "perfevent.hwcounters.RAPL_ENERGY_DRAM.dutycycle"]
+
+ALWAYS_HAVE_MONITOR_WIDER = ["perfevent.hwcounters.RAPL_ENERGY_PKG.value",
+                             "perfevent.hwcounters.RAPL_ENERGY_PKG.dutycycle",
+                             "perfevent.hwcounters.RAPL_ENERGY_DRAM.value",
+                             "perfevent.hwcounters.RAPL_ENERGY_DRAM.dutycycle",
+                             "kernel.all.pressure.cpu.some.total",
+                             "hinv.cpu.clock",
+                             "lmsensors.coretemp_isa_0000.package_id_0",
+                             "lmsensors.coretemp_isa_0001.package_id_1",
+                             "kernel.percpu.cpu.idle",
+                             "kernel.pernode.cpu.idle",
+                             "disk.dev.read",
+                             "disk.dev.write",
+                             "disk.dev.total",
+                             "disk.dev.read_bytes",
+                             "disk.dev.write_bytes",
+                             "disk.dev.total_bytes"]
+
+ALWAYS_HAVE_OBSERVATION = ["RAPL_ENERGY_PKG node",
+                           "RAPL_ENERGY_DRAM node"]
+
 def get_twin_description(hostProbFile):
 
     with open(hostProbFile, "r") as j:
@@ -174,11 +199,11 @@ class SuperTwin:
             self.monitor_tag = "_monitor"
             self.mongodb_id = insert_twin_description(get_twin_description(self.prob_file),self)
             print("Collection id:", self.mongodb_id)
-            #self.reconfigure_perfevent()
+            self.reconfigure_perfevent()
             self.monitor_pid = sampling.main(self.name, self.addr, self.influxdb_name, self.monitor_tag, self.monitor_metrics)
             
             utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
-            self.resurrect_and_clear_monitors() ##If there is any zombie monitor sampler
+            self.kill_zombie_monitors() ##If there is any zombie monitor sampler
             
             ##benchmark members
             self.benchmarks = 0
@@ -191,7 +216,7 @@ class SuperTwin:
             register_twin_state(self)
             
             
-    def resurrect_and_clear_monitors(self):
+    def kill_zombie_monitors(self):
         
         out = detect_utils.output_lines("ps aux | grep pcp2influxdb")
 
@@ -214,8 +239,6 @@ class SuperTwin:
                     print("Killing zombie monitoring sampler with pid:", pid)
                     detect_utils.cmd("sudo kill " + str(pid))
 
-
-                    
                     
     def update_twin_document__assert_new_monitor_pid(self):
         
@@ -230,7 +253,7 @@ class SuperTwin:
         db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
         self.monitor_pid = new_pid
 
-    def update_twin_document__update_new_monitor_pid(self):
+    def update_twin_document__update_monitor_pid(self):
         
         db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
         to_new = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
@@ -238,7 +261,7 @@ class SuperTwin:
         db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
         self.monitor_pid = new_pid
 
-
+        
     def prepare_stream_content(self, stream_modifiers, stream_res):
 
         benchmark_id = str(self.benchmarks)
@@ -487,32 +510,77 @@ class SuperTwin:
         to_new["system_dashboard"] = "http://localhost:3000" + url
         db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
         print("Roofline dashboard added to Digital Twin")
+
         
+    def update_twin_document__add_roofline_dashboard(self, url):
+
+        db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
+                
+        to_new = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
+        to_new["benchinfo_dashboard"] = "http://localhost:3000" + url
+        db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
+        print("Benchinfo dashboard added to Digital Twin")
+
         
     def generate_roofline_dashboard(self):
         url = roofline_dashboard.generate_roofline_dashboard(self)
         static_data.main(self)
         self.update_twin_document__add_roofline_dashboard(url)
 
-    def generate_bench_info_dashboard(self):
+        
+    def generate_benchinfo_dashboard(self):
         ##This will parse digital twin to get benchmark information
-        x = 1
+        url = benchinfo_dashboard.generate_benchinfo_dashboard(self)
+        self.update_twin_document__add_benchinfo_dashboard(url)
 
+        
     def generate_monitor_dashboard(self):
         ##This will generate monitor dashboard panels.
         ##However monitor dashboard panels should be called by observation panels
 
         x = 1
+        
 
+    def reconfigure_monitor_events(self, metrics):
+
+        for item in ALWAYS_HAVE_MONITOR_WIDER:
+            if item not in metrics:
+                metrics.append(item)
+        
+        writer = open("monitor_metrics.txt", "w+")
+        for item in metrics:
+            writer.write(item + "\n")
+        writer.close()
+
+        self.monitor_metrics = metrics
+        self.update_twin_document__assert_new_monitor_pid()
+        register_twin_state(self)
+
+        
+    def reconfigure_observation_events(self, metrics):
+
+        for item in ALWAYS_HAVE_OBSERVATION:
+            if item not in metrics:
+                metrics.append(item)
+        
+        writer = open("last_observation_metrics.txt", "w+")
+        for item in metrics:
+            writer.write(item + "\n")
+        writer.close()
+
+        self.observation_metrics = metrics
+        self.reconfigure_perfevent()
+        register_twin_state(self)
+        
     def reconfigure_perfevent(self):
 
         sampling.generate_perfevent_conf(self)
         sampling.reconfigure_perfevent(self)
         
 
-    def execute_observation(self, command, metrics):
+    def execute_observation(self, command):
         observation_id = str(uuid.uuid4())
-        reconfigure_perfevent()
+        self.reconfigure_perfevent()
         obs_conf = generate_pcp2influxdb_config_observation(self, observation_id)
         #observation.start_observation(SuperTwin, obs_conf)
         
@@ -520,11 +588,10 @@ class SuperTwin:
     def execute_observation_batch_element(self, command, observation_id, element_id):
         this_observation_id = observation_id + "_" + str(element_id)
 
-    def execute_observation_batch(self, commands, metrics):
+    def execute_observation_batch(self, commands):
         
         observation_id = str(uuid.uuid4())
         #reconfigure_perfevent(metrics)
-        
         
         
     def generate_observation_dashboard_type1(self): ##Applications runs on different threads at the same time
@@ -539,14 +606,14 @@ class SuperTwin:
 
 if __name__ == "__main__":
 
-    print("#######First SuperTwin, no args")
-    #my_SuperTwin = SuperTwin()
-    print("#######Second SuperTwin, 3 args")
-    addr = "10.36.54.195"
-    user_name = "ftasyaran"
-    password = "kemaliye"
-    my_SuperTwin = SuperTwin(addr, user_name, password)
-    #otherTwin = SuperTwin("10.36.54.195")
+    my_SuperTwin = SuperTwin() ##From scratch
+    #my_superTwin = SuperTwin(address) ##Re-construct
+    #my_SuperTwin = SuperTwin(addr, user_name, password) ##From scratch
     
+    #addr = "10.36.54.195"
+    #user_name = "ftasyaran"
+    #password = "OHPASSWORDNOTHISISASECURITYBREACH!!!1!!11"
+    
+        
     
     
