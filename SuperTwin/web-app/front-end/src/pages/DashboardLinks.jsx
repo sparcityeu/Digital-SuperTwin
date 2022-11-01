@@ -35,7 +35,7 @@ const DashboardLinks = () => {
   useEffect(() => {
     getDashboards();
     getMonitoringStatus();
-  }, []);
+  }, [dashboards]);
 
   function LinkCellRenderer(props) {
     const onClick = () => {
@@ -157,15 +157,15 @@ const DashboardLinks = () => {
           ></label>
           {AnimatedStatusCard(
             //Send from twin object
-            "abcd-efgh-1234-5678",
+            monitoringStatus["uid"],
             monitoringStatus["pid"],
             monitoringStatus !== undefined ? "Monitoring" : "Not connected",
             {
               //Send from twin object
-              machineAddress: "10.36.54.195",
-              userName: "mgale",
-              mongodbID: "id312312412312",
-              grafanaAPIKey: "fasdfasdfasdfasdfadsf",
+              machineAddress: monitoringStatus["address"],
+              userName: monitoringStatus["user"],
+              mongodbID: monitoringStatus["mongodb"],
+              grafanaAPIKey: monitoringStatus["grafana"],
             }
           )}
         </div>

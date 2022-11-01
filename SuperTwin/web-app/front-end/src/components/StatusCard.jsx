@@ -94,7 +94,7 @@ const AnimatedStatusCard = (sampler_id, process_id, status, extra_info) => {
                     textAlign: "left",
                   }}
                 >
-                  Sampler ID
+                  Digital Twin ID
                 </Typography>
               </div>
               <div class="col-span-6">

@@ -46,7 +46,7 @@ CORS(app)
 def setDB():
     try:
         global collection
-        db = db_client['dolap']
+        db = db_client[twin.name]
 
         collection = db['twin']
         response = dumps((collection.find({})), default=json_util.default)
@@ -76,7 +76,7 @@ def startSuperTwin():
         user_name = info["username"]
         password = info["password"]
         twin = supertwin.SuperTwin(addr, user_name, password)
-        time.sleep(3)
+        time.sleep(2)
 
         return make_response(jsonify({'OK': "OK"}), 200)
 
@@ -88,7 +88,7 @@ def startSuperTwin():
 def getMonitoringMetrics():
     try:
         #replace with twin.ObjectID
-        twin_data = loads(dumps((collection.find({"_id": ObjectId("636029828d94819daf406dde")})), default=json_util.default))
+        twin_data = loads(dumps((collection.find({"_id": twin.mongodb_id})), default=json_util.default))
         dtdl_twin = twin_data[0]['twin_description']
 
         raw_metrics = []
@@ -164,7 +164,7 @@ def getMonitoringMetrics():
             metrics.append(metric_with_type)
 
 
-
+        time.sleep(1)
         return make_response(jsonify({"monitoringMetrics":metrics}), 200)
 
     except Exception as error:
@@ -176,7 +176,7 @@ def getMonitoringMetrics():
 def getExperimentalMetrics():
     try:
         #replace with twin.ObjectID
-        twin_data = loads(dumps((collection.find({"_id": ObjectId("636029828d94819daf406dde")})), default=json_util.default))
+        twin_data = loads(dumps((collection.find({"_id": twin.mongodb_id})), default=json_util.default))
         dtdl_twin = twin_data[0]['twin_description']
 
         raw_metrics = []
@@ -317,14 +317,19 @@ def getMonitoringStatus():
         config = cmd_output[15]
         per = cmd_output[16]
 
-        daemon_info ={
+        monitor_info ={
+            "address":twin.addr,
+            "mongodb": twin.mongodb_id,
+            "grafana": twin.grafana_token,
+            "user": twin.SSHuser,
+            "uid": twin.uid,
             "pid":status,
             "dir":dir,
             "config":config,
             "per":per,
         }
 
-        return make_response(daemon_info, 200)
+        return make_response(monitor_info, 200)
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
 
@@ -334,28 +339,25 @@ def getDashboards():
     try:
         dashborads = []
 
-        #replace with twin.ObjectID
-        twin_data = loads(dumps((collection.find({"_id": ObjectId("636029828d94819daf406dde")})), default=json_util.default))
-        hostname = twin_data[0]['roofline_dashboard']
+        twin_data = loads(dumps((collection.find({"_id": twin.mongodb_id})), default=json_util.default))
         
         roofline_dashboard_link = twin_data[0]['roofline_dashboard']
-        roofline_dashboard_name = hostname +" roofline dashborad"
+        roofline_dashboard_name = twin.name +" roofline dashborad"
 
         monitoring_dashboard_link = twin_data[0]['monitoring_dashboard']
-        monitoring_dashboard_name = hostname +" monitoring dashborad"
+        monitoring_dashboard_name = twin.name +" monitoring dashborad"
 
         dashborads.append({"dashboard_name":roofline_dashboard_name, "dashboard_link": roofline_dashboard_link})
         dashborads.append({"dashboard_name":monitoring_dashboard_name, "dashboard_link": monitoring_dashboard_link})
+        #observationCollection = db_client['observation']
+        #observation_data = loads(dumps((observationCollection.find()), default=json_util.default))
+        #for obs in observation_data:
+        #    observation_name = twin.name + obs['_id']
+        #    observation_link = obs['dashboard_link']
+        #    dashborads.append({"dashboard_name":observation_name, "dashboard_link": observation_link})
 
-
-        #Observation Dashboards parts
-        #TODO:Here we need to get all observations -- also all in the same database?
-
-        #observationDB = db_client['digitalTwin'] #twin.observationDBName
-        #observationCollection = observationDB['observations']
-        #observation_data = loads(dumps((observationCollection.find({"_id": ObjectId("636029828d94819daf406dde")})), default=json_util.default))
-        #observation_dashboard
-
+        time.sleep(1)
+        
         return make_response(jsonify({"dashboards":dashborads}), 200)
 
 

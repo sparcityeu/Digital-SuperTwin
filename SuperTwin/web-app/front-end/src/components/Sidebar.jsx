@@ -16,12 +16,12 @@ const links = [
         location: "MonitoringMetrics",
       },
       {
-        name: "Dashboard Links",
-        location: "DashboardLinks",
-      },
-      {
         name: "Perform Experiment",
         location: "PerformExperiment",
+      },
+      {
+        name: "Dashboard Links",
+        location: "DashboardLinks",
       },
     ],
   },
