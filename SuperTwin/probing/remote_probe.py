@@ -40,6 +40,29 @@ def run_sudo_command(ssh_client, SSHkey, name, command):
     ##Will migrate to invoke_shell() or learn in a more in-depth manner
     for line in stdout:
         x = line
+
+def run_sudo_command_perfevent(ssh_client, SSHkey, name, command):
+
+    transport = ssh_client.get_transport()
+    session = transport.open_session()
+    session.set_combine_stderr(True)
+    session.get_pty()
+    stdin = session.makefile('wb', -1)
+    stdout = session.makefile('rb', -1)
+    session.exec_command(command)
+    stdin.write(SSHkey + '\n')
+    for line in stdout:
+        x = line 
+    stdin.write("y" + '\n')
+    stdin.flush()
+
+    print("Executing command on", name, ":", command)
+
+    ##This is really weird
+    ##Need to process the stdout somehow for command to be executed
+    ##May also use invoke_shell() here
+    for line in stdout:
+        x = line
     
     
 def run_command(ssh_client, name, command):
