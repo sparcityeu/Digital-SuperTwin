@@ -52,6 +52,8 @@ const PerformExperiment = () => {
         }
       });
     console.log("Experiment has run");
+
+    navigate("/DashboardLinks");
   }
 
   useEffect(() => {
