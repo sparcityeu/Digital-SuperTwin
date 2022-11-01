@@ -26,9 +26,9 @@ const MonitoringMetrics = () => {
     } catch (err) {}
   };
 
-  function startMonitor(e) {
+  async function startMonitor(e) {
     e.preventDefault();
-    axios
+    await axios
       .post("http://127.0.0.1:5000/api/appendMetrics/monitoring", {
         monitoringMetrics: container,
       })
@@ -43,7 +43,7 @@ const MonitoringMetrics = () => {
 
   useEffect(() => {
     getMonitoringMetrics();
-  }, []);
+  }, [monitoringMetrics]);
 
   const columnDefs = [
     { headerName: "Metric", field: "metric" },
