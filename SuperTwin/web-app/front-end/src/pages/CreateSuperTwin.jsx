@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Route, useNavigate } from "react-router-dom";
+import axios from "axios";
 import { FaGithub } from "react-icons/fa";
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
 
@@ -9,13 +10,23 @@ const CreateSuperTwin = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  function onSubmit(e) {
+  async function onSubmit(e) {
     e.preventDefault();
     const registered = {
       remoteAddress: remoteAddress,
       username: username,
       password: password,
     };
+
+    await axios
+      .post("http://127.0.0.1:5000/api/startSuperTwin", {
+        registration: registered,
+      })
+      .then((response) => this.myFunction(response.status))
+      .catch(function (error) {
+        if (error.response) {
+        }
+      });
 
     console.log(registered);
     navigate("/MonitoringMetrics");
