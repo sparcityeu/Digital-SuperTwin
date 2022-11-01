@@ -1,5 +1,6 @@
 import collections
 import sys
+import subprocess
 from subprocess import Popen, PIPE
 import shlex
 import time
@@ -36,7 +37,6 @@ import static_data
 
 
 app = Flask(__name__)
-
 db_client = MongoClient('localhost', 27017)
 CORS(app)
 
@@ -194,7 +194,7 @@ def getExperimentalMetrics():
                     for metric in values['contents']:
 
                         if metric['@type'] == "HWTelemetry":
-                            raw_metrics.append(metric['SamplerName'])
+                            raw_metrics.append(metric['PMUName'])
 
             elif values['@id'].find("core") != -1:
                 if core_count_flag == False:
@@ -202,7 +202,7 @@ def getExperimentalMetrics():
                     for metric in values['contents']:
 
                         if metric['@type'] == "HWTelemetry":
-                            raw_metrics.append(metric['SamplerName'])
+                            raw_metrics.append(metric['PMUName'])
 
 
 
@@ -211,7 +211,7 @@ def getExperimentalMetrics():
                     L1D_count_flag = True
                     for metric in values['contents']:
                         if metric['@type'] == "HWTelemetry":
-                            raw_metrics.append(metric['SamplerName'])
+                            raw_metrics.append(metric['PMUName'])
 
 
             elif values['@id'].find("L2") != -1:
@@ -219,14 +219,14 @@ def getExperimentalMetrics():
                     L2_count_flag = True
                     for metric in values['contents']:
                         if metric['@type'] == "HWTelemetry":
-                            raw_metrics.append(metric['SamplerName'])
+                            raw_metrics.append(metric['PMUName'])
 
             elif values['@id'].find("L3") != -1:
                 if L3_count_flag == False:
                     L3_count_flag = True
                     for metric in values['contents']:
                         if metric['@type'] == "HWTelemetry":
-                            raw_metrics.append(metric['SamplerName'])
+                            raw_metrics.append(metric['PMUName'])
 
 
             elif values['@id'].find("bank") != -1:
@@ -235,13 +235,13 @@ def getExperimentalMetrics():
                     for metric in values['contents']:
 
                         if metric['@type'] == "HWTelemetry":
-                            raw_metrics.append(metric['SamplerName'])
+                            raw_metrics.append(metric['PMUName'])
 
             else:
                 for metric in values['contents']:
 
                         if metric['@type'] == "HWTelemetry":
-                            raw_metrics.append(metric['SamplerName'])
+                            raw_metrics.append(metric['PMUName'])
         metrics = []
 
         for metric in raw_metrics:
@@ -274,9 +274,8 @@ def appendMonitoringMetrics():
 
 
         file_object.close()
-    
-        return make_response(jsonify({'OK': "OK"}), 200)
 
+        return "OK"
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
     
@@ -289,8 +288,7 @@ def appendExperimentalMetrics():
         data = request.get_json()
         metric_list = data['experimentMetrics']
 
-        file_object = open('monitor_metrics.txt', 'a')
-        file_object.write("\n##EXPERIMENT METRICS##\n")
+        file_object = open('perfevent.conf', 'a')
 
 
         x = 0
@@ -301,7 +299,7 @@ def appendExperimentalMetrics():
             
         file_object.close()
 
-        return make_response(jsonify({'OK': "OK"}), 200)
+        return "OK"
 
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
@@ -310,13 +308,23 @@ def appendExperimentalMetrics():
 @app.route('/api/getMonitoringStatus', methods=['GET'])
 def getMonitoringStatus():
     try:
-        p0_command = 'ps aux | grep mongodb'
-        
-        p0 = Popen(p0_command, shell=True)
-        monitor_pid = p0.pid
+        p0_command = 'ps aux | grep pcp2influxdb'
 
-        print("\n\n",monitor_pid,"\n\n")
-        return "aaaaaa"
+        cmd_output = output_lines(p0_command)
+        cmd_output = cmd_output[1].split()
+        status = cmd_output[1]
+        dir = cmd_output[11]
+        config = cmd_output[15]
+        per = cmd_output[16]
+
+        daemon_info ={
+            "pid":status,
+            "dir":dir,
+            "config":config,
+            "per":per,
+        }
+
+        return make_response(daemon_info, 200)
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
 
@@ -355,7 +363,18 @@ def getDashboards():
         return make_response(jsonify({'error': error}), 400)
 
 
+@app.route('/api/runExperiment', methods=['POST'])
+def sendCommands():
+    try:
+        data = request.get_json()
+        cmd = data['cmd']
 
+
+        
+
+        return "OK"
+    except Exception as error:
+        return make_response(jsonify({'error': error}), 400)
 
 
 def get_type(param_metric):
@@ -389,19 +408,25 @@ def get_type(param_metric):
         _type = 'disk.dev'
     elif(f_metric.find('disk.all') != -1):
         _type = 'disk.all'
-    elif(f_metric.find('hwcounters.UNC') != -1):                                                      
-        _type = 'uncore'
-    elif(f_metric.find('hwcounters.OFFC') != -1):                                                      
-        _type = 'offcore'                                                                            
+    elif(f_metric.find('UNC') != -1):                                                      
+        _type = 'uncore PMU'
+    elif(f_metric.find('OFFC') != -1):                                                      
+        _type = 'offcore PMU'                                                                            
     elif(f_metric.find('ENERGY') != -1):                                                              
         _type = 'energy'                                                                           
-    elif(f_metric.find('perfevent.hwcounters') != -1 and f_metric.find('UNC') == -1 and f_metric.find('OFFC') == -1):                                               
-        _type = 'perfevent.hwcounters'
+    elif(f_metric.find(':') != -1 and f_metric.find('UNC') == -1 and f_metric.find('OFFC') == -1):                                               
+        _type = 'core PMU'
     elif(f_metric.find('proc.') != -1):
         _type = 'proc'
     return _type
 
 
+def output_lines(cmdline):
+    """Run a shell command and returns the output as lines."""
+    proc = subprocess.Popen(cmdline, shell=True, stdout=subprocess.PIPE,
+                            universal_newlines=True)
+    stdout = proc.communicate()[0]
+    return stdout.splitlines()
     
 if __name__ == '__main__':
     app.run(port=5000,debug=True)

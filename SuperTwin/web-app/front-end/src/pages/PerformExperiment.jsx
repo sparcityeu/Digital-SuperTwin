@@ -10,7 +10,13 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 const PerformExperiment = () => {
   const [experimentMetrics, setExperimentMetrics] = useState(undefined);
   const [container, setContainer] = useState([]);
+  const [cmd, setCMD] = useState(undefined);
+
   const navigate = useNavigate();
+
+  function handleChange(event) {
+    setCMD(event.target.value);
+  }
 
   const getExperimentMetrics = async () => {
     try {
@@ -34,8 +40,18 @@ const PerformExperiment = () => {
         if (error.response) {
         }
       });
-    console.log("aaaaa");
-    navigate("/DashboardLinks");
+    console.log("Experiment metrics set");
+
+    await axios
+      .post("http://127.0.0.1:5000/api/runExperiment", {
+        cmd,
+      })
+      .then((response) => this.myFunction(response.status))
+      .catch(function (error) {
+        if (error.response) {
+        }
+      });
+    console.log("Experiment has run");
   }
 
   useEffect(() => {
@@ -111,6 +127,7 @@ const PerformExperiment = () => {
             rows="20"
             class="block p-2.5 w-full h-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Input the experimental code block"
+            onChange={handleChange}
             style={{
               height: "100%",
               resize: "none",
