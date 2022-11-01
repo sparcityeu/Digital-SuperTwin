@@ -65,10 +65,9 @@ def setDB():
 @app.route('/api/startSuperTwin', methods=['GET'])
 def startSuperTwin():
     global twin
-    #twin = callSuperTwin({"flag": True, "address" : "10.36.54.195"})
     addr = "10.36.54.195"                                                                           
-    user_name = "ftasyaran"                                                                         
-    password = "kemaliye"
+    user_name = "****"                                                                         
+    password = "****"
     twin = supertwin.SuperTwin(addr, user_name, password)
 
     
