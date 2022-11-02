@@ -372,6 +372,10 @@ def sendCommands():
     try:
         data = request.get_json()
         cmd = data['cmd']
+        affinity = data['affinity']
+        path = data['path']
+
+        print(cmd, affinity, path)
 
         twin.execute_observation(cmd)
         

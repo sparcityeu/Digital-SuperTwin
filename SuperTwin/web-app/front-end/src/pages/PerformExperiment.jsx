@@ -10,11 +10,21 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 const PerformExperiment = () => {
   const [experimentMetrics, setExperimentMetrics] = useState(undefined);
   const [container, setContainer] = useState([]);
+  const [path, setPath] = useState(undefined);
+  const [affinity, setAffinity] = useState(undefined);
   const [cmd, setCMD] = useState(undefined);
 
   const navigate = useNavigate();
 
-  function handleChange(event) {
+  function handleChangePath(event) {
+    setPath(event.target.value);
+  }
+
+  function handleChangeAffinity(event) {
+    setAffinity(event.target.value);
+  }
+
+  function handleChangeCMD(event) {
     setCMD(event.target.value);
   }
 
@@ -42,9 +52,14 @@ const PerformExperiment = () => {
       });
     console.log("Experiment metrics set");
 
+    navigate("/DashboardLinks");
+
+    console.log(path);
     await axios
       .post("http://127.0.0.1:5000/api/runExperiment", {
-        cmd,
+        cmd: cmd,
+        path: path,
+        affinity: affinity,
       })
       .then((response) => this.myFunction(response.status))
       .catch(function (error) {
@@ -52,8 +67,6 @@ const PerformExperiment = () => {
         }
       });
     console.log("Experiment has run");
-
-    navigate("/DashboardLinks");
   }
 
   useEffect(() => {
@@ -108,7 +121,7 @@ const PerformExperiment = () => {
             textAlign: "left",
             fontWeight: "bold",
             marginTop: "",
-            marginBottom: "3%",
+            marginBottom: "5%",
             color: "white",
           }}
         >
@@ -120,21 +133,93 @@ const PerformExperiment = () => {
             height: "80%",
           }}
         >
-          <label
-            for="message"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
-          ></label>
-          <textarea
-            id="none"
-            rows="20"
-            class="block p-2.5 w-full h-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Input the experimental code block"
-            onChange={handleChange}
+          <p
+            className="text-s"
             style={{
-              height: "100%",
-              resize: "none",
+              textAlign: "left",
+              fontWeight: "bold",
+              marginTop: "",
+              color: "white",
             }}
-          ></textarea>
+          >
+            Path
+          </p>
+          <div>
+            <label
+              for="message"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
+            ></label>
+            <textarea
+              id="none"
+              rows="2 "
+              class="block p-2.5 w-full h-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Input the experimental code block"
+              onChange={handleChangePath}
+              style={{
+                height: "20%",
+                resize: "none",
+                marginBottom: "5%",
+              }}
+            ></textarea>
+          </div>
+          <p
+            className="text-s"
+            style={{
+              textAlign: "left",
+              fontWeight: "bold",
+              marginTop: "",
+              color: "white",
+            }}
+          >
+            Affinity
+          </p>
+          <div>
+            <label
+              for="message"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
+            ></label>
+            <textarea
+              id="none"
+              rows="2"
+              class="block p-2.5 w-full h-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Input the experimental code block"
+              onChange={handleChangeAffinity}
+              style={{
+                height: "100%",
+                resize: "none",
+                marginBottom: "5%",
+              }}
+            ></textarea>
+            <p
+              className="text-s"
+              style={{
+                textAlign: "left",
+                fontWeight: "bold",
+                marginTop: "",
+                color: "white",
+              }}
+            >
+              Commands
+            </p>
+          </div>
+          <div>
+            <label
+              for="message"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400"
+            ></label>
+            <textarea
+              id="none"
+              rows="15  "
+              class="block p-2.5 w-full h-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Input the experimental code block"
+              onChange={handleChangeCMD}
+              style={{
+                height: "100%",
+                resize: "none",
+                marginBottom: "5%",
+              }}
+            ></textarea>
+          </div>
 
           <TooltipComponent content="Submit" position="BottomCenter">
             <button
@@ -143,7 +228,7 @@ const PerformExperiment = () => {
               class="bg-white hover:bg-gray-100 text-gray-800 py-3 px-5 text-xl border border-gray-400 rounded shadow"
               style={{
                 textAlign: "center",
-                marginTop: "7%",
+                marginTop: "4%",
               }}
             >
               Submit

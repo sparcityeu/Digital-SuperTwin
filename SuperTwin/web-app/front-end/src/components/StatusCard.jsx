@@ -276,31 +276,6 @@ const AnimatedStatusCard = (sampler_id, process_id, status, extra_info) => {
                       </Typography>
                     </div>
                   </div>
-                  <div className="grid grid-cols-11">
-                    <div class="col-span-5">
-                      <Typography
-                        component="p"
-                        variant="body2"
-                        style={{
-                          textAlign: "left",
-                          color: "white",
-                        }}
-                      >
-                        Grafana API Key
-                      </Typography>
-                    </div>
-                    <div class="col-span-6">
-                      <Typography
-                        variant="body2"
-                        style={{
-                          textalign: "left",
-                          color: "white",
-                        }}
-                      >
-                        {extra_info.grafanaAPIKey}
-                      </Typography>
-                    </div>
-                  </div>
                   <div
                     style={{
                       textAlign: "left",
