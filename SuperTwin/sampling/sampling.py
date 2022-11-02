@@ -87,11 +87,12 @@ def generate_pcp2influxdb_config(db_name, db_tag, sourceIP, source_name, metrics
                     "\n\n",
                     "[configured]" + "\n"]
 
-    
+
+    metrics = [x for x in metrics if x != ""] ##Fix this later
     for metric in metrics:
         config_lines.append(metric + " = ,," + "\n")
 
-        
+    
     pcp_conf_name = "pcp_" + source_name + db_tag + ".conf" 
     writer = open(pcp_conf_name, "w")
     

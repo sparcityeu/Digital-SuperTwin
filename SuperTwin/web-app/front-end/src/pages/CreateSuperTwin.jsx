@@ -18,7 +18,7 @@ const CreateSuperTwin = () => {
       password: password,
     };
 
-    await axios
+      await axios
       .post("http://127.0.0.1:5000/api/startSuperTwin", {
         registration: registered,
       })
@@ -27,6 +27,14 @@ const CreateSuperTwin = () => {
         if (error.response) {
         }
       });
+
+      await axios
+	  .get("http://127.0.0.1:5000/api/setDB")
+	  .then((response) => this.myFunction(response.status))
+	  .catch(function (error) {
+              if (error.response) {
+              }
+	  });
 
     console.log(registered);
     navigate("/MonitoringMetrics");

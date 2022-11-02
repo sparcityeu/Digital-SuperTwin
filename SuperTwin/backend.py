@@ -72,10 +72,19 @@ def startSuperTwin():
         data = request.get_json()
         info = data['registration']
 
-        addr = info["remoteAddress"]
-        user_name = info["username"]
-        password = info["password"]
-        twin = supertwin.SuperTwin(addr, user_name, password)
+        addr = info["remoteAddress"]["remoteAddress"]
+        user_name = info["username"]["username"]
+        password = info["password"]["password"]
+        reader = open("supertwin.state", "r")
+        lines = reader.readlines()
+        reader.close()
+        print("#########################")
+        print(addr, user_name, password)
+        print("#########################")
+        if(len(lines) == 0):
+            twin = supertwin.SuperTwin(addr, user_name, password)
+        else:
+            twin = supertwin.SuperTwin(addr)
         time.sleep(2)
 
         return make_response(jsonify({'OK': "OK"}), 200)
@@ -88,7 +97,7 @@ def startSuperTwin():
 def getMonitoringMetrics():
     try:
         #replace with twin.ObjectID
-        twin_data = loads(dumps((collection.find({"_id": twin.mongodb_id})), default=json_util.default))
+        twin_data = loads(dumps((collection.find({"_id": ObjectId(twin.mongodb_id)})), default=json_util.default))
         dtdl_twin = twin_data[0]['twin_description']
 
         raw_metrics = []
@@ -164,7 +173,6 @@ def getMonitoringMetrics():
             metrics.append(metric_with_type)
 
 
-        time.sleep(1)
         return make_response(jsonify({"monitoringMetrics":metrics}), 200)
 
     except Exception as error:
@@ -176,7 +184,7 @@ def getMonitoringMetrics():
 def getExperimentalMetrics():
     try:
         #replace with twin.ObjectID
-        twin_data = loads(dumps((collection.find({"_id": twin.mongodb_id})), default=json_util.default))
+        twin_data = loads(dumps((collection.find({"_id": ObjectId(twin.mongodb_id)})), default=json_util.default))
         dtdl_twin = twin_data[0]['twin_description']
 
         raw_metrics = []
@@ -313,9 +321,6 @@ def getMonitoringStatus():
         cmd_output = output_lines(p0_command)
         cmd_output = cmd_output[1].split()
         status = cmd_output[1]
-        dir = cmd_output[11]
-        config = cmd_output[15]
-        per = cmd_output[16]
 
         monitor_info ={
             "address":twin.addr,
@@ -324,11 +329,8 @@ def getMonitoringStatus():
             "user": twin.SSHuser,
             "uid": twin.uid,
             "pid":status,
-            "dir":dir,
-            "config":config,
-            "per":per,
         }
-
+        time.sleep(1)
         return make_response(monitor_info, 200)
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
@@ -339,7 +341,7 @@ def getDashboards():
     try:
         dashborads = []
 
-        twin_data = loads(dumps((collection.find({"_id": twin.mongodb_id})), default=json_util.default))
+        twin_data = loads(dumps((collection.find({"_id": ObjectId(twin.mongodb_id)})), default=json_util.default))
         
         roofline_dashboard_link = twin_data[0]['roofline_dashboard']
         roofline_dashboard_name = twin.name +" roofline dashborad"
@@ -371,9 +373,8 @@ def sendCommands():
         data = request.get_json()
         cmd = data['cmd']
 
-
+        twin.execute_observation(cmd)
         
-
         return "OK"
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
