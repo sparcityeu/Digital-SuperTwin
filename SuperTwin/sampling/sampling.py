@@ -130,7 +130,7 @@ def generate_pcp2influxdb_config_observation(SuperTwin, observation_id):
     for metric in metrics:
         config_lines.append(metric + " = ,," + "\n")
         
-    pcp_conf_name = "pcp_" + source_name + "_" + db_tag + ".conf" 
+    pcp_conf_name = "pcp_obsconf_" + source_name + "_" + db_tag + ".conf" 
     writer = open(pcp_conf_name, "w")
     
     for line in config_lines:

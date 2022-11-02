@@ -622,13 +622,13 @@ class SuperTwin:
 if __name__ == "__main__":
 
 
-    addr = "10.36.54.195"
-    user_name = "ftasyaran"
-    password = "kemaliye"
+    #addr = "10.36.54.195"
+    #user_name = "ftasyaran"
+    #password = "kemaliye"
     
-    #my_SuperTwin = SuperTwin() ##From scratch
+    my_superTwin = SuperTwin() ##From scratch
     #my_superTwin = SuperTwin(addr) ##Re-construct
-    my_superTwin = SuperTwin(addr, user_name, password) ##Re-construct
+    #my_superTwin = SuperTwin(addr, user_name, password) ##Re-construct
     #my_superTwin.execute_observation("likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s")
     
     my_superTwin.execute_observation_batch(
