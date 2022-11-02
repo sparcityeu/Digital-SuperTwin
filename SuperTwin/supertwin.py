@@ -606,7 +606,7 @@ class SuperTwin:
         
         ##for every observation tag there exist;
         ##subtract difference between first observation's first timestamp from other's first
-        #influx_help.normalize_tag(self, observation_id, len(commands))
+        influx_help.normalize_tag(self, observation_id, len(commands))
         
         
     def generate_observation_dashboard_type1(self): ##Applications runs on different threads at the same time
@@ -622,20 +622,20 @@ class SuperTwin:
 if __name__ == "__main__":
 
 
-    #addr = "10.36.54.195"
+    addr = "10.36.54.195"
     #user_name = "ftasyaran"
     #password = "kemaliye"
     
-    my_superTwin = SuperTwin() ##From scratch
-    #my_superTwin = SuperTwin(addr) ##Re-construct
+    #my_superTwin = SuperTwin() ##From scratch
+    my_superTwin = SuperTwin(addr) ##Re-construct
     #my_superTwin = SuperTwin(addr, user_name, password) ##Re-construct
     #my_superTwin.execute_observation("likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s")
     
     my_superTwin.execute_observation_batch(
         ["likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s",
-         "likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s",
-        "likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s",
-        "likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s"])
+         "likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s"])
+         #"likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s",
+        #"likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s"])
     
     #my_superTwin.update_twin_document__assert_new_monitor_pid()
     #my_SuperTwin = SuperTwin(addr, user_name, password) ##From scratch
