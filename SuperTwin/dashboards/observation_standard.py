@@ -215,10 +215,6 @@ def main(SuperTwin, observation):
         empty_dash["panels"].append(ts)
         empty_dash["panels"].append(gp)
         #print("panels:", empty_dash["panels"])
-    json_dash_obj = get_dashboard_json(empty_dash, overwrite = False)
-    g_url = upload_to_grafana(json_dash_obj, grafana_server, grafana_api_key)
-
-
     
     my_max = 0
     max_key = ""
@@ -228,7 +224,7 @@ def main(SuperTwin, observation):
             max_key = key
 
 
-    '''
+    
     fig = go.Figure(layout={})
     #ref = observation["elements"][observation["uid"] + "_0"]["duration"]
     ref = 47
@@ -239,7 +235,7 @@ def main(SuperTwin, observation):
             gauge = {'shape': "bullet"},
             delta = {'reference': ref, 'relative': True},
             value = observation["elements"][key]["duration"],
-            domain = {'row': x, 'column': 0},
+            domain = {'row': 0, 'column': x},
             title = {'text': observation["elements"][key]["name"] }))
         x = x + 1
                       
@@ -250,7 +246,7 @@ def main(SuperTwin, observation):
 
     print("JUST")
     empty_dash["panels"].append(ps.two_templates_two(dict_fig["data"], dict_fig["layout"]))
-    '''                  
+    
     #####################################3
     db = utils.get_influx_database(SuperTwin.influxdb_addr, SuperTwin.influxdb_name)
     db.switch_database(SuperTwin.influxdb_name)
@@ -264,6 +260,10 @@ def main(SuperTwin, observation):
 
     print("res_min:", res_min)
     print("res_max:", res_max)
+
+
+    json_dash_obj = get_dashboard_json(empty_dash, overwrite = False)
+    g_url = upload_to_grafana(json_dash_obj, grafana_server, grafana_api_key)
     
     time_from = int(time.mktime(time.strptime(res_min , "%Y-%m-%dT%H:%M:%S.%fZ"))) *1000 + 10800000 ##Convert to milliseconds then add browser time.
     print("res_min:", res_min, "time_from:", time_from)
