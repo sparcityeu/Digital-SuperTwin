@@ -251,7 +251,7 @@ def two_templates_two(data, layout):
     template = {
         "id": 42,
         "gridPos": {
-            "h": 5,
+            "h": 6,
             "w": 24,
             "x": 0,
             "y": 0

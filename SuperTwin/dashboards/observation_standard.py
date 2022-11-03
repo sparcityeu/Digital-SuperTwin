@@ -226,19 +226,31 @@ def main(SuperTwin, observation):
 
     
     fig = go.Figure(layout={})
-    #ref = observation["elements"][observation["uid"] + "_0"]["duration"]
-    ref = 47
-    x = 0
-    for key in observation["elements"]:
+    keys = list(observation["elements"].keys())
+    print("keys:", keys)
+    ref = observation["elements"][keys[0]]["duration"]
+
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        #delta = {'reference': ref, 'relative': True},
+        value = observation["elements"][keys[0]]["duration"],
+        domain = {'row': 0, 'column': 0},
+        number = {"font": {"color": "black", "size": 60}},
+        title = {'text': observation["elements"][keys[0]]["name"] , "font": {"color": "gray", "size": 36}})
+    )
+    
+    for i in range(1, len(keys)):
         fig.add_trace(go.Indicator(
-            mode = "number+gauge+delta",
-            gauge = {'shape': "bullet"},
-            delta = {'reference': ref, 'relative': True},
-            value = observation["elements"][key]["duration"],
-            domain = {'row': 0, 'column': x},
-            title = {'text': observation["elements"][key]["name"] }))
-        x = x + 1
-                      
+            mode = "number+delta",
+            delta = {'reference': ref, 'position': 'right', 'relative': True},
+            value = observation["elements"][keys[i]]["duration"],
+            domain = {'row': 0, 'column': i},
+            number = {"font": {"color": "black", "size": 60}},
+            title = {'text': observation["elements"][keys[i]]["name"] , "font": {"color": "gray", "size": 36 }})
+        )
+        
+    
+    
     fig = ps.grafana_layout_2(fig)
     
     fig.update_layout(grid = {'rows': 1, 'columns': len(observation["elements"].keys()), 'pattern': "independent"})
@@ -264,10 +276,16 @@ def main(SuperTwin, observation):
 
     json_dash_obj = get_dashboard_json(empty_dash, overwrite = False)
     g_url = upload_to_grafana(json_dash_obj, grafana_server, grafana_api_key)
-    
-    time_from = int(time.mktime(time.strptime(res_min , "%Y-%m-%dT%H:%M:%S.%fZ"))) *1000 + 10800000 ##Convert to milliseconds then add browser time.
+
+    try:
+        time_from = int(time.mktime(time.strptime(res_min , "%Y-%m-%dT%H:%M:%S.%fZ"))) *1000 + 10800000 ##Convert to milliseconds then add browser time.
+    except:
+        time_from = int(time.mktime(time.strptime(res_min , "%Y-%m-%dT%H:%M:%SZ"))) *1000 + 10800000 ##Convert to milliseconds then add browser time.
     print("res_min:", res_min, "time_from:", time_from)
-    time_to = int(time.mktime(time.strptime(res_max , "%Y-%m-%dT%H:%M:%S.%fZ"))) *1000 + 10800000
+    try:
+        time_to = int(time.mktime(time.strptime(res_max , "%Y-%m-%dT%H:%M:%S.%fZ"))) *1000 + 10800000
+    except:
+        time_to = int(time.mktime(time.strptime(res_max , "%Y-%m-%dT%H:%M:%SZ"))) *1000 + 10800000
     print("Time from:", time_from)
     _time_window = str(round((time_to - time_from)))
     _time = str(round((time_from + time_to) /2))
