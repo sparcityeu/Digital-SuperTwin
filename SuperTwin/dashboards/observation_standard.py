@@ -15,11 +15,19 @@ from bson.objectid import ObjectId
 from bson.json_util import dumps
 from bson.json_util import loads
 
+from influxdb import InfluxDBClient
+import influx_help
+import time
+
+import plotly.graph_objects as go
+import plotly.io as io
+
+
 ##These should be in a config file
 grafana_api_key = "eyJrIjoiM1JDaHR3Y1VENzFtSXZsNTh0Mzh0ZFpGRWhCdENvTDAiLCJuIjoiZHQwIiwiaWQiOjF9"
 grafana_server = "localhost:3000"
 
-y = -7
+y = -2
 
 def next_y():
     global y
@@ -158,12 +166,12 @@ def get_field_and_metric(SuperTwin, involved, pmu_metric):
     
     for t_key in twin.keys(): ##Every component is a digital twin
         for s_key in involved.keys(): ##Socket
-            print("!:", involved[s_key])
+            #print("!:", involved[s_key])
             for c_key in involved[s_key]: ##Thread
             
                 if(t_key.find(c_key) != -1):
                     contents = twin[t_key]["contents"]
-                    print("contents:", contents)
+                    #print("contents:", contents)
                     for content in contents:
                         if("PMUName" in content.keys()):
                             if(pmu_metric == content["PMUName"]):
@@ -196,18 +204,82 @@ def main(SuperTwin, observation):
             
     for metric in metrics_to_vis:
         ts = ps.ret_ts_panel(next_y(), metric) ##For metric, get time series panel
+        gp = ps.ret_gauge_panel(metric + " MEAN", current_y()) ##For metric, get gauge panel
+        cpu_field, metric_field = get_field_and_metric(SuperTwin, involved, metric)
+        print("returned:", cpu_field, metric_field)
         for _id in observation["elements"].keys():
             norm_id = _id + "_normalized"
             alias = observation["elements"][_id]["name"]
-            cpu_field, metric_field = get_field_and_metric(SuperTwin, involved, metric)
-            print("returned:", cpu_field, metric_field)
             ts["targets"].append(ps.ret_query(alias, metric_field, cpu_field, norm_id)) ##For "observation", get query
+            gp["targets"].append(ps.ret_query(alias, metric_field, cpu_field, norm_id)) ##For "observation", get query
         empty_dash["panels"].append(ts)
-        
+        empty_dash["panels"].append(gp)
+        #print("panels:", empty_dash["panels"])
     json_dash_obj = get_dashboard_json(empty_dash, overwrite = False)
     g_url = upload_to_grafana(json_dash_obj, grafana_server, grafana_api_key)
 
-    print("GENERATED:", generated)
+
+    
+    my_max = 0
+    max_key = ""
+    for key in observation["elements"]:
+        if(observation["elements"][key]["duration"] > my_max):
+            my_max = observation["elements"][key]["duration"]
+            max_key = key
+
+
+    '''
+    fig = go.Figure(layout={})
+    #ref = observation["elements"][observation["uid"] + "_0"]["duration"]
+    ref = 47
+    x = 0
+    for key in observation["elements"]:
+        fig.add_trace(go.Indicator(
+            mode = "number+gauge+delta",
+            gauge = {'shape': "bullet"},
+            delta = {'reference': ref, 'relative': True},
+            value = observation["elements"][key]["duration"],
+            domain = {'row': x, 'column': 0},
+            title = {'text': observation["elements"][key]["name"] }))
+        x = x + 1
+                      
+    fig = ps.grafana_layout_2(fig)
+    
+    fig.update_layout(grid = {'rows': 1, 'columns': len(observation["elements"].keys()), 'pattern': "independent"})
+    dict_fig = json.loads(io.to_json(fig))
+
+    print("JUST")
+    empty_dash["panels"].append(ps.two_templates_two(dict_fig["data"], dict_fig["layout"]))
+    '''                  
+    #####################################3
+    db = utils.get_influx_database(SuperTwin.influxdb_addr, SuperTwin.influxdb_name)
+    db.switch_database(SuperTwin.influxdb_name)
+            
+    _, metric_field = get_field_and_metric(SuperTwin, involved, metric)
+    qs = influx_help.query_string(metric_field, max_key + "_normalized")
+    
+    res = list(db.query(qs))[0]
+    res_min = res[0]["time"]
+    res_max = res[len(res) - 1]["time"]
+
+    print("res_min:", res_min)
+    print("res_max:", res_max)
+    
+    time_from = int(time.mktime(time.strptime(res_min , "%Y-%m-%dT%H:%M:%S.%fZ"))) *1000 + 10800000 ##Convert to milliseconds then add browser time.
+    print("res_min:", res_min, "time_from:", time_from)
+    time_to = int(time.mktime(time.strptime(res_max , "%Y-%m-%dT%H:%M:%S.%fZ"))) *1000 + 10800000
+    print("Time from:", time_from)
+    _time_window = str(round((time_to - time_from)))
+    _time = str(round((time_from + time_to) /2))
+
+    print("g_url:", g_url)
+    url = "http://localhost:3000" + g_url['url'] + "?" + "time=" + _time + "&" + "time.window=" + _time_window
+
+    print("GENERATED:", url)
+
+    
+    
+    
     return g_url
 
 

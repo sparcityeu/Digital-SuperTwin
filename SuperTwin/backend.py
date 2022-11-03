@@ -379,7 +379,7 @@ def sendCommands():
         path = data['path']
 
         print(cmd, affinity, path)
-
+        
         twin.execute_observation_batch_parameters(path, affinity, cmd)
         
         return "OK"

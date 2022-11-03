@@ -16,6 +16,7 @@ import hpcg_benchmark
 import adcarm_benchmark
 import observation
 import influx_help
+import observation_standard
 #import roofline_dashboard
 
 import static_data
@@ -34,7 +35,9 @@ import datetime
 import json
 
 #sys.path.append("quick_dashboard")
-#import unique ##delete dis
+#import generate_plotly_panels_dd_go ##delete dis
+#import unique
+import observation_standard
 
 ##HPCG benchmark parameters are set to be separate from classes, so hpcg is repeatable and easily mutable
 HPCG_PARAM = {}
@@ -586,27 +589,75 @@ class SuperTwin:
     def execute_observation(self, command):
         observation_id = str(uuid.uuid4())
         obs_conf = sampling.generate_pcp2influxdb_config_observation(self, observation_id)
-        observation.observe_single(self, observation_id, command, obs_conf)
+        duration = observation.observe_single(self, observation_id, command, obs_conf)
         print("Observation", observation_id, "is completed..")
-        
-        
+        return duration
+
+    
     def execute_observation_batch_element(self, command, observation_id, element_id):
         
         this_observation_id = observation_id + "_" + str(element_id)
         obs_conf = sampling.generate_pcp2influxdb_config_observation(self, this_observation_id)
-        observation.observe_single(self, this_observation_id, command, obs_conf)
+        duration = observation.observe_single(self, this_observation_id, command, obs_conf)
         print("Observation", this_observation_id, "is completed..")
+        return duration
+
+    
+    def execute_observation_batch_element_parameters(self, path, affinity, command, observation_id, element_id):
+        print("Called")
+        this_observation_id = observation_id + "_" + str(element_id)
+        obs_conf = sampling.generate_pcp2influxdb_config_observation(self, this_observation_id)
+        print("obs_conf:", obs_conf)
+        duration = observation.observe_single_parameters(self, path, affinity, this_observation_id, command, obs_conf)
+        print("Observation", this_observation_id, "is completed..")
+        return duration
 
         
     def execute_observation_batch(self, commands):
+
+        observation = {}
         
         observation_id = str(uuid.uuid4())
         for i in range(len(commands)):
+            tag = observation_id + "_" + str(i)
+            observation_id
             self.execute_observation_batch_element(commands[i], observation_id, i)
         
-        ##for every observation tag there exist;
-        ##subtract difference between first observation's first timestamp from other's first
         influx_help.normalize_tag(self, observation_id, len(commands))
+        #update_twin_document__add_observation(times, commands)
+
+    def update_twin_document__add_observation(self, observation):
+
+        db = utils.get_mongo_database(self.name, self.mongodb_addr)["observations"]
+        db.insert_one(observation)
+
+    def execute_observation_batch_parameters(self, path, affinity, commands):
+        print("here:", path, affinity, commands)
+        
+        observation = {}
+        observation_id = str(uuid.uuid4())
+        observation["uid"] = observation_id
+        observation["affinity"] = affinity
+        observation["metrics"] = []
+        for metric in self.observation_metrics:
+            observation["metrics"].append(metric)
+        for metric in self.monitor_metrics:
+            observation["metrics"].append(metric)
+        
+        observation["elements"] = {}
+        for i in range(len(commands)):
+            tag = observation_id + "_" + str(i)
+            observation["elements"][tag] = {}
+            fields = commands[i].split("|")
+            name = fields[0]
+            command = fields[1]
+            observation["elements"][tag]["name"] = name
+            observation["elements"][tag]["command"] = command
+            observation["elements"][tag]["duration"] = self.execute_observation_batch_element_parameters(path, affinity, command, observation_id, i)
+
+        influx_help.normalize_tag(self, observation_id, len(commands))
+        observation["report"] = observation_standard.main(self, observation)
+        self.update_twin_document__add_observation(observation)
         
         
     def generate_observation_dashboard_type1(self): ##Applications runs on different threads at the same time
@@ -630,13 +681,24 @@ if __name__ == "__main__":
     my_superTwin = SuperTwin(addr) ##Re-construct
     #my_superTwin = SuperTwin(addr, user_name, password) ##Re-construct
     #my_superTwin.execute_observation("likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s")
-    
-    my_superTwin.execute_observation_batch(
+
+    '''
+    my_superTwin.execute_observation_batch_parameters("","",
         ["likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s",
+         "likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s",
          "likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s"])
-         #"likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s",
-        #"likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s"])
+    '''
+
+    '''
+    my_superTwin.execute_observation_batch_parameters(".","likwid-pin -c S0:0-21",
+                                                      ["0|stress --cpu 22 --timeout 5s",
+                                                       "1|stress --cpu 22 --timeout 5s",
+                                                       "2|stress --cpu 22 --timeout 5s"])
+    '''
+
+
     
+
     #my_superTwin.update_twin_document__assert_new_monitor_pid()
     #my_SuperTwin = SuperTwin(addr, user_name, password) ##From scratch
 
@@ -655,3 +717,9 @@ if __name__ == "__main__":
     #my_superTwin.execute_observation_batch(commands):
     #########
     #########
+    #unique.main(my_superTwin)
+    #my_superTwin.update_twin_document__assert_new_monitor_pid()
+
+    observation = {'uid': 'f150f6d6-237f-44c2-aeee-acc61406c9df', 'affinity': 'likwid-pin -c S0:0', 'metrics': ['BR_INST_RETIRED:NEAR_TAKEN', 'BR_MISP_RETIRED:COND', 'BR_MISP_RETIRED:NEAR_TAKEN', 'CPU_CLK_THREAD_UNHALTED:REF_P', 'CYCLE_ACTIVITY:CYCLES_L2_MISS', 'CYCLE_ACTIVITY:CYCLES_L1D_MISS', 'CYCLE_ACTIVITY:STALLS_L1D_MISS', 'CYCLE_ACTIVITY:STALLS_L2_MISS', 'CYCLE_ACTIVITY:STALLS_L3_MISS', 'RAPL_ENERGY_PKG node', 'RAPL_ENERGY_DRAM node', 'kernel.all.pressure.cpu.some.total', 'hinv.cpu.clock', 'lmsensors.coretemp_isa_0000.package_id_0', 'lmsensors.coretemp_isa_0001.package_id_1', 'kernel.percpu.cpu.idle', 'kernel.pernode.cpu.idle', 'disk.dev.read', 'disk.dev.write', 'disk.dev.total', 'disk.dev.read_bytes', 'disk.dev.write_bytes', 'disk.dev.total_bytes', 'disk.all.read', 'disk.all.write', 'disk.all.total', 'disk.all.read_bytes', 'disk.all.write_bytes', 'disk.all.total_bytes', 'mem.util.used', 'mem.util.free', 'swap.pagesin', 'mem.numa.util.free', 'mem.numa.util.used', 'mem.numa.alloc.hit', 'mem.numa.alloc.miss', 'mem.numa.alloc.local_node', 'mem.numa.alloc.other_node', 'network.all.in.bytes', 'network.all.out.bytes', 'perfevent.hwcounters.RAPL_ENERGY_PKG.value', 'perfevent.hwcounters.RAPL_ENERGY_PKG.dutycycle', 'perfevent.hwcounters.RAPL_ENERGY_DRAM.value', 'perfevent.hwcounters.RAPL_ENERGY_DRAM.dutycycle'], 'elements': {'f150f6d6-237f-44c2-aeee-acc61406c9de_0': {'name': 'random', 'command': './random mixtank_new.mtx', 'duration': 14.316190309997182}, 'f150f6d6-237f-44c2-aeee-acc61406c9de_1': {'name': 'none', 'command': './none mixtank_new.mtx', 'duration': 13.1628974119958}, 'f150f6d6-237f-44c2-aeee-acc61406c9de_2': {'name': 'rcm', 'command': './rcm mixtank_new.mtx', 'duration': 14.076336130994605}, 'f150f6d6-237f-44c2-aeee-acc61406c9de_3': {'name': 'degree', 'command': './degree mixtank_new.mtx', 'duration': 14.113160095992498}}}
+
+    observation_standard.main(my_superTwin, observation)

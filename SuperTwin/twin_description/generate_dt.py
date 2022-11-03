@@ -157,7 +157,7 @@ def get_telemetry_mapped(hostname, name, field_key, measurement, comp, version):
 
     telemetry["displayName"] = field_key
     telemetry["SamplerName"] = measurement
-    telemetry["DBName"] = measurement.replace(".", "_")
+    telemetry["DBName"] = measurement.replace(".", "_") 
     
     return telemetry
 
@@ -172,7 +172,7 @@ def get_supertwin_telemetry_mapped(hostname, name, field_key, measurement, comp,
     
     st_telemetry["displayName"] = field_key
     st_telemetry["SamplerName"] = measurement[0]
-    st_telemetry["DBName"] = measurement[0].replace("perfevent.hwcounters.", "perfevent_hwcounters_")
+    st_telemetry["DBName"] = measurement[0].replace("perfevent.hwcounters.", "perfevent_hwcounters_") + "_value"
     st_telemetry["PMUName"] = measurement[1]
     #st_telemetry["description"] = measurement[2]
 
@@ -396,7 +396,7 @@ def add_threads(models_dict, _sys_dict, top_id, hostname, socket_id, socket_num,
     socket_displayName = "socket" + str(socket_num)
     core_displayName = "core" + str(core_num)
     thread_displayName = "thread" + str(thread)
-    field_key = "_core" + str(thread) 
+    field_key = "_cpu" + str(thread) 
     this_thread_id = get_uid(hostname, thread_displayName, "", 1)
     this_thread = get_interface(this_thread_id, displayname = thread_displayName)
 
