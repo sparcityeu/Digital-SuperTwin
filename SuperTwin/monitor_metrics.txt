@@ -34,19 +34,3 @@ mem.numa.alloc.local_node
 mem.numa.alloc.other_node
 network.all.in.bytes
 network.all.out.bytes
-
-##USER METRICS##
-network.sockstat.udp6.inuse
-network.sockstat.udplite6.inuse
-network.sockstat.raw6.inuse
-network.ip.defaultttl
-network.ip.inreceives
-network.ip.outrequests
-network.ip.outoctets
-
-##USER METRICS##
-kernel.all.sysfork
-kernel.all.running
-kernel.all.blocked
-kernel.all.boottime
-kernel.all.hz

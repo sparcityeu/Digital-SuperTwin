@@ -79,7 +79,7 @@ def normalize_tag(SuperTwin, _tag, no_subtags):
         for metric in metrics:
       
             qs = query_string(metric, tagkey)
-            print("qs:", qs)
+            print("Normalize measurement time:", qs)
             result = list(db.query(qs))[0]
             my_difference = difference(result[0]['time'], compare_time)
             my_write = []
@@ -91,17 +91,16 @@ def normalize_tag(SuperTwin, _tag, no_subtags):
                 n_time = result[i]['time']
               else:
                 n_time = normalized(result[i]['time'], my_difference)
-                if(tagkey.find("_0") == -1):
-                  
-                  to_write = {"measurement": metric,
-                               "tags": {"tag": tagkey + "_normalized"},
-                               "time": n_time}
-                  to_write["fields"] = {}
-                  for key in result[i].keys():
-                    if(key != "tag" and key != "time"):
-                      to_write["fields"][key] = result[i][key]
+                
+              to_write = {"measurement": metric,
+                          "tags": {"tag": tagkey + "_normalized"},
+                          "time": n_time}
+              to_write["fields"] = {}
+              for key in result[i].keys():
+                if(key != "tag" and key != "time"):
+                  to_write["fields"][key] = result[i][key]
                   my_write.append(to_write)
-              db.write_points(my_write)
+            db.write_points(my_write)
     
     #print("result:", result)
     #print("compare_time:", compare_time)

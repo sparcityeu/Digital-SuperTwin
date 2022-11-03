@@ -116,6 +116,15 @@ def generate_pcp2influxdb_config_observation(SuperTwin, observation_id):
             metrics.append(item)
 
     metrics = [x.strip("node").strip(" ") for x in metrics]
+    '''
+    metrics2 = [] 
+    for i in range(len(metrics)):
+        while(metrics[i].find("node") != -1):
+            metrics[i] = metrics[i][:-5]
+            print("item:", item)
+        item.strip(" ")
+        metrics2.append(item)
+    ''' 
     metrics = ["perfevent.hwcounters." + x.replace(":", "_") + ".value" for x in metrics]
     
     config_lines = ["[options]" + "\n",
@@ -162,10 +171,10 @@ def generate_perfevent_conf(SuperTwin):
         if item not in metrics:
             metrics.append(item)
 
-    for item in metrics:
-        if((item.find("numa") != -1 or item.find("node") != -1) and item.find("energy") == -1):
-            metrics.remove(item)
-            metrics.append(item + " node") ##
+    #for item in metrics:
+        #if((item.find("numa") != -1 or item.find("node") != -1 or item.find("UNC") or item.find("OFFC")) and item.find("RAPL") == -1):
+            #metrics.remove(item)
+            #metrics.append(item + " node") ##
     
     
     msr = get_msr(SuperTwin)

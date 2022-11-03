@@ -295,17 +295,12 @@ def appendExperimentalMetrics():
     try:
         data = request.get_json()
         metric_list = data['experimentMetrics']
-
-        file_object = open('perfevent.conf', 'a')
-
-
-        x = 0
-        for metric in metric_list:
-            file_object.write(metric['metric'])
-            if x != len(metric_list) -1:
-                file_object.write("\n")
-            
-        file_object.close()
+        metric_list = [x['metric'] for x in metric_list]
+        print("metric_list:", metric_list)
+                
+        #file_object = open('perfevent.conf', 'a')
+        twin.observation_metrics = metric_list
+        twin.reconfigure_perfevent()
 
         return "OK"
 
@@ -349,6 +344,12 @@ def getDashboards():
         monitoring_dashboard_link = twin_data[0]['monitoring_dashboard']
         monitoring_dashboard_name = twin.name +" monitoring dashborad"
 
+        roofline_dashboard_link = "http://localhost:3000/d/YciOsuNVk/roofline_template?orgId=1&refresh=5s"
+        roofline_dashboard_name = twin.name +" roofline dashboard"
+
+        monitoring_dashboard_link = "http://localhost:3000/d/BCDYYXHVk/augmentations-copy?orgId=1&from=now-5m&to=now&refresh=5s"
+        monitoring_dashboard_name = twin.name +" monitoring dashboard"
+
         dashborads.append({"dashboard_name":roofline_dashboard_name, "dashboard_link": roofline_dashboard_link})
         dashborads.append({"dashboard_name":monitoring_dashboard_name, "dashboard_link": monitoring_dashboard_link})
         #observationCollection = db_client['observation']
@@ -371,13 +372,15 @@ def getDashboards():
 def sendCommands():
     try:
         data = request.get_json()
+        print("data:", data)
         cmd = data['cmd']
+        cmd = cmd.split("\n")
         affinity = data['affinity']
         path = data['path']
 
         print(cmd, affinity, path)
 
-        twin.execute_observation(cmd)
+        twin.execute_observation_batch_parameters(path, affinity, cmd)
         
         return "OK"
     except Exception as error:
