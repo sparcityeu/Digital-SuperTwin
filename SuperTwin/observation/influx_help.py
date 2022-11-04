@@ -10,34 +10,9 @@ sys.path.append("../")
 
 import utils
 
-def parse_nanodate(s):
-  """
-  parse date, ignore nanoseconds
-  sample input: 2020-12-31T16:20:00.000000123Z
-  --> 123ns will be ignored
-  """
-  if s[-1] == 'Z':
-    # add explicit UTC timezone, to make strptime happy
-    s += '+0000'
-  return datetime.datetime.strptime(
-    s[0:26]+s[29:], '%Y-%m-%dT%H:%M:%S.%fZ%z')
-
 def query_string(metric, tagkey):
   
   return 'SELECT * FROM ' + metric + ' where "tag"'+ "=" +  "'" + tagkey + "'"
-
-'''
-def normalized(to_normal, normal): ##First observation first timestamp vs other o. first timestamp
-
-  t0 = int(time.mktime(time.strptime(to_normal, "%Y-%m-%dT%H:%M:%S.%fZ")))
-  t1 = int(time.mktime(time.strptime(normal, "%Y-%m-%dT%H:%M:%S.%fZ")))
-  
-  t0 -= (t1 - t0)
-  t0 = datetime.fromtimestamp(t0)
-  t0 = str(t0)
-  
-  return t0.split(" ")[0] + "T" + t0.split(" ")[1] + ".000000Z"
-'''
 
 def difference(to_normal, normal):
     
@@ -102,31 +77,4 @@ def normalize_tag(SuperTwin, _tag, no_subtags):
                   my_write.append(to_write)
             db.write_points(my_write)
     
-    #print("result:", result)
-    #print("compare_time:", compare_time)
-    
-    '''
-    intime = int(time.mktime(time.strptime("2022-11-02T02:52:09.223856Z", "%Y-%m-%dT%H:%M:%S.%fZ")))
-
-    
-    ts1 = datetime.fromtimestamp(intime)
-    print("type(ts1):", str(ts1))
-    
-
-    
-    #sts1 = str(ts1)
-    #sts1 = sts1.split(" ")[0] + "T" + sts1.split(" ")[1] + ".000000Z"
-    #print("sts1:", sts1)
-    
-
-    ##Loop here
-    firstStampString = "2022-11-02T02:52:09.223856Z"
-    
-    to_write = [{"measurement": "L1L10",
-                 "tags": {"tag1": "sa" + "_normalized",},
-                 "time": "2022-11-02T14:30:05.000000Z",
-                 #"time_precision": "ms",
-                 "fields": {"_cpu0": 441}}]
-
-    db.write_points(to_write)
-    '''
+            

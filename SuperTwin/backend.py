@@ -46,9 +46,11 @@ CORS(app)
 def setDB():
     try:
         global collection
+        global obs_collection
         db = db_client[twin.name]
 
         collection = db['twin']
+        obs_collection = db['observations']
         response = dumps((collection.find({})), default=json_util.default)
         a = loads(response)
 
@@ -78,14 +80,12 @@ def startSuperTwin():
         reader = open("supertwin.state", "r")
         lines = reader.readlines()
         reader.close()
-        print("#########################")
-        print(addr, user_name, password)
-        print("#########################")
+        
         if(len(lines) == 0):
             twin = supertwin.SuperTwin(addr, user_name, password)
         else:
             twin = supertwin.SuperTwin(addr)
-        time.sleep(2)
+        #time.sleep(2)
 
         return make_response(jsonify({'OK': "OK"}), 200)
 
@@ -267,9 +267,10 @@ def getExperimentalMetrics():
 @app.route('/api/appendMetrics/monitoring', methods=['POST'])
 def appendMonitoringMetrics():
     try:
+        
         data = request.get_json()
         metric_list = data['monitoringMetrics']
-
+        '''
         file_object = open('monitor_metrics.txt', 'a')
         file_object.write("\n##USER METRICS##\n")
 
@@ -282,7 +283,12 @@ def appendMonitoringMetrics():
 
 
         file_object.close()
-
+        '''
+        print(metric_list)
+        for _d in metric_list:
+            twin.monitor_metrics.append(_d["metric"])
+        twin.update_twin_document__assert_new_monitor_pid()
+        twin.update_twin_document__add_monitoring_dashboard("http://localhost:3000/d/wa83tmD4z/dolap-monitor_1")
         return "OK"
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
@@ -325,7 +331,7 @@ def getMonitoringStatus():
             "uid": twin.uid,
             "pid":status,
         }
-        time.sleep(1)
+        #time.sleep(1)
         return make_response(monitor_info, 200)
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
@@ -339,27 +345,23 @@ def getDashboards():
         twin_data = loads(dumps((collection.find({"_id": ObjectId(twin.mongodb_id)})), default=json_util.default))
         
         roofline_dashboard_link = twin_data[0]['roofline_dashboard']
-        roofline_dashboard_name = twin.name +" roofline dashborad"
-
-        monitoring_dashboard_link = twin_data[0]['monitoring_dashboard']
-        monitoring_dashboard_name = twin.name +" monitoring dashborad"
-
-        roofline_dashboard_link = "http://localhost:3000/d/YciOsuNVk/roofline_template?orgId=1&refresh=5s"
         roofline_dashboard_name = twin.name +" roofline dashboard"
 
-        monitoring_dashboard_link = "http://localhost:3000/d/BCDYYXHVk/augmentations-copy?orgId=1&from=now-5m&to=now&refresh=5s"
+        monitoring_dashboard_link = twin_data[0]['monitoring_dashboard']
         monitoring_dashboard_name = twin.name +" monitoring dashboard"
 
+                
         dashborads.append({"dashboard_name":roofline_dashboard_name, "dashboard_link": roofline_dashboard_link})
         dashborads.append({"dashboard_name":monitoring_dashboard_name, "dashboard_link": monitoring_dashboard_link})
-        #observationCollection = db_client['observation']
-        #observation_data = loads(dumps((observationCollection.find()), default=json_util.default))
-        #for obs in observation_data:
-        #    observation_name = twin.name + obs['_id']
-        #    observation_link = obs['dashboard_link']
-        #    dashborads.append({"dashboard_name":observation_name, "dashboard_link": observation_link})
 
-        time.sleep(1)
+        #observationCollection = db_client['observation']
+        observation_data = loads(dumps((obs_collection.find()), default=json_util.default))
+        for obs in observation_data:
+            observation_name = twin.name + "_" +str(obs['_id'])
+            observation_link = obs['report']
+            dashborads.append({"dashboard_name":observation_name, "dashboard_link": observation_link})
+
+        #time.sleep(1)
         
         return make_response(jsonify({"dashboards":dashborads}), 200)
 
@@ -439,4 +441,4 @@ def output_lines(cmdline):
     return stdout.splitlines()
     
 if __name__ == '__main__':
-    app.run(port=5000,debug=True)
+    app.run(port=5000,debug=False)

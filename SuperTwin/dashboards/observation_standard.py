@@ -162,16 +162,13 @@ def get_field_and_metric(SuperTwin, involved, pmu_metric):
     db = utils.get_mongo_database(SuperTwin.name, SuperTwin.mongodb_addr)["twin"]
     meta_with_twin = loads(dumps(db.find({"_id": ObjectId(SuperTwin.mongodb_id)})))[0]                
     twin = meta_with_twin["twin_description"]
-    print("involved:", involved)
-    
+        
     for t_key in twin.keys(): ##Every component is a digital twin
         for s_key in involved.keys(): ##Socket
-            #print("!:", involved[s_key])
             for c_key in involved[s_key]: ##Thread
             
                 if(t_key.find(c_key) != -1):
                     contents = twin[t_key]["contents"]
-                    #print("contents:", contents)
                     for content in contents:
                         if("PMUName" in content.keys()):
                             if(pmu_metric == content["PMUName"]):
@@ -179,10 +176,6 @@ def get_field_and_metric(SuperTwin, involved, pmu_metric):
                             
                     
                     
-#def get_time_window(SuperTwin, observation): ##Get first and last timestamp from db
-
-    
-
 def main(SuperTwin, observation):
 
     ##Multi-threaded visualizations are under development
@@ -206,7 +199,7 @@ def main(SuperTwin, observation):
         ts = ps.ret_ts_panel(next_y(), metric) ##For metric, get time series panel
         gp = ps.ret_gauge_panel(metric + " MEAN", current_y()) ##For metric, get gauge panel
         cpu_field, metric_field = get_field_and_metric(SuperTwin, involved, metric)
-        print("returned:", cpu_field, metric_field)
+        
         for _id in observation["elements"].keys():
             norm_id = _id + "_normalized"
             alias = observation["elements"][_id]["name"]
@@ -227,25 +220,23 @@ def main(SuperTwin, observation):
     
     fig = go.Figure(layout={})
     keys = list(observation["elements"].keys())
-    print("keys:", keys)
     ref = observation["elements"][keys[0]]["duration"]
 
     fig.add_trace(go.Indicator(
         mode = "number",
-        #delta = {'reference': ref, 'relative': True},
         value = observation["elements"][keys[0]]["duration"],
         domain = {'row': 0, 'column': 0},
-        number = {"font": {"color": "black", "size": 60}},
+        number = {"font": {"color": "black", "size": 60}, "suffix": "s"},
         title = {'text': observation["elements"][keys[0]]["name"] , "font": {"color": "gray", "size": 36}})
     )
     
     for i in range(1, len(keys)):
         fig.add_trace(go.Indicator(
             mode = "number+delta",
-            delta = {'reference': ref, 'position': 'right', 'relative': True},
+            delta = {'reference': ref, 'position': 'right', 'relative': True, 'increasing':{'color':'red'}, 'decreasing':{'color':'green'}},
             value = observation["elements"][keys[i]]["duration"],
             domain = {'row': 0, 'column': i},
-            number = {"font": {"color": "black", "size": 60}},
+            number = {"font": {"color": "black", "size": 60}, "suffix": "s"},
             title = {'text': observation["elements"][keys[i]]["name"] , "font": {"color": "gray", "size": 36 }})
         )
         
@@ -256,10 +247,13 @@ def main(SuperTwin, observation):
     fig.update_layout(grid = {'rows': 1, 'columns': len(observation["elements"].keys()), 'pattern': "independent"})
     dict_fig = json.loads(io.to_json(fig))
 
-    print("JUST")
+
     empty_dash["panels"].append(ps.two_templates_two(dict_fig["data"], dict_fig["layout"]))
-    
-    #####################################3
+    ######################################
+    ##create dashboard data
+
+    #locate time and upload
+    ######################################
     db = utils.get_influx_database(SuperTwin.influxdb_addr, SuperTwin.influxdb_name)
     db.switch_database(SuperTwin.influxdb_name)
             
@@ -270,39 +264,28 @@ def main(SuperTwin, observation):
     res_min = res[0]["time"]
     res_max = res[len(res) - 1]["time"]
 
-    print("res_min:", res_min)
-    print("res_max:", res_max)
-
-
     json_dash_obj = get_dashboard_json(empty_dash, overwrite = False)
-    g_url = upload_to_grafana(json_dash_obj, grafana_server, grafana_api_key)
+    g_url = upload_to_grafana(json_dash_obj, SuperTwin.grafana_addr, SuperTwin.grafana_token)
 
     try:
         time_from = int(time.mktime(time.strptime(res_min , "%Y-%m-%dT%H:%M:%S.%fZ"))) *1000 + 10800000 ##Convert to milliseconds then add browser time.
     except:
         time_from = int(time.mktime(time.strptime(res_min , "%Y-%m-%dT%H:%M:%SZ"))) *1000 + 10800000 ##Convert to milliseconds then add browser time.
-    print("res_min:", res_min, "time_from:", time_from)
+    
     try:
         time_to = int(time.mktime(time.strptime(res_max , "%Y-%m-%dT%H:%M:%S.%fZ"))) *1000 + 10800000
     except:
         time_to = int(time.mktime(time.strptime(res_max , "%Y-%m-%dT%H:%M:%SZ"))) *1000 + 10800000
-    print("Time from:", time_from)
+    
     _time_window = str(round((time_to - time_from)))
     _time = str(round((time_from + time_to) /2))
 
-    print("g_url:", g_url)
     url = "http://localhost:3000" + g_url['url'] + "?" + "time=" + _time + "&" + "time.window=" + _time_window
 
-    print("GENERATED:", url)
-
-    
-    
-    
-    return g_url
+    print("Generated report at:", url)
+    return url
 
 
 if __name__ == "__main__":
 
-    observation = {'uid': 'd1b03d31-7133-423e-a06a-021b799dca16', 'affinity': 'likwid-pin -c S0:0', 'metrics': ['L1D:REPLACEMENT', 'L1D_PEND_MISS:PENDING', 'L1D_PEND_MISS:FB_FULL', 'L1D_PEND_MISS:EDGE', 'MEM_LOAD_RETIRED:L1_HIT', 'MEM_LOAD_RETIRED:L1_MISS', 'RAPL_ENERGY_PKG node', 'RAPL_ENERGY_DRAM node', 'kernel.all.pressure.cpu.some.total', 'hinv.cpu.clock', 'lmsensors.coretemp_isa_0000.package_id_0', 'lmsensors.coretemp_isa_0001.package_id_1', 'kernel.percpu.cpu.idle', 'kernel.pernode.cpu.idle', 'disk.dev.read', 'disk.dev.write', 'disk.dev.total', 'disk.dev.read_bytes', 'disk.dev.write_bytes', 'disk.dev.total_bytes', 'disk.all.read', 'disk.all.write', 'disk.all.total', 'disk.all.read_bytes', 'disk.all.write_bytes', 'disk.all.total_bytes', 'mem.util.used', 'mem.util.free', 'swap.pagesin', 'mem.numa.util.free', 'mem.numa.util.used', 'mem.numa.alloc.hit', 'mem.numa.alloc.miss', 'mem.numa.alloc.local_node', 'mem.numa.alloc.other_node', 'network.all.in.bytes', 'network.all.out.bytes', 'perfevent.hwcounters.RAPL_ENERGY_PKG.value', 'perfevent.hwcounters.RAPL_ENERGY_PKG.dutycycle', 'perfevent.hwcounters.RAPL_ENERGY_DRAM.value', 'perfevent.hwcounters.RAPL_ENERGY_DRAM.dutycycle'], 'elements': {'d1b03d31-7133-423e-a06a-021b799dca16_0': {'name': 'random', 'command': './random 1138_bus.mtx', 'duration': 4.234471925999969}, 'd1b03d31-7133-423e-a06a-021b799dca16_1': {'name': 'none', 'command': './none 1138_bus.mtx', 'duration': 5.1262109729868826}, 'd1b03d31-7133-423e-a06a-021b799dca16_2': {'name': 'rcm', 'command': './rcm 1138_bus.mtx', 'duration': 3.9959133730153553}, 'd1b03d31-7133-423e-a06a-021b799dca16_3': {'name': 'degree', 'command': './degree 1138_bus.mtx', 'duration': 4.8339896720135584}}}
-
-    main("sa", observation)
+    main()

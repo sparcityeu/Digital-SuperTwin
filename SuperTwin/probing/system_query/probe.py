@@ -202,10 +202,7 @@ def main():
     diskinfo_list = diskinfo.detect()
 
     _system = {}
-    #_disk = {}
     
-    #_system = generate_hardware_dict(_system, system_list)
-    #_disk = generate_hardware_dict(_disk, diskinfo_list)
     _system = parse_lshw.parse_lshw()
     cache_info = parse_cpuid.parse_cpuid()
     socket_groups, domains, cache_topology, gpu_info = parse_likwid_topology.parse_likwid()
@@ -215,24 +212,6 @@ def main():
     
     info = choose_info(hostname, _system, cache_info, socket_groups, domains, cache_topology, affinity, gpu_info, PMUs, pmprobe)
 
-
-    #print(system)
-    #print('#############################')
-    #print_hardware_dict(system)
-    #print('#############################')
-    #print_hardware_dict(disk)
-    #print('#############################')
-    #print(cache_info)
-    #print('#############################')
-    #print(socket_groups)
-    #print('#############################')
-    #print(domains)
-    #print('#############################')
-    #print(cache_topology)
-    #print('#############################')
-    #print(gpu_info)
-    #print('#############################')
-    #pprint(info)    
 
     print("Will write to file")
     with open("/tmp/dt_probing/system_query/probing.json", "w") as outfile:

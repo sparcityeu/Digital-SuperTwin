@@ -257,7 +257,7 @@ def two_templates_two(data, layout):
             "y": 0
         },
         "type": "ae3e-plotly-panel",
-        "title": "Cache Aware Roofline Model",
+        "title": "Observation Result",
         "datasource": {
             "type": "simpod-json-datasource",
             "uid": "yjaMegMVk"

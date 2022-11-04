@@ -34,3 +34,7 @@ mem.numa.alloc.local_node
 mem.numa.alloc.other_node
 network.all.in.bytes
 network.all.out.bytes
+##
+kernel.all.nusers
+kernel.all.nprocs
+

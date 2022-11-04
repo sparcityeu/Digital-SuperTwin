@@ -56,8 +56,7 @@ def observe_single(SuperTwin, observation_id, command, obs_conf):
 
 def observe_single_parameters(SuperTwin, path, affinity, observation_id, command, obs_conf):
 
-    print("before ssh")
-    
+        
     ##Connect to remote host
     SSHuser = SuperTwin.SSHuser                                        
     SSHpass = SuperTwin.SSHpass
@@ -68,7 +67,7 @@ def observe_single_parameters(SuperTwin, path, affinity, observation_id, command
     scp = SCPClient(ssh.get_transport())
     ##Connect to remote host
 
-    print("after ssh")
+    
     
     command_script_name = "observation_" + observation_id + ".sh"
     
@@ -81,7 +80,7 @@ def observe_single_parameters(SuperTwin, path, affinity, observation_id, command
         writer.write(line + "\n")
     writer.close()
     
-    print("What is wrong")
+    
     
     try:
         scp.put(command_script_name, remote_path="/tmp/dt_files")
