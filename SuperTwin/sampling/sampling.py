@@ -61,8 +61,6 @@ ALWAYS_HAVE_MONITOR_WIDER = ["perfevent.hwcounters.RAPL_ENERGY_PKG.value",
 ALWAYS_HAVE_OBSERVATION = ["RAPL_ENERGY_PKG node",
                            "RAPL_ENERGY_DRAM node"]
 
-##These may increase or increse
-##TO DO: Add AMD energy PMUs
 
 def get_date_tag():
 
@@ -116,15 +114,6 @@ def generate_pcp2influxdb_config_observation(SuperTwin, observation_id):
             metrics.append(item)
 
     metrics = [x.strip("node").strip(" ") for x in metrics]
-    '''
-    metrics2 = [] 
-    for i in range(len(metrics)):
-        while(metrics[i].find("node") != -1):
-            metrics[i] = metrics[i][:-5]
-            print("item:", item)
-        item.strip(" ")
-        metrics2.append(item)
-    ''' 
     metrics = ["perfevent.hwcounters." + x.replace(":", "_") + ".value" for x in metrics]
     
     config_lines = ["[options]" + "\n",
@@ -171,12 +160,7 @@ def generate_perfevent_conf(SuperTwin):
         if item not in metrics:
             metrics.append(item)
 
-    #for item in metrics:
-        #if((item.find("numa") != -1 or item.find("node") != -1 or item.find("UNC") or item.find("OFFC")) and item.find("RAPL") == -1):
-            #metrics.remove(item)
-            #metrics.append(item + " node") ##
-    
-    
+            
     msr = get_msr(SuperTwin)
 
     writer = open("perfevent.conf", "w+")
@@ -220,12 +204,13 @@ def reconfigure_perfevent(SuperTwin):
 
     print("Reconfigured remote perfevent pmda")
 
+
+##deprecated
 def main(hostname, hostIP, db_name, db_tag, metrics):
 
     ##Get influxdb
     pcp_conf_name = generate_pcp2influxdb_config(db_name, db_tag, hostIP, hostname, metrics)
     print("pcp2influxdb configuration:", pcp_conf_name, "generated")
-    ##Get influxdb
     
     ##This is where actual thing happens
     #####################################################################
@@ -234,8 +219,6 @@ def main(hostname, hostIP, db_name, db_tag, metrics):
     
     p0 = Popen(p0_args)
     monitor_pid = p0.pid
-    #p0.wait(10)
-    #p0.kill()
     #####################################################################
     print("A daemon with pid:", monitor_pid, "is started monitoring", hostname)
     
@@ -243,7 +226,8 @@ def main(hostname, hostIP, db_name, db_tag, metrics):
     
 if __name__ == "__main__":
 
-    main("dolap", "10.36.54.195", "probing_dolap.json", "dolap_main.conf")
+    
+    main()
     
 
 

@@ -43,7 +43,7 @@ const MonitoringMetrics = () => {
 
   useEffect(() => {
     getMonitoringMetrics();
-  }, [monitoringMetrics]);
+  }, []);
 
   const columnDefs = [
     { headerName: "Metric", field: "metric" },
@@ -140,7 +140,7 @@ const MonitoringMetrics = () => {
             color: "white",
           }}
         >
-          Recommended Metric Packages
+          Pre-Selected Metrics
         </p>
         <div
           className="ag-theme-alpine"
@@ -169,7 +169,7 @@ const MonitoringMetrics = () => {
                 marginTop: "7%",
               }}
             >
-              Start Monitoring
+              Add Metrics
             </button>
           </TooltipComponent>
         </div>
@@ -184,30 +184,42 @@ export default MonitoringMetrics;
 var mockData = [
   [
     1,
-    "To monitor network traffic",
+    "Kernel metrics",
     [
-      "Metric-1",
-      "Metric-2",
-      "Metric-3",
-      "Metric-1",
-      "Metric-2",
-      "Metric-3",
-      "Metric-1",
-      "Metric-2",
-      "Metric-3",
-      "Metric-1",
-      "Metric-2",
-      "Metric-3",
-      "Metric-1",
-      "Metric-2",
-      "Metric-3",
+      "kernel.all.pressure.cpu.some.total",
+      "hinv.cpu.clock",
+      "kernel.percpu.cpu.idle",
+      "kernel.pernode.cpu.idle",
+      "disk.dev.read",
+      "disk.dev.write",
+      "disk.dev.total",
+      "disk.dev.read_bytes",
+      "disk.dev.write_bytes",
+      "disk.dev.total_bytes",
+      "disk.all.read",
+      "disk.all.write",
+      "disk.all.total",
+      "disk.all.read_bytes",
+      "disk.all.write_bytes",
+      "disk.all.total_bytes",
+      "mem.util.used",
+      "mem.util.free",
+      "swap.pagesin",
+      "mem.numa.util.free",
+      "mem.numa.util.used",
+      "mem.numa.alloc.hit",
+      "mem.numa.alloc.miss",
+      "mem.numa.alloc.local_node",
+      "mem.numa.alloc.other_node",
+      "network.all.in.bytes",
+      "network.all.out.bytes",
+      "kernel.all.nusers",
+      "kernel.all.nprocs",
+      "lmsensors.coretemp_isa_0000.package_id_0",
+      "lmsensors.coretemp_isa_0001.package_id_1",
     ],
   ],
-  [2, "To monitor CPU load", ["Metric-2", "Metric-3"]],
-  [3, "Number of NUMA access", ["Metric-1", "Metric-3"]],
-  [4, "....", ["Metric-3"]],
-  [5, "....", ["Metric-1", "Metric-2", "Metric-3"]],
-  [6, "....", ["Metric-1", "Metric-2", "Metric-3"]],
+  [2, "Hardware Metrics", ["RAPL_ENERGY_PKG", "RAPL_ENERGY_DRAM"]]
 ];
 
 // const metricData = [

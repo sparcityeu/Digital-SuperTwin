@@ -15,6 +15,7 @@ const DashboardLinks = () => {
   const getDashboards = async () => {
     try {
       const res = await axios.get("http://127.0.0.1:5000/api/getDashboards");
+      //const res = axios.get("http://127.0.0.1:5000/api/getDashboards");
       console.log(res.data);
       setDashboards(res.data["dashboards"]);
       return res.data;
@@ -23,8 +24,11 @@ const DashboardLinks = () => {
 
   const getMonitoringStatus = async () => {
     try {
+      //const res = await axios.get(
+      //"http://127.0.0.1:5000/api/getMonitoringStatus"
+      //);
       const res = await axios.get(
-        "http://127.0.0.1:5000/api/getMonitoringStatus"
+      "http://127.0.0.1:5000/api/getMonitoringStatus"
       );
       console.log(res.data);
       setMonitoringStatus(res.data);
@@ -32,10 +36,10 @@ const DashboardLinks = () => {
     } catch (err) {}
   };
 
-  useEffect(() => {
+    useEffect(() => {
     getDashboards();
     getMonitoringStatus();
-  }, [dashboards]);
+  }, []);
 
   function LinkCellRenderer(props) {
     const onClick = () => {

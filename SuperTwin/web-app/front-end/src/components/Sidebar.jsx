@@ -12,16 +12,16 @@ const links = [
         location: "CreateSuperTwin",
       },
       {
+        name: "Dashboard Links",
+        location: "DashboardLinks",
+      },
+      {
         name: "Monitoring Metrics",
         location: "MonitoringMetrics",
       },
       {
         name: "Perform Experiment",
         location: "PerformExperiment",
-      },
-      {
-        name: "Dashboard Links",
-        location: "DashboardLinks",
       },
     ],
   },

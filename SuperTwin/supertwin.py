@@ -17,7 +17,8 @@ import adcarm_benchmark
 import observation
 import influx_help
 import observation_standard
-#import roofline_dashboard
+import roofline_dashboard
+import monitoring_dashboard
 
 import static_data
 
@@ -179,7 +180,7 @@ class SuperTwin:
             self.monitor_pid = meta["monitor_pid"]
             self.roofline_dashboard = meta["roofline_dashboard"]
             self.monitoring_dashboard = meta["monitoring_dashboard"]
-
+            
             print("SuperTwin is reconstructed from db..")
 
         else: ##Construct from scratch
@@ -207,11 +208,11 @@ class SuperTwin:
             self.monitor_tag = "_monitor"
             self.mongodb_id = insert_twin_description(get_twin_description(self.prob_file),self)
             print("Collection id:", self.mongodb_id)
-            #self.reconfigure_perfevent()
             self.monitor_pid = sampling.main(self.name, self.addr, self.influxdb_name, self.monitor_tag, self.monitor_metrics)
             
             utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
             self.kill_zombie_monitors() ##If there is any zombie monitor sampler
+            self.generate_monitoring_dashboard()
             
             ##benchmark members
             self.benchmarks = 0
@@ -219,8 +220,7 @@ class SuperTwin:
             self.add_stream_benchmark()
             self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
             self.add_adcarm_benchmark()
-            #self.generate_roofline_dashboard()
-            
+            self.generate_roofline_dashboard()
             register_twin_state(self)
             
             
@@ -515,40 +515,31 @@ class SuperTwin:
         db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
                 
         to_new = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
-        to_new["system_dashboard"] = "http://localhost:3000" + url
+        to_new["roofline_dashboard"] = url
         db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
         print("Roofline dashboard added to Digital Twin")
 
         
-    def update_twin_document__add_roofline_dashboard(self, url):
+    def update_twin_document__add_monitoring_dashboard(self, url):
 
         db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
                 
         to_new = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
-        to_new["benchinfo_dashboard"] = "http://localhost:3000" + url
+        to_new["monitoring_dashboard"] = url
         db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
         print("Benchinfo dashboard added to Digital Twin")
 
         
     def generate_roofline_dashboard(self):
         url = roofline_dashboard.generate_roofline_dashboard(self)
-        static_data.main(self)
         self.update_twin_document__add_roofline_dashboard(url)
 
         
-    def generate_benchinfo_dashboard(self):
-        ##This will parse digital twin to get benchmark information
-        url = benchinfo_dashboard.generate_benchinfo_dashboard(self)
-        self.update_twin_document__add_benchinfo_dashboard(url)
+    def generate_monitoring_dashboard(self):
+        url = monitoring_dashboard.generate_monitoring_dashboard(self)
+        self.update_twin_document__add_monitoring_dashboard(url)
 
         
-    def generate_monitor_dashboard(self):
-        ##This will generate monitor dashboard panels.
-        ##However monitor dashboard panels should be called by observation panels
-
-        x = 1
-        
-
     def reconfigure_monitor_events(self, metrics):
 
         for item in ALWAYS_HAVE_MONITOR_WIDER:
@@ -660,66 +651,17 @@ class SuperTwin:
         self.update_twin_document__add_observation(observation)
         
         
-    def generate_observation_dashboard_type1(self): ##Applications runs on different threads at the same time
-        x = 1
-
-    def generate_observation_dashboard_type2(self): ##Applications runs at different times then overlapped
-        x = 1
-
-
     
-                
-
 if __name__ == "__main__":
-
-
-    addr = "10.36.54.195"
+    
+    #addr = "10.36.54.195"
     #user_name = "ftasyaran"
     #password = "kemaliye"
     
-    #my_superTwin = SuperTwin() ##From scratch
-    my_superTwin = SuperTwin(addr) ##Re-construct
+    my_superTwin = SuperTwin() ##From scratch
+    #my_superTwin = SuperTwin(addr) ##Re-construct
     #my_superTwin = SuperTwin(addr, user_name, password) ##Re-construct
-    #my_superTwin.execute_observation("likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s")
-
-    '''
-    my_superTwin.execute_observation_batch_parameters("","",
-        ["likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s",
-         "likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s",
-         "likwid-pin -c S0:0-21 stress --cpu 22 --timeout 5s"])
-    '''
-
-    '''
-    my_superTwin.execute_observation_batch_parameters(".","likwid-pin -c S0:0-21",
-                                                      ["0|stress --cpu 22 --timeout 5s",
-                                                       "1|stress --cpu 22 --timeout 5s",
-                                                       "2|stress --cpu 22 --timeout 5s"])
-    '''
-
-
+    my_superTwin.update_twin_document__assert_new_monitor_pid()
     
 
-    #my_superTwin.update_twin_document__assert_new_monitor_pid()
-    #my_SuperTwin = SuperTwin(addr, user_name, password) ##From scratch
 
-    #########
-    #########
-    #my_superTwin.kill_zombie_monitors()
-    #my_superTwin.update_twin_document__assert_new_monitor_pid()
-    #my_superTwin.update_twin_document__update_monitor_pid()
-    #my_superTwin.update_twin_document__add_roofline_dashboard(url)
-    #my_superTwin.add_stream_benchmark()
-    #my_superTwin.add_hpcg_benchmark(HPCG_PARAM) 
-    #my_superTwin.add_adcarm_benchmark()
-    #my_superTwin.reconfigure_observation_events(metrics)
-    #my_superTwin.reconfigure_monitor_events(metrics)
-    #my_superTwin.execute_observation(command):
-    #my_superTwin.execute_observation_batch(commands):
-    #########
-    #########
-    #unique.main(my_superTwin)
-    #my_superTwin.update_twin_document__assert_new_monitor_pid()
-
-    observation = {'uid': 'f150f6d6-237f-44c2-aeee-acc70cc6c9dcc', 'affinity': 'likwid-pin -c S0:0', 'metrics': ['BR_INST_RETIRED:NEAR_TAKEN', 'BR_MISP_RETIRED:COND', 'BR_MISP_RETIRED:NEAR_TAKEN', 'CPU_CLK_THREAD_UNHALTED:REF_P', 'CYCLE_ACTIVITY:CYCLES_L2_MISS', 'CYCLE_ACTIVITY:CYCLES_L1D_MISS', 'CYCLE_ACTIVITY:STALLS_L1D_MISS', 'CYCLE_ACTIVITY:STALLS_L2_MISS', 'CYCLE_ACTIVITY:STALLS_L3_MISS', 'RAPL_ENERGY_PKG node', 'RAPL_ENERGY_DRAM node', 'kernel.all.pressure.cpu.some.total', 'hinv.cpu.clock', 'lmsensors.coretemp_isa_0000.package_id_0', 'lmsensors.coretemp_isa_0001.package_id_1', 'kernel.percpu.cpu.idle', 'kernel.pernode.cpu.idle', 'disk.dev.read', 'disk.dev.write', 'disk.dev.total', 'disk.dev.read_bytes', 'disk.dev.write_bytes', 'disk.dev.total_bytes', 'disk.all.read', 'disk.all.write', 'disk.all.total', 'disk.all.read_bytes', 'disk.all.write_bytes', 'disk.all.total_bytes', 'mem.util.used', 'mem.util.free', 'swap.pagesin', 'mem.numa.util.free', 'mem.numa.util.used', 'mem.numa.alloc.hit', 'mem.numa.alloc.miss', 'mem.numa.alloc.local_node', 'mem.numa.alloc.other_node', 'network.all.in.bytes', 'network.all.out.bytes', 'perfevent.hwcounters.RAPL_ENERGY_PKG.value', 'perfevent.hwcounters.RAPL_ENERGY_PKG.dutycycle', 'perfevent.hwcounters.RAPL_ENERGY_DRAM.value', 'perfevent.hwcounters.RAPL_ENERGY_DRAM.dutycycle'], 'elements': {'f150f6d6-237f-44c2-aeee-acc61406c9de_0': {'name': 'random', 'command': './random mixtank_new.mtx', 'duration': 14.316190309997182}, 'f150f6d6-237f-44c2-aeee-acc61406c9de_1': {'name': 'none', 'command': './none mixtank_new.mtx', 'duration': 13.1628974119958}, 'f150f6d6-237f-44c2-aeee-acc61406c9de_2': {'name': 'rcm', 'command': './rcm mixtank_new.mtx', 'duration': 14.076336130994605}, 'f150f6d6-237f-44c2-aeee-acc61406c9de_3': {'name': 'degree', 'command': './degree mixtank_new.mtx', 'duration': 14.113160095992498}}}
-
-    observation_standard.main(my_superTwin, observation)
