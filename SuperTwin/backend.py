@@ -67,7 +67,7 @@ def setDB():
 
 @app.route('/api/startSuperTwin', methods=['POST'])
 def startSuperTwin():
-    
+    time.sleep(1)
     try:
         global twin
 
@@ -95,6 +95,7 @@ def startSuperTwin():
 
 @app.route('/api/getMetrics/monitoring', methods=['GET'])
 def getMonitoringMetrics():
+    time.sleep(1)
     try:
         #replace with twin.ObjectID
         twin_data = loads(dumps((collection.find({"_id": ObjectId(twin.mongodb_id)})), default=json_util.default))
@@ -182,6 +183,7 @@ def getMonitoringMetrics():
 
 @app.route('/api/getMetrics/experiment', methods=['GET'])
 def getExperimentalMetrics():
+    time.sleep(1)
     try:
         #replace with twin.ObjectID
         twin_data = loads(dumps((collection.find({"_id": ObjectId(twin.mongodb_id)})), default=json_util.default))
@@ -266,6 +268,7 @@ def getExperimentalMetrics():
 
 @app.route('/api/appendMetrics/monitoring', methods=['POST'])
 def appendMonitoringMetrics():
+    time.sleep(1)
     try:
         
         data = request.get_json()
@@ -297,7 +300,7 @@ def appendMonitoringMetrics():
 
 @app.route('/api/appendMetrics/experiment', methods=['POST'])
 def appendExperimentalMetrics():
-
+    time.sleep(1)
     try:
         data = request.get_json()
         metric_list = data['experimentMetrics']
@@ -316,6 +319,7 @@ def appendExperimentalMetrics():
 
 @app.route('/api/getMonitoringStatus', methods=['GET'])
 def getMonitoringStatus():
+    time.sleep(1)
     try:
         p0_command = 'ps aux | grep pcp2influxdb'
 
@@ -339,15 +343,16 @@ def getMonitoringStatus():
 
 @app.route('/api/getDashboards', methods=['GET'])
 def getDashboards():
+    time.sleep(1)
     try:
         dashborads = []
 
         twin_data = loads(dumps((collection.find({"_id": ObjectId(twin.mongodb_id)})), default=json_util.default))
         
-        roofline_dashboard_link = twin_data[0]['roofline_dashboard']
+        monitoring_dashboard_link = twin_data[0]['roofline_dashboard']
         roofline_dashboard_name = twin.name +" roofline dashboard"
 
-        monitoring_dashboard_link = twin_data[0]['monitoring_dashboard']
+        roofline_dashboard_link = twin_data[0]['monitoring_dashboard']
         monitoring_dashboard_name = twin.name +" monitoring dashboard"
 
                 
@@ -372,6 +377,7 @@ def getDashboards():
 
 @app.route('/api/runExperiment', methods=['POST'])
 def sendCommands():
+    time.sleep(1)
     try:
         data = request.get_json()
         print("data:", data)
@@ -390,7 +396,7 @@ def sendCommands():
 
 
 def get_type(param_metric):
-
+    
     _type = ''
 
     f_metric = ''

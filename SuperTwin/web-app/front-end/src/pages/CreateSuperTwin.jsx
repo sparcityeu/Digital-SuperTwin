@@ -104,7 +104,7 @@ const CreateSuperTwin = () => {
             color: "white",
           }}
         >
-          Real-time Supercomputer Monitoring Tool
+          Automated Performance Analysis Tool
         </p>
         <div
           style={{
