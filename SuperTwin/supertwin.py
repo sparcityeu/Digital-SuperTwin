@@ -221,6 +221,7 @@ class SuperTwin:
             self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
             self.add_adcarm_benchmark()
             self.generate_roofline_dashboard()
+            
             register_twin_state(self)
             
             
@@ -656,8 +657,7 @@ if __name__ == "__main__":
     
     #addr = "10.36.54.195"
     #user_name = "ftasyaran"
-    #password = "kemaliye"
-    
+        
     my_superTwin = SuperTwin() ##From scratch
     #my_superTwin = SuperTwin(addr) ##Re-construct
     #my_superTwin = SuperTwin(addr, user_name, password) ##Re-construct
