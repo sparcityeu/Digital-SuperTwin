@@ -17,8 +17,8 @@ import adcarm_benchmark
 import observation
 import influx_help
 import observation_standard
-import roofline_dashboard
-import monitoring_dashboard
+#import roofline_dashboard
+#import monitoring_dashboard
 
 import static_data
 
@@ -135,10 +135,10 @@ def register_twin_state(SuperTwin):
 def query_twin_state(name, mongodb_id, mongodb_addr):
 
     db = utils.get_mongo_database(name, mongodb_addr)["twin"]
-    meta = loads(dumps(db.find({"_id": ObjectId(mongodb_id)})))[0]
+    meta = loads(dumps(db.find({"_id": ObjectId(mongodb_id)})))
     print("Found db..")
     
-    return meta
+    return meta[0]
 
             
 class SuperTwin:
@@ -212,7 +212,7 @@ class SuperTwin:
             
             utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
             self.kill_zombie_monitors() ##If there is any zombie monitor sampler
-            self.generate_monitoring_dashboard()
+            #self.generate_monitoring_dashboard()
             
             ##benchmark members
             self.benchmarks = 0
@@ -220,7 +220,7 @@ class SuperTwin:
             self.add_stream_benchmark()
             self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
             self.add_adcarm_benchmark()
-            self.generate_roofline_dashboard()
+            #self.generate_roofline_dashboard()
             
             register_twin_state(self)
             
@@ -391,7 +391,7 @@ class SuperTwin:
             content["@environment"] = adcarm_modifiers["environment"]
             
         #content["@global_parameters"] = carm config values, L1size, L2size, Frequency?
-        content["@mvres"] = adcarm_res["threads"][max_threads()][which()]["FP"]
+        #content["@mvres"] = adcarm_res["threads"][max_threads()][which()]["FP"]
         content["@mvres_name"] = "Max threads ridge point, without modifiers"
         content["@mvres_unit"] = "GFlop/s"
 

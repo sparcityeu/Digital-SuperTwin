@@ -25,7 +25,7 @@ import plotly.io as io
 
 ##These should be in a config file
 grafana_api_key = "eyJrIjoiM1JDaHR3Y1VENzFtSXZsNTh0Mzh0ZFpGRWhCdENvTDAiLCJuIjoiZHQwIiwiaWQiOjF9"
-grafana_server = "localhost:3000"
+grafana_server = "host.docker.internal:3000"
 
 y = -2
 
@@ -280,7 +280,7 @@ def main(SuperTwin, observation):
     _time_window = str(round((time_to - time_from)))
     _time = str(round((time_from + time_to) /2))
 
-    url = "http://localhost:3000" + g_url['url'] + "?" + "time=" + _time + "&" + "time.window=" + _time_window
+    url = "http://host.docker.internal:3000" + g_url['url'] + "?" + "time=" + _time + "&" + "time.window=" + _time_window
 
     print("Generated report at:", url)
     return url

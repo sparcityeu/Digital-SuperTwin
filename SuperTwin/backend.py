@@ -37,7 +37,7 @@ import static_data
 
 
 app = Flask(__name__)
-db_client = MongoClient('localhost', 27017)
+db_client = MongoClient('host.docker.internal', 27017)
 CORS(app)
 
 
@@ -81,11 +81,7 @@ def startSuperTwin():
         lines = reader.readlines()
         reader.close()
         
-        if(len(lines) == 0):
-            twin = supertwin.SuperTwin(addr, user_name, password)
-        else:
-            twin = supertwin.SuperTwin(addr)
-        #time.sleep(2)
+        twin = supertwin.SuperTwin(addr, user_name, password)
 
         return make_response(jsonify({'OK': "OK"}), 200)
 
@@ -291,7 +287,7 @@ def appendMonitoringMetrics():
         for _d in metric_list:
             twin.monitor_metrics.append(_d["metric"])
         twin.update_twin_document__assert_new_monitor_pid()
-        twin.update_twin_document__add_monitoring_dashboard("http://localhost:3000/d/wa83tmD4z/dolap-monitor_1")
+        twin.update_twin_document__add_monitoring_dashboard("http://host.docker.internal/d/wa83tmD4z/dolap-monitor_1")
         return "OK"
     except Exception as error:
         return make_response(jsonify({'error': error}), 400)
@@ -447,4 +443,4 @@ def output_lines(cmdline):
     return stdout.splitlines()
     
 if __name__ == '__main__':
-    app.run(port=5000,debug=False)
+    app.run(host="0.0.0.0", port=5000,debug=False)

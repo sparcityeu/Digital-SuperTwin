@@ -54,7 +54,7 @@ def generate_pcp2influxdb_config(config_file, tag, sourceIP, source_name):
     influx_db_name = source_name + "_main" 
 
     config_lines = ["[options]" + "\n",
-                    "influx_server = http://127.0.0.1:8086" + "\n",
+                    "influx_server = http://host.docker.internal:8086" + "\n",
                     "influx_db = " + influx_db_name + "\n",
                     "influx_tags = " + "tag=" + tag + "\n",
                     "source = " + sourceIP + "\n",
@@ -80,7 +80,7 @@ def generate_pcp2influxdb_config(config_file, tag, sourceIP, source_name):
 def get_mongo_database(mongodb_name):
 
     ##Create a connection for mongodb 
-    CONNECTION_STRING = "mongodb://localhost:27017"
+    CONNECTION_STRING = "mongodb://host.docker.internal:27017"
     client = MongoClient(CONNECTION_STRING)
     
     ##Create the database for this instance(s)
@@ -89,7 +89,7 @@ def get_mongo_database(mongodb_name):
 
 def get_influx_database(influxdb_name):
 
-    influxdb = InfluxDBClient(host="localhost", port=8086)
+    influxdb = InfluxDBClient(host="host.docker.internal", port=8086)
     influxdb.create_database(influxdb_name)
 
 
@@ -191,7 +191,7 @@ def main(hostname, hostIP, hostProbFile, monitoringMetricsConf):
         "dtdl_twin": _twin,
         "influxdb": influxdb_name,
         "influxdb_tag": "_main",
-        "dashboard_location": "http://localhost:3000/d/hnYCSYZ4k"
+        "dashboard_location": "http://host.docker.internal:3000/d/hnYCSYZ4k"
         #"real_dashboard_location": "system_dashboard",
     }
     result = collection.insert_one(metadata)

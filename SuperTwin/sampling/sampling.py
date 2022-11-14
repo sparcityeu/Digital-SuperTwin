@@ -78,7 +78,7 @@ def generate_pcp2influxdb_config(db_name, db_tag, sourceIP, source_name, metrics
             metrics.append(item)
     
     config_lines = ["[options]" + "\n",
-                    "influx_server = http://127.0.0.1:8086" + "\n",
+                    "influx_server = http://host.docker.internal:8086" + "\n",
                     "influx_db = " + db_name + "\n",
                     "influx_tags = " + "tag=" + db_tag + "\n",
                     "source = " + sourceIP + "\n",
@@ -117,7 +117,7 @@ def generate_pcp2influxdb_config_observation(SuperTwin, observation_id):
     metrics = ["perfevent.hwcounters." + x.replace(":", "_") + ".value" for x in metrics]
     
     config_lines = ["[options]" + "\n",
-                    "influx_server = http://127.0.0.1:8086" + "\n",
+                    "influx_server = http://host.docker.internal:8086" + "\n",
                     "influx_db = " + db_name + "\n",
                     "influx_tags = " + "tag=" + db_tag + "\n",
                     "source = " + sourceIP + "\n",
