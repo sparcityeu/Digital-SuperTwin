@@ -212,7 +212,7 @@ class SuperTwin:
             
             utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
             self.kill_zombie_monitors() ##If there is any zombie monitor sampler
-            self.generate_monitoring_dashboard()
+            #self.generate_monitoring_dashboard()
             
             ##benchmark members
             self.benchmarks = 0
@@ -220,7 +220,7 @@ class SuperTwin:
             self.add_stream_benchmark()
             self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
             self.add_adcarm_benchmark()
-            self.generate_roofline_dashboard()
+            #self.generate_roofline_dashboard()
             
             register_twin_state(self)
             
@@ -532,7 +532,8 @@ class SuperTwin:
 
         
     def generate_roofline_dashboard(self):
-        url = roofline_dashboard.generate_roofline_dashboard(self)
+        #url = roofline_dashboard.generate_roofline_dashboard(self)
+        url = "to_be"
         self.update_twin_document__add_roofline_dashboard(url)
 
         
@@ -660,8 +661,9 @@ if __name__ == "__main__":
         
     my_superTwin = SuperTwin() ##From scratch
     #my_superTwin = SuperTwin(addr) ##Re-construct
+    my_superTwin.generate_monitoring_dashboard()
     #my_superTwin = SuperTwin(addr, user_name, password) ##Re-construct
-    my_superTwin.update_twin_document__assert_new_monitor_pid()
+    #my_superTwin.update_twin_document__assert_new_monitor_pid()
     
 
 
