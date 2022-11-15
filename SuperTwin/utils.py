@@ -110,9 +110,13 @@ def check_state(addr):
     name = None
     twin_id = None
     collection_id = None
-        
-    reader = open("supertwin.state", "r")
-    lines = reader.readlines()
+
+    try:
+        reader = open("supertwin.state", "r")
+        lines = reader.readlines()
+
+    except:
+        lines = []
 
     for line in lines:
         #if(line.find("#---") == -1):

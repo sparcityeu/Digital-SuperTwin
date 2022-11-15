@@ -1,6 +1,7 @@
 # **Digital SuperTwin**
 SuperTwin creates a structured data representation over an HPC system, **manages data input from a collection of tools and enable reasonings** among them. Current capabilities of SuperTwin are; 
 - Monitoring
+- Automated PMU configuration
 - Automated profiling
 - Modelling
 - Knowledge retrieval
@@ -41,29 +42,7 @@ SuperTwin creates a structured data representation over an HPC system, **manages
         - [Plotly panel](https://grafana.com/grafana/plugins/ae3e-plotly-panel/)
 - [pcp-export-pcp2influxdb](https://packages.debian.org/sid/utils/pcp-export-pcp2influxdb)
 - Python 3.7+   
-### On local host -- Python packages
-- json
-- bson
-- xml
-- datetime
-- subprocess
-- shlex
-- influxdb
-- pymongo
-- syncio
-- paramiko
-- scp
-- threading
-- getpass
-- contextlib
-- re
-- glob
-- uuid
-- socket
-- collections
-- flask
-- string.Template
----
+
 ## Directory Structure
 
     .
@@ -87,16 +66,25 @@ SuperTwin creates a structured data representation over an HPC system, **manages
     |       ├── benchmarks
     |           ├── stream_benchmark.py # Execute and parse stream benchmark
     |           ├── hpcg_benchmark.py   # Execute and parse hpcg benchmark
+    |           ├── carm_benchmark.py   # Execute and parse cache aware roofline model benchmark
     |               ├── STREAM       # STREAM benchmark
     |               ├── HPCG         # HPCG benchmark
+    |               ├── CARM         # Cache aware roofline model benchmark
     |        ├── twin_description  
     |            ├── generate_twin.py # Generate DTD from probed info
     |        ├── dashboards
     |            ├── roofline_dashboard.py # Generate roofline and show in dashboard
+    |            ├── monitoring_dashboard.py # Generate monitoring dashboard
+    |            ├── observation_standard.py # Generate "observation" dashboard
+    |        ├── sampling
+    |            ├── sampling.py # Configure and start metric shipment events
+    |        ├── observation
+    |            ├── observation.py # Configure, start and record observations
+    |            ├── influx_help.py # Overlap observations that take place in time temporally
     └── ...
 
 ---
-## Usage
+## Usage with CLI
 After invoking the ``supertwin.py`` metadata, generated digital twin descriptions and dashboards are registered to mongodb database named *hostname*, under collection *twin*. Observations, with their generated dashboards could be found under *observations*. Excepted output for invoking ``supertwin.py`` is as following 
 ```bash
 > sudo python3 supertwin.py
@@ -120,7 +108,7 @@ Remote probing is done..
 pcp2influxdb configuration: pcp_dolap_monitor.conf generated
 A daemon with pid: 2277498 is started monitoring dolap
 Using database 'dolap_main' and tags 'tag=_monitor'.
-Sending 21 metrics to InfluxDB at http://127.0.0.1:8086 every 1.0 sec...
+Sending 35 metrics to InfluxDB at http://127.0.0.1:8086 every 1.0 sec...
 (Ctrl-C to stop)
 Collection id: 634939b2562da7d3f0b47fc9
 STREAM Benchmark thread set: [1, 2, 4, 8, 16, 22, 32, 44, 64, 88]
@@ -135,6 +123,23 @@ HPCG Benchmark thread set: [1, 2, 4, 8, 16, 22, 32, 44, 64, 88]
 HPCG benchmark script, with params nx: 104 ny: 104 nz: 104 time: 60 is generated..
 Executing command on dolap : sh /tmp/dt_probing/benchmarks/hpcg/bin/gen_bench.sh
 STREAM benchmark result added to Digital Twin
+CARM config generated..
+CARM Benchmark thread set: [1, 2, 4, 8, 16, 22, 32, 44, 64, 88]
+CARM benchmark script generated..
+CARM benchmark result added to Digital Twin
 Roofline dashboard added to Digital Twin
+Twin state is registered to db..
 ```
+
+## Usage with web application
+```bash
+> cd web-app/front-end
+> npm install
+> npm start
+> cd web-app/backend
+> python3 backend.py
+```
+Web application is available at localhost:3000
+
+<mark>Warning: This software is under development and may not produce same results on every host</mark>
 
