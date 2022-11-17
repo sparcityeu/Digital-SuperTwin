@@ -418,3 +418,26 @@ def obscure(data: bytes) -> bytes:
 
 def unobscure(obscured: bytes) -> bytes:
     return zlib.decompress(b64d(obscured))
+
+
+def get_twin_with_meta(SuperTwin):
+
+    db = get_mongo_database(SuperTwin.name, SuperTwin.mongodb_addr)["twin"]
+    meta_with_twin = loads(dumps(db.find({"_id": ObjectId(SuperTwin.mongodb_id)})))[0]
+
+    return meta_with_twin
+
+def get_twin_description(SuperTwin):
+
+    db = get_mongo_database(SuperTwin.name, SuperTwin.mongodb_addr)["twin"]
+    meta_with_twin = loads(dumps(db.find({"_id": ObjectId(SuperTwin.mongodb_id)})))[0]
+    twin = meta_with_twin["twin_description"]
+
+    return twin
+
+def get_observations(SuperTwin):
+
+    db = get_mongo_database(SuperTwin.name, SuperTwin.mongodb_addr)["observations"]
+
+    return db
+    

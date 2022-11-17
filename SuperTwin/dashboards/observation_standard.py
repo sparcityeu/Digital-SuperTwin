@@ -91,7 +91,7 @@ def template_dict(observation_id):
     _template["links"] = []
     _template["fiscalYearStartMonth"] = 0
     _template["liveNow"] = False
-    #_template["refresh"] = "1s" ##Not exist in example
+    _template["refresh"] = "5s" ##Not exist in example
     
     _template["templating"] = {}
     _template["templating"]["list"] = []

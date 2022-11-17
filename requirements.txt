@@ -1,0 +1,13 @@
+cryptography==2.8
+Flask==2.2.2
+Flask_Cors==3.0.10
+grafanalib==0.6.3
+influxdb==5.3.1
+matplotlib==3.4.1
+numpy==1.17.4
+pandas==1.5.1
+paramiko==2.6.0
+plotly==5.11.0
+pymongo==4.1.1
+requests==2.22.0
+scp==0.14.4

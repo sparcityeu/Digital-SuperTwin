@@ -18,7 +18,7 @@ import observation
 import influx_help
 import observation_standard
 #import roofline_dashboard
-#import monitoring_dashboard
+import monitoring_dashboard
 
 import static_data
 
@@ -212,7 +212,7 @@ class SuperTwin:
             
             utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
             self.kill_zombie_monitors() ##If there is any zombie monitor sampler
-            #self.generate_monitoring_dashboard()
+            self.generate_monitoring_dashboard()
             
             ##benchmark members
             self.benchmarks = 0
@@ -655,13 +655,18 @@ class SuperTwin:
         
     
 if __name__ == "__main__":
-    
-    #addr = "10.36.54.195"
+
     #user_name = "ftasyaran"
-        
-    my_superTwin = SuperTwin() ##From scratch
-    #my_superTwin = SuperTwin(addr) ##Re-construct
-    #my_superTwin.generate_monitoring_dashboard()
+    
+    args = sys.argv
+    if(len(args) == 1):
+        my_superTwin = SuperTwin() ##From scratch
+    else:
+        addr = args[1]
+        my_superTwin = SuperTwin(addr) ##Re-construct
+
+    my_superTwin.generate_monitoring_dashboard()
+
     #my_superTwin = SuperTwin(addr, user_name, password) ##Re-construct
     #my_superTwin.update_twin_document__assert_new_monitor_pid()
     
