@@ -67,7 +67,7 @@ def get_params(td, measurement):
             if(content["@type"].find("Telemetry") != -1):
                 if(content["DBName"] == measurement):
                     params.append({"Alias": td[interface]["displayName"], "Param": content["displayName"]})
-                    print("content: ", content, "measurement:", measurement)
+                    #print("content: ", content, "measurement:", measurement)
                     
 
     return params
@@ -147,7 +147,7 @@ def generate_monitoring_dashboard(SuperTwin):
     empty_dash["panels"].append(mp.stat_panel(get_next_id(), 5, 4, 20, 0, "continuous-GrYlRd", "Socket Energy"))
     params = get_params(td, "perfevent_hwcounters_RAPL_ENERGY_PKG_value")
     params = [params[1], params[3]] ##small glitch in twin generation
-    print("Params:", params)
+    #print("Params:", params)
     for idx, param in enumerate(params):
         param["Param"] = param["Param"].replace("core", "cpu") ##Small glitch in twin generation
         empty_dash["panels"][3]["targets"].append(mp.stat_query(param["Alias"], "perfevent_hwcounters_RAPL_ENERGY_PKG_value", param["Param"]))
@@ -159,7 +159,7 @@ def generate_monitoring_dashboard(SuperTwin):
     empty_dash["panels"].append(mp.stat_panel(get_next_id(), 5, 4, 20, 10, "continuous-GrYlRd", "Socket DRAM Energy"))
     params = get_params(td, "perfevent_hwcounters_RAPL_ENERGY_DRAM_value")
     params = [params[1], params[3]] ##small glitch in twin generation
-    print("Params:", params)
+    #print("Params:", params)
     for idx, param in enumerate(params):
         param["Param"] = param["Param"].replace("core", "cpu") ##Small glitch in twin generation
         empty_dash["panels"][4]["targets"].append(mp.stat_query(param["Alias"], "perfevent_hwcounters_RAPL_ENERGY_DRAM_value", param["Param"]))
@@ -208,11 +208,11 @@ def generate_monitoring_dashboard(SuperTwin):
 
 
     topology = get_topology(td)
-    print("topology:", topology)
+    #print("topology:", topology)
     
     ##cpu frequency
     for idx, socket in enumerate(topology):
-        print("idx:", idx)
+        #print("idx:", idx)
         empty_dash["panels"].append(mp.clock_panel(get_next_id(), 15, 3, 4 + ((idx)*6), 0, color_schemes_clock[idx], "Thread Frequency - Socket " + str(idx)))
         for thread in topology[socket]: ##Note that, that was a single list
             param = get_params_interface_known(td, thread, "hinv_cpu_clock")
@@ -223,7 +223,7 @@ def generate_monitoring_dashboard(SuperTwin):
     ##load per cpu
     for idx2, socket in enumerate(topology):
         empty_dash["panels"].append(mp.clock_panel(get_next_id(), 15, 3, 7 + idx2*6, 0, color_schemes_load[idx2], "Thread Load - Socket " + str(idx2)))
-        print("no_panels:", len(empty_dash))
+        #print("no_panels:", len(empty_dash))
         for idt, thread in enumerate(topology[socket]): ##Note that, that was a single list
             param = get_params_interface_known(td, thread, "kernel_percpu_cpu_idle")
             empty_dash["panels"][13+idx2]["targets"].append(mp.clock_query(param["Alias"], "kernel_percpu_cpu_idle", param["Param"]))

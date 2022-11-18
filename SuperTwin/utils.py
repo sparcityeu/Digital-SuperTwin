@@ -134,7 +134,9 @@ def check_state(addr):
 
 #Hyperthreading, on-off?
 def get_multithreading_info(data):
-
+    '''
+    @param data: digital twin description
+    '''
     mt_info = {}
     mt_info["no_sockets"] = 0
 
