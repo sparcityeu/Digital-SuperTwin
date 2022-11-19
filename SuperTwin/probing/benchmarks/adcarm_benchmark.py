@@ -305,7 +305,7 @@ def get_threads(files):
 
 
 def parse_adcarm_bench():
-
+    ##SuperTwin.name
     adcarm_base = "probing/benchmarks/adCARM_RES/"
 
     files = glob.glob(adcarm_base + "*.out")

@@ -65,11 +65,21 @@ def show_eid():
 
 def generate_visibility_sequence(vis_dict):
 
-    visibility = [False for i in range(show_eid())]
-
+    visibility = [False for i in range(show_eid() + 1)]
+    
     for key in vis_dict.keys():
         for item in vis_dict[key]:
+            #print("item:", item)
             visibility[item] = True
+
+    return visibility
+
+def generate_visibility_sequence_from_list(vis_list):
+
+    visibility = [False for i in range(show_eid() + 1)]
+
+    for item in vis_list:
+        visibility[item] = True
 
     return visibility
 
@@ -215,19 +225,19 @@ def return_subtraces(data, ai, thread, index):
 
         
     if(thread not in vis_map_all.keys()):
-        vis_map_all_keys[thread] = []
+        vis_map_all[thread] = []
         vis_map_L1s[thread] = []
         vis_map_L2s[thread] = []
         vis_map_L3s[thread] = []
-        vis_map_DRAMS[thread] = []
-        vis_map_threads[threads] = []
+        vis_map_DRAMs[thread] = []
+        vis_map_threads[thread] = []
 
-    vis_map_all_keys[thread] += [_id1, _id2, _id3, _id4]
+    vis_map_all[thread] += [_id1, _id2, _id3, _id4]
     vis_map_threads[thread] += [_id1, _id2, _id3, _id4]
     vis_map_L1s[thread].append(_id1)
     vis_map_L2s[thread].append(_id2)
     vis_map_L3s[thread].append(_id3)
-    vis_map_DRAMS[thread].append(_id4)
+    vis_map_DRAMs[thread].append(_id4)
         
 
     return [for_one_L1, for_one_L2, for_one_L3, for_one_DRAM, name]
@@ -326,7 +336,14 @@ def get_carm_res_from_dt(SuperTwin):
 ##For returning a roofline dashboard for observations; it should levitate these indices
 ##For buttons; probably shouldnt exist
 ##When there is no buttons, legend automatically comes back which is nice
-def generate_roofline_dashboard(SuperTwin): ##THREADS as a parameter to redraw for observations
+def generate_carm_roofline(SuperTwin): ##THREADS as a parameter to redraw for observations
+
+    global vis_map_all
+    global vis_map_L1s
+    global vis_map_L2s
+    global vis_map_L3s
+    global vis_map_DRAMs
+    global vis_map_threads
 
     td = utils.get_twin_description(SuperTwin) ##Twin description
 
@@ -354,6 +371,23 @@ def generate_roofline_dashboard(SuperTwin): ##THREADS as a parameter to redraw f
     for idx, key in enumerate(carm_res["threads"].keys()):
         fig = thread_groups(fig, key, colors[idx], carm_res, ai, ai_list)
 
+        
+    #print("##########")
+    print("all:", vis_map_all)
+    print("L1s:", vis_map_L1s)
+    print("L2s:", vis_map_L2s)
+    print("L3s:",vis_map_L3s)
+    print("DRAMS:", vis_map_DRAMs)
+    print("Threads:", vis_map_threads)
+    #print("##########")
+    
+    vis_map_all = dict(sorted(vis_map_all.items(), key=lambda t: int(t[0])))
+    vis_map_L1s = dict(sorted(vis_map_L1s.items(), key=lambda t: int(t[0])))
+    vis_map_L2s = dict(sorted(vis_map_L2s.items(), key=lambda t: int(t[0])))
+    vis_map_L3s = dict(sorted(vis_map_L3s.items(), key=lambda t: int(t[0])))
+    vis_map_DRAMs = dict(sorted(vis_map_DRAMs.items(), key=lambda t: int(t[0])))
+    vis_map_threads = dict(sorted(vis_map_threads.items(), key=lambda t: int(t[0])))
+    
     
     buttons = [{"label": "All",
                 "method": "restyle",
@@ -371,7 +405,46 @@ def generate_roofline_dashboard(SuperTwin): ##THREADS as a parameter to redraw f
                 "method": "restyle",
                 "args": ["visible", generate_visibility_sequence(vis_map_DRAMs)]}]
 
+    buttons2 = []
+    for thread in vis_map_threads.keys():
+        buttons2.append({"label": thread +" thr",
+                                         "method": "restyle",
+                                         "args": ["visible",
+                                                  generate_visibility_sequence_from_list(vis_map_threads[thread])]})
 
+
+    fig.update_layout(showlegend=False)
+    fig.update_layout(font_size=16)
+    fig.update_xaxes(showspikes=True)
+    fig.update_yaxes(showspikes=True)
+    fig.update_traces(hovertemplate="%{y}")
+    fig.update_layout(hovermode="x")
+
+    ##update layout with buttons
+    fig.update_layout(
+        updatemenus=[
+            dict(
+                type="buttons",
+                direction="right",
+                buttons=buttons,
+                pad={"r": 4, "t": 4, "l": 0, "b": 0}, ##b?
+                showactive=True,
+                x=0.1,
+                xanchor="left",
+                y=1.15,
+                yanchor="top"),
+            dict(
+                type="buttons",
+                direction="right",
+                buttons=buttons2,
+                pad={"r": 4, "t": 4, "l": 0, "b": 0}, ##b?
+                showactive=True,
+                x=0.1,
+                xanchor="left",
+                y=1.25,
+                yanchor="top")])
+            
+    
     fig = rdp.grafana_layout(fig)
     dict_fig = obs.json.loads(io.to_json(fig))
     empty_dash["panels"].append(rdp.two_templates_one(dict_fig["data"], dict_fig["layout"]))
@@ -382,3 +455,6 @@ def generate_roofline_dashboard(SuperTwin): ##THREADS as a parameter to redraw f
 
 
     
+def generate_roofline_dashboard(SuperTwin):
+
+    generate_carm_roofline(SuperTwin)

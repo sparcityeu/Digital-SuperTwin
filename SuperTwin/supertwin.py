@@ -17,7 +17,7 @@ import adcarm_benchmark
 import observation
 import influx_help
 import observation_standard
-#import roofline_dashboard
+import roofline_dashboard
 import monitoring_dashboard
 
 import static_data
@@ -528,12 +528,14 @@ class SuperTwin:
         to_new = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
         to_new["monitoring_dashboard"] = url
         db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
-        print("Benchinfo dashboard added to Digital Twin")
+        print("Monitoring dashboard added to Digital Twin")
+
+    #def update_twin_document__update_monitoring_dashboard(self, url):
+    #monitoring_dashboard.update_dashboard(self)
 
         
     def generate_roofline_dashboard(self):
-        #url = roofline_dashboard.generate_roofline_dashboard(self)
-        url = "to_be"
+        url = roofline_dashboard.generate_roofline_dashboard(self)
         self.update_twin_document__add_roofline_dashboard(url)
 
         
@@ -665,8 +667,10 @@ if __name__ == "__main__":
         addr = args[1]
         my_superTwin = SuperTwin(addr) ##Re-construct
 
-    my_superTwin.generate_monitoring_dashboard()
 
+    #my_superTwin.generate_monitoring_dashboard()
+    my_superTwin.generate_roofline_dashboard()
+    
     #my_superTwin = SuperTwin(addr, user_name, password) ##Re-construct
     #my_superTwin.update_twin_document__assert_new_monitor_pid()
     
