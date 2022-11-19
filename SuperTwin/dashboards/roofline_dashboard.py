@@ -353,8 +353,6 @@ def generate_carm_roofline(SuperTwin): ##THREADS as a parameter to redraw for ob
     ai = np.linspace(0.00390625, 2048, num=1000)
     data = adcarm_benchmark.parse_adcarm_bench()
 
-    empty_dash = obs.template_dict(SuperTwin.name + " Monitor-" + str(uuid.uuid4()))
-    empty_dash["panels"] = []
     ###
     
     fig = go.Figure(layout={})
@@ -445,16 +443,235 @@ def generate_carm_roofline(SuperTwin): ##THREADS as a parameter to redraw for ob
                 yanchor="top")])
             
     
-    fig = rdp.grafana_layout(fig)
-    dict_fig = obs.json.loads(io.to_json(fig))
-    empty_dash["panels"].append(rdp.two_templates_one(dict_fig["data"], dict_fig["layout"]))
+    fig = rdp.grafana_layout(fig) ##return this, ##parameterise this
+
+    return fig
+
+
+def get_indicator_fields(_string):
+
+    value = -1
+    prefix = ""
+    suffix = ""
+    for idx, char in enumerate(_string):
+        if(char.isdigit()):
+            value = int(_string[idx])
+            prefix = _string[0:idx - 1]
+            suffix = _string[idx + 1:]
+            
+    return value, prefix, suffix
+
+def get_indicator_fields_vector(_array):
+
+    value = -1
+    prefix = ""
+    suffix = ""
+
+    _string = ""
+    for idx, item in enumerate(_array):
+        _string += item
+        _string += " "
+        if(idx == 3 and len(_array) >= 6): ##Just aesthetical, change the values and see
+            _string += "<br>"
+    _string = _string[:-1]
+
+    
+    for idx, char in enumerate(_string):
+        if(char.isdigit()):
+            value = int(_string[idx])
+            prefix = _string[0:idx]
+            suffix = _string[idx + 1:]
+            break
+
+    print("vps:", value, prefix, suffix)
+    return value, prefix, suffix
+
+    
+def generate_info_panel(SuperTwin):
+
+    td = utils.get_twin_description(SuperTwin) ##Twin description
+    data = utils.fill_data(td, SuperTwin.name, SuperTwin.addr)
+
+
+    number_size = 26
+    title_size = 20
+
+    fig = go.Figure(layout={})
+
+    value, prefix, suffix = get_indicator_fields(data["cpu_model"])
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = value,
+        number = {"font": {"color": "black", "size": number_size}, "prefix": prefix, "suffix": suffix},
+        title = {"text": "CPU", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 0, "column": 1}
+    ))
+
+    number_size = 42
+    ##Don't need to do split prefix suffix thing if value is simply a number
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = int(data["system_no_numa_nodes"]),
+        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": ""},
+        title = {"text": "Numa Nodes", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 1, 'column': 0}
+    ))
+
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = int(data["cpu_cores"]),
+        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": ""},
+        title = {"text": "Core Per Node", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 1, 'column': 1}
+    ))
+
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = int(data["cpu_threads_per_core"]),
+        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": ""},
+        title = {"text": "Thread Per Core", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 1, 'column': 2}
+    ))
+    
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = int(data["l1dcache_size"].strip(" kB")),
+        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": "kB"},
+        title = {"text": "L1D Cache Size", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 2, 'column': 0}
+    ))
+
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = int(data["l2cache_size"].strip(" MB")),
+        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": "MB"},
+        title = {"text": "L2 Cache Size", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 2, 'column': 1}
+    ))
+
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = float(data["l3cache_size"].strip(" MB")),
+        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": "MB"},
+        title = {"text": "L3 Cache Size", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 2, 'column': 2}
+    ))
+
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = int(data["l1dcache_associativity"]),
+        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": ""},
+        title = {"text": "L1D Association", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 3, 'column': 0}
+    ))
+
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = int(data["l1dcache_linesize"]),
+        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": ""},
+        title = {"text": "L1D Cacheline Size", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 3, 'column': 1}
+    ))
+
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = int(data["l1dcache_nosets"]),
+        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": ""},
+        title = {"text": "L1D No Sets", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 3, 'column': 2}
+    ))
+
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = int(data["l2cache_associativity"]),
+        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": ""},
+        title = {"text": "L2 Association", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 4, 'column': 0}
+    ))
+
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = int(data["l2cache_linesize"]),
+        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": ""},
+        title = {"text": "L2 Cacheline Size", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 4, 'column': 1}
+    ))
+
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = int(data["l2cache_nosets"]),
+        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": ""},
+        title = {"text": "L2 No Sets", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 4, 'column': 2}
+    ))
+
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = int(data["l3cache_associativity"]),
+        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": ""},
+        title = {"text": "L3 Association", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 5, 'column': 0}
+    ))
+
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = int(data["l3cache_linesize"]),
+        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": ""},
+        title = {"text": "L3 Cacheline Size", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 5, 'column': 1}
+    ))
+
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = int(data["l3cache_nosets"]),
+        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": ""},
+        title = {"text": "L3 No Sets", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 5, 'column': 2}
+    ))
+    
+    number_size = 26
+    value, prefix, suffix = get_indicator_fields_vector(data["sse_vector"])
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = value,
+        number = {"font": {"color": "black", "size": number_size}, "prefix": prefix, "suffix": suffix},
+        title = {"text": "Supported SSE Instructions", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 6, 'column': 1}
+    ))
+
+    value, prefix, suffix = get_indicator_fields_vector(data["avx_vector"])
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = value,
+        number = {"font": {"color": "black", "size": number_size}, "prefix": prefix, "suffix": suffix},
+        title = {"text": "Supported AVX Instructions", "font": {"color": "gray", "size": title_size}},
+        domain = {'row': 7, 'column': 1}
+    ))
+
+    fig = rdp.grafana_layout_2(fig)
+    fig.update_layout(grid = {'rows': 8, 'columns': 3, 'pattern': "independent"})
+    return fig
+    
+    
+def generate_roofline_dashboard(SuperTwin):
+
+    empty_dash = obs.template_dict(SuperTwin.name + " Roofline-" + str(uuid.uuid4()))
+    empty_dash["panels"] = []
+    
+    roofline_fig = generate_carm_roofline(SuperTwin)
+    info_fig = generate_info_panel(SuperTwin)
+
+    dict_roofline_fig = obs.json.loads(io.to_json(roofline_fig))
+    empty_dash["panels"].append(rdp.two_templates_one(dict_roofline_fig["data"],
+                                                      dict_roofline_fig["layout"]))
+
+    dict_info_fig = obs.json.loads(io.to_json(info_fig))
+    empty_dash["panels"].append(rdp.two_templates_two(dict_info_fig["data"],
+                                                      dict_info_fig["layout"]))
+
+    
     ###
     json_dash_obj = obs.get_dashboard_json(empty_dash, overwrite = False)
     g_url = obs.upload_to_grafana(json_dash_obj, SuperTwin.grafana_addr, SuperTwin.grafana_token)
     print("Generated:", g_url)
-
-
     
-def generate_roofline_dashboard(SuperTwin):
-
-    generate_carm_roofline(SuperTwin)

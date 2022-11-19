@@ -348,6 +348,9 @@ def add_sockets(models_dict, _sys_dict, top_id, hostname, socket):
     this_socket["contents"].append(get_property(get_uid(hostname, displayName, "property6", 1),
                                                 "min_mhz", description = _sys_dict["cpu"]["specs"]["min_mhz"]))
 
+    this_socket["contents"].append(get_property(get_uid(hostname, displayName, "property7", 1),
+                                                "flags", description = _sys_dict["cpu"]["specs"]["flags"]))
+
     #def get_relationship(_id, name, target, displayname = "", description = ""):
     ##Add chosen properties
     #######################
@@ -856,8 +859,10 @@ def main(_sys_dict):
     
     ##Top level arrangements
 
-
-
+    #print("sys_dict:", _sys_dict.keys())
+    #print("cpu:", _sys_dict["cpu"])
+    #exit(1)
+    
     models_dict = add_cpus(models_dict, _sys_dict, top_id, hostname)
     ##TO DO
     #models_dict = add_pmus(models_dict, _sys_dict, top_id, hostname)

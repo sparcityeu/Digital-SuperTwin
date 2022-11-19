@@ -263,6 +263,7 @@ def fill_data(data, hostname, hostip):
     cpu_model = ""
     cpu_cores = 0
     cpu_threads = 0
+    cpu_threads_per_core = 0
     cpu_hyperthreading = ""
     cpu_maxmhz = 0
     cpu_minmhx = 0
@@ -287,6 +288,9 @@ def fill_data(data, hostname, hostip):
     l1d_cache = True
     l2_cache = True
     l3_cache = True
+
+    sse_vector = []
+    avx_vector = []
     
     #Get all data in one loop, using 'cases'
     for key in data:
@@ -312,6 +316,8 @@ def fill_data(data, hostname, hostip):
                     cpu_cores = int(content["description"])
                 if(content["name"] == "threads"):
                     cpu_threads = int(content["description"])
+                if(content["name"] == "threads_per_core"):
+                    cpu_threads_per_core = int(content["description"])
                 if(content["name"] == "hyperthreading"):
                     cpu_hyperthreading = content["description"]
                 if(content["name"] == "max_mhz"):
@@ -372,19 +378,39 @@ def fill_data(data, hostname, hostip):
                     l3cache_linesize = content["description"]
 
             l3_cache = False
-                    
+
+
+        ##vector extensions
+        if(key.find("socket") != -1):
+            contents = data[key]["contents"]
+            for content in contents:
+                if(content["name"] == "flags"):
+                    flags = content["description"]
+                    for item in flags.split(" "):
+                        if(item.find("sse") != -1):
+                            if(item not in sse_vector):
+                                sse_vector.append(item)
+                        if(item.find("avx") != -1):
+                            if(item not in avx_vector):
+                                avx_vector.append(item)
+                            
+                        
         ##NO_NUMA_NODES
         if(key.find("socket") != -1):
             system_no_numa_nodes += 1
             
-
+            
         ##disks
         if(key.find("disk;1") != -1):
             system_no_disks = int(data[key]["contents"][0]["description"])
 
             
     cpu_ghz = float(cpu_model.split("@")[1].strip("GHz"))
-            
+
+    
+    #print("sse_vector:", sse_vector)
+    #print("avx_vector:", avx_vector)
+    
     data = {"system_hostname": system_hostname,
             "system_ip": system_ip,
             "system_os": system_os,
@@ -393,6 +419,7 @@ def fill_data(data, hostname, hostip):
             "cpu_model" : cpu_model,
             "cpu_cores": cpu_cores,
             "cpu_threads": cpu_threads,
+            "cpu_threads_per_core": cpu_threads_per_core,
             "cpu_hyperthreading": cpu_hyperthreading,
             "cpu_ghz": cpu_ghz,
             "cpu_maxmhz": cpu_maxmhz,
@@ -409,8 +436,10 @@ def fill_data(data, hostname, hostip):
             "l3cache_associativity": l3cache_associativity,
             "l3cache_linesize": l3cache_linesize,
             "l3cache_nosets": l3cache_nosets,
-            "no_fma_units": 2, ##change this with fma_number_benchmark
-            "max_vector_size": 512} ##change this with vector extension look-up
+            "sse_vector": sse_vector,
+            "avx_vector": avx_vector}
+            #"no_fma_units": 2, ##change this with fma_number_benchmark
+            #"max_vector_size": 512} ##change this with vector extension look-up
     
     return data
 

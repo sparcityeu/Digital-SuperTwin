@@ -3,8 +3,8 @@ def two_templates_one(data, layout):
     template = {
         "id": 41,
         "gridPos": {
-            "h": 17,
-            "w": 13,
+            "h": 16,
+            "w": 17,
             "x": 0,
             "y": 0
         },
@@ -64,9 +64,9 @@ def two_templates_two(data, layout):
     template = {
         "id": 42,
         "gridPos": {
-            "h": 5,
-            "w": 24,
-            "x": 0,
+            "h": 27,
+            "w": 7,
+            "x": 17,
             "y": 0
         },
         "type": "ae3e-plotly-panel",
