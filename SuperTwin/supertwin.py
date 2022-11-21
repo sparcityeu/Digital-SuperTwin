@@ -671,6 +671,7 @@ if __name__ == "__main__":
     #my_superTwin.generate_monitoring_dashboard()
     my_superTwin.generate_roofline_dashboard()
     #roofline_dashboard.generate_info_panel(my_superTwin)
+    #roofline_dashboard.generate_stream_panel(my_superTwin)
     
     #my_superTwin = SuperTwin(addr, user_name, password) ##Re-construct
     #my_superTwin.update_twin_document__assert_new_monitor_pid()

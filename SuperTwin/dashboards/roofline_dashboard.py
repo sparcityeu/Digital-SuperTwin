@@ -263,7 +263,7 @@ def thread_groups(fig, thread, color, data, ai, ai_list):
     return fig
 
 
-def fill_res_dict(carm_res, result):
+def fill_carm_res_dict(carm_res, result):
 
     threads = str(result["@threads"])
     modifier = ""
@@ -328,7 +328,7 @@ def get_carm_res_from_dt(SuperTwin):
 
                     for result in results:
                         #print("one_res:", result)
-                        carm_res = fill_res_dict(carm_res, result)
+                        carm_res = fill_carm_res_dict(carm_res, result)
 
     return carm_res
 
@@ -347,8 +347,8 @@ def generate_carm_roofline(SuperTwin): ##THREADS as a parameter to redraw for ob
 
     td = utils.get_twin_description(SuperTwin) ##Twin description
 
-    empty_dash = obs.template_dict(SuperTwin.name + " Roofline-" + str(uuid.uuid4()))
-    empty_dash["panels"] = []
+    #empty_dash = obs.template_dict(SuperTwin.name + " Roofline-" + str(uuid.uuid4()))
+    #empty_dash["panels"] = []
 
     ai = np.linspace(0.00390625, 2048, num=1000)
     data = adcarm_benchmark.parse_adcarm_bench()
@@ -651,16 +651,159 @@ def generate_info_panel(SuperTwin):
     fig = rdp.grafana_layout_2(fig)
     fig.update_layout(grid = {'rows': 8, 'columns': 3, 'pattern': "independent"})
     return fig
+
+
+def get_stream_bench_data(td):
+
+    stream_res = {}
+
+    for key in td:
+        if(key.find("system") != -1):
+            for content in td[key]["contents"]:
+                if(content["@type"] == "benchmark" and content["@name"] == "STREAM"):
+                    results = content["@contents"]
+                    results = sorted(results, key=lambda d: d['@threads']) 
+                    #print("results:", results)
+                    
+                    for result in results:
+                        name = result["@field"]
+                        threads = str(result["@threads"])
+                        affinity = ""
+                        try:
+                            affinity = result["@modifier"][1].split(" ")[-1]
+                            name += " numa bind"
+                        except:
+                            pass
+                        _res = float(result["@result"])
+                        #print("Name:", name, "threads:", threads, "affinity:", affinity, "_res:", _res)
+                        if(name.find("Max_Thr") == -1):
+                            try:
+                                stream_res[name].append({threads: _res})
+                            except:
+                                stream_res[name] = []
+                                stream_res[name].append({threads: _res})
+                                
+
+    return stream_res
+
+def generate_x(stream_res):
+
+    x = []
+    keys = list(stream_res.keys())
+    #print("keys:", keys)
+    for item in stream_res[keys[0]]:
+        to_app = int(list(item.items())[0][0])
+        x.append(to_app)
+
+    return x
+
+def generate_y(stream_res_key):
+
+    y = []
+    for item in stream_res_key:
+        y.append(list(item.items())[0][1])
+
+    return y
+
+def generate_stream_panel(SuperTwin):
+
+    td = utils.get_twin_description(SuperTwin)
+    fig = go.Figure(layout={})
+
+    stream_res = get_stream_bench_data(td)
+    x = generate_x(stream_res)
+    
+    for key in stream_res:
+        gc = get_next_color()
+        fig.add_trace(go.Scatter(x=x, y=generate_y(stream_res[key]),
+                      mode = "lines", name=key, line=line_spec(gc, "")))
+
+    
+    xtickvals = [str(xx) for xx in x]
+    fig.update_layout(font_size=16)
+    fig.update_xaxes(showspikes=True)
+    fig.update_yaxes(showspikes=True)
+    fig.update_traces(hovertemplate="%{y}")
+    fig.update_layout(hovermode="x")
+    fig = rdp.grafana_layout_3(fig, xtickvals) ##return this, ##parameterise this
+    print("Returning")
+    return fig
+
+
+def get_hpcg_bench_data(td):
+
+    hpcg_res = {}
+    
+    for key in td:
+        if(key.find("system") != -1):
+            for content in td[key]["contents"]:
+                if(content["@type"] == "benchmark" and content["@name"] == "HPCG"):
+                    results = content["@contents"]
+                    results = sorted(results, key=lambda d: d["@threads"])
+
+                    for result in results:
+                        name = result["@field"]
+                        threads = str(result["@threads"])
+                        affinity = ""
+                        try:
+                            affinity = result["@modifier"][1].split(" ")[-1]
+                            name += " numa bind" ## This may change later
+                        except:
+                            pass
+                        _res = float(result["@result"])
+                        #print("Name:", name, "threads:", threads, "affinity:", affinity, "_res:", _res)
+                        if(name.find("Max_Thr") == -1):
+                            try:
+                                hpcg_res[name].append({threads: _res})
+                            except:
+                                hpcg_res[name] = []
+                                hpcg_res[name].append({threads: _res})
+                                
+    print("hpcg_res:", hpcg_res)
+    return hpcg_res
+
+
+def generate_hpcg_panel(SuperTwin): ##Tricky part is marking results on the roofline
+
+    td = utils.get_twin_description(SuperTwin) ##This line keeps repeating because we may call
+    fig = go.Figure(layout={})                 ##these generate panel functions on their own
+    
+
+    hpcg_res = get_hpcg_bench_data(td)
+    ##hpcg_marks = get_hpcg_bench_marks() ##Make this global, and let roofline call it
+
+    x = generate_x(hpcg_res)
+    
+    for key in hpcg_res:
+        gc = get_next_color()
+        fig.add_trace(go.Scatter(x=x, y=generate_y(hpcg_res[key]),
+                      mode = "lines", name=key, line=line_spec(gc, "")))
+
+    
+    xtickvals = [str(xx) for xx in x]
+    fig.update_layout(font_size=16)
+    fig.update_xaxes(showspikes=True)
+    fig.update_yaxes(showspikes=True)
+    fig.update_traces(hovertemplate="%{y}")
+    fig.update_layout(hovermode="x")
+    fig = rdp.grafana_layout_3(fig, xtickvals) ##return this, ##parameterise this
+    print("Returning")
+    return fig
     
     
 def generate_roofline_dashboard(SuperTwin):
-
+    global next_color
+    
     empty_dash = obs.template_dict(SuperTwin.name + " Roofline-" + str(uuid.uuid4()))
     empty_dash["panels"] = []
     
     roofline_fig = generate_carm_roofline(SuperTwin)
+    next_color = -1
     info_fig = generate_info_panel(SuperTwin)
-
+    next_color = -1
+    stream_bench_fig = generate_stream_panel(SuperTwin)
+    hpcg_bench_fig = generate_hpcg_panel(SuperTwin)
+    
     dict_roofline_fig = obs.json.loads(io.to_json(roofline_fig))
     empty_dash["panels"].append(rdp.two_templates_one(dict_roofline_fig["data"],
                                                       dict_roofline_fig["layout"]))
@@ -670,6 +813,15 @@ def generate_roofline_dashboard(SuperTwin):
                                                       dict_info_fig["layout"]))
 
     
+    dict_stream_bench_fig = obs.json.loads(io.to_json(stream_bench_fig))
+    empty_dash["panels"].append(rdp.two_templates_three(dict_stream_bench_fig["data"],
+                                                      dict_stream_bench_fig["layout"]))
+
+    dict_hpcg_bench_fig = obs.json.loads(io.to_json(hpcg_bench_fig))
+    empty_dash["panels"].append(rdp.two_templates_three(dict_hpcg_bench_fig["data"],
+                                                      dict_hpcg_bench_fig["layout"]))
+
+    print("Upload?")
     ###
     json_dash_obj = obs.get_dashboard_json(empty_dash, overwrite = False)
     g_url = obs.upload_to_grafana(json_dash_obj, SuperTwin.grafana_addr, SuperTwin.grafana_token)

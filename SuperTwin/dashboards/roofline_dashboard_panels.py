@@ -120,6 +120,67 @@ def two_templates_two(data, layout):
 
     return template
 
+def two_templates_three(data, layout):
+    
+    template = {
+        "id": 442,
+        "gridPos": {
+            "h": 11,
+            "w": 8,
+            "x": 0,
+            "y": 16
+        },
+        "type": "ae3e-plotly-panel",
+        "title": "STREAM Benchmark",
+        "datasource": {
+            "type": "simpod-json-datasource",
+            "uid": "yjaMegMVk"
+        },
+        "options": {
+            "script": "console.log(data)\n\n\nreturn {};",
+            "onclick": "console.log(data)\nwindow.updateVariables({query:{'var-project':'test'}, partial: true})",
+            "config": {
+                "displayModeBar": False,
+                "locale": "en"
+            },
+            "data": data,
+            "layout": layout
+        },
+        "targets": [
+            {
+                "alias": "",
+                "bucketAggs": [
+                    {
+                        "field": "@timestamp",
+                        "id": "2",
+                        "settings": {
+                            "interval": "auto"
+                        },
+                        "type": "date_histogram"
+                    }
+                ],
+                "datasource": {
+                    "type": "simpod-json-datasource",
+                    "uid": "yjaMegMVk"
+                },
+                "metrics": [
+                    {
+                        "id": "1",
+                        "type": "count"
+                    }
+                ],
+                "payload": "",
+                "query": "",
+                "refId": "A",
+                "target": "system_ip",
+                "timeField": "@timestamp"
+            }
+        ],
+        "transparent": True
+    }
+
+    return template
+
 def grafana_layout(fig):
 
     fig.update_layout({
@@ -221,5 +282,28 @@ def grafana_layout_2(fig):
             ]
         }
     })
+
+    return fig
+
+def grafana_layout_3(fig, xtickvals):
+
+    fig.update_layout({
+        #"legend": {
+        #    "orientation": "h",
+        #    "x": 0,
+        #    "y": 1.3
+        #},
+        "paper_bgcolor": "rgba(0,0,0,0)",
+        "plot_bgcolor": "rgba(0,0,0,0)",
+        "xaxis": {"title": "Number of Threads",
+                  "tickvals": xtickvals,
+                  "nticks": len(xtickvals),
+                  "type": "category"},
+        "yaxis": {"title": "Bandwith [MB/s]",
+                  "rangemode": "tozero"},
+        "margin": {"l": 50, "r": 35, "t": 10, "b": 40},
+        "legend": {"orientation": "h",
+                   "y": 1.1}
+        })
 
     return fig
