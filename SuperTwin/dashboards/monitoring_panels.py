@@ -1,4 +1,4 @@
-def stat_panel(_id, h, w, x, y, color_scheme, title):
+def stat_panel(datasource, _id, h, w, x, y, color_scheme, title):
     panel = {
         "id": _id,
         "gridPos": {
@@ -11,7 +11,7 @@ def stat_panel(_id, h, w, x, y, color_scheme, title):
         "title": title,
         "datasource": {
             "type": "influxdb",
-            "uid": "54U16937k" ##Make it connected
+            "uid": datasource ##Make it connected
         },
         "pluginVersion": "9.2.2",
         "fieldConfig": {
@@ -57,13 +57,13 @@ def stat_panel(_id, h, w, x, y, color_scheme, title):
     return panel
 
 
-def stat_query(alias, measurement, param):
+def stat_query(datasource, alias, measurement, param):
 
     query = {
         "alias": alias,
         "datasource": {
             "type": "influxdb",
-            "uid": "54U16937k"
+            "uid": datasource
         },
         "groupBy": [
             {
@@ -103,7 +103,7 @@ def stat_query(alias, measurement, param):
 
     return query
 
-def name_panel(_id, name):
+def name_panel(datasource, _id, name):
 
     name = {
         "id": _id,
@@ -117,7 +117,7 @@ def name_panel(_id, name):
         "title": "Hostname",
         "datasource": {
             "type": "influxdb",
-            "uid": "54U16937k"
+            "uid": datasource
     },
         "pluginVersion": "9.2.2",
         "fieldConfig": {
@@ -166,7 +166,7 @@ def name_panel(_id, name):
             {
                 "datasource": {
                     "type": "influxdb",
-                    "uid": "54U16937k"
+                    "uid": datasource
                 },
                 "groupBy": [
                     {
@@ -215,7 +215,7 @@ def name_panel(_id, name):
 
     return name
 
-def clock_panel(_id, h, w, x, y, color_scheme, title):
+def clock_panel(datasource, _id, h, w, x, y, color_scheme, title):
 
     cp = {
         "id": _id,
@@ -230,7 +230,7 @@ def clock_panel(_id, h, w, x, y, color_scheme, title):
         "transformations": [],
         "datasource": {
             "type": "influxdb",
-            "uid": "54U16937k"
+            "uid": datasource
         },
         "pluginVersion": "9.2.2",
         "fieldConfig": {
@@ -288,7 +288,7 @@ def clock_panel(_id, h, w, x, y, color_scheme, title):
     
     return cp
     
-def clock_query(alias, measurement, param):
+def clock_query(datasource, alias, measurement, param):
 
     cq = { "alias": alias,
           "bucketAggs": [
@@ -303,7 +303,7 @@ def clock_query(alias, measurement, param):
           ],
           "datasource": {
               "type": "influxdb",
-              "uid": "54U16937k"
+              "uid": datasource
           },
           "groupBy": [
               {
@@ -358,7 +358,7 @@ def clock_query(alias, measurement, param):
     return cq
 
 
-def small_single_timeseries(_id, h, w, x, y, title):
+def small_single_timeseries(datasource, _id, h, w, x, y, title):
 
     sst = {
         "id": _id,
@@ -372,7 +372,7 @@ def small_single_timeseries(_id, h, w, x, y, title):
         "title": title,
         "datasource": {
             "type": "influxdb",
-            "uid": "54U16937k"
+            "uid": datasource
         },
         "pluginVersion": "9.2.2",
         "fieldConfig": {
@@ -445,13 +445,13 @@ def small_single_timeseries(_id, h, w, x, y, title):
 
     return sst
 
-def small_single_query(alias, measurement):
+def small_single_query(datasource, alias, measurement):
 
     query = {
       "alias": alias,
       "datasource": {
         "type": "influxdb",
-        "uid": "54U16937k"
+        "uid": datasource
       },
       "groupBy": [
         {
@@ -492,7 +492,7 @@ def small_single_query(alias, measurement):
     return query
 
 
-def all_network_panel(_id, h, w, x, y):
+def all_network_panel(datasource, _id, h, w, x, y):
 
     np = {
         "id": _id,
@@ -506,7 +506,7 @@ def all_network_panel(_id, h, w, x, y):
         "title": "Network",
         "datasource": {
             "type": "influxdb",
-            "uid": "54U16937k"
+            "uid": datasource
         },
         "pluginVersion": "9.2.2",
         "fieldConfig": {
@@ -578,7 +578,7 @@ def all_network_panel(_id, h, w, x, y):
                 "alias": "Network In",
                 "datasource": {
                     "type": "influxdb",
-                    "uid": "54U16937k"
+                    "uid": datasource
                 },
                 "groupBy": [
                     {
@@ -619,7 +619,7 @@ def all_network_panel(_id, h, w, x, y):
                 "alias": "Network out",
                 "datasource": {
                     "type": "influxdb",
-                    "uid": "54U16937k"
+                    "uid": datasource
                 },
                 "groupBy": [
                     {
@@ -664,7 +664,7 @@ def all_network_panel(_id, h, w, x, y):
     return np
 
 
-def disk_panel(_id, h, w, x, y, title):
+def disk_panel(datasource, _id, h, w, x, y, title):
 
     dp = {
         "id": _id,
@@ -678,7 +678,7 @@ def disk_panel(_id, h, w, x, y, title):
         "title": title,
         "datasource": {
             "type": "influxdb",
-            "uid": "54U16937k"
+            "uid": datasource
         },
         "pluginVersion": "9.2.2",
         "fieldConfig": {

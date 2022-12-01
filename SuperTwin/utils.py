@@ -25,12 +25,80 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import zlib
 from base64 import urlsafe_b64encode as b64e, urlsafe_b64decode as b64d
 
+ALWAYS_EXISTS_MONITOR = ["kernel.all.pressure.cpu.some.total",
+                         "hinv.cpu.clock",
+                         "lmsensors.coretemp_isa_0000.package_id_0",
+                         "kernel.pernode.cpu.idle",
+                         "kernel.percpu.cpu.idle",
+                         "disk.dev.read",
+                         "disk.dev.write",
+                         "disk.dev.total",
+                         "disk.dev.read_bytes",
+                         "disk.dev.write_bytes",
+                         "disk.dev.total_bytes",
+                         "disk.all.read",
+                         "disk.all.write",
+                         "disk.all.total",
+                         "disk.all.read_bytes",
+                         "disk.all.write_bytes",
+                         "disk.all.total_bytes",
+                         "swap.pagesin",
+                         "kernel.all.nusers",
+                         "kernel.all.nprocs",
+                         "network.all.in.bytes",
+                         "network.all.out.bytes"]
+
+ALWAYS_HAVE_MONITOR_NUMA = ALWAYS_EXISTS_MONITOR + ["lmsensors.coretemp_isa_0001.package_id_1",
+                                                    "mem.numa.util.free",
+                                                    "mem.numa.util.used",
+                                                    "mem.numa.alloc.hit",
+                                                    "mem.numa.alloc.miss",
+                                                    "mem.numa.alloc.local_node",
+                                                    "mem.numa.alloc.other_node",
+                                                    "perfevent.hwcounters.RAPL_ENERGY_PKG.value",
+                                                    "perfevent.hwcounters.RAPL_ENERGY_DRAM.value"]
+
+ALWAYS_HAVE_MONITOR_SINGLE_SOCKET = ALWAYS_EXISTS_MONITOR + ["mem.util.used",
+                                                             "mem.util.free",
+                                                             "perfevent.hwcounters.RAPL_ENERGY_PKG.value",
+                                                             "perfevent.hwcounters.RAPL_ENERGY_DRAM.value"]
+
+SKL_DONT_HAVE = ["perfevent.hwcounters.RAPL_ENERGY_DRAM.value"]
+ICL_DONT_HAVE = ["perfevent.hwcounters.RAPL_ENERGY_DRAM.value",
+                 "perfevent.hwcounters.RAPL_ENERGY_PKG.value"] ##RAPL is not currenty available on Icelake
+ALWAYS_HAVE_MONITOR_SKL = [x for x in ALWAYS_HAVE_MONITOR_SINGLE_SOCKET if x not in SKL_DONT_HAVE]
+ALWAYS_HAVE_MONITOR_ICL = [x for x in ALWAYS_HAVE_MONITOR_SINGLE_SOCKET if x not in ICL_DONT_HAVE]
+
+
+ALWAYS_HAVE_OBSERVATION = ["RAPL_ENERGY_PKG",
+                           "RAPL_ENERGY_DRAM"]
+ALWAYS_HAVE_OBSERVATION_SKL = ["RAPL_ENERGY_PKG"]
+ALWAYS_HAVE_OBSERVATION_ICL = [] ##RAPL is not currently available on Icelake
+
+##
+met = {
+        'monitor':{
+            'general_single': ALWAYS_HAVE_MONITOR_SINGLE_SOCKET,
+            'general_numa': ALWAYS_HAVE_MONITOR_NUMA,
+            'skl': ALWAYS_HAVE_MONITOR_SKL,
+            'icl': ALWAYS_HAVE_MONITOR_ICL
+        },
+        'observation': {
+            'general': ALWAYS_HAVE_OBSERVATION,
+            'skl': ALWAYS_HAVE_OBSERVATION_SKL,
+            'icl': ALWAYS_HAVE_OBSERVATION_ICL
+        }
+    }
+##
+
 def get_mongo_database(mongodb_name, CONNECTION_STRING):
 
     ##Create a connection for mongodb
     client = MongoClient(CONNECTION_STRING)
-
     ##Create the database for this instance(s)
+
+    print("name:", mongodb_name, "type:", type(mongodb_name))
+    
     return client[mongodb_name]
 
 
@@ -158,6 +226,22 @@ def get_multithreading_info(data):
             
 
     return mt_info
+
+def create_grafana_datasource(hostname, uid, api_key, grafana_server, influxdb_server, verify=True):
+
+    headers = {'Authorization': f"Bearer {api_key}", 'Content-Type': 'application/json'}
+    data = {
+        "name": hostname + "_" + uid + "_influx_datasource",
+        "type":"influxdb",
+        "url":influxdb_server,
+        "database": hostname,
+        "access":"proxy",
+        "basicAuth":False
+    }
+    r = requests.post(f"http://{grafana_server}/api/datasources", data=json.dumps(data), headers=headers, verify=verify)
+    #print(f"{r.status_code} - {r.content}")
+
+    return dict(r.json())
 
 
 def upload_to_grafana(json, server, api_key, verify=True):
@@ -471,4 +555,60 @@ def get_observations(SuperTwin):
     db = get_mongo_database(SuperTwin.name, SuperTwin.mongodb_addr)["observations"]
 
     return db
+
+
+def get_system_dict_from_td(td):
+
+    for key in td:
+        if(key.find("system") != -1):
+            print("returning:", key)
+            return td[key]
+
+
+def get_selected_from_dict(_dict, selected):
     
+    
+    for content in _dict["contents"]:
+        if(content["@id"].find(selected) != -1):
+            return content
+    
+
+def get_msr(SuperTwin):
+
+    td = get_twin_description(SuperTwin)
+    _system = get_system_dict_from_td(td)
+    msr = get_selected_from_dict(_system, "MSR")["description"]
+
+    return msr
+
+def is_numa(SuperTwin):
+
+    td = get_twin_description(SuperTwin)
+    mt = get_multithreading_info(td)
+
+    if(mt["no_sockets"] == 1):
+        return False
+    else:
+        return True
+
+##always have metrics adjusted to msrs
+def always_have_metrics(purpose, SuperTwin):
+
+    numa = is_numa(SuperTwin)
+    msr = get_msr(SuperTwin)
+    
+    if(msr != "icl" and msr != "skl"):
+        msr = "general"
+        
+    if(purpose == "monitor"):
+        if(numa):
+            msr = "general_numa"
+        else:
+            if(msr != "icl" and msr != "skl"):
+                msr = "general_single"
+
+    print("!!purpose:", purpose, "msr:", msr)
+    print("metrics will be:", met[purpose][msr])
+    return met[purpose][msr]
+
+

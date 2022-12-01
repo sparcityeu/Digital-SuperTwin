@@ -44,7 +44,9 @@ vis_map_threads = {} ##This is where markings will be added
 
 #colors = ["#75eab6", "#2d747a", "#20d8fd", "#c0583d", "#bccd97", "#b1e632", "#57832e", "#efaa79"]
 #colors = ["#56ebd3", "#528e8c", "#c5df72", "#194f46", "#b4ddd4", "#9f5553"] ##This is, SO BEAUTIFUL
-colors = ["#399283", "#9f1845", "#4cf32c", "#3c5472", "#cadba5", "#02531d", "#56ebd3", "#d11f0b", "#a0e85b", "#3163d8", "#b3d9fa", "#82400f", "#ef8ead", "#31a62e", "#ff0087", "#809b31"]
+colors = ["#399283", "#9f1845", "#4cf32c", "#3c5472", "#cadba5", "#02531d", "#56ebd3", "#d11f0b", "#a0e85b", "#3163d8", "#b3d9fa", "#82400f", "#ef8ead", "#31a62e", "#ff0087", "#809b31","#399283", "#9f1845", "#4cf32c", "#3c5472", "#cadba5", "#02531d", "#56ebd3", "#d11f0b", "#a0e85b", "#3163d8", "#b3d9fa", "#82400f", "#ef8ead", "#31a62e", "#ff0087", "#809b31"]
+
+chosen_thread_colors = {}
 
 next_color = -1
 next_element_id = -1
@@ -164,7 +166,7 @@ def line_spec(color, dash):
     return line
 
 def return_subtraces(data, ai, thread, index):
-
+    
     global vis_all
     global vis_L1s
     global vis_L2s
@@ -238,15 +240,17 @@ def return_subtraces(data, ai, thread, index):
     vis_map_L2s[thread].append(_id2)
     vis_map_L3s[thread].append(_id3)
     vis_map_DRAMs[thread].append(_id4)
-        
 
+    
     return [for_one_L1, for_one_L2, for_one_L3, for_one_DRAM, name]
 
 
 def thread_groups(fig, thread, color, data, ai, ai_list):
-
+    
+    global chosen_thread_colors
+    
     thread_lines = []
-    print(data["threads"])
+    print("data[threads]:", data["threads"])
     for i in range(len(data["threads"][thread])):
         thread_lines = return_subtraces(data, ai, thread, i)
         name_postfix = thread_lines[4]
@@ -260,6 +264,11 @@ def thread_groups(fig, thread, color, data, ai, ai_list):
         fig.add_trace(go.Scatter(x=ai_list, y=thread_lines[3].tolist(),
                       mode = "lines", name="DRAM - "+ name_postfix, line=line_spec(gc, "dashdot")))
 
+        if(thread not in chosen_thread_colors.keys()): 
+            chosen_thread_colors[thread] = gc
+        if(thread == '32'): ##Will change anyway
+            chosen_thread_colors[thread] = gc
+                
     return fig
 
 
@@ -332,6 +341,24 @@ def get_carm_res_from_dt(SuperTwin):
 
     return carm_res
 
+def get_hpcg_marks(hpcg_res):
+
+    hpcg_marks = {}
+
+    for key in hpcg_res:
+        for _res in hpcg_res[key]:
+            for thr in _res:
+                try:
+                    hpcg_marks[thr].append((key, _res[thr]))
+                except:
+                    hpcg_marks[thr] = []
+                    hpcg_marks[thr].append((key, _res[thr]))
+
+    return hpcg_marks
+
+##colors needs to be related with number of threads
+##I need various different color sets for various different result sets
+
 ##This visibility thing; should keep indices, then generate, true false arrays from it
 ##For returning a roofline dashboard for observations; it should levitate these indices
 ##For buttons; probably shouldnt exist
@@ -345,12 +372,15 @@ def generate_carm_roofline(SuperTwin): ##THREADS as a parameter to redraw for ob
     global vis_map_DRAMs
     global vis_map_threads
 
+    global next_color
+    global chosen_thread_colors
+
     td = utils.get_twin_description(SuperTwin) ##Twin description
 
     #empty_dash = obs.template_dict(SuperTwin.name + " Roofline-" + str(uuid.uuid4()))
     #empty_dash["panels"] = []
 
-    ai = np.linspace(0.00390625, 2048, num=1000)
+    ai = np.linspace(0.00390625, 2048, num=10000)
     data = adcarm_benchmark.parse_adcarm_bench()
 
     ###
@@ -378,6 +408,34 @@ def generate_carm_roofline(SuperTwin): ##THREADS as a parameter to redraw for ob
     print("DRAMS:", vis_map_DRAMs)
     print("Threads:", vis_map_threads)
     #print("##########")
+
+    ##hpcg marks
+    hpcg_res = get_hpcg_bench_data(td)
+    hpcg_marks = get_hpcg_marks(hpcg_res)
+    print("hpcg marks:", hpcg_marks)
+    ##hpcg marks
+
+    marker_symbols = {'spmv numa bind': 'cross-open', 'ddot numa bind': 'x-open',
+                      'waxpby numa bind': 'hash-open'}
+    
+    hpcg_ai = {'spmv numa bind': 0.25, 'waxpby numa bind': 0.125, 'ddot numa bind': 0.125}
+    
+    next_color = -1
+    
+    for _threads in hpcg_marks:
+        for _tuple in hpcg_marks[_threads]:
+            _this_mark_id = get_eid()
+            _name = _tuple[0]
+            _res = _tuple[1]
+            fig.add_trace(go.Scatter(x=[hpcg_ai[_name]], y=[_res],
+                                     mode = "markers", name=_name,
+                                     marker_symbol=marker_symbols[_name],
+                                     marker_color=chosen_thread_colors[_threads],
+                                     marker_size=14,
+                                     marker_line_width=2))
+            vis_map_all[_threads].append(_this_mark_id)
+            vis_map_threads[_threads].append(_this_mark_id)
+        
     
     vis_map_all = dict(sorted(vis_map_all.items(), key=lambda t: int(t[0])))
     vis_map_L1s = dict(sorted(vis_map_L1s.items(), key=lambda t: int(t[0])))
@@ -493,8 +551,8 @@ def generate_info_panel(SuperTwin):
     data = utils.fill_data(td, SuperTwin.name, SuperTwin.addr)
 
 
-    number_size = 26
-    title_size = 20
+    number_size = 24
+    title_size = 18
 
     fig = go.Figure(layout={})
 
@@ -507,7 +565,7 @@ def generate_info_panel(SuperTwin):
         domain = {'row': 0, "column": 1}
     ))
 
-    number_size = 42
+    number_size = 36
     ##Don't need to do split prefix suffix thing if value is simply a number
     fig.add_trace(go.Indicator(
         mode = "number",
@@ -629,7 +687,7 @@ def generate_info_panel(SuperTwin):
         domain = {'row': 5, 'column': 2}
     ))
     
-    number_size = 26
+    number_size = 24
     value, prefix, suffix = get_indicator_fields_vector(data["sse_vector"])
     fig.add_trace(go.Indicator(
         mode = "number",
@@ -815,11 +873,14 @@ def generate_roofline_dashboard(SuperTwin):
     
     dict_stream_bench_fig = obs.json.loads(io.to_json(stream_bench_fig))
     empty_dash["panels"].append(rdp.two_templates_three(dict_stream_bench_fig["data"],
-                                                      dict_stream_bench_fig["layout"]))
+                                                        dict_stream_bench_fig["layout"],
+                                                        11, 9 , 0, 16))
 
+    
     dict_hpcg_bench_fig = obs.json.loads(io.to_json(hpcg_bench_fig))
     empty_dash["panels"].append(rdp.two_templates_three(dict_hpcg_bench_fig["data"],
-                                                      dict_hpcg_bench_fig["layout"]))
+                                                        dict_hpcg_bench_fig["layout"],
+                                                        11, 9, 9, 16))
 
     print("Upload?")
     ###

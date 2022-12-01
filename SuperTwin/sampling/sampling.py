@@ -36,32 +36,6 @@ from bson.json_util import dumps
 from bson.json_util import loads
 
 
-ALWAYS_HAVE_MONITOR = ["perfevent.hwcounters.RAPL_ENERGY_PKG.value",
-                       "perfevent.hwcounters.RAPL_ENERGY_PKG.dutycycle",
-                       "perfevent.hwcounters.RAPL_ENERGY_DRAM.value",
-                       "perfevent.hwcounters.RAPL_ENERGY_DRAM.dutycycle"]
-
-ALWAYS_HAVE_MONITOR_WIDER = ["perfevent.hwcounters.RAPL_ENERGY_PKG.value",
-                             "perfevent.hwcounters.RAPL_ENERGY_PKG.dutycycle",
-                             "perfevent.hwcounters.RAPL_ENERGY_DRAM.value",
-                             "perfevent.hwcounters.RAPL_ENERGY_DRAM.dutycycle",
-                             "kernel.all.pressure.cpu.some.total",
-                             "hinv.cpu.clock",
-                             "lmsensors.coretemp_isa_0000.package_id_0",
-                             "lmsensors.coretemp_isa_0001.package_id_1",
-                             "kernel.percpu.cpu.idle",
-                             "kernel.pernode.cpu.idle",
-                             "disk.dev.read",
-                             "disk.dev.write",
-                             "disk.dev.total",
-                             "disk.dev.read_bytes",
-                             "disk.dev.write_bytes",
-                             "disk.dev.total_bytes"]
-
-ALWAYS_HAVE_OBSERVATION = ["RAPL_ENERGY_PKG node",
-                           "RAPL_ENERGY_DRAM node"]
-
-
 def get_date_tag():
 
     date = datetime.datetime.now()
@@ -71,12 +45,20 @@ def get_date_tag():
     return tag_date
 
 
-def generate_pcp2influxdb_config(db_name, db_tag, sourceIP, source_name, metrics):
+#def generate_pcp2influxdb_config(db_name, db_tag, sourceIP, source_name, metrics):
+def generate_pcp2influxdb_config(SuperTwin):
+
+    db_name = SuperTwin.name
+    db_tag = SuperTwin.monitor_tag
+    sourceIP = SuperTwin.addr
+    source_name = SuperTwin.name
+    metrics = SuperTwin.monitor_metrics
+    always_have_metrics = utils.always_have_metrics("monitor", SuperTwin)
     
-    for item in ALWAYS_HAVE_MONITOR_WIDER:
+    for item in always_have_metrics:
         if item not in metrics:
             metrics.append(item)
-    
+            
     config_lines = ["[options]" + "\n",
                     "influx_server = http://127.0.0.1:8086" + "\n",
                     "influx_db = " + db_name + "\n",
@@ -86,11 +68,10 @@ def generate_pcp2influxdb_config(db_name, db_tag, sourceIP, source_name, metrics
                     "[configured]" + "\n"]
 
 
-    metrics = [x for x in metrics if x != ""] ##Fix this later
+    metrics = [x for x in metrics if x != ""] ##Just to make sure
     for metric in metrics:
         config_lines.append(metric + " = ,," + "\n")
 
-    
     pcp_conf_name = "pcp_" + source_name + db_tag + ".conf" 
     writer = open(pcp_conf_name, "w")
     
@@ -138,30 +119,18 @@ def generate_pcp2influxdb_config_observation(SuperTwin, observation_id):
 
     return pcp_conf_name
 
-def get_msr(SuperTwin):
-
-    db = utils.get_mongo_database(SuperTwin.name, SuperTwin.mongodb_addr)["twin"]
-    meta_with_twin = loads(dumps(db.find({"_id": ObjectId(SuperTwin.mongodb_id)})))[0]
-    twin = meta_with_twin["twin_description"]                  
-
-    for key in twin.keys():
-        if(key.find("system:S1") != -1):
-            contents = twin[key]["contents"]
-            for content in contents:
-                if(content["@id"].find("MSR") != -1):
-                    return content["description"]
-
 
 def generate_perfevent_conf(SuperTwin):
 
     metrics = SuperTwin.observation_metrics
-
-    for item in ALWAYS_HAVE_OBSERVATION:
+    always_have_metrics = utils.always_have_metrics("observation", SuperTwin)
+    
+    for item in always_have_metrics:
         if item not in metrics:
             metrics.append(item)
 
             
-    msr = get_msr(SuperTwin)
+    msr = utils.get_msr(SuperTwin)
 
     writer = open("perfevent.conf", "w+")
     writer.write("[" + msr + "]" + "\n")
@@ -170,6 +139,7 @@ def generate_perfevent_conf(SuperTwin):
     writer.close()
 
     print("Generated new perfevent pmda configuration..")
+    
 
 def reconfigure_perfevent(SuperTwin):
 
@@ -205,11 +175,13 @@ def reconfigure_perfevent(SuperTwin):
     print("Reconfigured remote perfevent pmda")
 
 
-##deprecated
-def main(hostname, hostIP, db_name, db_tag, metrics):
+
+#def main(hostname, hostIP, db_name, db_tag, metrics):
+def main(SuperTwin):
 
     ##Get influxdb
-    pcp_conf_name = generate_pcp2influxdb_config(db_name, db_tag, hostIP, hostname, metrics)
+    #pcp_conf_name = generate_pcp2influxdb_config(db_name, db_tag, hostIP, hostname, metrics)
+    pcp_conf_name = generate_pcp2influxdb_config(SuperTwin)
     print("pcp2influxdb configuration:", pcp_conf_name, "generated")
     
     ##This is where actual thing happens
@@ -220,7 +192,7 @@ def main(hostname, hostIP, db_name, db_tag, metrics):
     p0 = Popen(p0_args)
     monitor_pid = p0.pid
     #####################################################################
-    print("A daemon with pid:", monitor_pid, "is started monitoring", hostname)
+    print("A daemon with pid:", monitor_pid, "is started monitoring", SuperTwin.name)
     
     return monitor_pid
     

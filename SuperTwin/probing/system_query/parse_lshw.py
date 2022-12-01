@@ -65,7 +65,10 @@ def parse_lshw():
     
     out = detect_utils.cmd('lshw -json')[1]
 
-    out = json.loads(out)[0]
+    try:
+        out = json.loads(out)[0]
+    except:
+        out = json.loads(out)
     #pprint.pprint(out)
     
     system = {}
@@ -165,11 +168,15 @@ def parse_lshw():
     ##TO DO: Add other disk types as encountered
     for f_disk in found:
         if(f_disk["description"].find("NVMe") != -1):
-            name = f_disk["children"][0]["logicalname"].strip("/dev/")
-            system["disk"][name] = {}
-            system["disk"][name]["model"] = f_disk["product"]
-            system["disk"][name]["size"] = f_disk["children"][0]["size"]
-            system["disk"][name]["units"] = f_disk["children"][0]["units"]
+            try: ##If windows partition exists, tables are different
+                system["disk"][name]["size"] = f_disk["children"][0]["size"]
+                name = f_disk["children"][0]["logicalname"].strip("/dev/")
+                system["disk"][name] = {}
+                system["disk"][name]["model"] = f_disk["product"]
+                system["disk"][name]["size"] = f_disk["children"][0]["size"]
+                system["disk"][name]["units"] = f_disk["children"][0]["units"]
+            except: ##If windows partition exists, tables are different
+                system["disk"]["logical"]["count"] -= 1
         else:
             name = f_disk["logicalname"].strip("/dev/")
             system["disk"][name] = {}

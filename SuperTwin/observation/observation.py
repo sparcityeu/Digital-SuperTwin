@@ -73,7 +73,7 @@ def observe_single_parameters(SuperTwin, path, affinity, observation_id, command
     
     command_script_lines = ["#!/bin/bash"]
     command_script_lines.append("cd " + path)
-    command_script_lines.append(reuser + " " + affinity + " " + command)
+    command_script_lines.append(affinity + " " + command) ##reuser?
     
     
     writer = open(command_script_name, "w+")

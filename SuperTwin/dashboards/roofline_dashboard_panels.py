@@ -65,8 +65,8 @@ def two_templates_two(data, layout):
         "id": 42,
         "gridPos": {
             "h": 27,
-            "w": 7,
-            "x": 17,
+            "w": 6,
+            "x": 18,
             "y": 0
         },
         "type": "ae3e-plotly-panel",
@@ -120,15 +120,15 @@ def two_templates_two(data, layout):
 
     return template
 
-def two_templates_three(data, layout):
+def two_templates_three(data, layout, h, w, x, y):
     
     template = {
         "id": 442,
         "gridPos": {
-            "h": 11,
-            "w": 8,
-            "x": 0,
-            "y": 16
+            "h": h,
+            "w": w,
+            "x": x,
+            "y": y
         },
         "type": "ae3e-plotly-panel",
         "title": "STREAM Benchmark",

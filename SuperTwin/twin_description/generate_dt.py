@@ -809,7 +809,7 @@ def pmu_to_pcp(PMUs, metrics):
 
 def get_msr(PMUs):
 
-    MSRs = ["snb", "snb_ep", "ivb", "bdw", "bdw_ep", "knc", "knl", "glm", "hsw", "hsw_ep", "slm", "skx", "skl", "icl", "knm", "clx", "tmt", "icx", "spl"]
+    MSRs = ["snb", "snb_ep", "ivb", "ivb_ep", "bdw", "bdw_ep", "knc", "knl", "glm", "hsw", "hsw_ep", "slm", "skx", "skl", "icl", "knm", "clx", "tmt", "icx", "spl"]
 
     for key in PMUs.keys():
         if key in MSRs:

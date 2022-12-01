@@ -73,6 +73,10 @@ ALWAYS_HAVE_MONITOR_WIDER = ["perfevent.hwcounters.RAPL_ENERGY_PKG.value",
 ALWAYS_HAVE_OBSERVATION = ["RAPL_ENERGY_PKG node",
                            "RAPL_ENERGY_DRAM node"]
 
+ALWAYS_HAVE_OBSERVATION_ICL = [] ##RAPL is not currently available on Icelake
+ALWAYS_HAVE_OBSERVATION_SKL = ["RAPL_ENERGY_PKG node"]
+                           
+
 def get_twin_description(hostProbFile):
 
     with open(hostProbFile, "r") as j:
@@ -126,6 +130,7 @@ def register_twin_state(SuperTwin):
     meta["twin_state"]["benchmark_results"] = SuperTwin.benchmark_results
     meta["twin_state"]["monitor_metrics"] = SuperTwin.monitor_metrics
     meta["twin_state"]["observation_metrics"] = SuperTwin.observation_metrics
+    meta["twin_state"]["grafana_datasource"] = SuperTwin.grafana_datasource
     
     db.replace_one({"_id": ObjectId(SuperTwin.mongodb_id)}, meta)
     
@@ -172,10 +177,10 @@ class SuperTwin:
             self.monitor_tag = meta["twin_state"]["monitor_tag"]
             self.benchmarks = meta["twin_state"]["benchmarks"]
             self.benchmark_results = meta["twin_state"]["benchmark_results"]
-            
             self.prob_file = meta["prob_file"]
             self.uid = meta["uid"]
             self.influxdb_name = meta["influxdb_name"]
+            self.grafana_datasource = meta["grafana_datasource"]
             self.monitor_tag = meta["influxdb_tag"]
             self.monitor_pid = meta["monitor_pid"]
             self.roofline_dashboard = meta["roofline_dashboard"]
@@ -194,32 +199,48 @@ class SuperTwin:
                 
             else:
                 self.addr = input("Address of the remote system: ")
+                alias = input("Alias for hostname: ")
                 self.name, self.prob_file, self.SSHuser, self.SSHpass = remote_probe.main(self.addr)
 
-                
+            if(alias != ""):
+                self.name = alias
             self.uid = str(uuid.uuid4())
             print("Creating a new digital twin with id:", self.uid)
                     
             self.influxdb_name = self.name + "_main"
             self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
             utils.get_influx_database(self.influxdb_addr, self.influxdb_name)
-            self.monitor_metrics = utils.read_monitor_metrics() ##These are the continuously sampled metrics
-            self.observation_metrics = utils.read_observation_metrics()
+            self.grafana_datasource = utils.create_grafana_datasource(self.name, self.uid, self.grafana_token, self.grafana_addr, self.influxdb_addr)["datasource"]["uid"]
+            #self.monitor_metrics = utils.read_monitor_metrics() ##These are the continuously sampled metrics
+
             self.monitor_tag = "_monitor"
             self.mongodb_id = insert_twin_description(get_twin_description(self.prob_file),self)
             print("Collection id:", self.mongodb_id)
-            self.monitor_pid = sampling.main(self.name, self.addr, self.influxdb_name, self.monitor_tag, self.monitor_metrics)
+            #self.monitor_pid = sampling.main(self.name, self.addr, self.influxdb_name, self.monitor_tag, self.monitor_metrics)
+
+            #benchmark members
+            self.benchmarks = 0
+            self.benchmark_results = 0
+            
+            ##
+            ##This is a breaking point where we know everything and can configure now
+            ##
+            
+            #self.observation_metrics = utils.read_observation_metrics() #This may become problematic with multinode
+            self.monitor_metrics = []
+            self.observation_metrics = [] #Start empty
+            self.reconfigure_observation_events_beginning() ##Only add available power
+            
+            self.monitor_pid = sampling.main(self)
             
             utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
             self.kill_zombie_monitors() ##If there is any zombie monitor sampler
             self.generate_monitoring_dashboard()
             
-            ##benchmark members
-            self.benchmarks = 0
-            self.benchmark_results = 0
-            self.add_stream_benchmark()
-            self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
-            self.add_adcarm_benchmark()
+            ##benchmark functions
+            #self.add_stream_benchmark()
+            #self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
+            #self.add_adcarm_benchmark()
             #self.generate_roofline_dashboard()
             
             register_twin_state(self)
@@ -544,8 +565,10 @@ class SuperTwin:
         self.update_twin_document__add_monitoring_dashboard(url)
 
         
-    def reconfigure_monitor_events(self, metrics):
+    def reconfigure_monitor_events(self):
 
+        metrics = self.observation_metrics
+        
         for item in ALWAYS_HAVE_MONITOR_WIDER:
             if item not in metrics:
                 metrics.append(item)
@@ -574,7 +597,70 @@ class SuperTwin:
         self.observation_metrics = metrics
         self.reconfigure_perfevent()
         register_twin_state(self)
+
         
+    def reconfigure_observation_events_parameterized(self, obs_metric_file):
+
+        msr = utils.get_msr(self)
+        metrics = self.observation_metrics
+
+        if(msr == "icl"):
+            for item in ALWAYS_HAVE_OBSERVATION_ICL:
+                if item not in metrics:
+                    metrics.append(item)
+
+        elif(msr == "skl"):
+            for item in ALWAYS_HAVE_OBSERVATION_SKL:
+                if item not in metrics:
+                    metrics.append(item)
+
+        else:
+            for item in ALWAYS_HAVE_OBSERVATION:
+                if item not in metrics:
+                    metrics.append(item)
+        
+        
+        writer = open("last_observation_metrics.txt", "w+")
+        for item in metrics:
+            writer.write(item + "\n")
+        writer.close()
+
+        self.observation_metrics = metrics
+        self.reconfigure_perfevent()
+        register_twin_state(self)
+
+
+    def reconfigure_observation_events_beginning(self):
+
+        msr = utils.get_msr(self)
+        metrics = self.observation_metrics
+
+        if(msr == "icl"):
+            for item in ALWAYS_HAVE_OBSERVATION_ICL:
+                if item not in metrics:
+                    metrics.append(item)
+
+        elif(msr == "skl"):
+            for item in ALWAYS_HAVE_OBSERVATION_SKL:
+                if item not in metrics:
+                    metrics.append(item)
+
+        else:
+            for item in ALWAYS_HAVE_OBSERVATION:
+                if item not in metrics:
+                    metrics.append(item)
+
+        '''
+        writer = open("last_observation_metrics.txt", "w+")
+        for item in metrics:
+            writer.write(item + "\n")
+        writer.close()
+        '''
+
+        self.observation_metrics = metrics
+        self.reconfigure_perfevent()
+        register_twin_state(self)
+                    
     def reconfigure_perfevent(self):
 
         sampling.generate_perfevent_conf(self)
@@ -669,12 +755,13 @@ if __name__ == "__main__":
 
 
     #my_superTwin.generate_monitoring_dashboard()
-    my_superTwin.generate_roofline_dashboard()
+    #my_superTwin.generate_roofline_dashboard()
     #roofline_dashboard.generate_info_panel(my_superTwin)
     #roofline_dashboard.generate_stream_panel(my_superTwin)
-    
     #my_superTwin = SuperTwin(addr, user_name, password) ##Re-construct
     #my_superTwin.update_twin_document__assert_new_monitor_pid()
+    
+        
     
 
 
