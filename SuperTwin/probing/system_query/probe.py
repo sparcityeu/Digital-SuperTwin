@@ -98,7 +98,13 @@ def choose_info(hostname, system, cache_info, socket_groups, domains, cache_topo
         chosen_info['network'][key]['serial'] = system['network'][key]['serial']
         chosen_info['network'][key]['link'] = system['network'][key]['link']
         
-    
+    ##ugly workaround for windows ruined partition 
+    if(system['disk']['logical']['count'] == 1):
+        system['disk']['nvme0n1'] = {'model': 'KINGSTON SKC2000M8500G',
+                                     'size': 500107862016,
+                                     'units': 'bytes'}
+        system['disk']['logical']['count'] = 2
+    ##ugly workaround for windows ruined partition
 
     chosen_info['disk'] = {}
     chosen_info['disk']['no_disks'] = system['disk']['logical']['count']

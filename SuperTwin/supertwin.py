@@ -48,34 +48,6 @@ HPCG_PARAM["nz"] = 104
 HPCG_PARAM["time"] = 60
 ##HPCG benchmark parameters
 
-ALWAYS_HAVE_MONITOR = ["perfevent.hwcounters.RAPL_ENERGY_PKG.value",
-                       "perfevent.hwcounters.RAPL_ENERGY_PKG.dutycycle",
-                       "perfevent.hwcounters.RAPL_ENERGY_DRAM.value",
-                       "perfevent.hwcounters.RAPL_ENERGY_DRAM.dutycycle"]
-
-ALWAYS_HAVE_MONITOR_WIDER = ["perfevent.hwcounters.RAPL_ENERGY_PKG.value",
-                             "perfevent.hwcounters.RAPL_ENERGY_PKG.dutycycle",
-                             "perfevent.hwcounters.RAPL_ENERGY_DRAM.value",
-                             "perfevent.hwcounters.RAPL_ENERGY_DRAM.dutycycle",
-                             "kernel.all.pressure.cpu.some.total",
-                             "hinv.cpu.clock",
-                             "lmsensors.coretemp_isa_0000.package_id_0",
-                             "lmsensors.coretemp_isa_0001.package_id_1",
-                             "kernel.percpu.cpu.idle",
-                             "kernel.pernode.cpu.idle",
-                             "disk.dev.read",
-                             "disk.dev.write",
-                             "disk.dev.total",
-                             "disk.dev.read_bytes",
-                             "disk.dev.write_bytes",
-                             "disk.dev.total_bytes"]
-
-ALWAYS_HAVE_OBSERVATION = ["RAPL_ENERGY_PKG node",
-                           "RAPL_ENERGY_DRAM node"]
-
-ALWAYS_HAVE_OBSERVATION_ICL = [] ##RAPL is not currently available on Icelake
-ALWAYS_HAVE_OBSERVATION_SKL = ["RAPL_ENERGY_PKG node"]
-                           
 
 def get_twin_description(hostProbFile):
 
@@ -177,10 +149,10 @@ class SuperTwin:
             self.monitor_tag = meta["twin_state"]["monitor_tag"]
             self.benchmarks = meta["twin_state"]["benchmarks"]
             self.benchmark_results = meta["twin_state"]["benchmark_results"]
+            self.grafana_datasource = meta["twin_state"]["grafana_datasource"]
             self.prob_file = meta["prob_file"]
             self.uid = meta["uid"]
             self.influxdb_name = meta["influxdb_name"]
-            self.grafana_datasource = meta["grafana_datasource"]
             self.monitor_tag = meta["influxdb_tag"]
             self.monitor_pid = meta["monitor_pid"]
             self.roofline_dashboard = meta["roofline_dashboard"]
@@ -207,7 +179,7 @@ class SuperTwin:
             self.uid = str(uuid.uuid4())
             print("Creating a new digital twin with id:", self.uid)
                     
-            self.influxdb_name = self.name + "_main"
+            self.influxdb_name = self.name #+ "_main"
             self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
             utils.get_influx_database(self.influxdb_addr, self.influxdb_name)
             self.grafana_datasource = utils.create_grafana_datasource(self.name, self.uid, self.grafana_token, self.grafana_addr, self.influxdb_addr)["datasource"]["uid"]
@@ -474,11 +446,15 @@ class SuperTwin:
         
     def add_stream_benchmark(self):
         
-        stream_modifiers = stream_benchmark.generate_stream_bench_sh(self)
-        #stream_benchmark.execute_stream_bench(self)
-        stream_res = stream_benchmark.parse_stream_bench(self)
+        stream_modifiers, maker, runs = stream_benchmark.generate_stream_bench_sh(self)
+        #print("stream_modifiers:", stream_modifiers)
+        #print("make:", make)
+        #print("runs:", runs)
+        stream_benchmark.compile_stream_bench(self, maker)
+        stream_benchmark.execute_stream_runs(self, runs)
+        #stream_res = stream_benchmark.parse_stream_bench(self)
         
-        self.update_twin_document__add_stream_benchmark(stream_modifiers, stream_res)
+        #self.update_twin_document__add_stream_benchmark(stream_modifiers, stream_res)
         
 
     def update_twin_document__add_hpcg_benchmark(self, hpcg_modifiers, hpcg_res):
@@ -634,21 +610,11 @@ class SuperTwin:
 
         msr = utils.get_msr(self)
         metrics = self.observation_metrics
+        always_have_metrics = utils.always_have_metrics("observation", self)
 
-        if(msr == "icl"):
-            for item in ALWAYS_HAVE_OBSERVATION_ICL:
-                if item not in metrics:
-                    metrics.append(item)
-
-        elif(msr == "skl"):
-            for item in ALWAYS_HAVE_OBSERVATION_SKL:
-                if item not in metrics:
-                    metrics.append(item)
-
-        else:
-            for item in ALWAYS_HAVE_OBSERVATION:
-                if item not in metrics:
-                    metrics.append(item)
+        for item in always_have_metrics:
+            if item not in metrics:
+                metrics.append(item)
 
         '''
         writer = open("last_observation_metrics.txt", "w+")
@@ -753,14 +719,27 @@ if __name__ == "__main__":
         addr = args[1]
         my_superTwin = SuperTwin(addr) ##Re-construct
 
-
+        
     #my_superTwin.generate_monitoring_dashboard()
     #my_superTwin.generate_roofline_dashboard()
     #roofline_dashboard.generate_info_panel(my_superTwin)
     #roofline_dashboard.generate_stream_panel(my_superTwin)
     #my_superTwin = SuperTwin(addr, user_name, password) ##Re-construct
     #my_superTwin.update_twin_document__assert_new_monitor_pid()
-    
+
+    ##Nice, it works
+    #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c S0:0"))
+    #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c S0:0-8"))
+    #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c S1:2-8,6"))
+    #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c S0:0-8,11,17@S1:0-6,10"))
+    #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c N:0"))
+    #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c N:0,2,22,67"))
+    #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c N:0-16,21"))
+    #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c N:0-16,22-41,65-79"))
+
+    print("####Manually adding stream benchmark")
+    my_superTwin.add_stream_benchmark()
+    print("####")
         
     
 

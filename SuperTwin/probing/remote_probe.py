@@ -129,7 +129,9 @@ def main(*args):
     #scp = SCPClient(ssh.get_transport(), progress4=progress4) ##Need to resolve carriage return trailing problem
     scp = SCPClient(ssh.get_transport())
     run_sudo_command(ssh, SSHpass, remotehost_name, "sudo rm -r /tmp/dt_probing")
+    run_sudo_command(ssh, SSHpass, remotehost_name, "sudo rm -r /tmp/dt_files")
     run_command(ssh, remotehost_name, "mkdir /tmp/dt_probing")
+    run_command(ssh, remotehost_name, "mkdir /tmp/dt_files")
     ##scp
     print("Copying probing framework to remote system..")
     ##Issue is here, scp does not create folder when first called only copies content

@@ -97,8 +97,6 @@ def get_mongo_database(mongodb_name, CONNECTION_STRING):
     client = MongoClient(CONNECTION_STRING)
     ##Create the database for this instance(s)
 
-    print("name:", mongodb_name, "type:", type(mongodb_name))
-    
     return client[mongodb_name]
 
 
@@ -581,9 +579,25 @@ def get_msr(SuperTwin):
 
     return msr
 
+def get_msr_td(td):
+
+    _system = get_system_dict_from_td(td)
+    msr = get_selected_from_dict(_system, "MSR")["description"]
+
+    return msr
+
 def is_numa(SuperTwin):
 
     td = get_twin_description(SuperTwin)
+    mt = get_multithreading_info(td)
+
+    if(mt["no_sockets"] == 1):
+        return False
+    else:
+        return True
+
+def is_numa_td(td): ##td versions are actually same with SuperTwin versions but avoids time of asking twin description to database, therefore much faster
+
     mt = get_multithreading_info(td)
 
     if(mt["no_sockets"] == 1):
@@ -607,8 +621,137 @@ def always_have_metrics(purpose, SuperTwin):
             if(msr != "icl" and msr != "skl"):
                 msr = "general_single"
 
-    print("!!purpose:", purpose, "msr:", msr)
-    print("metrics will be:", met[purpose][msr])
+    return met[purpose][msr]
+
+##always have metrics adjusted to msrs
+def always_have_metrics_td(purpose, td):
+
+    numa = is_numa_td(td)
+    msr = get_msr_td(td)
+    
+    if(msr != "icl" and msr != "skl"):
+        msr = "general"
+        
+    if(purpose == "monitor"):
+        if(numa):
+            msr = "general_numa"
+        else:
+            if(msr != "icl" and msr != "skl"):
+                msr = "general_single"
+
     return met[purpose][msr]
 
 
+def get_biggest_vector_inst(td):
+
+    avx = False
+    avx2 = False
+    avx512 = False
+    
+    for key in td:
+        if(key.find("socket") != -1):
+            contents = td[key]["contents"]
+
+            for content in contents:
+                if(content["name"].find("flags") != -1):
+                    for flag in content["description"].split(" "):
+                        if(flag.find("avx512") != -1):
+                            avx512 = True
+                        if(flag.find("avx2") != -1):
+                            avx2 = True
+                        if(flag.find("avx") != -1):
+                            avx = True
+
+
+    if(avx512):
+        return "avx512"
+    if(avx2):
+        return "avx2"
+    if(avx):
+        return "avx"
+
+    return None
+
+
+
+##It would be much if contents will be dictionary instead of list. Require big refactorization. Fix this later.
+def find_component(td, _id):
+
+    for item in td:
+        if(td[item]["@id"] == _id):
+            return td[item]
+        
+    return None
+        
+
+def find_first(td, socket_content):
+
+    for c_content in socket_content:
+        if (c_content["@type"] == "Relationship"):
+            core = find_component(td, c_content["target"]) ##First core
+            
+            for t_content in core["contents"]:
+                if(t_content["@type"] == "Relationship"):
+                    thread = find_component(td, t_content["target"]) ##First thread
+                    break
+            break
+
+    return int(thread["displayName"].strip("thread"))
+
+
+
+def first_thread_of_sockets(td):
+
+    first = {}
+    sock = 0 
+    for key in td:
+        if(key.find("socket") != -1):
+            contents = td[key]["contents"]
+            first[str(sock)] = find_first(td, contents)
+            sock += 1
+            
+
+    return first
+
+
+
+def resolve_likwid_pin(td, affinity):
+
+    print("Affinity:", affinity)
+    
+    first = first_thread_of_sockets(td)
+    resolved_threads = []
+
+    if(affinity.find("N") == -1): ##Socket notation
+    
+        sockets = affinity.strip("likwid-pin -c ")
+        sockets = sockets.split("@")
+
+        for socket_str in sockets:
+            socket,threads = socket_str.split(":")
+            socket = socket.strip("S")
+            first_thr = first[socket]
+            
+            all_threads = threads.split(",")
+            for thread in all_threads:
+                if(thread.find("-") == -1):
+                    resolved_threads.append(first[socket] + int(thread))
+                else:
+                    range_start, range_end = thread.split("-")
+                    for i in range(int(range_start), int(range_end)):
+                        resolved_threads.append(first[socket] + i)
+
+    else: ##Thread notation
+
+        _all = affinity.strip("likwid-pin -c N:")
+        _all_threads = _all.split(",")
+        for thread in _all_threads:
+            if(thread.find("-") == -1):
+                resolved_threads.append(int(thread))
+            else:
+                range_start, range_end = thread.split("-")
+                for i in range(int(range_start), int(range_end)):
+                    resolved_threads.append(i)
+                        
+    resolved_threads = list(sorted(resolved_threads))
+    return resolved_threads

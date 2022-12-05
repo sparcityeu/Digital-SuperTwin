@@ -197,7 +197,7 @@ def generate_monitoring_dashboard(SuperTwin):
     panel_id = get_next_id()
     empty_dash["panels"].append(mp.stat_panel(datasource, panel_id, 5, 4, 20, 15, "continuous-GrYlRd", "Socket Temperature"))
     params = get_params(td, "lmsensors_coretemp_isa_0000_package_id_0")
-    print("params:", params)
+    #print("params:", params)
     for idx, param in enumerate(params):
         empty_dash["panels"][panel_id]["targets"].append(mp.stat_query(datasource, "socket" + str(idx), "lmsensors_coretemp_isa_000"+ str(idx) +"_package_id_" + str(idx), "value"))
         #empty_dash["panels"][7]["targets"].append(mp.stat_query(datasource, "socket1", "lmsensors_coretemp_isa_0001_package_id_1", "value"))
@@ -225,7 +225,7 @@ def generate_monitoring_dashboard(SuperTwin):
     ##name
     empty_dash["panels"].append(mp.name_panel(datasource, get_next_id(), SuperTwin.name))
 
-    print("topology:", topology)
+    #print("topology:", topology)
     
     ##cpu frequency
     for idx, socket in enumerate(topology):
@@ -233,7 +233,7 @@ def generate_monitoring_dashboard(SuperTwin):
         empty_dash["panels"].append(mp.clock_panel(datasource, panel_id, 15, 3, 4 + ((idx)*6), 0, color_schemes_clock[idx], "Thread Frequency - Socket " + str(idx)))
         for thread in topology[socket]: ##Note that, that was a single list
             param = get_params_interface_known(td, thread, "hinv_cpu_clock")
-            print("no panels:", len(empty_dash["panels"]), "panel_id:", panel_id, "+idx:", panel_id + idx)
+            #print("no panels:", len(empty_dash["panels"]), "panel_id:", panel_id, "+idx:", panel_id + idx)
             empty_dash["panels"][panel_id]["targets"].append(mp.clock_query(datasource, param["Alias"], "hinv_cpu_clock", param["Param"]))
             
 
