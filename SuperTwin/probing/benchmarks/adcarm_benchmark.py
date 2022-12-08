@@ -47,8 +47,14 @@ def get_fields(data):
             for content in contents:
 
                 if(content["name"] == "size"):
-                    l2_cache = int(content["description"].strip(" MB"))
-                    l2_cache *= 1024
+                    mb = False
+                    try:
+                        l2_cache = int(content["description"].strip(" MB"))
+                        mb = True
+                    except:
+                        l2_cache = int(content["description"].strip(" kB"))
+                    if(mb):
+                        l2_cache *= 1024
                     l2_cache = str(l2_cache)
 
         if(key.find("L3") != -1):
@@ -89,9 +95,99 @@ def generate_adcarm_config(SuperTwin):
     
     return local_path_and_name
     
-    
+
+def prepare_carm_bind(td, threads):
+
+    per_socket = int(threads / 2)
+    _str = "S0:" + str(per_socket) + "@" + "S1:" + str(per_socket)
+    bind = utils.prepare_st_likwid_pin(td, _str)
+    bind = "likwid-pin -q -m -c " + bind
+    #print("thrads:", threads, "bind:", bind)
+    bind = bind.split(" ")
+    ret = ""
+    for item in bind:
+        print("item:", item)
+        ret += item + "|"
+    ret = ret[:-1]
+    #print("threads:", threads, "ret:", ret)
+    return ret
 
 def generate_adcarm_bench_sh(SuperTwin, adcarm_config):
+    
+    modifiers = {}
+    modifiers["environment"] = []
+
+    td = utils.get_twin_description(SuperTwin)
+    mt_info = utils.get_multithreading_info(td)
+
+    no_sockets = mt_info["no_sockets"]
+    no_cores_per_socket = mt_info["no_cores_per_socket"]
+    no_threads_per_socket = mt_info["no_threads_per_socket"]
+    total_cores = mt_info["total_cores"]
+    total_threads = mt_info["total_threads"]
+    is_numa = utils.is_numa_td(td)
+    msr = utils.get_msr_td(td)
+    biggest_vector = utils.get_biggest_vector_inst(td)
+    
+    thread_set = []
+    thr = 1
+    while(thr < total_threads):
+        thread_set.append(thr)
+        thr = thr * 2
+
+    if no_cores_per_socket not in thread_set:
+        thread_set.append(no_cores_per_socket)
+
+    if no_threads_per_socket not in thread_set:
+        thread_set.append(no_threads_per_socket)
+
+    if total_cores not in thread_set:
+        thread_set.append(total_cores)
+
+    if total_threads not in thread_set:
+        thread_set.append(total_threads)
+
+    thread_set = list(sorted(thread_set))
+    print("ADCARM Benchmark thread set:", thread_set)
+
+    base = "/tmp/dt_probing/benchmarks/adCARM/"
+    lines = ["#!/bin/bash/ \n\n\n",
+             "cd " + base + "\n\n\n"]
+
+    
+    for thread in thread_set:
+        if str(thread) not in modifiers.keys():
+            modifiers[str(thread)] = []
+
+        if(biggest_vector == "avx512"):
+            if(is_numa and thread != 1):
+                #line = "python3 " + "run.py " + " " + adcarm_config + " -t " + str(thread) + "\n\n"
+                #lines.append(line) ##One as it is
+                #modifiers[str(thread)].append({'isa': 'avx512', 'inst': 'fma'})
+                binding = prepare_carm_bind(td, thread)
+                line = "python3 " + "run_binded.py " + " " + adcarm_config + " -t " + str(thread) + " -b " + "'" + binding + "'" + "\n\n"
+                lines.append(line) ##One binded
+                modifiers[str(thread)].append({'binding': binding, 'isa': 'avx512', 'inst': 'fma'})
+            else:
+                line = "python3 " + "run.py " + " " + adcarm_config + " -t " + str(thread) + "\n\n"
+                lines.append(line) ##One as it is
+                modifiers[str(thread)].append({'isa': 'avx512', 'inst': 'fma'})
+        else:
+            line = "python3 " + "run.py " + " " + adcarm_config + " -t " + str(thread) + " --isa scalar --inst add"+"\n\n"
+            lines.append(line)
+            modifiers[str(thread)].append({'isa': 'scalar', 'inst': 'add'})
+
+    writer = open("probing/benchmarks/adCARM/gen_bench.sh", "w+")
+    for line in lines:
+        writer.write(line)
+    writer.close()
+
+    print("adCARM benchmark script generated..")
+
+    return modifiers
+
+##deprecated
+def deprecated_generate_adcarm_bench_sh(SuperTwin, adcarm_config):
 
     modifiers = {}
     modifiers["environment"] = []
@@ -216,7 +312,7 @@ def execute_adcarm_bench(SuperTwin):
     ssh.connect(SuperTwin.addr, username = SuperTwin.SSHuser, password = SuperTwin.SSHpass)
 
     scp = SCPClient(ssh.get_transport())
-    '''
+    
     try:
         scp.put(path, recursive=True, remote_path="/tmp/dt_probing/benchmarks/")
         remote_probe.run_sudo_command(ssh, SuperTwin.SSHpass, SuperTwin.name, "sudo rm -r /tmp/dt_probing/benchmarks/*")
@@ -229,7 +325,7 @@ def execute_adcarm_bench(SuperTwin):
         
 
     remote_probe.run_sudo_command(ssh, SuperTwin.SSHpass, SuperTwin.name, "sh /tmp/dt_probing/benchmarks/adCARM/gen_bench.sh")
-    '''
+    
     scp.get(recursive=True, remote_path = "/tmp/dt_probing/benchmarks/adCARM/Results", local_path = "probing/benchmarks/")
 
     try:
@@ -304,9 +400,9 @@ def get_threads(files):
     return threads
 
 
-def parse_adcarm_bench():
+def parse_adcarm_bench(SuperTwin):
     ##SuperTwin.name
-    adcarm_base = "probing/benchmarks/adCARM_RES/"
+    adcarm_base = "probing/benchmarks/adCARM_RES_" + SuperTwin.name
 
     files = glob.glob(adcarm_base + "*.out")
             

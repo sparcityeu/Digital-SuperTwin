@@ -111,6 +111,7 @@ def register_twin_state(SuperTwin):
 
 def query_twin_state(name, mongodb_id, mongodb_addr):
 
+    print("in query_twin_state: name: ", name)
     db = utils.get_mongo_database(name, mongodb_addr)["twin"]
     meta = loads(dumps(db.find({"_id": ObjectId(mongodb_id)})))[0]
     print("Found db..")
@@ -130,12 +131,13 @@ class SuperTwin:
         if(len(args) == 1): ##Check if existed and wanted to be reconstructed from non-existed
             try:
                 exist, name, twin_id, collection_id = utils.check_state(args[0])
+                print("exist:", exist, "name:", name, "twin_id:", twin_id, "collection_id:", collection_id, "args[0]:", args[0])
             except:
                 print("A SuperTwin instance is tried to be reconstructed from address", args[0])
                 print("However, there is no such twin with that address..")
                 exit(1)
         
-        if(len(args) == 1 or exist): ##Reconstruct from db
+        if(len(args) == 1 and exist): ##Reconstruct from db
 
             self.addr = args[0]
             self.name = name
@@ -176,9 +178,11 @@ class SuperTwin:
 
             if(alias != ""):
                 self.name = alias
+
+            print("!!self.name:", self.name)
             self.uid = str(uuid.uuid4())
             print("Creating a new digital twin with id:", self.uid)
-                    
+            
             self.influxdb_name = self.name #+ "_main"
             self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
             utils.get_influx_database(self.influxdb_addr, self.influxdb_name)
@@ -210,10 +214,10 @@ class SuperTwin:
             self.generate_monitoring_dashboard()
             
             ##benchmark functions
-            #self.add_stream_benchmark()
-            #self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
-            #self.add_adcarm_benchmark()
-            #self.generate_roofline_dashboard()
+            self.add_stream_benchmark()
+            self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
+            self.add_adcarm_benchmark()
+            self.generate_roofline_dashboard()
             
             register_twin_state(self)
             
@@ -266,6 +270,8 @@ class SuperTwin:
         
     def prepare_stream_content(self, stream_modifiers, stream_res):
 
+        print("stream_modifiers:", stream_modifiers)
+        
         benchmark_id = str(self.benchmarks)
         benchmark_result_id = self.benchmark_results ##Note that benchmark_id is str but this one is int, since we will keep incrementing this one
 
@@ -283,10 +289,12 @@ class SuperTwin:
         content["@mvres_unit"] = "MB/s"
         
         content["@contents"] = []
+
+        print("stream_res:", stream_res)
         
         for _field_key in stream_res:
             try: ##Field key is a thread
-                for _thread_key in stream_res[_field_key]: 
+                for _thread_key in stream_res[_field_key]:
                     _dict = {}
                     _dict["@id"] = id_base + "benchmark_res:B" + str(benchmark_result_id) + ";1"
                     _dict["@type"] = "benchmark_result"
@@ -295,7 +303,7 @@ class SuperTwin:
                     _dict["@modifier"] = stream_modifiers[_thread_key]
                     _dict["@result"] = stream_res[_field_key][_thread_key]
                     _dict["@unit"] = "MB/s" #We know that beforehand
-
+                    
                     content["@contents"].append(_dict)
                     benchmark_result_id += 1
             except: ##Field key is a global or local max
@@ -309,6 +317,9 @@ class SuperTwin:
     
     def prepare_hpcg_content(self, hpcg_modifiers, hpcg_res):
 
+        print("hpcg_modifiers:", hpcg_modifiers)
+        print("hpcg_res:", hpcg_res)
+        
         benchmark_id = str(self.benchmarks)
         benchmark_result_id = self.benchmark_results ##Note that benchmark_id is str but this one is int, since we will keep incrementing this one
 
@@ -319,6 +330,7 @@ class SuperTwin:
         content["@type"] = "benchmark"
         content["@date"] = datetime.datetime.now().strftime("%d-%m-%Y")
         content["@name"] = "HPCG"
+        print("hpcg_modifiers:", hpcg_modifiers)
         content["@environment"] = hpcg_modifiers['environment']
         content["@global_parameters"] = hpcg_res["parameters"] 
         
@@ -356,6 +368,8 @@ class SuperTwin:
         ##It only contains global environment variable changes in the system
         ##Since it is also exist in adcarm_res, in contrary to other benchmarks
 
+        print("adcarm_res:", adcarm_res)
+        
         def max_threads():
             threads = adcarm_res["threads"].keys()
             threads = [int(x) for x in threads]
@@ -447,14 +461,10 @@ class SuperTwin:
     def add_stream_benchmark(self):
         
         stream_modifiers, maker, runs = stream_benchmark.generate_stream_bench_sh(self)
-        #print("stream_modifiers:", stream_modifiers)
-        #print("make:", make)
-        #print("runs:", runs)
         stream_benchmark.compile_stream_bench(self, maker)
         stream_benchmark.execute_stream_runs(self, runs)
-        #stream_res = stream_benchmark.parse_stream_bench(self)
-        
-        #self.update_twin_document__add_stream_benchmark(stream_modifiers, stream_res)
+        stream_res = stream_benchmark.parse_stream_bench(self)
+        self.update_twin_document__add_stream_benchmark(stream_modifiers, stream_res)
         
 
     def update_twin_document__add_hpcg_benchmark(self, hpcg_modifiers, hpcg_res):
@@ -475,8 +485,8 @@ class SuperTwin:
 
     def add_hpcg_benchmark(self, HPCG_PARAM):
 
-        hpcg_modifiers = hpcg_benchmark.generate_hpcg_bench_sh(self, HPCG_PARAM)
-        #hpcg_benchmark.execute_hpcg_bench(self)
+        hpcg_modifiers, runs = hpcg_benchmark.generate_hpcg_bench_sh(self, HPCG_PARAM)
+        hpcg_benchmark.execute_hpcg_runs(self, runs)
         hpcg_res = hpcg_benchmark.parse_hpcg_bench(self)
 
         self.update_twin_document__add_hpcg_benchmark(hpcg_modifiers, hpcg_res)
@@ -503,7 +513,7 @@ class SuperTwin:
         adcarm_config = adcarm_benchmark.generate_adcarm_config(self)
         adcarm_modifiers = adcarm_benchmark.generate_adcarm_bench_sh(self, adcarm_config)
         #adcarm_benchmark.execute_adcarm_bench(self)
-        adcarm_res = adcarm_benchmark.parse_adcarm_bench()
+        adcarm_res = adcarm_benchmark.parse_adcarm_bench(self)
                         
         self.update_twin_document__add_adcarm_benchmark(adcarm_modifiers, adcarm_res)
         
@@ -677,6 +687,7 @@ class SuperTwin:
 
         db = utils.get_mongo_database(self.name, self.mongodb_addr)["observations"]
         db.insert_one(observation)
+        print("Observation", observation["uid"], "is added to twin description..")
 
     def execute_observation_batch_parameters(self, path, affinity, commands):
         print("here:", path, affinity, commands)
@@ -737,10 +748,44 @@ if __name__ == "__main__":
     #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c N:0-16,21"))
     #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c N:0-16,22-41,65-79"))
 
-    print("####Manually adding stream benchmark")
-    my_superTwin.add_stream_benchmark()
-    print("####")
-        
+    #print("####Manually adding stream benchmark")
+    #my_superTwin.add_stream_benchmark()
+    #print("####")
+    #print("####Manually adding roofline benchmark")
+    #my_superTwin.add_adcarm_benchmark()
+    #print("####")
+    #print("####Manually adding hpcg benchmark")
+    #my_superTwin.add_hpcg_benchmark(HPCG_PARAM)
+    #print("####")
+
+    #print("############################")
+    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:1@S1:1")
+    #print("############################")
+    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:5:2@S1:5:2")
+    #print("############################")
+    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:12:2@S1:12:2")
+    #print("############################")
+    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:24:2@S1:24:2")
+    #print("############################")
+    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:22@S1:22")
+    #print("############################")
+    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:20@S1:20")
+    #print("############################")
+    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:1")
+    #print("############################")
+    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:5:2")
+    #print("############################")
+    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:12:2")
+    #print("############################")
+    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:24:2")
+    #print("############################")
+    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:22")
+    #print("############################")
+    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:20")
+    #print("############################")
+    #print(utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:35:2@S1:35:2"))
+    #print(utils.resolve_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:35:2@S1:35:2"))
+    #print("############################")
     
 
 

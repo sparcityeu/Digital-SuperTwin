@@ -67,7 +67,6 @@ def generate_stream_bench_sh(SuperTwin):
     if total_threads not in thread_set:
         thread_set.append(total_threads)
 
-    thread_set = list(sorted(thread_set))
     print("STREAM Benchmark thread set:", thread_set)
 
     ##Two possiblities, numa will have two different versions for number of threads that span
@@ -76,7 +75,7 @@ def generate_stream_bench_sh(SuperTwin):
     is_numa = utils.is_numa_td(td)
     stream_compiler_flags = ["-O3", "-DNTIMES=100", "-DOFFSET=0", "-DSTREAM_TYPE=double",
                              "-DSTREAM_ARRAY_SIZE=268435456", "-Wall", "-mcmodel=medium",
-                             "-qopenmp", "-shared-intel", "-qopt-streaming-stores always"]
+                             "-qopenmp", "-shared-intel"]
     
     stream_compiler_flags += vector_flags(vector)
     modifiers["environment"]["flags"] = stream_compiler_flags
@@ -85,7 +84,7 @@ def generate_stream_bench_sh(SuperTwin):
     make_lines = ["#!/bin/bash \n\n\n",
                   "source /opt/intel/oneapi/setvars.sh \n",
                   "make -C " + base + " " + "stream_" + vector + "\n\n",
-                  "mkdir /tmp/dt_probing/benchmarks/STREAM_RES \n"]
+                  "mkdir /tmp/dt_probing/benchmarks/STREAM_RES_" + SuperTwin.name + "\n"]
     
     writer = open("probing/benchmarks/compile_stream_bench.sh", "w+")
     for line in make_lines:
@@ -93,29 +92,33 @@ def generate_stream_bench_sh(SuperTwin):
     writer.close()
     maker = "bash /tmp/dt_probing/benchmarks/compile_stream_bench.sh"
     runs = {}
+    
     for thread in thread_set:
-        if(thread == 1):
-            thr_name = "t_" + str(thread)
-            exec_name = "./stream_" + vector
-            runs[thr_name] = "likwid-pin -c N:0 ./stream_" + vector + " &>> " + thr_name + ".txt"
+        thr_name = "t_" + str(thread)
+        modif_key = str(thread)
+        if(thread == 1):     ##Burasını environment'a yazmak lazım
+            runs[thr_name] = "likwid-pin -c N:0 ./stream_" + vector + " &>> ../STREAM_RES_" + SuperTwin.name + "/" + thr_name + ".txt"
             try:
-                modifiers[thr_name].append("likwid-pin -c N:0")
+                modifiers[modif_key].append("likwid-pin -c N:0")
             except:
-                modifiers[thr_name] = []
-                modifiers[thr_name].append("likwid-pin -c N:0")
+                modifiers[modif_key] = []
+                modifiers[modif_key].append("likwid-pin -c N:0")
         else:
-            thr_name = "t_" + str(thread) ##For normal
-            exec_name = "./stream_" + vector
-            runs[thr_name] = "likwid-pin -c N:0-" + str(thread-1) + " ./stream_" + vector + " &>> " + thr_name + ".txt"
+            pin_and_thread = "likwid-pin "
+            if(is_numa):
+                pin_and_thread += "-m "
+            pin_and_thread += "-c N:0-" + str(thread-1)
+            runs[thr_name] = pin_and_thread + " ./stream_" + vector + " &>> ../STREAM_RES_" + SuperTwin.name + "/" + thr_name + ".txt"
             try:
-                modifiers[thr_name].append("likwid-pin -c N:0-" + str(thread-1))
+                modifiers[modif_key].append(pin_and_thread)
             except:
-                modifiers[thr_name] = []
-                modifiers[thr_name].append("likwid-pin -c N:0" + str(thread-1))
+                modifiers[modif_key] = []
+                modifiers[modif_key].append(pin_and_thread)
+        '''
         if(is_numa and thread != 1):                               
             thr_name_numa = "t_" + str(thread) + "_numa" #For socket binding
-            per_socket = int(thread / 2)
-            #print("per_socket:", per_socket)
+            per_socket = int(thread / 2)          ##It turns out socket binding effect performance
+            #print("per_socket:", per_socket)     ##very bad
             exec_name = "./stream_" + vector
             ##Hardcoded for 2 nodes for now
             runs[thr_name_numa] = "likwid-pin -c S0:0-" + str(per_socket - 1) + "@S1:0-" + str(per_socket - 1)+ " ./stream_" + vector + " &>> " + thr_name_numa + ".txt"
@@ -125,7 +128,7 @@ def generate_stream_bench_sh(SuperTwin):
             except:
                 modifiers[thr_name_numa] = []
                 modifiers[thr_name_numa].append("likwid-pin -c S0:0- " + str(per_socket - 1) + "@S1:0-" + str(per_socket - 1))
-                        
+        '''                
 
     for key in runs:
         writer = open(SuperTwin.name + "_STREAM_" + key + ".sh", "w+")
@@ -185,14 +188,60 @@ def copy_file_to_remote(SuperTwin, f_name, remote_path="tmp/dt_files/"):
     except:
         remote_probe.run_command(ssh, SuperTwin.name, "mkdir /tmp/dt_files/")
         scp.put(f_name, remote_path=remote_path)
+
+def copy_file_to_local(SuperTwin, remote_path, local_path):
+
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(SuperTwin.addr, username = SuperTwin.SSHuser, password = SuperTwin.SSHpass)
+    scp = SCPClient(ssh.get_transport())
+    print("remote_path:", remote_path, "local_path:", local_path)
+    try:
+        scp.get(recursive=True, remote_path = remote_path, local_path = local_path)
+    except:
+        print("Can't get remote files..")
+
+def get_benchmark_observation_fields(td, script):
     
+    reader = open(script, "r")
+    lines = reader.readlines()
+    command = lines[3].strip("\n")
+    affinity = command.split("./")[0].strip(" ")
+    threads = utils.resolve_likwid_pin(td, affinity)
+    thread_count = len(threads)
+    observation = {}
+    observation["command"] = command
+    observation["affinity"] = affinity
+    observation["thread_count"] = thread_count
+    observation["threads"] = threads
+
+    return observation
+        
 def execute_stream_runs(SuperTwin, runs):
-    
+
+    td = utils.get_twin_description(SuperTwin)
+
     for key in runs:
         script_name = SuperTwin.name + "_STREAM_" + key + ".sh"
-        #copy_file_to_remote(SuperTwin, script_name)
         time, uid = observation.observe_script_wrap(SuperTwin, script_name)
+        
         print("Observation", uid, "is completed in", time, "seconds")
+        observation_dict = get_benchmark_observation_fields(td, script_name)
+        observation_dict["name"] = "STREAM_" + key
+        observation_dict["duration"] = time
+        observation_dict["uid"] = uid
+        observation_dict["metrics"] = {}
+        observation_dict["metrics"]["software"] = []
+        observation_dict["metrics"]["hardware"] = []
+        #observation["report"] = observation_standard.main()
+        for metric in SuperTwin.monitor_metrics:
+            if(metric.find("RAPL") == -1): ##RAPL is a hardware metric but monitored
+                observation_dict["metrics"]["software"].append(metric)
+        for metric in SuperTwin.observation_metrics:
+            observation_dict["metrics"]["hardware"].append(metric)
+        SuperTwin.update_twin_document__add_observation(observation_dict)
+        
+    copy_file_to_local(SuperTwin,  "/tmp/dt_probing/benchmarks/STREAM_RES_" + SuperTwin.name, "probing/benchmarks/")
 
 def execute_stream_bench(SuperTwin):
 
@@ -220,13 +269,13 @@ def execute_stream_bench(SuperTwin):
         
     remote_probe.run_command(ssh, SuperTwin.name, "mkdir /tmp/dt_probing/benchmarks/STREAM/STREAM_res_" + SuperTwin.name)
     remote_probe.run_sudo_command(ssh, SuperTwin.SSHpass, SuperTwin.name, "sh /tmp/dt_probing/benchmarks/STREAM/gen_bench.sh")
-    scp.get(recursive=True, remote_path = "/tmp/dt_probing/benchmarks/STREAM/STREAM_res_" + SuperTwin.name, local_path = "probing/benchmarks/")
+    scp.get(recursive=True, remote_path = "/tmp/dt_probing/benchmarks/STREAM/STREAM_RES_" + SuperTwin.name, local_path = "probing/benchmarks/")
     
 
 
 def parse_one_stream_res(res_mt_scale, one_res):
 
-    thread = one_res.split("/t")[1]
+    thread = one_res.split("t_")[1]
     thread = int(thread.split(".")[0])
     #print("file:", one_res, "threads:", thread)
 
@@ -257,7 +306,7 @@ def parse_one_stream_res(res_mt_scale, one_res):
     
 def parse_stream_bench(SuperTwin):
 
-    res_base = "probing/benchmarks/STREAM_res_" + SuperTwin.name
+    res_base = "probing/benchmarks/STREAM_RES_" + SuperTwin.name + "/"
     files = glob.glob(res_base + "*.txt")
 
     res_mt_scale = {}
@@ -266,7 +315,8 @@ def parse_stream_bench(SuperTwin):
     res_mt_scale["Add"] = {}
     res_mt_scale["Triad"] = {}
     res_mt_scale["Max_Thr"] = {}
-
+    
+        
     for _file in files:
         res_mt_scale = parse_one_stream_res(res_mt_scale, _file)
 

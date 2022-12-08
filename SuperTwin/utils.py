@@ -111,7 +111,7 @@ def get_influx_database(address, influxdb_name):
     influxdb = InfluxDBClient(host=host, port=port)
 
     return influxdb
-    
+
 def read_env():
     reader = open("env.txt", "r")
     lines = reader.readlines()
@@ -184,18 +184,21 @@ def check_state(addr):
     except:
         lines = []
 
+
+    #print("check_state: lines:", lines)
     for line in lines:
         #if(line.find("#---") == -1):
         fields = line.strip("\n").split("|")
+        
         if(addr == fields[1]):
             exist = True
             name = fields[0]
             addr = fields[1]
             twin_id = fields[2]
             collection_id = fields[3]
-            return exist, name, twin_id, collection_id
+            #return exist, name, twin_id, collection_id
             
-        return exist, name, twin_id, collection_id
+    return exist, name, twin_id, collection_id
 
 
 #Hyperthreading, on-off?
@@ -559,7 +562,6 @@ def get_system_dict_from_td(td):
 
     for key in td:
         if(key.find("system") != -1):
-            print("returning:", key)
             return td[key]
 
 
@@ -713,8 +715,110 @@ def first_thread_of_sockets(td):
 
     return first
 
+def find_socket_threads_td(td):
+
+    ts = {}
+    socket = -1
+    for key in td:
+        if(key.find("socket") != -1):
+            socket += 1
+            str_socket = str(socket)
+            ts[str_socket] = []
+            socket_content = td[key]["contents"]
+            for c_content in socket_content:
+                if (c_content["@type"] == "Relationship"):
+                    core = find_component(td, c_content["target"]) ##First core
+            
+                    for t_content in core["contents"]:
+                        if(t_content["@type"] == "Relationship"):
+                            thread = int(find_component(td, t_content["target"])["displayName"].strip("thread"))
+                            ts[str_socket].append(thread)
 
 
+    for key in ts:
+        ts[key] = list(sorted(ts[key]))
+        
+    return ts
+
+
+def prepare_st_likwid_pin(td, st_affinity):
+    
+    ret_str = ""
+    
+    is_numa = is_numa_td(td)
+    mt_info = get_multithreading_info(td)
+
+    no_sockets = mt_info["no_sockets"]
+    no_cores_per_socket = mt_info["no_cores_per_socket"]
+    no_threads_per_socket = mt_info["no_threads_per_socket"]
+    total_cores = mt_info["total_cores"]
+    total_threads = mt_info["total_threads"]
+
+    topology = find_socket_threads_td(td)
+    if(st_affinity.find("S") != -1): ##Socket
+               
+        sockets = st_affinity.split("@")
+
+        for idx, one_socket in enumerate(sockets):
+            socket_name = "S" + str(idx)
+            socket_idx = str(idx)
+            is_strided = bool(one_socket.count(":") > 1)
+            requested_threads = int(one_socket.split(":")[1])
+            ret_str += socket_name + ":"
+            
+            if(is_strided):
+                for i in range(requested_threads):
+                    if(i > no_cores_per_socket - 1):
+                        ret_str += str(topology[socket_idx][(i*2) - no_threads_per_socket - 1]) + ","
+                    else:
+                        ret_str += str(topology[socket_idx][i * 2]) + ","
+                ret_str = ret_str[:-1]
+            else:
+                for i in range(requested_threads):
+                    ret_str += str(topology[socket_idx][i]) + ","
+                ret_str = ret_str[:-1]
+            ret_str += "@"
+        ret_str = ret_str[:-1]
+
+    return ret_str ##(+likwid-pin -m -c)?
+            
+def resolve_st_likwid_pin(td, st_affinity):
+
+    resolved_threads = []
+    
+    is_numa = is_numa_td(td)
+    mt_info = get_multithreading_info(td)
+
+    no_sockets = mt_info["no_sockets"]
+    no_cores_per_socket = mt_info["no_cores_per_socket"]
+    no_threads_per_socket = mt_info["no_threads_per_socket"]
+    total_cores = mt_info["total_cores"]
+    total_threads = mt_info["total_threads"]
+    topology = find_socket_threads_td(td)
+    
+    if(st_affinity.find("S") != -1): ##Socket
+               
+        sockets = st_affinity.split("@")
+
+        for idx, one_socket in enumerate(sockets):
+            socket_name = "S" + str(idx)
+            socket_idx = str(idx)
+            is_strided = bool(one_socket.count(":") > 1)
+            requested_threads = int(one_socket.split(":")[1])
+
+            if(is_strided):
+                for i in range(requested_threads):
+                    if(i > no_cores_per_socket - 1):
+                        resolved_threads.append(topology[socket_idx][(i*2) - no_threads_per_socket - 1])
+                    else:
+                        resolved_threads.append(topology[socket_idx][i * 2])
+            else:
+                for i in range(requested_threads):
+                    resolved_threads.append(topology[socket_idx][i])
+
+    return list(sorted(resolved_threads)) ##(+likwid-pin -m -c)?
+    
+    
 def resolve_likwid_pin(td, affinity):
 
     print("Affinity:", affinity)
@@ -752,6 +856,7 @@ def resolve_likwid_pin(td, affinity):
                 range_start, range_end = thread.split("-")
                 for i in range(int(range_start), int(range_end)):
                     resolved_threads.append(i)
-                        
+
+    print("resolved threads:", resolved_threads)
     resolved_threads = list(sorted(resolved_threads))
     return resolved_threads

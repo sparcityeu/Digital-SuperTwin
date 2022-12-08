@@ -750,3 +750,91 @@ def disk_panel(datasource, _id, h, w, x, y, title):
     }
 
     return dp
+
+
+def general_panel(datasource, _id, h, w, x, y, title):
+
+    gp = {
+        "id": _id,
+        "gridPos": {
+            "h": h,
+            "w": w,
+            "x": x,
+            "y": y
+        },
+        "type": "timeseries",
+        "title": title,
+        "datasource": {
+            "type": "influxdb",
+            "uid": datasource
+        },
+        "pluginVersion": "9.2.2",
+        "fieldConfig": {
+            "defaults": {
+                "custom": {
+                    "drawStyle": "line",
+                    "lineInterpolation": "linear",
+                    "barAlignment": 0,
+                    "lineWidth": 2,
+                    "fillOpacity": 20,
+                    "gradientMode": "hue",
+                    "spanNulls": False,
+                    "showPoints": "auto",
+                    "pointSize": 5,
+                    "stacking": {
+                        "mode": "normal",
+                        "group": "A"
+                    },
+                    "axisPlacement": "auto",
+                    "axisLabel": "",
+                    "axisColorMode": "text",
+                    "scaleDistribution": {
+                        "type": "linear"
+                    },
+                    "axisCenteredZero": False,
+                    "hideFrom": {
+                        "tooltip": False,
+                        "viz": False,
+                        "legend": False
+                    },
+                    "thresholdsStyle": {
+                        "mode": "off"
+                    }
+                },
+                "color": {
+                    "mode": "palette-classic"
+                },
+                "mappings": [],
+                "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                        {
+                            "color": "green",
+                            "value": None
+                        },
+                        {
+                            "color": "red",
+                            "value": 80
+                        }
+                    ]
+                }
+            },
+            "overrides": []
+        },
+        "options": {
+            "tooltip": {
+                "mode": "single",
+                "sort": "none"
+            },
+            "legend": {
+                "showLegend": True,
+                "displayMode": "list",
+                "placement": "bottom",
+                "calcs": []
+            }
+        },
+        "targets": [],
+        "transparent": True
+    }
+
+    return gp

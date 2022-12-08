@@ -53,10 +53,12 @@ def observe_wrap(SuperTwin, command):
     sampling_process = Popen(sampling_args)
 
     start = timer()
+    ##start_reusetracker(affinity)
     stdin, stdout, stderr = ssh.exec_command(run_script)
     print("Executing -and observing- command", command, "on:", SuperTwin.name)
     exit_status = stdout.channel.recv_exit_status()
     end = timer()
+    ##stop_reusetracker(affinity)
     print("Took", end - start, "seconds")
     sampling_process.kill()
 
