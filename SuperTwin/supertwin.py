@@ -717,7 +717,31 @@ class SuperTwin:
         observation["report"] = observation_standard.main(self, observation)
         self.update_twin_document__add_observation(observation)
         
-        
+
+
+def resolve_test(my_superTwin, threads):
+
+    print("#############################################################################")
+    print("##Threads: ", threads)
+    compact_16 = utils.prepare_bind(my_superTwin, threads, "compact", -1)
+    balanced_16 = utils.prepare_bind(my_superTwin, threads, "balanced", -1)
+    compact_numa_16 = utils.prepare_bind(my_superTwin, threads, "compact numa", -1)
+    balanced_numa_16 = utils.prepare_bind(my_superTwin, threads, "balanced numa", -1)
+
+    print("##")
+    print("compact bind:", compact_16)
+    print("compact resolve:", utils.resolve_bind(my_superTwin, compact_16))
+    print("##")
+    print("balanced bind:", balanced_16)
+    print("balanced resolve:", utils.resolve_bind(my_superTwin, balanced_16))
+    print("##")
+    print("compact numa bind:", compact_numa_16)
+    print("compact numa resolve: ", utils.resolve_bind(my_superTwin, compact_numa_16))
+    print("##")
+    print("balanced numa bind:", balanced_numa_16)
+    print("balanced numa resolve: ", utils.resolve_bind(my_superTwin, balanced_numa_16))
+    print("#############################################################################")
+    
     
 if __name__ == "__main__":
 
@@ -736,25 +760,14 @@ if __name__ == "__main__":
     #my_superTwin.add_adcarm_benchmark()
     #my_superTwin.generate_roofline_dashboard()
 
-    compact_16 = utils.prepare_bind(my_superTwin, 16, "compact", -1)
-    balanced_16 = utils.prepare_bind(my_superTwin, 16, "balanced", -1)
-    compact_numa_16 = utils.prepare_bind(my_superTwin, 52, "compact numa", -1)
-    balanced_numa_16 = utils.prepare_bind(my_superTwin, 84, "balanced numa", -1)
-
-    print(compact_16)
-    print(balanced_16)
-    print(compact_numa_16)
-    print(balanced_numa_16)
-
-    print("compact:")
-    print(utils.resolve_bind(my_superTwin, compact_16))
-    print("balanced:")
-    print(utils.resolve_bind(my_superTwin, balanced_16))
-    print("compact numa:")
-    print(utils.resolve_bind(my_superTwin, compact_numa_16))
-    print("balanced numa:")
-    print(utils.resolve_bind(my_superTwin, balanced_numa_16))
     
+    #resolve_test(my_superTwin, 1)
+    resolve_test(my_superTwin, 2)
+    resolve_test(my_superTwin, 4)
+    resolve_test(my_superTwin, 6)
+    resolve_test(my_superTwin, 8)
+    resolve_test(my_superTwin, 64)
+    resolve_test(my_superTwin, 80)
     
 
 

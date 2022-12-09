@@ -757,16 +757,55 @@ def prepare_bind(SuperTwin, no_threads, affinity, policy):
     
     if(total_cores == total_threads):
         support_ht = False
+
+    numa_multip = 1
+    is_mnuma = is_numa(SuperTwin)
+    if(is_mnuma):
+        numa_multip *= 2
     
     base = "likwid-pin -q "
     if(policy != -1):
         base += affinity
     base += "-c "
-    
+
+    ##edge cases
+    ##these are edge cases that are not easily generalized
+    ##also catch them in resolve
+    if(no_threads == 1):
+        base += "N:0"
+        return base
+    if(no_threads == 2):
+        if(affinity == "compact"):
+            base += "N:0," + str(no_cores_per_socket * numa_multip)
+            return base
+        if(affinity == "balanced"):
+            base += "N:0-1"
+            return base
+        if(affinity == "compact numa" or affinity == "balanced numa"):
+            base += "S0:0@S1:0"
+            return base
+    if(no_threads == 4):
+        if(affinity == "compact"):
+            base += "N:0-1," + str(no_cores_per_socket * numa_multip) + "-" + str(no_cores_per_socket * numa_multip + 1)
+            return base
+        if(affinity == "balanced"):
+            base += "N:0-3"
+            return base
+        if(affinity == "compact numa"):
+            _per_socket = "0," + str(no_cores_per_socket)
+            base += "S0:" + _per_socket + "@" + "S1:" + _per_socket
+            return base
+        if(affinity == "balanced numa"):
+            base += "S0:0-1@S1:0-1"
+            return base
+            
     if(affinity == "compact"):
         per_comp = int(no_threads / 2)
-        base += "N:0-" + str(per_comp - 1) + ","
-        base += str(no_cores_per_socket) + "-" + str(no_cores_per_socket + (per_comp - 1))
+        if(per_comp > 1):
+            base += "N:0-" + str(per_comp - 1) + ","
+            base += str(no_cores_per_socket * numa_multip) + "-" + str(no_cores_per_socket * numa_multip + (per_comp - 1))
+        if(per_comp == 1):
+            base += "N:0," + str(no_cores_per_socket)
 
     elif(affinity == "balanced"):
         base += "N:0-" + str(no_threads - 1)
@@ -775,8 +814,18 @@ def prepare_bind(SuperTwin, no_threads, affinity, policy):
         per_node = int(no_threads / 2)
         per_comp = int(per_node / 2)
 
+        if(per_node == 1):
+            base += "S0:0-1@S1:0-1"
+            return base
+        elif(per_comp == 1):
+            base += "S0:0," + str(no_cores_per_socket) + "@" + "S1:0," + str(no_cores_per_socket)
+            return base
+
         comp0_start = 0
         comp1_start = no_cores_per_socket
+
+        #print("comp0_start", comp0_start, "comp1_start", comp1_start, "per_node:", per_node,
+        #"per_comp", per_comp)
 
         _str = str(comp0_start) + "-" + str(comp0_start + per_comp - 1) + "," + str(comp1_start) + "-" + str(comp1_start + per_comp - 1)
 
@@ -785,6 +834,11 @@ def prepare_bind(SuperTwin, no_threads, affinity, policy):
 
     elif(affinity == "balanced numa"):
         per_node = int(no_threads / 2)
+
+        if(per_node == 1):
+            base += "S0:0-1@S1:0-1"
+            return base
+        
         base += "S0:0-" + str(per_node - 1) + "@"
         base += "S1:0-" + str(per_node - 1)
 
@@ -815,11 +869,36 @@ def resolve_bind(SuperTwin, bind):
     except:
         bind = bind.strip("likwid-pin -q -c ")
 
+
+    ##edge cases
+    ##these are edge cases that are not easily generalized
+    if(bind == "N:0," + str(no_cores_per_socket)):
+        return [0, no_cores_per_socket] ##Two threads compact
+    if(bind == "N:0," + str(no_cores_per_socket * 2)):
+        return [0, no_cores_per_socket * 2] ##Two threads compact but machine is numa :)
+    if(bind == "N:0-1"):
+        return [0,1] ##Two threads balanced
+    if(bind == "S0:0@S1:0"):
+        return [0, no_cores_per_socket] ##Two threads numa balance or compact
+    if(bind == "N:0-1," + str(no_cores_per_socket) + "-" + str(no_cores_per_socket + 1)):
+        return [0, 1, no_cores_per_socket, no_cores_per_socket + 1] ##Four threads compact
+    if(bind == "N:0-3"): 
+        return [0,1,2,3] ##Four threads balanced
+    
+    _per_socket = "0," + str(no_cores_per_socket)
+    if(bind == "S0:" + _per_socket + "@" + "S1:" + _per_socket):
+        return [0, no_cores_per_socket, no_cores_per_socket * 2, no_cores_per_socket * 3] #4 threads numa compact
+    if(bind == "S0:0-1@S1:0-1"):
+        return [0,1,no_cores_per_socket, no_cores_per_socket + 1] ##4 threads numa balanced
+        
+    
     if(bind.find("@") == -1 and bind.find("-") == -1 and bind.find(",") == -1): ##Single threaded bind
+        print("T:Single threaded")
         thread = int(bind.strip("N:"))
         return([thread])
 
     if(bind.find("@") == -1 and bind.find("-") != -1 and bind.find(",") == -1): ##Single socket balanced
+        print("T:Single socket balanced")
         bind = bind.strip("N:")
         
         _from = int(bind.split("-")[0])
@@ -829,6 +908,7 @@ def resolve_bind(SuperTwin, bind):
             involved_threads.append(i)
 
     if(bind.find("@") == -1 and bind.find("-") != -1 and bind.find(",") != -1): ##Single socket compact
+        print("T:Single socket compact")
         bind = bind.strip("N:")
         
         for bind_part in bind.split(","):
@@ -839,7 +919,8 @@ def resolve_bind(SuperTwin, bind):
                 involved_threads.append(i)
         
     if(bind.find("@") != -1 and bind.find(",") == -1): ##numa balanced
-        
+
+        print("T:Numa balanced")
         first_socket = bind.split("@")[0].strip("S0").strip(":") ##We know that other socket is identical
         _from_first = int(first_socket.split("-")[0])
         _to_first = int(first_socket.split("-")[1])
@@ -855,12 +936,11 @@ def resolve_bind(SuperTwin, bind):
             involved_threads.append(i + no_cores_per_socket) ##For second socket
 
     if(bind.find("@") != -1 and bind.find(",") != -1): ##numa compact
+        print("T:Numa compact")
         first_socket = bind.split("@")[0].strip("S0").strip(":") ##We know that other socket is identical
         first_comp = first_socket.split(",")[0]
         second_comp = first_socket.split(",")[1]
 
-        print("bind:", bind, "first_comp:", first_comp, "second_comp:", second_comp)
-        
         _from_first = int(first_comp.split("-")[0])
         _to_first = int(first_comp.split("-")[1])
 
@@ -876,15 +956,12 @@ def resolve_bind(SuperTwin, bind):
         _from_first = int(second_comp.split("-")[0])
         _to_first = int(second_comp.split("-")[1])
 
-        print("!!!!!threads after first comp:", involved_threads)
-        
+                
         for i in range(_from_first, _to_first + 1):
-            print("0-i:", i)
             if(i > no_cores_per_socket - 1):
                 i += no_cores_per_socket
             involved_threads.append(i)
         for i in range(_from_first, _to_first + 1):
-            print("1-i:", i)
             if(i > no_cores_per_socket - 1):
                 i += no_cores_per_socket
             involved_threads.append(i + no_cores_per_socket) ##For second socket
