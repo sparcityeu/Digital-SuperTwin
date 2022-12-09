@@ -130,10 +130,10 @@ def generate_hpcg_bench_sh(SuperTwin, HPCG_PARAM):
                 affinity = "likwid-pin -c N:0-" + str(thread - 1) + " ./xhpcg_" + vecmsr
                 runs[thr_name] = affinity
                 try:
-                    modifiers[modif_key] = affinity.split(" ./xhpcg")[0]
+                    modifiers[modif_key].append(affinity.split(" ./xhpcg")[0])
                 except:
                     modifiers[modif_key] = []
-                    modifiers[modif_key] = affinity.split(" ./xhpcg")[0]
+                    modifiers[modif_key].append(affinity.split(" ./xhpcg")[0])
 
                 
     for key in runs:
@@ -145,7 +145,7 @@ def generate_hpcg_bench_sh(SuperTwin, HPCG_PARAM):
 
     print("HPCG benchmark run scripts generated")
 
-    
+    print("modifiers here:", modifiers)
     return modifiers, runs
 
     

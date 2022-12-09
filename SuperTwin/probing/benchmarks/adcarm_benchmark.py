@@ -402,9 +402,13 @@ def get_threads(files):
 
 def parse_adcarm_bench(SuperTwin):
     ##SuperTwin.name
-    adcarm_base = "probing/benchmarks/adCARM_RES_" + SuperTwin.name
 
+    path = detect_utils.cmd("pwd")[1].strip("\n")
+    adcarm_base = "/probing/benchmarks/adCARM_RES_" + SuperTwin.name + "/"
+    adcarm_base = path + adcarm_base
+    print("adcarm_base:", adcarm_base)
     files = glob.glob(adcarm_base + "*.out")
+    print("files:", files)
             
     adcarm_res = {}
     adcarm_res["threads"] = {}

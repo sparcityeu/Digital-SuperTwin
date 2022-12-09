@@ -214,10 +214,10 @@ class SuperTwin:
             self.generate_monitoring_dashboard()
             
             ##benchmark functions
-            self.add_stream_benchmark()
-            self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
-            self.add_adcarm_benchmark()
-            self.generate_roofline_dashboard()
+            #self.add_stream_benchmark()
+            #self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
+            #self.add_adcarm_benchmark()
+            #self.generate_roofline_dashboard()
             
             register_twin_state(self)
             
@@ -512,7 +512,7 @@ class SuperTwin:
     def add_adcarm_benchmark(self):
         adcarm_config = adcarm_benchmark.generate_adcarm_config(self)
         adcarm_modifiers = adcarm_benchmark.generate_adcarm_bench_sh(self, adcarm_config)
-        #adcarm_benchmark.execute_adcarm_bench(self)
+        adcarm_benchmark.execute_adcarm_bench(self)
         adcarm_res = adcarm_benchmark.parse_adcarm_bench(self)
                         
         self.update_twin_document__add_adcarm_benchmark(adcarm_modifiers, adcarm_res)
@@ -730,62 +730,31 @@ if __name__ == "__main__":
         addr = args[1]
         my_superTwin = SuperTwin(addr) ##Re-construct
 
-        
-    #my_superTwin.generate_monitoring_dashboard()
-    #my_superTwin.generate_roofline_dashboard()
-    #roofline_dashboard.generate_info_panel(my_superTwin)
-    #roofline_dashboard.generate_stream_panel(my_superTwin)
-    #my_superTwin = SuperTwin(addr, user_name, password) ##Re-construct
-    #my_superTwin.update_twin_document__assert_new_monitor_pid()
 
-    ##Nice, it works
-    #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c S0:0"))
-    #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c S0:0-8"))
-    #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c S1:2-8,6"))
-    #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c S0:0-8,11,17@S1:0-6,10"))
-    #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c N:0"))
-    #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c N:0,2,22,67"))
-    #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c N:0-16,21"))
-    #print("Threads:", utils.resolve_likwid_pin(utils.get_twin_description(my_superTwin), "likwid-pin -c N:0-16,22-41,65-79"))
-
-    #print("####Manually adding stream benchmark")
     #my_superTwin.add_stream_benchmark()
-    #print("####")
-    #print("####Manually adding roofline benchmark")
+    #my_superTwin.add_hpcg_benchmark(HPCG_PARAM) 
     #my_superTwin.add_adcarm_benchmark()
-    #print("####")
-    #print("####Manually adding hpcg benchmark")
-    #my_superTwin.add_hpcg_benchmark(HPCG_PARAM)
-    #print("####")
+    #my_superTwin.generate_roofline_dashboard()
 
-    #print("############################")
-    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:1@S1:1")
-    #print("############################")
-    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:5:2@S1:5:2")
-    #print("############################")
-    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:12:2@S1:12:2")
-    #print("############################")
-    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:24:2@S1:24:2")
-    #print("############################")
-    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:22@S1:22")
-    #print("############################")
-    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:20@S1:20")
-    #print("############################")
-    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:1")
-    #print("############################")
-    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:5:2")
-    #print("############################")
-    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:12:2")
-    #print("############################")
-    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:24:2")
-    #print("############################")
-    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:22")
-    #print("############################")
-    #utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:20")
-    #print("############################")
-    #print(utils.prepare_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:35:2@S1:35:2"))
-    #print(utils.resolve_st_likwid_pin(utils.get_twin_description(my_superTwin), "S0:35:2@S1:35:2"))
-    #print("############################")
+    compact_16 = utils.prepare_bind(my_superTwin, 16, "compact", -1)
+    balanced_16 = utils.prepare_bind(my_superTwin, 16, "balanced", -1)
+    compact_numa_16 = utils.prepare_bind(my_superTwin, 52, "compact numa", -1)
+    balanced_numa_16 = utils.prepare_bind(my_superTwin, 84, "balanced numa", -1)
+
+    print(compact_16)
+    print(balanced_16)
+    print(compact_numa_16)
+    print(balanced_numa_16)
+
+    print("compact:")
+    print(utils.resolve_bind(my_superTwin, compact_16))
+    print("balanced:")
+    print(utils.resolve_bind(my_superTwin, balanced_16))
+    print("compact numa:")
+    print(utils.resolve_bind(my_superTwin, compact_numa_16))
+    print("balanced numa:")
+    print(utils.resolve_bind(my_superTwin, balanced_numa_16))
+    
     
 
 

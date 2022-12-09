@@ -381,8 +381,8 @@ def generate_carm_roofline(SuperTwin): ##THREADS as a parameter to redraw for ob
     #empty_dash["panels"] = []
 
     ai = np.linspace(0.00390625, 2048, num=10000)
-    data = adcarm_benchmark.parse_adcarm_bench()
-
+    #data = adcarm_benchmark.parse_adcarm_bench()
+    data = adcarm_benchmark.parse_adcarm_bench(SuperTwin) ##This is not good coding
     ###
     
     fig = go.Figure(layout={})
@@ -392,7 +392,7 @@ def generate_carm_roofline(SuperTwin): ##THREADS as a parameter to redraw for ob
     #print("carm res:", carm_res.keys())
     #print("###############")
     carm_res = get_carm_res_from_dt(SuperTwin)
-    #print("carm res:", carm_res.keys())
+    print("carm res:", carm_res.keys())
     
     
     print("carm_res:", carm_res.keys())
@@ -415,10 +415,10 @@ def generate_carm_roofline(SuperTwin): ##THREADS as a parameter to redraw for ob
     print("hpcg marks:", hpcg_marks)
     ##hpcg marks
 
-    marker_symbols = {'spmv numa bind': 'cross-open', 'ddot numa bind': 'x-open',
-                      'waxpby numa bind': 'hash-open'}
+    marker_symbols = {'spmv': 'cross-open', 'ddot': 'x-open',
+                      'waxpby': 'hash-open'}
     
-    hpcg_ai = {'spmv numa bind': 0.25, 'waxpby numa bind': 0.125, 'ddot numa bind': 0.125}
+    hpcg_ai = {'spmv': 0.25, 'waxpby': 0.125, 'ddot': 0.125}
     
     next_color = -1
     
@@ -599,10 +599,22 @@ def generate_info_panel(SuperTwin):
         domain = {'row': 2, 'column': 0}
     ))
 
+    l2mb = False
+    strip = ""
+    suffix = ""
+    if(data["l2cache_size"].find("MB") != -1):
+        l2mb = True
+    if(l2mb):
+        strip = " MB"
+        suffix = "MB"
+    else:
+        strip = " kB"
+        suffix = " kB"
+        
     fig.add_trace(go.Indicator(
         mode = "number",
-        value = int(data["l2cache_size"].strip(" MB")),
-        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": "MB"},
+        value = int(data["l2cache_size"].strip(strip)),
+        number = {"font": {"color": "black", "size": number_size}, "prefix": "", "suffix": suffix},
         title = {"text": "L2 Cache Size", "font": {"color": "gray", "size": title_size}},
         domain = {'row': 2, 'column': 1}
     ))
@@ -729,7 +741,7 @@ def get_stream_bench_data(td):
                         affinity = ""
                         try:
                             affinity = result["@modifier"][1].split(" ")[-1]
-                            name += " numa bind"
+                            #name += " numa bind"
                         except:
                             pass
                         _res = float(result["@result"])
@@ -805,7 +817,7 @@ def get_hpcg_bench_data(td):
                         affinity = ""
                         try:
                             affinity = result["@modifier"][1].split(" ")[-1]
-                            name += " numa bind" ## This may change later
+                            #name += " numa bind" ## This may change later
                         except:
                             pass
                         _res = float(result["@result"])
@@ -859,18 +871,18 @@ def generate_roofline_dashboard(SuperTwin):
     next_color = -1
     info_fig = generate_info_panel(SuperTwin)
     next_color = -1
-    stream_bench_fig = generate_stream_panel(SuperTwin)
-    hpcg_bench_fig = generate_hpcg_panel(SuperTwin)
+    #stream_bench_fig = generate_stream_panel(SuperTwin)
+    #hpcg_bench_fig = generate_hpcg_panel(SuperTwin)
     
     dict_roofline_fig = obs.json.loads(io.to_json(roofline_fig))
     empty_dash["panels"].append(rdp.two_templates_one(dict_roofline_fig["data"],
                                                       dict_roofline_fig["layout"]))
-
+    
     dict_info_fig = obs.json.loads(io.to_json(info_fig))
     empty_dash["panels"].append(rdp.two_templates_two(dict_info_fig["data"],
                                                       dict_info_fig["layout"]))
 
-    
+    '''
     dict_stream_bench_fig = obs.json.loads(io.to_json(stream_bench_fig))
     empty_dash["panels"].append(rdp.two_templates_three(dict_stream_bench_fig["data"],
                                                         dict_stream_bench_fig["layout"],
@@ -881,7 +893,7 @@ def generate_roofline_dashboard(SuperTwin):
     empty_dash["panels"].append(rdp.two_templates_three(dict_hpcg_bench_fig["data"],
                                                         dict_hpcg_bench_fig["layout"],
                                                         11, 9, 9, 16))
-
+    '''
     print("Upload?")
     ###
     json_dash_obj = obs.get_dashboard_json(empty_dash, overwrite = False)

@@ -741,122 +741,160 @@ def find_socket_threads_td(td):
     return ts
 
 
-def prepare_st_likwid_pin(td, st_affinity):
-    
-    ret_str = ""
-    
-    is_numa = is_numa_td(td)
-    mt_info = get_multithreading_info(td)
 
+
+def prepare_bind(SuperTwin, no_threads, affinity, policy):
+
+    td = get_twin_description(SuperTwin)
+    
+    mt_info = get_multithreading_info(td)
     no_sockets = mt_info["no_sockets"]
     no_cores_per_socket = mt_info["no_cores_per_socket"]
     no_threads_per_socket = mt_info["no_threads_per_socket"]
     total_cores = mt_info["total_cores"]
     total_threads = mt_info["total_threads"]
-
-    topology = find_socket_threads_td(td)
-    if(st_affinity.find("S") != -1): ##Socket
-               
-        sockets = st_affinity.split("@")
-
-        for idx, one_socket in enumerate(sockets):
-            socket_name = "S" + str(idx)
-            socket_idx = str(idx)
-            is_strided = bool(one_socket.count(":") > 1)
-            requested_threads = int(one_socket.split(":")[1])
-            ret_str += socket_name + ":"
-            
-            if(is_strided):
-                for i in range(requested_threads):
-                    if(i > no_cores_per_socket - 1):
-                        ret_str += str(topology[socket_idx][(i*2) - no_threads_per_socket - 1]) + ","
-                    else:
-                        ret_str += str(topology[socket_idx][i * 2]) + ","
-                ret_str = ret_str[:-1]
-            else:
-                for i in range(requested_threads):
-                    ret_str += str(topology[socket_idx][i]) + ","
-                ret_str = ret_str[:-1]
-            ret_str += "@"
-        ret_str = ret_str[:-1]
-
-    return ret_str ##(+likwid-pin -m -c)?
-            
-def resolve_st_likwid_pin(td, st_affinity):
-
-    resolved_threads = []
+    support_ht = True
     
-    is_numa = is_numa_td(td)
-    mt_info = get_multithreading_info(td)
+    if(total_cores == total_threads):
+        support_ht = False
+    
+    base = "likwid-pin -q "
+    if(policy != -1):
+        base += affinity
+    base += "-c "
+    
+    if(affinity == "compact"):
+        per_comp = int(no_threads / 2)
+        base += "N:0-" + str(per_comp - 1) + ","
+        base += str(no_cores_per_socket) + "-" + str(no_cores_per_socket + (per_comp - 1))
 
+    elif(affinity == "balanced"):
+        base += "N:0-" + str(no_threads - 1)
+        
+    elif(affinity == "compact numa"):
+        per_node = int(no_threads / 2)
+        per_comp = int(per_node / 2)
+
+        comp0_start = 0
+        comp1_start = no_cores_per_socket
+
+        _str = str(comp0_start) + "-" + str(comp0_start + per_comp - 1) + "," + str(comp1_start) + "-" + str(comp1_start + per_comp - 1)
+
+        base += "S0:" + _str + "@"
+        base += "S1:" + _str
+
+    elif(affinity == "balanced numa"):
+        per_node = int(no_threads / 2)
+        base += "S0:0-" + str(per_node - 1) + "@"
+        base += "S1:0-" + str(per_node - 1)
+
+
+    return base
+
+
+def resolve_bind(SuperTwin, bind):
+
+    involved_threads = []
+    
+    td = get_twin_description(SuperTwin)
+    first_threads = first_thread_of_sockets(td)
+    
+    mt_info = get_multithreading_info(td)
     no_sockets = mt_info["no_sockets"]
     no_cores_per_socket = mt_info["no_cores_per_socket"]
     no_threads_per_socket = mt_info["no_threads_per_socket"]
     total_cores = mt_info["total_cores"]
     total_threads = mt_info["total_threads"]
-    topology = find_socket_threads_td(td)
+    support_ht = True
     
-    if(st_affinity.find("S") != -1): ##Socket
-               
-        sockets = st_affinity.split("@")
+    if(total_cores == total_threads):
+        support_ht = False
 
-        for idx, one_socket in enumerate(sockets):
-            socket_name = "S" + str(idx)
-            socket_idx = str(idx)
-            is_strided = bool(one_socket.count(":") > 1)
-            requested_threads = int(one_socket.split(":")[1])
+    try:
+        bind = bind.strip("likwid-pin -q -m -c ")
+    except:
+        bind = bind.strip("likwid-pin -q -c ")
 
-            if(is_strided):
-                for i in range(requested_threads):
-                    if(i > no_cores_per_socket - 1):
-                        resolved_threads.append(topology[socket_idx][(i*2) - no_threads_per_socket - 1])
-                    else:
-                        resolved_threads.append(topology[socket_idx][i * 2])
-            else:
-                for i in range(requested_threads):
-                    resolved_threads.append(topology[socket_idx][i])
+    if(bind.find("@") == -1 and bind.find("-") == -1 and bind.find(",") == -1): ##Single threaded bind
+        thread = int(bind.strip("N:"))
+        return([thread])
 
-    return list(sorted(resolved_threads)) ##(+likwid-pin -m -c)?
-    
-    
-def resolve_likwid_pin(td, affinity):
+    if(bind.find("@") == -1 and bind.find("-") != -1 and bind.find(",") == -1): ##Single socket balanced
+        bind = bind.strip("N:")
+        
+        _from = int(bind.split("-")[0])
+        _to = int(bind.split("-")[1])
 
-    print("Affinity:", affinity)
-    
-    first = first_thread_of_sockets(td)
-    resolved_threads = []
+        for i in range(_from, _to + 1):
+            involved_threads.append(i)
 
-    if(affinity.find("N") == -1): ##Socket notation
-    
-        sockets = affinity.strip("likwid-pin -c ")
-        sockets = sockets.split("@")
+    if(bind.find("@") == -1 and bind.find("-") != -1 and bind.find(",") != -1): ##Single socket compact
+        bind = bind.strip("N:")
+        
+        for bind_part in bind.split(","):
+            _from = int(bind_part.split("-")[0])
+            _to = int(bind_part.split("-")[1])
 
-        for socket_str in sockets:
-            socket,threads = socket_str.split(":")
-            socket = socket.strip("S")
-            first_thr = first[socket]
+            for i in range(_from, _to + 1):
+                involved_threads.append(i)
+        
+    if(bind.find("@") != -1 and bind.find(",") == -1): ##numa balanced
+        
+        first_socket = bind.split("@")[0].strip("S0").strip(":") ##We know that other socket is identical
+        _from_first = int(first_socket.split("-")[0])
+        _to_first = int(first_socket.split("-")[1])
+
+        for i in range(_from_first, _to_first + 1):
+            if(i > no_cores_per_socket - 1):
+                i += no_cores_per_socket
+            involved_threads.append(i)
             
-            all_threads = threads.split(",")
-            for thread in all_threads:
-                if(thread.find("-") == -1):
-                    resolved_threads.append(first[socket] + int(thread))
-                else:
-                    range_start, range_end = thread.split("-")
-                    for i in range(int(range_start), int(range_end)):
-                        resolved_threads.append(first[socket] + i)
+        for i in range(_from_first, _to_first + 1):
+            if(i > no_cores_per_socket - 1):
+                i += no_cores_per_socket
+            involved_threads.append(i + no_cores_per_socket) ##For second socket
 
-    else: ##Thread notation
+    if(bind.find("@") != -1 and bind.find(",") != -1): ##numa compact
+        first_socket = bind.split("@")[0].strip("S0").strip(":") ##We know that other socket is identical
+        first_comp = first_socket.split(",")[0]
+        second_comp = first_socket.split(",")[1]
 
-        _all = affinity.strip("likwid-pin -c N:")
-        _all_threads = _all.split(",")
-        for thread in _all_threads:
-            if(thread.find("-") == -1):
-                resolved_threads.append(int(thread))
-            else:
-                range_start, range_end = thread.split("-")
-                for i in range(int(range_start), int(range_end)):
-                    resolved_threads.append(i)
+        print("bind:", bind, "first_comp:", first_comp, "second_comp:", second_comp)
+        
+        _from_first = int(first_comp.split("-")[0])
+        _to_first = int(first_comp.split("-")[1])
 
-    print("resolved threads:", resolved_threads)
-    resolved_threads = list(sorted(resolved_threads))
-    return resolved_threads
+        for i in range(_from_first, _to_first + 1):
+            if(i > no_cores_per_socket - 1):
+                i += no_cores_per_socket
+            involved_threads.append(i)
+        for i in range(_from_first, _to_first + 1):
+            if(i > no_cores_per_socket - 1):
+                i += no_cores_per_socket
+            involved_threads.append(i + no_cores_per_socket) ##For second socket
+
+        _from_first = int(second_comp.split("-")[0])
+        _to_first = int(second_comp.split("-")[1])
+
+        print("!!!!!threads after first comp:", involved_threads)
+        
+        for i in range(_from_first, _to_first + 1):
+            print("0-i:", i)
+            if(i > no_cores_per_socket - 1):
+                i += no_cores_per_socket
+            involved_threads.append(i)
+        for i in range(_from_first, _to_first + 1):
+            print("1-i:", i)
+            if(i > no_cores_per_socket - 1):
+                i += no_cores_per_socket
+            involved_threads.append(i + no_cores_per_socket) ##For second socket
+            
+    print("len:", len(involved_threads))
+    return involved_threads
+    #return list(sorted(involved_threads))
+            
+        
+            
+
+        
+            
