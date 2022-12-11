@@ -764,8 +764,10 @@ def prepare_bind(SuperTwin, no_threads, affinity, policy):
         numa_multip *= 2
     
     base = "likwid-pin -q "
-    if(policy != -1):
-        base += affinity
+    if(policy != -1 and policy == "m"):
+        base += "-m "
+    if(policy != -1 and policy == "i"):
+        base += "-i "
     base += "-c "
 
     ##edge cases

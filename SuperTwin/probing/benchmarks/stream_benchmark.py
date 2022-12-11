@@ -37,8 +37,7 @@ def generate_stream_bench_sh(SuperTwin):
     
     td = utils.get_twin_description(SuperTwin)
     mt_info = utils.get_multithreading_info(td)
-    
-    
+        
     no_sockets = mt_info["no_sockets"]
     no_cores_per_socket = mt_info["no_cores_per_socket"]
     no_threads_per_socket = mt_info["no_threads_per_socket"]
@@ -114,22 +113,7 @@ def generate_stream_bench_sh(SuperTwin):
             except:
                 modifiers[modif_key] = []
                 modifiers[modif_key].append(pin_and_thread)
-        '''
-        if(is_numa and thread != 1):                               
-            thr_name_numa = "t_" + str(thread) + "_numa" #For socket binding
-            per_socket = int(thread / 2)          ##It turns out socket binding effect performance
-            #print("per_socket:", per_socket)     ##very bad
-            exec_name = "./stream_" + vector
-            ##Hardcoded for 2 nodes for now
-            runs[thr_name_numa] = "likwid-pin -c S0:0-" + str(per_socket - 1) + "@S1:0-" + str(per_socket - 1)+ " ./stream_" + vector + " &>> " + thr_name_numa + ".txt"
-            
-            try:
-                modifiers[thr_name_numa].append("likwid-pin -c S0:0- " + str(per_socket - 1) + "@S1:0-" + str(per_socket - 1))
-            except:
-                modifiers[thr_name_numa] = []
-                modifiers[thr_name_numa].append("likwid-pin -c S0:0- " + str(per_socket - 1) + "@S1:0-" + str(per_socket - 1))
-        '''                
-
+                
     for key in runs:
         writer = open(SuperTwin.name + "_STREAM_" + key + ".sh", "w+")
         writer.write("#!/bin/bash" + "\n")

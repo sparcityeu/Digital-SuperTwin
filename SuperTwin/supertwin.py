@@ -19,6 +19,7 @@ import influx_help
 import observation_standard
 import roofline_dashboard
 import monitoring_dashboard
+import monitoring_dashboard_modular as mdm
 
 import static_data
 
@@ -103,7 +104,7 @@ def register_twin_state(SuperTwin):
     meta["twin_state"]["monitor_metrics"] = SuperTwin.monitor_metrics
     meta["twin_state"]["observation_metrics"] = SuperTwin.observation_metrics
     meta["twin_state"]["grafana_datasource"] = SuperTwin.grafana_datasource
-    
+        
     db.replace_one({"_id": ObjectId(SuperTwin.mongodb_id)}, meta)
     
     print("Twin state is registered to db..")
@@ -159,6 +160,7 @@ class SuperTwin:
             self.monitor_pid = meta["monitor_pid"]
             self.roofline_dashboard = meta["roofline_dashboard"]
             self.monitoring_dashboard = meta["monitoring_dashboard"]
+            self.pcp_pids = meta["pcp_pids"]
             
             print("SuperTwin is reconstructed from db..")
 
@@ -193,7 +195,7 @@ class SuperTwin:
             self.mongodb_id = insert_twin_description(get_twin_description(self.prob_file),self)
             print("Collection id:", self.mongodb_id)
             #self.monitor_pid = sampling.main(self.name, self.addr, self.influxdb_name, self.monitor_tag, self.monitor_metrics)
-
+            self.pcp_pids = sampling.get_pcp_pids(self)
             #benchmark members
             self.benchmarks = 0
             self.benchmark_results = 0
@@ -762,12 +764,24 @@ if __name__ == "__main__":
 
     
     #resolve_test(my_superTwin, 1)
-    resolve_test(my_superTwin, 2)
-    resolve_test(my_superTwin, 4)
-    resolve_test(my_superTwin, 6)
-    resolve_test(my_superTwin, 8)
-    resolve_test(my_superTwin, 64)
-    resolve_test(my_superTwin, 80)
-    
+    #resolve_test(my_superTwin, 2)
+    #resolve_test(my_superTwin, 4)
+    #resolve_test(my_superTwin, 6)
+    #resolve_test(my_superTwin, 8)
+    #resolve_test(my_superTwin, 64)
+    #resolve_test(my_superTwin, 80)
+
+    #my_superTwin.update_twin_document__assert_new_monitor_pid()
+
+    '''
+    empty_dash = mdm.generate_empty_dash(my_superTwin)
+    empty_dash = mdm.name_panel(my_superTwin, empty_dash)
+    empty_dash = mdm.freq_clock_panel(my_superTwin, 5, 5, 5, 5, [2,6,7,22,23,65], empty_dash)
+    empty_dash = mdm.stat_panel(my_superTwin, 5, 5, 5, 5, "continuous-GrYlRd", "kernel_pernode_cpu_idle", empty_dash)
+    url = mdm.upload_dashboard(my_superTwin, empty_dash)
+    print("url here:", url)
+    '''
+
+    sampling.get_pcp_pids(my_superTwin)
 
 

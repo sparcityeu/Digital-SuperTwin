@@ -44,7 +44,146 @@ def get_date_tag():
 
     return tag_date
 
+def add_pcp(SuperTwin, config_lines):
 
+    #"4186626 /var/lib/pcp/pmdas/root/pmdaroot"
+    
+    pcp_lines = ["pcp_pmproxy_mem = pcp_pmproxy_mem \n",
+                 "pcp_pmproxy_mem.formula = proc.psinfo.rss \n",
+                 'pcp_pmproxy_mem.instances = ' + '"' + SuperTwin.pcp_pids["pmproxy"] + ' /usr/lib/pcp/bin/pmproxy' + '"' + '\n'
+                 'pcp_pmproxy_mem.label = "pcp_pmproxy_mem" \n',
+                                 
+                 "pcp_pmproxy_cpu = pcp_pmproxy_cpu\n",
+                 "pcp_pmproxy_cpu.formula = 0.1 * (proc.psinfo.utime + proc.psinfo.stime) \n",
+                 'pcp_pmproxy_cpu.instances = ' + '"' + SuperTwin.pcp_pids["pmproxy"] + ' /usr/lib/pcp/bin/pmproxy' + '"' + '\n',
+                 'pcp_pmproxy_cpu.label = "pcp_pmproxy_cpu" \n',
+                 ##
+                 "pcp_pmie_mem = pcp_pmie_mem \n",
+                 "pcp_pmie_mem.formula = proc.psinfo.rss \n",
+                 'pcp_pmie_mem.instances = ' + '"' + SuperTwin.pcp_pids["pmie"] + ' /usr/bin/pmie' + '"' + '\n'
+                 'pcp_pmie_mem.label = "pcp_pmie_mem" \n',
+                                 
+                 "pcp_pmie_cpu = pcp_pmie_cpu\n",
+                 "pcp_pmie_cpu.formula = 0.1 * (proc.psinfo.utime + proc.psinfo.stime) \n",
+                 'pcp_pmie_cpu.instances = ' + '"' + SuperTwin.pcp_pids["pmie"] + ' /usr/bin/pmie' + '"' + '\n',
+                 'pcp_pmie_cpu.label = "pcp_pmie_cpu" \n',
+                 ##
+                 "pcp_pmcd_mem = pcp_pmcd_mem \n",
+                 "pcp_pmcd_mem.formula = proc.psinfo.rss \n",
+                 'pcp_pmcd_mem.instances = ' + '"' + SuperTwin.pcp_pids["pmcd"] + ' /usr/lib/pcp/bin/pmcd' + '"' + '\n'
+                 'pcp_pmcd_mem.label = "pcp_pmproxy_mem" \n',
+                                 
+                 "pcp_pmcd_cpu = pcp_pmcd_cpu\n",
+                 "pcp_pmcd_cpu.formula = 0.1 * (proc.psinfo.utime + proc.psinfo.stime) \n",
+                 'pcp_pmcd_cpu.instances = ' + '"' + SuperTwin.pcp_pids["pmcd"] + ' /usr/lib/pcp/bin/pmcd' + '"' + '\n',
+                 'pcp_pmcd_cpu.label = "pcp_pmproxy_cpu" \n',
+                 ##
+                 "pcp_pmdaproc_mem = pcp_pmdaproc_mem \n",
+                 "pcp_pmdaproc_mem.formula = proc.psinfo.rss \n",
+                 'pcp_pmdaproc_mem.instances = ' + '"' + SuperTwin.pcp_pids["pmdaproc"] + ' /var/lib/pcp/pmdas/proc/pmdaproc' + '"' + '\n'
+                 'pcp_pmdaproc_mem.label = "pcp_pmdraproc_mem" \n',
+                                 
+                 "pcp_pmdaproc_cpu = pcp_pmdaproc_cpu\n",
+                 "pcp_pmdaproc_cpu.formula = 0.1 * (proc.psinfo.utime + proc.psinfo.stime) \n",
+                 'pcp_pmdaproc_cpu.instances = ' + '"' + SuperTwin.pcp_pids["pmdaproc"] + ' /var/lib/pcp/pmdas/proc/pmdaproc' + '"' + '\n',
+                 'pcp_pmdaproc_cpu.label = "pcp_pmdaproc_cpu" \n',
+                 ##
+                 "pcp_pmdalinux_mem = pcp_pmdalinux_mem \n",
+                 "pcp_pmdalinux_mem.formula = proc.psinfo.rss \n",
+                 'pcp_pmdalinux_mem.instances = ' + '"' + SuperTwin.pcp_pids["pmdalinux"] + ' /var/lib/pcp/pmdas/linux/pmdalinux' + '"' + '\n'
+                 'pcp_pmdalinux_mem.label = "pcp_pmdalinux_mem" \n',
+                                 
+                 "pcp_pmdalinux_cpu = pcp_pmdalinux_cpu\n",
+                 "pcp_pmdalinux_cpu.formula = 0.1 * (proc.psinfo.utime + proc.psinfo.stime) \n",
+                 'pcp_pmdalinux_cpu.instances = ' + '"' + SuperTwin.pcp_pids["pmdalinux"] + ' /var/lib/pcp/pmdas/linux/pmdalinux' + '"' + '\n',
+                 'pcp_pmdalinux_cpu.label = "pcp_pmdalinux_cpu" \n',
+                 ##
+                 "pcp_pmdalmsensors_mem = pcp_pmdalmsensors_mem \n",
+                 "pcp_pmdalmsensors_mem.formula = proc.psinfo.rss \n",
+                 'pcp_pmdalmsensors_mem.instances = ' + '"' + SuperTwin.pcp_pids["pmdalmsensors"] + ' /var/lib/pcp/pmdas/lmsensors/pmdalmsensors' + '"' + '\n'
+                 'pcp_pmdalmsensors_mem.label = "pcp_pmdalmsensors_mem" \n',
+                                 
+                 "pcp_pmdalmsensors_cpu = pcp_pmdalmsensors_cpu\n",
+                 "pcp_pmdalmsensors_cpu.formula = 0.1 * (proc.psinfo.utime + proc.psinfo.stime) \n",
+                 'pcp_pmdalmsensors_cpu.instances = ' + '"' + SuperTwin.pcp_pids["pmdalmsensors"] + ' /var/lib/pcp/pmdas/lmsensors/pmdalmsensors' + '"' + '\n',
+                 'pcp_pmdalmsensors_cpu.label = "pcp_pmdalmsensors_cpu" \n',
+                 ##
+                 "pcp_pmdaperfevent_mem = pcp_pmdalmsensors_mem \n",
+                 "pcp_pmdaperfevent_mem.formula = proc.psinfo.rss \n",
+                 'pcp_pmdaperfevent_mem.instances = ' + '"' + SuperTwin.pcp_pids["pmdaperfevent"] + ' /var/lib/pcp/pmdas/perfevent/pmdaperfevent' + '"' + '\n'
+                 'pcp_pmdaperfevent_mem.label = "pcp_pmdaperfevent_mem" \n',
+                                 
+                 "pcp_pmdaperfevent_cpu = pcp_pmdaperfevent_cpu\n",
+                 "pcp_pmdaperfevent_cpu.formula = 0.1 * (proc.psinfo.utime + proc.psinfo.stime) \n",
+                 'pcp_pmdaperfevent_cpu.instances = ' + '"' + SuperTwin.pcp_pids["pmdaperfevent"] + ' /var/lib/pcp/pmdas/perfevent/pmdaperfevent' + '"' + '\n',
+                 'pcp_pmdaperfevent_cpu.label = "pcp_pmdaperfevent_cpu" \n',
+                 ]
+
+    
+    return config_lines + pcp_lines
+                
+                
+
+def get_pid(line):
+
+    fields = line.split(" ")
+    fields = [x for x in fields if x != ""]
+
+    return fields[1]
+
+
+def complete_to_six(pids):
+
+    for key in pids:
+        pid = pids[key]
+        while(len(pid) < 6):
+            pid = "0" + pid
+        pids[key] = pid
+
+    return pids
+
+    
+def get_pcp_pids(SuperTwin):
+
+    SSHuser = SuperTwin.SSHuser
+    SSHpass = SuperTwin.SSHpass
+
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(SuperTwin.addr, username = SSHuser, password = SSHpass)
+
+    stdin, stdout, stderr = ssh.exec_command("ps aux | grep pcp")
+    output = stdout.read()
+    #print("pcps:", output, type(output))
+    #print("#########3")
+    #print(output.decode("utf-8"))
+    output = output.decode("utf-8")
+    output = output.split("\n")
+
+    pids = {}
+    
+    for item in output:
+        
+        if(item.find("pmproxy") != -1):
+            pids["pmproxy"] = get_pid(item)
+        if(item.find("pmie") != -1):
+            pids["pmie"] = get_pid(item)
+        if(item.find("pmcd") != -1):
+            pids["pmcd"] = get_pid(item)
+        if(item.find("pmdaproc") != -1):
+            pids["pmdaproc"] = get_pid(item)
+        if(item.find("pmdalinux") != -1):
+            pids["pmdalinux"] = get_pid(item)
+        if(item.find("pmdalmsensors") != -1):
+            pids["pmdalmsensors"] = get_pid(item)
+        if(item.find("pmdaperfevent") != -1):
+            pids["pmdaperfevent"] = get_pid(item)
+
+    print("pids:", pids)
+    pids = complete_to_six(pids)
+    print("pids:", pids)
+    return pids
+    
 #def generate_pcp2influxdb_config(db_name, db_tag, sourceIP, source_name, metrics):
 def generate_pcp2influxdb_config(SuperTwin):
 
@@ -67,10 +206,13 @@ def generate_pcp2influxdb_config(SuperTwin):
                     "\n\n",
                     "[configured]" + "\n"]
 
+    
+    #metrics = [x for x in metrics if x != ""] ##Just to make sure
+    #for metric in metrics:
+    #    config_lines.append(metric + " = ,," + "\n")
 
-    metrics = [x for x in metrics if x != ""] ##Just to make sure
-    for metric in metrics:
-        config_lines.append(metric + " = ,," + "\n")
+    ##Add remote ship overheead
+    config_lines = add_pcp(SuperTwin, config_lines)
 
     pcp_conf_name = "pcp_" + source_name + db_tag + ".conf" 
     writer = open(pcp_conf_name, "w")
