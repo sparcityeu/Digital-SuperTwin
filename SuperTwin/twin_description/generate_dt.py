@@ -1,8 +1,10 @@
 import sys
 sys.path.append("../probing")
+sys.path.append("../")
 
 #import probe
 import detect_utils
+import utils
 
 from pprint import pprint
 import json
@@ -226,6 +228,9 @@ def _filter(param_metric):
     return _type
 
 def get_my_metrics(my_types):
+
+    if(my_types == "overhead"):
+        return ["mem_use", "cpu_use"]
     
     my_metrics = []
 
@@ -731,6 +736,135 @@ def add_network(models_dict, _sys_dict, top_id, hostname):
 #    field_key = "metadata"
     
 
+##this function is different from the rest
+##need to implement get pcp_pids without SuperTwin
+def add_pcp(models_dict, hostname, _sys_dict, top_id, pcp_pids):
+
+    ######
+    ##pmproxy
+    displayName = "pmproxy"
+    field_key = '"' + pcp_pids["pmproxy"] + ' /usr/lib/pcp/bin/pmproxy' + '"'
+    component_id = get_uid(hostname, displayName, "", 1)
+    component = get_interface(component_id, displayname = displayName)
+
+    ##add pmcd to digital twin
+    models_dict[component_id] = component
+
+    ##add overhead as telemetry
+    models_dict = add_my_metrics_mapped(models_dict, component_id, hostname, displayName, field_key, "overhead")
+
+    contains = c()
+    models_dict[top_id]["contents"].append(get_relationship(get_uid(hostname, "system", "ownership" + contains, 1), "contains" + contains, component_id))
+    #####
+
+    #####
+    ##pmie
+    displayName = "pmie"
+    field_key = '"' + pcp_pids["pmie"] + ' /usr/bin/pmie' + '"'
+    component_id = get_uid(hostname, displayName, "", 1)
+    component = get_interface(component_id, displayname = displayName)
+
+    ##add pmcd to digital twin
+    models_dict[component_id] = component
+
+    ##add overhead as telemetry
+    models_dict = add_my_metrics_mapped(models_dict, component_id, hostname, displayName, field_key, "overhead")
+
+    contains = c()
+    models_dict[top_id]["contents"].append(get_relationship(get_uid(hostname, "system", "ownership" + contains, 1), "contains" + contains, component_id))
+    #####
+
+    #####
+    ##pmcd
+    displayName = "pmcd"
+    field_key = '"' + pcp_pids["pmcd"] + ' /usr/lib/pcp/bin/pmcd' + '"'
+    component_id = get_uid(hostname, displayName, "", 1)
+    component = get_interface(component_id, displayname = displayName)
+
+    ##add pmcd to digital twin
+    models_dict[component_id] = component
+
+    ##add overhead as telemetry
+    models_dict = add_my_metrics_mapped(models_dict, component_id, hostname, displayName, field_key, "overhead")
+
+    contains = c()
+    models_dict[top_id]["contents"].append(get_relationship(get_uid(hostname, "system", "ownership" + contains, 1), "contains" + contains, component_id))
+    #####
+
+    #####
+    ##pmdaproc
+    displayName = "pmdaproc"
+    field_key = '"' + pcp_pids["pmdaproc"] + ' /var/lib/pcp/pmdas/proc/pmdaproc' + '"'
+    component_id = get_uid(hostname, displayName, "", 1)
+    component = get_interface(component_id, displayname = displayName)
+
+    ##add pmcd to digital twin
+    models_dict[component_id] = component
+
+    ##add overhead as telemetry
+    models_dict = add_my_metrics_mapped(models_dict, component_id, hostname, displayName, field_key, "overhead")
+
+    contains = c()
+    models_dict[top_id]["contents"].append(get_relationship(get_uid(hostname, "system", "ownership" + contains, 1), "contains" + contains, component_id))
+    #####
+
+    #####
+    ##pmdalinux
+    displayName = "pmdalinux"
+    field_key = '"' + pcp_pids["pmdalinux"] + ' /var/lib/pcp/pmdas/linux/pmdalinux' + '"'
+    component_id = get_uid(hostname, displayName, "", 1)
+    component = get_interface(component_id, displayname = displayName)
+
+    ##add pmcd to digital twin
+    models_dict[component_id] = component
+
+    ##add overhead as telemetry
+    models_dict = add_my_metrics_mapped(models_dict, component_id, hostname, displayName, field_key, "overhead")
+
+    contains = c()
+    models_dict[top_id]["contents"].append(get_relationship(get_uid(hostname, "system", "ownership" + contains, 1), "contains" + contains, component_id))
+    #####
+
+    #####
+    ##pmdalmsensors
+    displayName = "pmdalmsensors"
+    field_key = '"' + pcp_pids["pmdalmsensors"] + ' /var/lib/pcp/pmdas/lmsensors/pmdalmsensors' + '"'
+    component_id = get_uid(hostname, displayName, "", 1)
+    component = get_interface(component_id, displayname = displayName)
+
+    ##add pmcd to digital twin
+    models_dict[component_id] = component
+
+    ##add overhead as telemetry
+    models_dict = add_my_metrics_mapped(models_dict, component_id, hostname, displayName, field_key, "overhead")
+
+    contains = c()
+    models_dict[top_id]["contents"].append(get_relationship(get_uid(hostname, "system", "ownership" + contains, 1), "contains" + contains, component_id))
+    #####
+
+    #####
+    ##pmdaperfevent
+    displayName = "pmdaperfevent"
+    field_key = '"' + pcp_pids["pmdaperfevent"] + ' /var/lib/pcp/pmdas/perfevent/pmdaperfevent' + '"'
+    component_id = get_uid(hostname, displayName, "", 1)
+    component = get_interface(component_id, displayname = displayName)
+
+    ##add pmcd to digital twin
+    models_dict[component_id] = component
+
+    ##add overhead as telemetry
+    models_dict = add_my_metrics_mapped(models_dict, component_id, hostname, displayName, field_key, "overhead")
+
+    contains = c()
+    models_dict[top_id]["contents"].append(get_relationship(get_uid(hostname, "system", "ownership" + contains, 1), "contains" + contains, component_id))
+    #####
+
+
+    return models_dict
+
+    
+    
+
 def add_proc(models_dict, _sys_dict, top_id, hostname):
 
     displayName = "process"
@@ -817,7 +951,7 @@ def get_msr(PMUs):
 
     return None
 
-def main(_sys_dict):
+def main(_sys_dict, alias, SSHuser, SSHpass, addr):
 
     #prune_tree(config_file)
     #_sys_dict = probe.main()
@@ -831,6 +965,8 @@ def main(_sys_dict):
     
     ##Top level arrangements
     hostname = _sys_dict["hostname"]
+    if(alias != ""):
+        hostname = alias
     os = _sys_dict["os"]
 
     top_id = get_id(hostname, "system", 1, "S", 1)
@@ -869,7 +1005,10 @@ def main(_sys_dict):
     models_dict = add_memory(models_dict, _sys_dict, top_id, hostname)
     models_dict = add_disk(models_dict, _sys_dict, top_id, hostname)
     models_dict = add_network(models_dict, _sys_dict, top_id, hostname)
-    models_dict = add_proc(models_dict, _sys_dict, top_id, hostname)
+
+    pids = utils.get_pcp_pids_beginning(SSHuser, SSHpass, addr)
+    models_dict = add_pcp(models_dict, hostname, _sys_dict, top_id, pids)
+    #models_dict = add_proc(models_dict, _sys_dict, top_id, hostname)
     
     
     #pprint(models_dict)

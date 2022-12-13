@@ -25,6 +25,8 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import zlib
 from base64 import urlsafe_b64encode as b64e, urlsafe_b64decode as b64d
 
+import paramiko
+
 ALWAYS_EXISTS_MONITOR = ["kernel.all.pressure.cpu.some.total",
                          "hinv.cpu.clock",
                          "lmsensors.coretemp_isa_0000.package_id_0",
@@ -847,6 +849,105 @@ def prepare_bind(SuperTwin, no_threads, affinity, policy):
 
     return base
 
+def complete_to_six(pids):
+
+    for key in pids:
+        pid = pids[key]
+        while(len(pid) < 6):
+            pid = "0" + pid
+        pids[key] = pid
+
+    return pids
+
+
+def get_pid(line):
+
+    fields = line.split(" ")
+    fields = [x for x in fields if x != ""]
+
+    return fields[1]
+
+
+
+def get_pcp_pids(SuperTwin):
+
+    SSHuser = SuperTwin.SSHuser
+    SSHpass = SuperTwin.SSHpass
+
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(SuperTwin.addr, username = SSHuser, password = SSHpass)
+
+    stdin, stdout, stderr = ssh.exec_command("ps aux | grep pcp")
+    output = stdout.read()
+    #print("pcps:", output, type(output))
+    #print("#########3")
+    #print(output.decode("utf-8"))
+    output = output.decode("utf-8")
+    output = output.split("\n")
+
+    pids = {}
+    
+    for item in output:
+        
+        if(item.find("pmproxy") != -1):
+            pids["pmproxy"] = get_pid(item)
+        if(item.find("pmie") != -1):
+            pids["pmie"] = get_pid(item)
+        if(item.find("pmcd") != -1):
+            pids["pmcd"] = get_pid(item)
+        if(item.find("pmdaproc") != -1):
+            pids["pmdaproc"] = get_pid(item)
+        if(item.find("pmdalinux") != -1):
+            pids["pmdalinux"] = get_pid(item)
+        if(item.find("pmdalmsensors") != -1):
+            pids["pmdalmsensors"] = get_pid(item)
+        if(item.find("pmdaperfevent") != -1):
+            pids["pmdaperfevent"] = get_pid(item)
+
+    print("pids:", pids)
+    pids = complete_to_six(pids)
+    print("pids:", pids)
+    return pids
+
+def get_pcp_pids_beginning(SSHuser, SSHpass, addr):
+
+    
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(addr, username = SSHuser, password = SSHpass)
+
+    stdin, stdout, stderr = ssh.exec_command("ps aux | grep pcp")
+    output = stdout.read()
+    #print("pcps:", output, type(output))
+    #print("#########3")
+    #print(output.decode("utf-8"))
+    output = output.decode("utf-8")
+    output = output.split("\n")
+
+    pids = {}
+    
+    for item in output:
+        
+        if(item.find("pmproxy") != -1):
+            pids["pmproxy"] = get_pid(item)
+        if(item.find("pmie") != -1):
+            pids["pmie"] = get_pid(item)
+        if(item.find("pmcd") != -1):
+            pids["pmcd"] = get_pid(item)
+        if(item.find("pmdaproc") != -1):
+            pids["pmdaproc"] = get_pid(item)
+        if(item.find("pmdalinux") != -1):
+            pids["pmdalinux"] = get_pid(item)
+        if(item.find("pmdalmsensors") != -1):
+            pids["pmdalmsensors"] = get_pid(item)
+        if(item.find("pmdaperfevent") != -1):
+            pids["pmdaperfevent"] = get_pid(item)
+
+    print("pids:", pids)
+    pids = complete_to_six(pids)
+    print("pids:", pids)
+    return pids
 
 def resolve_bind(SuperTwin, bind):
 

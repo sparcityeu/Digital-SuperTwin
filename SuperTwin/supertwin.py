@@ -50,12 +50,12 @@ HPCG_PARAM["time"] = 60
 ##HPCG benchmark parameters
 
 
-def get_twin_description(hostProbFile):
+def get_twin_description(hostProbFile, alias, SSHuser, SSHpass, addr):
 
     with open(hostProbFile, "r") as j:
         _sys_dict = json.loads(j.read())
 
-    _twin = generate_dt.main(_sys_dict)
+    _twin = generate_dt.main(_sys_dict, alias, SSHuser, SSHpass, addr)
     return _twin
 
 
@@ -192,10 +192,10 @@ class SuperTwin:
             #self.monitor_metrics = utils.read_monitor_metrics() ##These are the continuously sampled metrics
 
             self.monitor_tag = "_monitor"
-            self.mongodb_id = insert_twin_description(get_twin_description(self.prob_file),self)
+            self.mongodb_id = insert_twin_description(get_twin_description(self.prob_file, self.name, self.SSHuser, self.SSHpass, self.addr),self)
             print("Collection id:", self.mongodb_id)
             #self.monitor_pid = sampling.main(self.name, self.addr, self.influxdb_name, self.monitor_tag, self.monitor_metrics)
-            self.pcp_pids = sampling.get_pcp_pids(self)
+            #self.pcp_pids = sampling.get_pcp_pids(self)
             #benchmark members
             self.benchmarks = 0
             self.benchmark_results = 0
@@ -782,6 +782,6 @@ if __name__ == "__main__":
     print("url here:", url)
     '''
 
-    sampling.get_pcp_pids(my_superTwin)
+    #sampling.get_pcp_pids(my_superTwin)
 
 
