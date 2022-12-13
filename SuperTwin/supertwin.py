@@ -104,6 +104,8 @@ def register_twin_state(SuperTwin):
     meta["twin_state"]["monitor_metrics"] = SuperTwin.monitor_metrics
     meta["twin_state"]["observation_metrics"] = SuperTwin.observation_metrics
     meta["twin_state"]["grafana_datasource"] = SuperTwin.grafana_datasource
+    meta["twin_state"]["pcp_pids"] = SuperTwin.pcp_pids
+        
         
     db.replace_one({"_id": ObjectId(SuperTwin.mongodb_id)}, meta)
     
@@ -160,7 +162,7 @@ class SuperTwin:
             self.monitor_pid = meta["monitor_pid"]
             self.roofline_dashboard = meta["roofline_dashboard"]
             self.monitoring_dashboard = meta["monitoring_dashboard"]
-            self.pcp_pids = meta["pcp_pids"]
+            self.pcp_pids = meta["twin_state"]["pcp_pids"]
             
             print("SuperTwin is reconstructed from db..")
 
@@ -192,10 +194,13 @@ class SuperTwin:
             #self.monitor_metrics = utils.read_monitor_metrics() ##These are the continuously sampled metrics
 
             self.monitor_tag = "_monitor"
+            self.pcp_pids = utils.get_pcp_pids(self)
+            
             self.mongodb_id = insert_twin_description(get_twin_description(self.prob_file, self.name, self.SSHuser, self.SSHpass, self.addr),self)
             print("Collection id:", self.mongodb_id)
             #self.monitor_pid = sampling.main(self.name, self.addr, self.influxdb_name, self.monitor_tag, self.monitor_metrics)
-            #self.pcp_pids = sampling.get_pcp_pids(self)
+            
+            
             #benchmark members
             self.benchmarks = 0
             self.benchmark_results = 0
