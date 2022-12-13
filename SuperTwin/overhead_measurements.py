@@ -57,7 +57,7 @@ def one_run(client, interval, metric, field, sampler_config, duration):
         time.sleep(duration)
         
         sampling_process.kill()
-
+        
         query_string = 'SELECT ' + '"' + field + '"' +' from ' + metric
         print("query_string:", query_string)
         response = list(client.query(query_string))[0]
@@ -72,10 +72,23 @@ def one_run(client, interval, metric, field, sampler_config, duration):
     
     return runs
 
-def one_run_two_returns(client, interval, metric1, metric2, field, sampler_config, duration):
+def one_run_two_returns(client, interval, metric1, metric2, fields, sampler_config, duration):
 
-    metric1s = []
-    metric2s = []
+    client.drop_database("dolap_run")   ##Reset database
+    client.create_database("dolap_run")
+    client.switch_database("dolap_run")
+
+    cpu_overheads = {}
+    mem_overheads = {}
+    cpu_responses = {}
+    mem_responses = {}
+    
+    for key in fields:
+        cpu_overheads[key] = []
+        mem_overheads[key] = []
+        cpu_responses[key] = []
+        mem_responses[key] = []
+            
     for i in range(3):
         ##try except: insert some datapoints if no response
         print("Interval:", interval)
@@ -87,28 +100,35 @@ def one_run_two_returns(client, interval, metric1, metric2, field, sampler_confi
         
         sampling_process.kill()
 
-        query_string1 = 'SELECT ' + '"' + field + '"' +' from ' + metric1
-        query_string2 = 'SELECT ' + '"' + field + '"' +' from ' + metric2
-        response1 = list(client.query(query_string1))[0]
-        response2 = list(client.query(query_string2))[0]
+        for key in fields:
+            cpu_query = 'SELECT ' + '"' + fields[key] + '"' +' from ' + metric1
+            mem_query = 'SELECT ' + '"' + fields[key] + '"' +' from ' + metric2
+            print("cpu_query:", cpu_query)
+            print("mem_query:", mem_query)
+            cpu_responses[key] = list(client.query(cpu_query))[0]
+            mem_responses[key] = list(client.query(mem_query))[0]
 
-        _sum1 = 0
-        for item in response1:
-            _sum1 += item[field]
-        _sum1 /= len(response1)
-        metric1s.append(_sum1)
+        for key in fields:
+            _sum1 = 0
+            for item in cpu_responses[key]:
+                print("item:", item)
+                print("fields[key]:", fields[key])
+                _sum1 += item[fields[key]]
+            _sum1 /= len(cpu_responses[key])
+            cpu_overheads[key].append(_sum1)
 
-        _sum2 = 0
-        for item in response2:
-            _sum2 += item[field]
-        _sum2 /= len(response2)
-        metric2s.append(_sum2)
+            _sum2 = 0
+            for item in mem_responses[key]:
+                print("item:", item)
+                print("fields[key]:", fields[key])
+                _sum2 += item[fields[key]]
+            _sum2 /= len(mem_responses[key])
+            mem_overheads[key].append(_sum2)
         
-        print("Mean CPU usage of",field, _sum1)
-        print("Mean MEMORY usage of",field, _sum2) 
-        
-    
-    return metric1s, metric2s
+            #print("Mean CPU usage of",field, _sum1)
+            #print("Mean MEMORY usage of",field, _sum2) 
+            
+    return cpu_overheads, mem_overheads
     
 if __name__ == "__main__":
 
@@ -118,16 +138,13 @@ if __name__ == "__main__":
     pmdas = mutate_p1(pmdas_atm, pids)
     pmdas = mutate_p2(pmdas)
     
-
+    
     client = InfluxDBClient(host='localhost', port=8086)
-    client.drop_database("dolap_run")
-    client.create_database("dolap_run")
-    client.switch_database("dolap_run")
     
     sampler_config = " -c overhead_configs/dolap_10.conf :configured"
     metric1 = "cpu_use"
     metric2 = "mem_use"
-    field = pmdas_atm["pmdaproc"]
+    fields = pmdas
 
     duration = 10
     
@@ -139,35 +156,35 @@ if __name__ == "__main__":
     _gots = {}
 
     
-    _runs["1"], _gots["1"] = one_run_two_returns(client, "1", metric1, metric2, field, sampler_config, duration)
-    _runs["0.5"], _gots["0.5"] = one_run_two_returns(client, "0.5", metric1, metric2, field, sampler_config, duration)
-    _runs["0.25"], _gots["0.25"] = one_run_two_returns(client, "0.25", metric1, metric2, field, sampler_config, duration)
-    _runs["0.125"], _gots["0.125"] = one_run_two_returns(client, "0.125" , metric1, metric2, field, sampler_config, duration)
-    _runs["0.0625"], _gots["0.0625"] = one_run_two_returns(client, "0.0625" , metric1, metric2, field, sampler_config, duration)
-    _runs["0.03125"], _gots["0.03125"] = one_run_two_returns(client, "0.03125" , metric1, metric2, field, sampler_config, duration)
+    _runs["1"], _gots["1"] = one_run_two_returns(client, "1", metric1, metric2, fields, sampler_config, duration)
+    _runs["0.5"], _gots["0.5"] = one_run_two_returns(client, "0.5", metric1, metric2, fields, sampler_config, duration)
+    _runs["0.25"], _gots["0.25"] = one_run_two_returns(client, "0.25", metric1, metric2, fields, sampler_config, duration)
+    _runs["0.125"], _gots["0.125"] = one_run_two_returns(client, "0.125" , metric1, metric2, fields, sampler_config, duration)
+    _runs["0.0625"], _gots["0.0625"] = one_run_two_returns(client, "0.0625" , metric1, metric2, fields, sampler_config, duration)
+    _runs["0.03125"], _gots["0.03125"] = one_run_two_returns(client, "0.03125" , metric1, metric2, fields, sampler_config, duration)
             
 
     writer = open("dolap_first.txt", "w+")
     for key in _runs:
-        got = _runs[key]
+        run = _runs[key]
         writer.write("#############################" + "\n")
         writer.write("interval:" + str(key) + "\n")
-        writer.write("mean:" + str(statistics.mean(got)) + "\n")
-        writer.write("min:" +  str(min(got)) + "\n")
-        writer.write("max:" + str(max(got)) + "\n")
-        writer.write("std:" + str(statistics.stdev(got)) + "\n")
+        writer.write("mean:" + str(statistics.mean(run)) + "\n")
+        writer.write("min:" +  str(min(run)) + "\n")
+        writer.write("max:" + str(max(run)) + "\n")
+        writer.write("std:" + str(statistics.stdev(run)) + "\n")
         writer.write("memory:" + str(statistics.mean(_gots[key])) + "\n")
         writer.write("#############################" + "\n")
         
     
     for key in _runs:
-        got = _runs[key]
+        run = _runs[key]
         print("#############################")
         print("interval:", key)
-        print("mean:", statistics.mean(got))
-        print("min:", min(got))
-        print("max:", max(got))
-        print("std:", statistics.stdev(got))
+        print("mean:", statistics.mean(run))
+        print("min:", min(run))
+        print("max:", max(run))
+        print("std:", statistics.stdev(run))
         print("memory", statistics.mean(_gots[key]))
         print("#############################")
 
