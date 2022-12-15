@@ -8,8 +8,10 @@ import statistics
 import supertwin
 import utils
 
-def mutate_p2(pmdas):
+from copy import deepcopy
 
+def mutate_p2(pmdas):
+    print("pmdas:", pmdas)
     for key in pmdas:
         pmdas[key] = pmdas[key].replace(" ", "_")
         pmdas[key] = pmdas[key].replace("/", "_")
@@ -17,7 +19,7 @@ def mutate_p2(pmdas):
     return pmdas
 
 def mutate_p1(pmdas, pids):
-
+    #print("pmdas:", pmdas, "pids:", pids)
     for key in pmdas:
         pmdas[key] = pmdas[key].replace("XXXXXX", pids[key])
         
@@ -26,7 +28,7 @@ def mutate_p1(pmdas, pids):
     
     
 ##pmdas atm
-pmdas_atm = {'pmproxy': "XXXXXX /usr/lib/pcp/bin/pmproxy",
+pmdas_atm = {#'pmproxy': "XXXXXX /usr/lib/pcp/bin/pmproxy",
              'pmie': "XXXXXX /usr/bin/pmie",
              'pmcd': "XXXXXX /usr/lib/pcp/bin/pmcd",
              'pmdaproc': "XXXXXX /var/lib/pcp/pmdas/proc/pmdaproc",
@@ -48,7 +50,7 @@ def quick_insert(client, sampler_config):
 def one_run(client, interval, metric, field, sampler_config, duration):
 
     runs = []    
-    for i in range(3):
+    for i in range(5):
         ##try except: insert some datapoints if no response
         print("Interval:", interval)
         sampling_command = "pcp2influxdb -t " + interval + sampler_config
@@ -60,7 +62,7 @@ def one_run(client, interval, metric, field, sampler_config, duration):
         sampling_process.kill()
         
         query_string = 'SELECT ' + '"' + field + '"' +' from ' + metric
-        print("query_string:", query_string)
+        #print("query_string:", query_string)
         response = list(client.query(query_string))[0]
 
         _sum = 0
@@ -73,6 +75,17 @@ def one_run(client, interval, metric, field, sampler_config, duration):
     
     return runs
 
+def sample(interval, sampler_config, duration):
+    print("trying once more")
+
+    print("Interval:", interval)
+    sampling_command = "pcp2influxdb -t " + interval + sampler_config
+    sampling_args = shlex.split(sampling_command)
+    sampling_process = Popen(sampling_args)
+    
+    time.sleep(duration)
+
+    
 def one_run_two_returns(client, interval, metric1, metric2, fields, sampler_config, duration, name):
 
     client.drop_database(name + "_run")   ##Reset database
@@ -83,14 +96,16 @@ def one_run_two_returns(client, interval, metric1, metric2, fields, sampler_conf
     mem_overheads = {}
     cpu_responses = {}
     mem_responses = {}
+    net_traffic = {}
     
     for key in fields:
         cpu_overheads[key] = []
         mem_overheads[key] = []
         cpu_responses[key] = []
         mem_responses[key] = []
+    net_traffic["all"] = []
             
-    for i in range(3):
+    for i in range(5):
         ##try except: insert some datapoints if no response
         print("Interval:", interval)
         sampling_command = "pcp2influxdb -t " + interval + sampler_config
@@ -98,22 +113,51 @@ def one_run_two_returns(client, interval, metric1, metric2, fields, sampler_conf
         sampling_process = Popen(sampling_args)
         
         time.sleep(duration)
-        
+
+        '''
+        netwatch_command = "ifstat -i enp4s0"
+        netwatch_args = shlex.split(netwatch_command)
+        netwatch_process = Popen(netwatch_args,stdin=PIPE, stdout=PIPE)
+        t_end = time.time() + duration
+        while time.time() < t_end:
+            val = netwatch_process.stdout.readline().decode("utf-8")
+            if(val.find("KB") == -1 and val.find("enp") == -1):
+                val = val.split(" ")
+                val = [x for x in val if x != ""]
+                net_traffic[key].append(float(val[0]))
+            
+        netwatch_process.kill()
+        '''
         sampling_process.kill()
 
                         
         for key in fields:
             cpu_query = 'SELECT ' + '"' + fields[key] + '"' +' from ' + metric1
             mem_query = 'SELECT ' + '"' + fields[key] + '"' +' from ' + metric2
-            #print("cpu_query:", cpu_query)
+            print("cpu_query:", cpu_query)
             #print("mem_query:", mem_query)
             #print("key:", key)
             #print("q:", client.query(cpu_query))
             #print("w:", client.query(mem_query))
-            cpu_responses[key] = list(client.query(cpu_query))[0]
-            mem_responses[key] = list(client.query(mem_query))[0]
-            
-                
+            try:
+                cpu_responses[key] = list(client.query(cpu_query))[0]
+                mem_responses[key] = list(client.query(mem_query))[0]
+            except:
+                sample(interval, sampler_config, duration)
+                cpu_responses[key] = list(client.query(cpu_query))[0]
+                mem_responses[key] = list(client.query(mem_query))[0]
+
+        ##This or that
+        net_query = 'SELECT * from network_out'
+        net_response = list(client.query(net_query))[0]
+        #print("net_response:", net_response)
+        _sum0 = 0
+        for item in net_response:
+            _sum0 += item["value"]
+        _sum0 /= len(net_response)
+        net_traffic["all"].append(_sum0)
+
+        
         for key in fields:
             _sum1 = 0
             for item in cpu_responses[key]:
@@ -134,10 +178,10 @@ def one_run_two_returns(client, interval, metric1, metric2, fields, sampler_conf
             #print("Mean CPU usage of",field, _sum1)
             #print("Mean MEMORY usage of",field, _sum2) 
             
-    return cpu_overheads, mem_overheads
+    return cpu_overheads, mem_overheads, net_traffic
     
 def bw():
-    print("wtf")
+
     netwatch_command = "ifstat -i enp4s0"
     netwatch_args = shlex.split(netwatch_command)
     netwatch_process = Popen(netwatch_args,stdin=PIPE, stdout=PIPE)
@@ -148,21 +192,26 @@ def bw():
         if(val.find("KB") == -1 and val.find("enp") == -1):
             val = val.split(" ")
             val = [x for x in val if x != ""]
-            print("val:", float(val[0]))
+            #print("val:", float(val[0]))
     netwatch_process.kill()
         
     exit(1)
 
+def reassign_pids(SuperTwin):
+    
+    pids = utils.get_pcp_pids(SuperTwin)
+    pmdas = mutate_p1(deepcopy(pmdas_atm), pids)
+    pmdas = mutate_p2(pmdas)
+
+    return pmdas
+    
 def main(addr, config, name, run_name, alias):
-    print("wtf1")
-    bw()
-    print("wtf2")
+    
     my_superTwin = supertwin.SuperTwin(addr)
     pids = utils.get_pcp_pids(my_superTwin)
     
-    pmdas = mutate_p1(pmdas_atm, pids)
+    pmdas = mutate_p1(deepcopy(pmdas_atm), pids)
     pmdas = mutate_p2(pmdas)
-    
     
     client = InfluxDBClient(host='localhost', port=8086)
         
@@ -171,28 +220,42 @@ def main(addr, config, name, run_name, alias):
     metric2 = "mem_use"
     fields = pmdas
 
-    duration = 5
+    duration = 20
     
     _runs = {}
     _gots = {}
+    _nets = {}
 
     
-    #_runs["1"], _gots["1"] = one_run_two_returns(client, "1", metric1, metric2, fields, sampler_config, duration, name)
-    #_runs["0.5"], _gots["0.5"] = one_run_two_returns(client, "0.5", metric1, metric2, fields, sampler_config, duration, name)
-    #_runs["0.25"], _gots["0.25"] = one_run_two_returns(client, "0.25", metric1, metric2, fields, sampler_config, duration, name)
-    #_runs["0.125"], _gots["0.125"] = one_run_two_returns(client, "0.125" , metric1, metric2, fields, sampler_config, duration, name)
-    #_runs["0.0625"], _gots["0.0625"] = one_run_two_returns(client, "0.0625" , metric1, metric2, fields, sampler_config, duration, name)
-    _runs["0.03125"], _gots["0.03125"] = one_run_two_returns(client, "0.03125" , metric1, metric2, fields, sampler_config, duration, name)
+    my_superTwin.reconfigure_observation_events_parameterized("dolap10_perfevent.txt")
+    fields = reassign_pids(my_superTwin)
+    _runs["1"], _gots["1"], _nets["1"] = one_run_two_returns(client, "1", metric1, metric2, fields, sampler_config, duration, name)
+    #my_superTwin.reconfigure_observation_events_parameterized("dolap10_perfevent.txt")
+    fields = reassign_pids(my_superTwin)
+    _runs["0.5"], _gots["0.5"], _nets["0.5"] = one_run_two_returns(client, "0.5", metric1, metric2, fields, sampler_config, duration, name)
+    #my_superTwin.reconfigure_observation_events_parameterized("dolap10_perfevent.txt")
+    fields = reassign_pids(my_superTwin)
+    _runs["0.25"], _gots["0.25"], _nets["0.25"] = one_run_two_returns(client, "0.25", metric1, metric2, fields, sampler_config, duration, name)
+    #my_superTwin.reconfigure_observation_events_parameterized("dolap10_perfevent.txt")
+    fields = reassign_pids(my_superTwin)
+    _runs["0.125"], _gots["0.125"], _nets["0.125"] = one_run_two_returns(client, "0.125" , metric1, metric2, fields, sampler_config, duration, name)
+    #my_superTwin.reconfigure_observation_events_parameterized("dolap10_perfevent.txt")
+    fields = reassign_pids(my_superTwin)
+    _runs["0.0625"], _gots["0.0625"], _nets["0.0625"] = one_run_two_returns(client, "0.0625" , metric1, metric2, fields, sampler_config, duration, name)
+    #my_superTwin.reconfigure_observation_events_parameterized("dolap10_perfevent.txt")
+    fields = reassign_pids(my_superTwin)
+    _runs["0.03125"], _gots["0.03125"], _nets["0.03125"] = one_run_two_returns(client, "0.03125" , metric1, metric2, fields, sampler_config, duration, name)
             
 
     writer = open("dolap_results" + ".csv", "a")
     for key in _runs:
         cpuo = _runs[key]
         memo = _gots[key]
+        neto = _nets[key]
+        interval = key
         #print("cpuo:", cpuo, "memo:", memo, "key:", key)
         for comp in cpuo:
-            print("interval:", key, "comp:", comp, "")
-            interval = key
+            #print("interval:", key, "comp:", comp, "")            
             comp = comp
             cpu_use_mean = str(statistics.mean(cpuo[comp]))
             cpu_use_min = str(min(cpuo[comp]))
@@ -203,9 +266,18 @@ def main(addr, config, name, run_name, alias):
             mem_use_min = str(min(memo[comp]))
             mem_use_max = str(max(memo[comp]))
             mem_use_std = str(statistics.stdev(cpuo[comp]))
-            print("cpu_use_mean:", cpu_use_mean)
-            line = alias + "," + interval + "," + comp + "," + cpu_use_mean + "," + cpu_use_min + "," + cpu_use_max + "," + cpu_use_std + "," + mem_use_mean + "," + mem_use_min + "," + mem_use_max + "," + mem_use_std + "\n"
+            
+            line = alias + "," + interval + "," + comp + "," + cpu_use_mean + "," + cpu_use_min + "," + cpu_use_max + "," + cpu_use_std + "," + mem_use_mean + "," + mem_use_min + "," + mem_use_max + "," + mem_use_std + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "\n"
             writer.write(line)
+
+        net_use_mean = str(statistics.mean(neto["all"]))
+        net_use_min = str(min(neto["all"]))
+        net_use_max = str(max(neto["all"]))
+        net_use_std = str(statistics.stdev(neto["all"]))
+
+        line = alias + "," + interval + "," + "network" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + net_use_mean + "," + net_use_min + "," + net_use_max + "," + net_use_std + "\n"
+        writer.write(line)
+    
     writer.close()
     print("Succesfully wrote", alias, "results")
     '''
@@ -224,11 +296,17 @@ def main(addr, config, name, run_name, alias):
         
 if __name__ == "__main__":
 
-    
+    #print("With 10 metrics")
     #main("10.36.54.195", " -c overhead_configs/dolap_10.conf :configured", "dolap", "try0", "dolap10")
+    #print("With 20 metrics")
     #main("10.36.54.195", " -c overhead_configs/dolap_20.conf :configured", "dolap", "try0", "dolap20")
+    #print("With 30 metrics")
     main("10.36.54.195", " -c overhead_configs/dolap_30.conf :configured", "dolap", "try0", "dolap30")
+    #print("With 40 metrics")
     main("10.36.54.195", " -c overhead_configs/dolap_40.conf :configured", "dolap", "try0", "dolap40")
+    print("With 50 metrics")
     main("10.36.54.195", " -c overhead_configs/dolap_50.conf :configured", "dolap", "try0", "dolap50")
-    main("10.36.54.195", " -c overhead_configs/dolap_100.conf :configured", "dolap", "try0", "dolap100")
+    print("#########################################################################################")
+    print("SUCCESFULLY FINISHED!")
+    print("#########################################################################################")
     

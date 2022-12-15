@@ -49,6 +49,66 @@ HPCG_PARAM["nz"] = 104
 HPCG_PARAM["time"] = 60
 ##HPCG benchmark parameters
 
+ALWAYS_EXISTS_MONITOR = ["kernel.all.pressure.cpu.some.total",
+                         "hinv.cpu.clock",
+                         "lmsensors.coretemp_isa_0000.package_id_0",
+                         "kernel.pernode.cpu.idle",
+                         "kernel.percpu.cpu.idle",
+                         "disk.dev.read",
+                         "disk.dev.write",
+                         "disk.dev.total",
+                         "disk.dev.read_bytes",
+                         "disk.dev.write_bytes",
+                         "disk.dev.total_bytes",
+                         "swap.pagesin",
+                         "kernel.all.nusers",
+                         "kernel.all.nprocs",
+                         "network.all.in.bytes",
+                         "network.all.out.bytes"]
+
+ALWAYS_HAVE_MONITOR_NUMA = ALWAYS_EXISTS_MONITOR + ["lmsensors.coretemp_isa_0001.package_id_1",
+                                                    "mem.numa.util.free",
+                                                    "mem.numa.util.used",
+                                                    "mem.numa.alloc.hit",
+                                                    "mem.numa.alloc.miss",
+                                                    "mem.numa.alloc.local_node",
+                                                    "mem.numa.alloc.other_node",
+                                                    "perfevent.hwcounters.RAPL_ENERGY_PKG.value",
+                                                    "perfevent.hwcounters.RAPL_ENERGY_DRAM.value"]
+
+ALWAYS_HAVE_MONITOR_SINGLE_SOCKET = ALWAYS_EXISTS_MONITOR + ["mem.util.used",
+                                                             "mem.util.free",
+                                                             "perfevent.hwcounters.RAPL_ENERGY_PKG.value",
+                                                             "perfevent.hwcounters.RAPL_ENERGY_DRAM.value"]
+
+SKL_DONT_HAVE = ["perfevent.hwcounters.RAPL_ENERGY_DRAM.value"]
+ICL_DONT_HAVE = ["perfevent.hwcounters.RAPL_ENERGY_DRAM.value",
+                 "perfevent.hwcounters.RAPL_ENERGY_PKG.value"] ##RAPL is not currenty available on Icelake
+ALWAYS_HAVE_MONITOR_SKL = [x for x in ALWAYS_HAVE_MONITOR_SINGLE_SOCKET if x not in SKL_DONT_HAVE]
+ALWAYS_HAVE_MONITOR_ICL = [x for x in ALWAYS_HAVE_MONITOR_SINGLE_SOCKET if x not in ICL_DONT_HAVE]
+
+
+ALWAYS_HAVE_OBSERVATION = ["RAPL_ENERGY_PKG",
+                           "RAPL_ENERGY_DRAM"]
+ALWAYS_HAVE_OBSERVATION_SKL = ["RAPL_ENERGY_PKG"]
+ALWAYS_HAVE_OBSERVATION_ICL = [] ##RAPL is not currently available on Icelake
+
+##
+met = {
+        'monitor':{
+            'general_single': ALWAYS_HAVE_MONITOR_SINGLE_SOCKET,
+            'general_numa': ALWAYS_HAVE_MONITOR_NUMA,
+            'skl': ALWAYS_HAVE_MONITOR_SKL,
+            'icl': ALWAYS_HAVE_MONITOR_ICL
+        },
+        'observation': {
+            'general': ALWAYS_HAVE_OBSERVATION,
+            'skl': ALWAYS_HAVE_OBSERVATION_SKL,
+            'icl': ALWAYS_HAVE_OBSERVATION_ICL
+        }
+    }
+##
+
 
 def get_twin_description(hostProbFile, alias, SSHuser, SSHpass, addr):
 
@@ -595,8 +655,16 @@ class SuperTwin:
     def reconfigure_observation_events_parameterized(self, obs_metric_file):
 
         msr = utils.get_msr(self)
-        metrics = self.observation_metrics
+        #metrics = self.observation_metrics
 
+        metrics = []
+        
+        reader = open(obs_metric_file)
+        lines = reader.readlines()
+        for item in lines:
+            metrics.append(item.strip("\n"))
+        print("METRICS:", metrics)
+        
         if(msr == "icl"):
             for item in ALWAYS_HAVE_OBSERVATION_ICL:
                 if item not in metrics:
@@ -612,7 +680,7 @@ class SuperTwin:
                 if item not in metrics:
                     metrics.append(item)
         
-        
+                    
         writer = open("last_observation_metrics.txt", "w+")
         for item in metrics:
             writer.write(item + "\n")
