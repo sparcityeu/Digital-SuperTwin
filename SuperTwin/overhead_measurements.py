@@ -87,7 +87,7 @@ def sample(interval, sampler_config, duration):
 
     
 def one_run_two_returns(client, interval, metric1, metric2, fields, sampler_config, duration, name):
-
+    
     client.drop_database(name + "_run")   ##Reset database
     client.create_database(name + "_run")
     client.switch_database(name + "_run")
@@ -147,6 +147,8 @@ def one_run_two_returns(client, interval, metric1, metric2, fields, sampler_conf
                 cpu_responses[key] = list(client.query(cpu_query))[0]
                 mem_responses[key] = list(client.query(mem_query))[0]
 
+                
+                
         ##This or that
         net_query = 'SELECT * from network_out'
         net_response = list(client.query(net_query))[0]
@@ -214,6 +216,19 @@ def main(addr, config, name, run_name, alias):
     pmdas = mutate_p2(pmdas)
     
     client = InfluxDBClient(host='localhost', port=8086)
+
+    ##datapoints
+    client.switch_database("dolap_run")
+    mes = list(client.query("SHOW MEASUREMENTS"))[0]
+    total_datapoints = 0
+    print("mes:", mes)
+    for item in mes:
+        datapoints = len(list(client.query("SELECT last(*) FROM " + item["name"]))[0][0].keys())
+        print(item["name"], ":", datapoints)
+        total_datapoints += datapoints
+    ##
+    print("Total datapoints:", total_datapoints)
+    exit(1)
         
     sampler_config = config
     metric1 = "cpu_use"
@@ -301,9 +316,9 @@ if __name__ == "__main__":
     #print("With 20 metrics")
     #main("10.36.54.195", " -c overhead_configs/dolap_20.conf :configured", "dolap", "try0", "dolap20")
     #print("With 30 metrics")
-    main("10.36.54.195", " -c overhead_configs/dolap_30.conf :configured", "dolap", "try0", "dolap30")
+    #main("10.36.54.195", " -c overhead_configs/dolap_30.conf :configured", "dolap", "try0", "dolap30")
     #print("With 40 metrics")
-    main("10.36.54.195", " -c overhead_configs/dolap_40.conf :configured", "dolap", "try0", "dolap40")
+    #main("10.36.54.195", " -c overhead_configs/dolap_40.conf :configured", "dolap", "try0", "dolap40")
     print("With 50 metrics")
     main("10.36.54.195", " -c overhead_configs/dolap_50.conf :configured", "dolap", "try0", "dolap50")
     print("#########################################################################################")
