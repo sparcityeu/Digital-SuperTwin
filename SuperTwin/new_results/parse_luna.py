@@ -9,7 +9,8 @@ import plotly.io as pio
 #pio.kaleido.scope.default_width = 1200
 #pio.kaleido.scope.default_heigth = 500
 #colors_4 = ["rgb(82,239,153)", "rgb(7,92,98)", "rgb(147,208,226)", "rgb(29,109,31)"]
-colors_4 = ["rgb(33,240,182)", "rgb(38,85,130)", "rgb(187,226,114)", "rgb(27,81,29)", "rgb(150,233,124)"]
+#THIS IS FIRSTcolors_4 = ["rgb(33,240,182)", "rgb(38,85,130)", "rgb(187,226,114)", "rgb(27,81,29)", "rgb(150,233,124)"]
+colors_4 = ["rgb(57,146,131)", "rgb(180,221,212)", "rgb(52,75,70)", "rgb(54,237,211)", "rgb(26,167,238)"]
 
 
 def one_size(metrics, alias):
@@ -223,8 +224,8 @@ def one_size(metrics, alias):
 
 
 if __name__ == "__main__":
-
-    #one_size("10" ,"luna10")
+    
+    one_size("10" ,"luna10")
     one_size("20" ,"luna20")
     one_size("30" ,"luna30")
     one_size("40" ,"luna40")

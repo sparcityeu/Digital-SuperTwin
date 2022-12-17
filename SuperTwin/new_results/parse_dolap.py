@@ -8,9 +8,7 @@ import plotly.io as pio
 
 #pio.kaleido.scope.default_width = 1200
 #pio.kaleido.scope.default_heigth = 500
-#colors_4 = ["rgb(82,239,153)", "rgb(7,92,98)", "rgb(147,208,226)", "rgb(29,109,31)"]
-colors_4 = ["rgb(33,240,182)", "rgb(38,85,130)", "rgb(187,226,114)", "rgb(27,81,29)", "rgb(150,233,124)"]
-
+colors_4 = ["rgb(6,150,104)", "rgb(195,222,155)", "rgb(52,75,70)", "rgb(121,235,153)", "rgb(101,139,131)"]
 
 def one_size(metrics, alias):
     
@@ -146,6 +144,7 @@ def one_size(metrics, alias):
     
     datapoints = s_20.loc[s_20["component"] == "datapoints"]
     datapoints = list(datapoints["total_datapoints"])
+    print("datapoints:", datapoints)
 
     trace9 = go.Bar(name = "network",
                     x = xx,
@@ -173,21 +172,21 @@ def one_size(metrics, alias):
     fig.append_trace(trace8, 1,2)
     fig.append_trace(trace9, 1,3)
     
-    #fig.update_traces(texttemplate='%{y:.2f}', textposition='auto')
-    fig.update_layout(legend=dict(yanchor="top",y=0.99,xanchor="left",x=0.01,orientation="h"))
+    fig.update_traces(texttemplate='  %{y:.2f}', textposition='auto')
+    fig.update_layout(legend=dict(yanchor="top",y=1.025,xanchor="left",x=0.01,orientation="h"))
     fig.update_traces(marker_line_color='rgb(0,0,0)',marker_line_width=1, opacity=1)
-    fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide', template="simple_white")
+    fig.update_layout(uniformtext_minsize=8, uniformtext_mode='show', template="simple_white")
     #legend = {"orientation":"h"})
         
     
     #fig.update_yaxes(type="log", dtick=0.30102999566, fontsize="25")
-    fig.layout['yaxis1'].update(type="log", dtick=0.30102999566, title="CPU [%]")
+    fig.layout['yaxis1'].update(type="log", dtick=0.30102999566, title="CPU [%]", tickvals=[0,1,2,4,8,16,32])
     fig.layout['yaxis2'].update(title="Memory [MB/s]")
     fig.layout['yaxis3'].update(title="Network Traffic [MB/s]")
     #fig.layout['xaxis'].update(title="Frequency [s]")
     #fig.update_xaxes(title_text="Frequency [s]")
     fig.update_layout(
-        title="Luna, " + metrics + " metrics " + str(datapoints[0]) + " datapoints",
+        title="Dolap, " + metrics + " metrics " + str(datapoints[0]) + " datapoints",
         font=dict(
             family="Courier New, monospace",
             size=18,
@@ -223,10 +222,10 @@ def one_size(metrics, alias):
 
 
 if __name__ == "__main__":
-
-    #one_size("10" ,"luna10")
-    one_size("20" ,"luna20")
-    one_size("30" ,"luna30")
-    one_size("40" ,"luna40")
-    one_size("50" ,"luna50")
+    
+    one_size("10" ,"dolap10")
+    one_size("20" ,"dolap20")
+    one_size("30" ,"dolap30")
+    one_size("40" ,"dolap40")
+    one_size("50" ,"dolap50")
     

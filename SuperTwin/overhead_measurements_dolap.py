@@ -11,7 +11,7 @@ import utils
 from copy import deepcopy
 
 def mutate_p2(pmdas):
-    print("pmdas:", pmdas)
+    #print("pmdas:", pmdas)
     for key in pmdas:
         pmdas[key] = pmdas[key].replace(" ", "_")
         pmdas[key] = pmdas[key].replace("/", "_")
@@ -70,7 +70,7 @@ def one_run(client, interval, metric, field, sampler_config, duration):
             _sum += item[field]
         _sum /= len(response)
         runs.append(_sum)
-        print("Mean CPU usage of pmdaproc:", _sum) 
+        
         
     
     return runs
@@ -139,9 +139,9 @@ def one_run_two_returns(client, interval, metric1, metric2, fields, sampler_conf
             cpu_query = 'SELECT ' + '"' + fields[key] + '"' +' from ' + metric1
             mem_query = 'SELECT ' + '"' + fields[key] + '"' +' from ' + metric2
             io_query = 'SELECT ' + '"' + fields[key] + '"' +' from ' + "proc_io_total_bytes"
-            print("cpu_query:", cpu_query)
-            print("mem_query:", mem_query)
-            print("io_query:", io_query)
+            #print("cpu_query:", cpu_query)
+            #print("mem_query:", mem_query)
+            #print("io_query:", io_query)
             #print("key:", key)
             #print("q:", client.query(cpu_query))
             #print("w:", client.query(mem_query))
@@ -248,8 +248,7 @@ def main(addr, config, name, run_name, alias):
     _nets = {}
 
     
-    my_superTwin.reconfigure_observation_events_parameterized("dolap10_perfevent.txt")
-    '''
+    #my_superTwin.reconfigure_observation_events_parameterized("dolap10_perfevent.txt")
     fields = reassign_pids(my_superTwin)
     _runs["1"], _gots["1"], _ios["1"], _nets["1"] = one_run_two_returns(client, "1", metric1, metric2, fields, sampler_config, duration, name)
     #my_superTwin.reconfigure_observation_events_parameterized("dolap10_perfevent.txt")
@@ -265,13 +264,12 @@ def main(addr, config, name, run_name, alias):
     fields = reassign_pids(my_superTwin)
     _runs["0.0625"], _gots["0.0625"], _ios["0.0625"], _nets["0.0625"] = one_run_two_returns(client, "0.0625" , metric1, metric2, fields, sampler_config, duration, name)
     #my_superTwin.reconfigure_observation_events_parameterized("dolap10_perfevent.txt")
-    '''
     fields = reassign_pids(my_superTwin)
     _runs["0.03125"], _gots["0.03125"], _ios["0.03125"], _nets["0.03125"] = one_run_two_returns(client, "0.03125" , metric1, metric2, fields, sampler_config, duration, name)
 
 
     ##datapoints
-    client.switch_database("deren_run") ##PROBLEM
+    client.switch_database("dolap_run") ##PROBLEM
     mes = list(client.query("SHOW MEASUREMENTS"))[0]
     total_datapoints = 0
     print("mes:", mes)
@@ -284,7 +282,7 @@ def main(addr, config, name, run_name, alias):
     print("Total datapoints:", total_datapoints)
     
 
-    writer = open("deren_results" + ".csv", "a")
+    writer = open("dolap_results" + ".csv", "a")
     for key in _runs:
         cpuo = _runs[key]
         memo = _gots[key]
@@ -343,15 +341,15 @@ def main(addr, config, name, run_name, alias):
 if __name__ == "__main__":
 
     #print("With 10 metrics")
-    #main("10.36.54.195", " -c overhead_configs/dolap_10.conf :configured", "dolap", "try0", "dolap10")
+    #main("10.36.54.195", " -c new_overhead_configs/dolap_10.conf :configured", "dolap", "try0", "dolap10")
     #print("With 20 metrics")
-    #main("10.36.54.195", " -c overhead_configs/dolap_20.conf :configured", "dolap", "try0", "dolap20")
+    #main("10.36.54.195", " -c new_overhead_configs/dolap_20.conf :configured", "dolap", "try0", "dolap20")
     print("With 30 metrics")
-    main("10.36.54.195", " -c overhead_configs/dolap_30.conf :configured", "dolap", "try0", "dolap30")
-    #print("With 40 metrics")
-    #main("10.36.54.195", " -c overhead_configs/dolap_40.conf :configured", "dolap", "try0", "dolap40")
+    main("10.36.54.195", " -c new_overhead_configs/dolap_30.conf :configured", "dolap", "try0", "dolap30")
+    print("With 40 metrics")
+    main("10.36.54.195", " -c new_overhead_configs/dolap_40.conf :configured", "dolap", "try0", "dolap40")
     #print("With 50 metrics")
-    #main("10.36.54.195", " -c overhead_configs/dolap_50.conf :configured", "dolap", "try0", "dolap50")
+    #main("10.36.54.195", " -c new_overhead_configs/dolap_50.conf :configured", "dolap", "try0", "dolap50")
     print("#########################################################################################")
     print("SUCCESFULLY FINISHED!")
     print("#########################################################################################")

@@ -9,8 +9,7 @@ import plotly.io as pio
 #pio.kaleido.scope.default_width = 1200
 #pio.kaleido.scope.default_heigth = 500
 #colors_4 = ["rgb(82,239,153)", "rgb(7,92,98)", "rgb(147,208,226)", "rgb(29,109,31)"]
-colors_4 = ["rgb(33,240,182)", "rgb(38,85,130)", "rgb(187,226,114)", "rgb(27,81,29)", "rgb(150,233,124)"]
-
+colors_4 = ["rgb(240,210,126)", "rgb(139,18,58)", "rgb(212,212,212)", "rgb(208,100,64)", "rgb(93,62,71)"]
 
 def one_size(metrics, alias):
     
@@ -187,7 +186,7 @@ def one_size(metrics, alias):
     #fig.layout['xaxis'].update(title="Frequency [s]")
     #fig.update_xaxes(title_text="Frequency [s]")
     fig.update_layout(
-        title="Luna, " + metrics + " metrics " + str(datapoints[0]) + " datapoints",
+        title="Poseidon, " + metrics + " metrics " + str(datapoints[0]) + " datapoints",
         font=dict(
             family="Courier New, monospace",
             size=18,
@@ -223,10 +222,10 @@ def one_size(metrics, alias):
 
 
 if __name__ == "__main__":
-
-    #one_size("10" ,"luna10")
-    one_size("20" ,"luna20")
-    one_size("30" ,"luna30")
-    one_size("40" ,"luna40")
-    one_size("50" ,"luna50")
+    
+    one_size("10" ,"poseidon10")
+    one_size("20" ,"poseidon20")
+    one_size("30" ,"poseidon30")
+    one_size("40" ,"poseidon40")
+    one_size("50" ,"poseidon50")
     
