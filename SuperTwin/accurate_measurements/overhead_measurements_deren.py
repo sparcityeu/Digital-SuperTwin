@@ -138,7 +138,7 @@ def one_run_two_returns(client, interval, metric1, metric2, fields, sampler_conf
         for key in fields:
             cpu_query = 'SELECT ' + '"' + fields[key] + '"' +' from ' + metric1
             mem_query = 'SELECT ' + '"' + fields[key] + '"' +' from ' + metric2
-            #io_query = 'SELECT ' + '"' + fields[key] + '"' +' from ' + "proc_io_total_bytes"
+            io_query = 'SELECT ' + '"' + fields[key] + '"' +' from ' + "proc_io_total_bytes"
             #print("cpu_query:", cpu_query)
             #print("mem_query:", mem_query)
             #print("io_query:", io_query)
@@ -148,12 +148,12 @@ def one_run_two_returns(client, interval, metric1, metric2, fields, sampler_conf
             try:
                 cpu_responses[key] = list(client.query(cpu_query))[0]
                 mem_responses[key] = list(client.query(mem_query))[0]
-                #io_responses[key] = list(client.query(io_query))[0]
+                io_responses[key] = list(client.query(io_query))[0]
             except:
                 sample(interval, sampler_config, duration)
                 cpu_responses[key] = list(client.query(cpu_query))[0]
                 mem_responses[key] = list(client.query(mem_query))[0]
-                #io_responses[key] = list(client.query(io_query))[0]
+                io_responses[key] = list(client.query(io_query))[0]
 
                 
                 
@@ -186,16 +186,14 @@ def one_run_two_returns(client, interval, metric1, metric2, fields, sampler_conf
             mem_overheads[key].append(_sum2)
 
             _sum3 = 0
-            '''
             for item in mem_responses[key]:
                 #print("item:", item)
                 #print("fields[key]:", fields[key])
                 _sum3 += item[fields[key]]
             _sum3 /= len(io_responses[key])
             _sum3 /= 1024 ##convert to kbs as others
-            '''
             io_overheads[key].append(_sum3)
-            
+        
             #print("Mean CPU usage of",field, _sum1)
             #print("Mean MEMORY usage of",field, _sum2) 
             
@@ -372,17 +370,17 @@ def main(addr, config, name, run_name, alias):
 if __name__ == "__main__":
 
     print("With 10 metrics")
-    main("10.92.53.74", " -c accurate_measurements/deren_10.conf :configured", "deren", "try0", "deren10")
+    main("10.92.53.74", " -c deren_10.conf :configured", "deren", "try0", "deren10")
     print("With 20 metrics")
-    main("10.92.53.74", " -c accurate_measurements/deren_20.conf :configured", "deren", "try0", "deren20")
+    main("10.92.53.74", " -c deren_20.conf :configured", "deren", "try0", "deren20")
     print("With 30 metrics")
-    main("10.92.53.74", " -c accurate_measurements/deren_30.conf :configured", "deren", "try0", "deren30")
+    main("10.92.53.74", " -c deren_30.conf :configured", "deren", "try0", "deren30")
     print("With 40 metrics")
-    main("10.92.53.74", " -c accurate_measurements/deren_40.conf :configured", "deren", "try0", "deren40")
+    main("10.92.53.74", " -c deren_40.conf :configured", "deren", "try0", "deren40")
     print("With 50 metrics")
-    main("10.92.53.74", " -c accurate_measurements/deren_50.conf :configured", "deren", "try0", "deren50")
+    main("10.92.53.74", " -c deren_50.conf :configured", "deren", "try0", "deren50")
     print("With monitor metrics")
-    main("10.92.53.74", " -c accurate_measurements/pcp_deren_monitor.conf :configured", "deren", "try0", "derenmonitor")
+    main("10.92.53.74", " -c pcp_deren_monitor.conf :configured", "deren", "try0", "derenmonitor")
     print("#########################################################################################")
     print("SUCCESFULLY FINISHED!")
     print("#########################################################################################")

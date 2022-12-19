@@ -115,8 +115,9 @@ def one_run_two_returns(client, interval, metric1, metric2, fields, sampler_conf
         sampling_command = "pcp2influxdb -t " + interval + sampler_config
         sampling_args = shlex.split(sampling_command)
         sampling_process = Popen(sampling_args)
-        
-        #time.sleep(duration)
+
+        time.sleep(duration)
+        '''
         net_reading = []
         netwatch_command = "ifstat -i enp4s0"
         netwatch_args = shlex.split(netwatch_command)
@@ -130,13 +131,14 @@ def one_run_two_returns(client, interval, metric1, metric2, fields, sampler_conf
                 net_reading.append(float(val[0]))
             
         netwatch_process.kill()
+        '''
         sampling_process.kill()
 
                         
         for key in fields:
             cpu_query = 'SELECT ' + '"' + fields[key] + '"' +' from ' + metric1
             mem_query = 'SELECT ' + '"' + fields[key] + '"' +' from ' + metric2
-            io_query = 'SELECT ' + '"' + fields[key] + '"' +' from ' + "proc_io_total_bytes"
+            #io_query = 'SELECT ' + '"' + fields[key] + '"' +' from ' + "proc_io_total_bytes"
             #print("cpu_query:", cpu_query)
             #print("mem_query:", mem_query)
             #print("io_query:", io_query)
@@ -146,23 +148,22 @@ def one_run_two_returns(client, interval, metric1, metric2, fields, sampler_conf
             try:
                 cpu_responses[key] = list(client.query(cpu_query))[0]
                 mem_responses[key] = list(client.query(mem_query))[0]
-                io_responses[key] = list(client.query(io_query))[0]
+                #io_responses[key] = list(client.query(io_query))[0]
             except:
                 sample(interval, sampler_config, duration)
                 cpu_responses[key] = list(client.query(cpu_query))[0]
                 mem_responses[key] = list(client.query(mem_query))[0]
-                io_responses[key] = list(client.query(io_query))[0]
+                #io_responses[key] = list(client.query(io_query))[0]
 
                 
-                
         ##This or that
-        #net_query = 'SELECT * from network_out'
-        #net_response = list(client.query(net_query))[0]
-        #print("net_response:", net_response)
+        net_query = 'SELECT * from network_interface_out_bytes'
+        net_response = list(client.query(net_query))[0]
+        print("net_response:", net_response)
         _sum0 = 0
-        for item in net_reading:
-            _sum0 += item
-        _sum0 /= len(net_reading)
+        for item in net_response:
+            _sum0 += item['_enp0s25']
+        _sum0 /= len(net_response)
         net_traffic["all"].append(_sum0)
 
         
@@ -184,12 +185,14 @@ def one_run_two_returns(client, interval, metric1, metric2, fields, sampler_conf
             mem_overheads[key].append(_sum2)
 
             _sum3 = 0
+            '''
             for item in mem_responses[key]:
                 #print("item:", item)
                 #print("fields[key]:", fields[key])
                 _sum3 += item[fields[key]]
             _sum3 /= len(io_responses[key])
             _sum3 /= 1024 ##convert to kbs as others
+            '''
             io_overheads[key].append(_sum3)
         
             #print("Mean CPU usage of",field, _sum1)
@@ -267,15 +270,34 @@ def main(addr, config, name, run_name, alias):
     _runs["0.03125"], _gots["0.03125"], _ios["0.03125"], _nets["0.03125"] = one_run_two_returns(client, "0.03125" , metric1, metric2, fields, sampler_config, duration, name)
 
 
+    proc_br = 0
+    linux_br = 0
+    perfevent_br = 0
+    
     ##datapoints
     client.switch_database("luna_run") ##PROBLEM
     mes = list(client.query("SHOW MEASUREMENTS"))[0]
     total_datapoints = 0
     print("mes:", mes)
     for item in mes:
-        datapoints = len(list(client.query("SELECT last(*) FROM " + item["name"]))[0][0].keys())
+
+        datapoints = len(list(client.query("SELECT last(*) FROM " + item["name"]))[0][0].keys()) - 1
+        print(item["name"], ":", datapoints)
+        
         print(item["name"], ":", datapoints)
         total_datapoints += datapoints
+        metric = item["name"]
+        if(metric == "cpu_use"):
+            proc_br += (2 * datapoints)
+            total_datapoints += datapoints
+        elif(metric == "mem_use"):
+            proc_br += datapoints
+        elif(metric.find("proc") != -1):
+            proc_br += datapoints
+        elif(metric.find("perfevent") != -1):
+            perfevent_br += datapoints
+        else:
+            linux_br += datapoints
     ##
     total_datapoints = str(total_datapoints)
     print("Total datapoints:", total_datapoints)
@@ -290,7 +312,20 @@ def main(addr, config, name, run_name, alias):
         interval = key
         #print("cpuo:", cpuo, "memo:", memo, "key:", key)
         for comp in cpuo:
-            #print("interval:", key, "comp:", comp, "")            
+            #print("interval:", key, "comp:", comp, "")
+
+            my_br = 0
+            if(comp == "pmdaproc"):
+                my_br = proc_br
+            elif(comp == "pmdaperfevent"):
+                my_br = perfevent_br
+            elif(comp == "pmdalinux"):
+                my_br = linux_br
+            else:
+                my_br = -1
+
+            my_br = str(my_br)
+            
             comp = comp
             cpu_use_mean = str(statistics.mean(cpuo[comp]))
             cpu_use_min = str(min(cpuo[comp]))
@@ -306,8 +341,8 @@ def main(addr, config, name, run_name, alias):
             io_use_min = str(min(io[comp]))
             io_use_max = str(max(io[comp]))
             io_use_std = str(statistics.stdev(io[comp]))
-            
-            line = alias + "," + interval + "," + comp + "," + cpu_use_mean + "," + cpu_use_min + "," + cpu_use_max + "," + cpu_use_std + "," + mem_use_mean + "," + mem_use_min + "," + mem_use_max + "," + mem_use_std + "," + io_use_mean + "," + io_use_min + "," + io_use_max + "," + io_use_std + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1"+"\n" 
+
+            line = alias + "," + interval + "," + comp + "," + cpu_use_mean + "," + cpu_use_min + "," + cpu_use_max + "," + cpu_use_std + "," + mem_use_mean + "," + mem_use_min + "," + mem_use_max + "," + mem_use_std + "," + io_use_mean + "," + io_use_min + "," + io_use_max + "," + io_use_std + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1"+ "," + my_br + "\n" 
             writer.write(line)
 
         net_use_mean = str(statistics.mean(neto["all"]))
@@ -315,12 +350,13 @@ def main(addr, config, name, run_name, alias):
         net_use_max = str(max(neto["all"]))
         net_use_std = str(statistics.stdev(neto["all"]))
 
-        line = alias + "," + interval + "," + "network" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + net_use_mean + "," + net_use_min + "," + net_use_max + "," + net_use_std + "," + "-1" +"\n"
+        line = alias + "," + interval + "," + "network" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + net_use_mean + "," + net_use_min + "," + net_use_max + "," + net_use_std + "," + "-1" + "," + "-1" +"\n"
         writer.write(line)
 
-        line = alias + "," + interval + "," + "datapoints" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + total_datapoints +"\n"
+        line = alias + "," + interval + "," + "datapoints" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + "-1" + "," + total_datapoints + ", " + "-1" + "\n"
         writer.write(line)
-    
+            
+            
     writer.close()
     print("Succesfully wrote", alias, "results")
     '''
@@ -340,15 +376,17 @@ def main(addr, config, name, run_name, alias):
 if __name__ == "__main__":
 
     print("With 10 metrics")
-    main("10.36.52.109", " -c new_overhead_configs/luna_10.conf :configured", "luna", "try0", "luna10")
+    main("10.36.52.109", " -c accurate_measurements/luna_10.conf :configured", "luna", "try0", "luna10")
     print("With 20 metrics")
-    main("10.36.52.109", " -c new_overhead_configs/luna_20.conf :configured", "luna", "try0", "luna20")
+    main("10.36.52.109", " -c accurate_measurements/luna_20.conf :configured", "luna", "try0", "luna20")
     print("With 30 metrics")
-    main("10.36.52.109", " -c new_overhead_configs/luna_30.conf :configured", "luna", "try0", "luna30")
+    main("10.36.52.109", " -c accurate_measurements/luna_30.conf :configured", "luna", "try0", "luna30")
     print("With 40 metrics")
-    main("10.36.52.109", " -c new_overhead_configs/luna_40.conf :configured", "luna", "try0", "luna40")
+    main("10.36.52.109", " -c accurate_measurements/luna_40.conf :configured", "luna", "try0", "luna40")
     print("With 50 metrics")
-    main("10.36.52.109", " -c new_overhead_configs/luna_50.conf :configured", "luna", "try0", "luna50")
+    main("10.36.52.109", " -c accurate_measurements/luna_50.conf :configured", "luna", "try0", "luna50")
+    print("Monitor metrics")
+    main("10.36.52.109", " -c accurate_measurements/pcp_luna_monitor.conf :configured", "luna", "try0", "lunamonitor")
     print("#########################################################################################")
     print("SUCCESFULLY FINISHED!")
     print("#########################################################################################")
