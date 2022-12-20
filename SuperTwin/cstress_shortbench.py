@@ -16,10 +16,7 @@ from timeit import default_timer as timer
 repeat = 3
 client = InfluxDBClient(host='localhost', port=8086)
 
-def perform_triad(ssh, SuperTwin):
-
-    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t stream -w S0:100kB:1 -s 1")
-    stdout = stdout.readlines()
+def parse_likwid_bench(stdout):
 
     time = -1
     flops = -1
@@ -43,7 +40,7 @@ def perform_triad(ssh, SuperTwin):
             instructions = item
         if(item.find("UOPs") != -1):
             uops = item
-        
+
     cycles = float(cycles.strip("Cycles:".strip("\n")))
     time = float(time.strip("Time:").strip("\n").strip(" sec"))
     flops = float(flops.strip("Number of Flops:".strip("\n")))
@@ -51,94 +48,78 @@ def perform_triad(ssh, SuperTwin):
     mbytes_s = float(mbyte_s.strip("MByte/s:").strip("\n"))
     instructions = float(instructions.strip("Instructions:").strip("\n"))
     uops = float(uops.strip("UOPs:").strip("\n"))
+            
+    return cycles, time, flops, mflops_s, mbytes_s, instructions, uops
+
+
+def perform_triad(ssh, SuperTwin):
+
+    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t triad -w S0:100kB:1 -s 2")
+    stdout = stdout.readlines()
+
+    cycles, time, flops, mflops_s, mbytes_s, instructions, uops = parse_likwid_bench(stdout)
     
     return time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout
-    #return stdout
 ####    
 
 ####    
 def perform_sum(ssh, SuperTwin):
 
-    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t triad -w S0:100kB:1")
+    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t sum -w S0:100kB:1 -s 2")
     stdout = stdout.readlines()
 
-
-    time = -1
-    for item in stdout:
-        if(item.find("Time") != -1):
-            time = item
-    time = float(time.strip("Time:").strip("\n").strip(" sec"))
+    cycles, time, flops, mflops_s, mbytes_s, instructions, uops = parse_likwid_bench(stdout)
     
-    #return time
-    return stdout
+    return time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout
+    
 ####    
 
 ####    
 def perform_stream(ssh, SuperTwin):
 
-    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t triad -w S0:100kB:1")
+    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t stream -w S0:100kB:1")
     stdout = stdout.readlines()
 
-
-    time = -1
-    for item in stdout:
-        if(item.find("Time") != -1):
-            time = item
-    time = float(time.strip("Time:").strip("\n").strip(" sec"))
+    cycles, time, flops, mflops_s, mbytes_s, instructions, uops = parse_likwid_bench(stdout)
     
-    #return time
-    return stdout
+    return time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout
+    
 ####    
 
 ####    
 def perform_peakflops(ssh, SuperTwin):
 
-    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t triad -w S0:100kB:1")
+    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t peakflops -w S0:100kB:1")
     stdout = stdout.readlines()
+
+    cycles, time, flops, mflops_s, mbytes_s, instructions, uops = parse_likwid_bench(stdout)
     
-    time = -1
-    for item in stdout:
-        if(item.find("Time") != -1):
-            time = item
-    time = float(time.strip("Time:").strip("\n").strip(" sec"))
+    return time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout
     
-    #return time
-    return stdout
 ####    
 
 ####    
 def perform_ddot(ssh, SuperTwin):
 
-    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t triad -w S0:100kB:1")
+    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t ddot -w S0:100kB:1")
     stdout = stdout.readlines()
+
+    cycles, time, flops, mflops_s, mbytes_s, instructions, uops = parse_likwid_bench(stdout)
     
-    time = -1
-    flops = -1
-    for item in stdout:
-        if(item.find("Time") != -1):
-            time = item
-        if(item.find("Number of Flops:") != -1):
-            flops = item
-    time = float(time.strip("Time:").strip("\n").strip(" sec"))
-    flops = float(flops.strip("Number of Flops:".strip("\n")))
-    #return time
-    return stdout
+    return time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout
+    
 ####    
 
 ####    
 def perform_daxpy(ssh, SuperTwin):
 
-    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t triad -w S0:100kB:1 -s 45")
+    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t daxpy -w S0:100kB:1 -s 2")
     stdout = stdout.readlines()
+
+    cycles, time, flops, mflops_s, mbytes_s, instructions, uops = parse_likwid_bench(stdout)
     
-    time = -1
-    for item in stdout:
-        if(item.find("Time") != -1):
-            time = item
-    time = float(time.strip("Time:").strip("\n").strip(" sec"))
+    return time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout
     
-    #return time
-    return stdout
 ####    
 
 #time, cycles, flops, mflops_s, mbytes_s, instructions, uops
@@ -149,17 +130,17 @@ def decide_and_run(ssh, SuperTwin, bench):
     if(bench == "triad"):
         time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout = perform_triad(ssh, SuperTwin)
     elif(bench == "sum"):
-        time, cycles, flops, mflops_s, mbytes_s, instructions, uops = perform_sum(ssh, SuperTwin)
+        time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout = perform_sum(ssh, SuperTwin)
     elif(bench == "stream"):
-        time, cycles, flops, mflops_s, mbytes_s, instructions, uops = perform_stream(ssh, SuperTwin)
+        time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout = perform_stream(ssh, SuperTwin)
     elif(bench == "peakflops"):
-        time, cycles, flops, mflops_s, mbytes_s, instructions, uops = perform_peakflops(ssh, SuperTwin)
+        time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout = perform_peakflops(ssh, SuperTwin)
     elif(bench == "ddot"):
-        time, cycles, flops, mflops_s, mbytes_s, instructions, uops = perform_ddot(ssh, SuperTwin)
+        time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout = perform_ddot(ssh, SuperTwin)
     elif(bench == "daxpy"):
-        time, cycles, flops, mflops_s, mbytes_s, instructions, uops = perform_daxpy(ssh, SuperTwin)
+        time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout = perform_daxpy(ssh, SuperTwin)
     else:
-        print("Weird benchmark, exiting,,\n eww:", bench, bench=="triad")
+        print("Weird benchmark, exiting,,\n eww:", bench)
         exit(1)
         
     return time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout
@@ -199,9 +180,8 @@ def get_sum(metric):
         else:
             zero_points += 1
             
-    print("points:", points)
+    #print("points:", points)
     return val, points, zero_points
-    #return val
 
 #time, cycles, flops, mflops_s, mbytes_s, instructions, uops
 def one_run_sampled(SuperTwin, bench, config, db):
@@ -210,7 +190,6 @@ def one_run_sampled(SuperTwin, bench, config, db):
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(SuperTwin.addr, username=SuperTwin.SSHuser, password=SuperTwin.SSHpass)
 
-    
     client.drop_database(db)
     client.create_database(db)
     
@@ -222,13 +201,12 @@ def one_run_sampled(SuperTwin, bench, config, db):
     time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout = decide_and_run(ssh, SuperTwin, bench)
     sampling_process.kill()
     wall = timer() - wall
-    print("Wall time:", wall, "Reported time:", time, "Ratio:", wall/time)
+    #print("Wall time:", wall, "Reported time:", time, "Ratio:", wall/time)
     ssh.close()
 
     #for line in stdout:
         #print(line)
-
-    
+        
     ##analyse here
     unhalted_core, p, zp = get_sum("perfevent_hwcounters_UNHALTED_CORE_CYCLES_value")
     unhalted_ref, p, zp = get_sum("perfevent_hwcounters_UNHALTED_REFERENCE_CYCLES_value")
@@ -241,18 +219,19 @@ def one_run_sampled(SuperTwin, bench, config, db):
 
     print("fp_arith_scalar:", fp_arith_scalar_d)
     print("####RATIOS####")
-    print("Wall / Time:", 1/(wall/time))
-    print("Cycles / Unhalted Core:", 1/(cycles/(unhalted_core/wall)))
-    print("Cycles / Unhalted Ref:", 1/(cycles/(unhalted_ref/wall)))
-    print("Instructions / Inst_Retired:", 1/(instructions / (inst_retired/wall)))
-    print("Uops / uops_issued_any:", 1 / (uops/(uops_issued_any/wall)))
-    print("No flops / fp_arith_scalar:", 1/(flops /(fp_arith_scalar_d/wall)))
-    print("Mflop/s / fp_arith_scalar/p:", 1/(mflops_s/(fp_arith_scalar_d/((p)*1000000))))
+    print("Wall / Time:", (time/wall) )
+    print("Cycles / Unhalted Core:", ((unhalted_core/p)*time) / (cycles) )
+    print("Cycles / Unhalted Ref:", ((unhalted_ref/p)*time) / (cycles) )
+    print("Instructions / Inst_Retired:", ((inst_retired/p)*time) / (instructions) )
+    print("Uops / uops_issued_any:", ((uops_issued_any/p)*time)/uops )
+    print("No flops / fp_arith_scalar:", ((fp_arith_scalar_d/p)*time) / flops )
+    print("Mflop/s / fp_arith_scalar/p:", (mflops_s/(fp_arith_scalar_d/((p)*1000000))))
+    print("All mem:", (((mem_uops_all_loads + mem_uops_all_stores)/p)*time) / mbytes_s)
+    print("AI:", (fp_arith_scalar_d/(mem_uops_all_loads + mem_uops_all_stores))/8)
     print("p:", p, "zp:", zp)
 
-    c = p+zp
-    
-    print("No flops:", flops, "MFlop/s:", mflops_s, "Time:", time, "Mflops/s*time:", mflops_s*time*1000000, "this:", (fp_arith_scalar_d/p)*time, ((fp_arith_scalar_d/p)*time)/flops)
+    #print("No flops:", flops, "MFlop/s:", mflops_s, "Time:", time, "Mflops/s*time:", mflops_s*time*1000000, "this:", (fp_arith_scalar_d/p)*time, ((fp_arith_scalar_d/p)*time)/flops)
+
     
 def write_to_file(times, bench, interval, no_metrics):
 
@@ -270,12 +249,12 @@ if __name__ == "__main__":
 
     
     my_superTwin = supertwin.SuperTwin("10.36.54.195")
-    #benchs = ["triad", "sum", "stream", "peakflops", "ddot", "daxpy"]
-    benchs = ["triad"]    
+    benchs = ["triad", "sum", "stream", "peakflops", "ddot", "daxpy"]
+    #benchs = ["triad"]    
     
     for bench in benchs:
         print("##################" + bench + "##################")
-        config = "-t 0.01 -c shortbench.conf :configured" 
+        config = "-t 0.125 -c shortbench.conf :configured" 
         times = one_run_sampled(my_superTwin, bench, config, "dolap_run")
         print("##################" + bench + "##################")
                 
