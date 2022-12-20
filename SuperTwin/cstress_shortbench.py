@@ -97,7 +97,7 @@ def perform_sum(ssh, SuperTwin):
 ####    
 def perform_stream(ssh, SuperTwin):
 
-    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t stream -w S0:100kB:1")
+    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t stream -w S0:100kB:1 -s 2")
     stdout = stdout.readlines()
 
     cycles, time, flops, mflops_s, databytes, mbytes_s, instructions, uops = parse_likwid_bench(stdout)
@@ -109,7 +109,7 @@ def perform_stream(ssh, SuperTwin):
 ####    
 def perform_peakflops(ssh, SuperTwin):
 
-    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t peakflops -w S0:100kB:1")
+    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t peakflops -w S0:100kB:1 -s 2")
     stdout = stdout.readlines()
 
     cycles, time, flops, mflops_s, databytes, mbytes_s, instructions, uops = parse_likwid_bench(stdout)
@@ -121,7 +121,7 @@ def perform_peakflops(ssh, SuperTwin):
 ####    
 def perform_ddot(ssh, SuperTwin):
 
-    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t ddot -w S0:100kB:1")
+    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t ddot -w S0:100kB:1 -s 2")
     stdout = stdout.readlines()
 
     cycles, time, flops, mflops_s, databytes, mbytes_s, instructions, uops = parse_likwid_bench(stdout)
@@ -206,12 +206,14 @@ def get_sum(metric):
 
 
 #time, cycles, flops, mflops_s, mbytes_s, instructions, uops
-def one_run_sampled(SuperTwin, bench, config, db):
+def one_run_sampled(SuperTwin, bench, config, db, baseline, no_metrics, interval):
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(SuperTwin.addr, username=SuperTwin.SSHuser, password=SuperTwin.SSHpass)
 
+    for i in range repeat:
+    
     client.drop_database(db)
     client.create_database(db)
     
@@ -228,18 +230,45 @@ def one_run_sampled(SuperTwin, bench, config, db):
 
     #for line in stdout:
         #print(line)
+    
+    unhalted_ref = -1
+    inst_retired = -1
+    fp_arith_scalar_d = -1
+    uops_retired_any = -1
+    mem_uops_all_loads = -1
+    mem_uops_all_stores = -1
 
-            
-    ##analyse here
-    #unhalted_core, p, zp = get_sum("perfevent_hwcounters_UNHALTED_CORE_CYCLES_value")
-    unhalted_ref, p, zp = get_sum("perfevent_hwcounters_UNHALTED_REFERENCE_CYCLES_value")
-    inst_retired, p, zp = get_sum("perfevent_hwcounters_INSTRUCTION_RETIRED_value")
+    involved = list(client.query("SHOW MEASUREMENTS"))[0]
+    
+    if("perfevent_hwcounters_UNHALTED_REFERENCE_CYCLES_value" in involved):
+        unhalted_ref, p, zp = get_sum("perfevent_hwcounters_UNHALTED_REFERENCE_CYCLES_value")
+    if("perfevent_hwcounters_INSTRUCTION_RETIRED_value" in involved):
+        inst_retired, p, zp = get_sum("perfevent_hwcounters_INSTRUCTION_RETIRED_value")
+    if("perfevent_hwcounters_UOPS_RETIRED_ANY_value" in involved):
+        uops_retired_any, p, zp = get_sum("perfevent_hwcounters_UOPS_RETIRED_ANY_value")
+    if("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_LOADS_value" in involved):
+        mem_uops_all_loads, p, zp = get_sum("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_LOADS_value")
+    if("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_STORES_value" in involved):
+        mem_uops_all_stores, p, zp = get_sum("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_STORES_value")
     fp_arith_scalar_d, p, zp = get_sum("perfevent_hwcounters_FP_ARITH_SCALAR_DOUBLE_value")
-    uops_retired_any, p, zp = get_sum("perfevent_hwcounters_UOPS_RETIRED_ANY_value")
-    mem_uops_all_loads, p, zp = get_sum("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_LOADS_value")
-    mem_uops_all_stores, p, zp = get_sum("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_STORES_value")
-    #return times
 
+    
+    fp_arith_scalar_err = ((fp_arith_scalar_d/p)*time) / flops
+    if(unhalted_ref != -1):
+        unhalted_ref_err = ((unhalted_ref/p)*time) / (cycles)
+    if(inst_retired != -1):
+        inst_retired_err = ((inst_retired/p)*time) / (instructions)
+    if(uops_retired_any != -1):
+        uops_retired_any_err = ((uops_retired_any/p)*time)/uops
+    if(mem_uops_all_loads != -1 and mem_uops_all_stores != -1):
+        l1_bw_err = (((mem_uops_all_loads + mem_uops_all_stores)/p)*time)*8) / (databytes)
+        ai_itself = ((fp_arith_scalar_d/(mem_uops_all_loads + mem_uops_all_stores))/8)
+        ai_err = ((fp_arith_scalar_d/(mem_uops_all_loads + mem_uops_all_stores))/8) / AIs["bench"]
+        
+    ##append to own list
+    ##if not -1 write line
+    ##for AI, if all 3 is here
+    
     #make these lines modular, and then, profit! While writing to csv, absent values are -1
     print("fp_arith_scalar:", fp_arith_scalar_d)
     print("####RATIOS####")
@@ -247,14 +276,15 @@ def one_run_sampled(SuperTwin, bench, config, db):
     #print("Cycles / Unhalted Core:", ((unhalted_core/p)*time) / (cycles) )
     print("Cycles / Unhalted Ref:", ((unhalted_ref/p)*time) / (cycles) )
     print("Instructions / Inst_Retired:", ((inst_retired/p)*time) / (instructions) )
-    print("Uops / uops_issued_any:", ((uops_retired_any/p)*time)/uops )
+    print("Uops / uops_retired_any:", ((uops_retired_any/p)*time)/uops )
     print("No flops / fp_arith_scalar:", ((fp_arith_scalar_d/p)*time) / flops )
     print("Mflop/s / fp_arith_scalar/p:", (mflops_s/(fp_arith_scalar_d/((p)*1000000))))
     print("All mem:", ((((mem_uops_all_loads + mem_uops_all_stores)/p)*time)*8) / (databytes))
     print("AI:", (fp_arith_scalar_d/(mem_uops_all_loads + mem_uops_all_stores))/8)
-    #print("p:", p, "zp:", zp)
 
-    #print("No flops:", flops, "MFlop/s:", mflops_s, "Time:", time, "Mflops/s*time:", mflops_s*time*1000000, "this:", (fp_arith_scalar_d/p)*time, ((fp_arith_scalar_d/p)*time)/flops)
+    
+
+    
 
     
 def write_to_file(times, bench, interval, no_metrics):
@@ -278,14 +308,12 @@ if __name__ == "__main__":
     
     my_superTwin = supertwin.SuperTwin("10.36.54.195")
     benchs = ["triad", "sum", "stream", "peakflops", "ddot", "daxpy"]
-    #benchs = ["triad"]    
     
     for bench in benchs:
         print("##################" + bench + "##################")
-        #config = "-t 1 -c shortbench.conf :configured"
-        config = "-t 1 -c dolap_shortbench_1.conf :configured"
-        ##no_metrics, interval
-        baseline = one_run(my_superTwin, bench)
-        one_run_sampled(my_superTwin, bench, config, "dolap_run", "1", "1")
+        config = "-t 1 -c dolap_shortbench_one.conf :configured"
+        baseline = one_run(my_superTwin, bench)[0] ##time
+        print("Baseline:", baseline)
+        one_run_sampled(my_superTwin, bench, config, "dolap_run", baseline, "1", "1")
         print("##################" + bench + "##################")
                 
