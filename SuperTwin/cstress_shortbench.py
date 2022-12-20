@@ -18,22 +18,41 @@ client = InfluxDBClient(host='localhost', port=8086)
 
 def perform_triad(ssh, SuperTwin):
 
-    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t triad -w S0:100kB:1 -s 5")
+    stdin, stdout, stderr = ssh.exec_command("likwid-bench -t stream -w S0:100kB:1 -s 1")
     stdout = stdout.readlines()
 
     time = -1
     flops = -1
+    cycles = -1
+    mflops_s = -1
+    mbyte_s = -1
+    instructions = -1
+    uops = -1
     for item in stdout:
         if(item.find("Time") != -1):
             time = item
         if(item.find("Number of Flops:") != -1):
             flops = item
-    #cycles = float(flops.strip("Cycles:".strip("\n")))
+        if(item.find("Cycles:") != -1):
+            cycles = item
+        if(item.find("MFlops/s") != -1):
+            mflops_s = item
+        if(item.find("MByte/s") != -1):
+            mbyte_s = item
+        if(item.find("Instructions") != -1):
+            instructions = item
+        if(item.find("UOPs") != -1):
+            uops = item
+        
+    cycles = float(cycles.strip("Cycles:".strip("\n")))
     time = float(time.strip("Time:").strip("\n").strip(" sec"))
     flops = float(flops.strip("Number of Flops:".strip("\n")))
+    mflops_s = float(mflops_s.strip("MFlops/s:").strip("\n"))
+    mbytes_s = float(mbyte_s.strip("MByte/s:").strip("\n"))
+    instructions = float(instructions.strip("Instructions:").strip("\n"))
+    uops = float(uops.strip("UOPs:").strip("\n"))
     
-        
-    return time, flops, stdout
+    return time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout
     #return stdout
 ####    
 
@@ -122,28 +141,28 @@ def perform_daxpy(ssh, SuperTwin):
     return stdout
 ####    
 
-        
+#time, cycles, flops, mflops_s, mbytes_s, instructions, uops
 def decide_and_run(ssh, SuperTwin, bench):
 
     time = -1
     
     if(bench == "triad"):
-        time, flops, stdout = perform_triad(ssh, SuperTwin)
+        time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout = perform_triad(ssh, SuperTwin)
     elif(bench == "sum"):
-        time = perform_sum(ssh, SuperTwin)
+        time, cycles, flops, mflops_s, mbytes_s, instructions, uops = perform_sum(ssh, SuperTwin)
     elif(bench == "stream"):
-        time = perform_stream(ssh, SuperTwin)
+        time, cycles, flops, mflops_s, mbytes_s, instructions, uops = perform_stream(ssh, SuperTwin)
     elif(bench == "peakflops"):
-        time = perform_peakflops(ssh, SuperTwin)
+        time, cycles, flops, mflops_s, mbytes_s, instructions, uops = perform_peakflops(ssh, SuperTwin)
     elif(bench == "ddot"):
-        time = perform_ddot(ssh, SuperTwin)
+        time, cycles, flops, mflops_s, mbytes_s, instructions, uops = perform_ddot(ssh, SuperTwin)
     elif(bench == "daxpy"):
-        time = perform_daxpy(ssh, SuperTwin)
+        time, cycles, flops, mflops_s, mbytes_s, instructions, uops = perform_daxpy(ssh, SuperTwin)
     else:
         print("Weird benchmark, exiting,,\n eww:", bench, bench=="triad")
         exit(1)
-
-    return time, flops, stdout
+        
+    return time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout
 
 
 def one_run(SuperTwin, bench):
@@ -155,34 +174,36 @@ def one_run(SuperTwin, bench):
     times = []
 
     for i in range(repeat):
-        time = decide_and_run(ssh, SuperTwin, bench)
+        time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout = decide_and_run(ssh, SuperTwin, bench)
         times.append(time)
 
-    return times
+    return time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout
 
-def show_sum(metric):
-    val = 0
+def get_sum(metric):
+    val = 1
     points = 0
     zero_points = 0
     ## get stddev of metric
     ## get values bigger than stddev
+
     client.switch_database("dolap_run")
-    query = "select * from " + metric
+    query = "select _cpu0 from " + metric
     res = list(client.query(query))[0]
-    #query = "select (_cpu0) from " + metric
-    #print("res:", client.query(query))
+    _stdev = "select stddev(_cpu0) from " + metric
+    _stdev_res = list(client.query(_stdev))[0][0]['stddev']
+    #print("_stdev_res:", _stdev_res)
     for item in res:
-        val += item["_cpu0"]
-        if(val != 0):
+        if(item["_cpu0"] > _stdev_res):
+            val += item["_cpu0"]
             points += 1
         else:
             zero_points += 1
-    #print("metric:", metric, "val:", val)
-    print("zero points:", zero_points)
-    return val / points
+            
+    print("points:", points)
+    return val, points, zero_points
     #return val
 
-#def decide_and_run(SuperTwin, bench):
+#time, cycles, flops, mflops_s, mbytes_s, instructions, uops
 def one_run_sampled(SuperTwin, bench, config, db):
 
     ssh = paramiko.SSHClient()
@@ -198,34 +219,41 @@ def one_run_sampled(SuperTwin, bench, config, db):
     sampling_process = Popen(sampling_args)
     
     wall = timer()
-    time, flops, stdout = decide_and_run(ssh, SuperTwin, bench)
-    #time = decide_and_run(ssh, SuperTwin, bench)
-    #times.append(time)
+    time, cycles, flops, mflops_s, mbytes_s, instructions, uops, stdout = decide_and_run(ssh, SuperTwin, bench)
     sampling_process.kill()
     wall = timer() - wall
     print("Wall time:", wall, "Reported time:", time, "Ratio:", wall/time)
     ssh.close()
 
-    for line in stdout:
-        print(line)
+    #for line in stdout:
+        #print(line)
 
     
-        ##analyse here
-    val = show_sum("perfevent_hwcounters_UNHALTED_CORE_CYCLES_value")
-    val = show_sum("perfevent_hwcounters_UNHALTED_REFERENCE_CYCLES_value")
-    val = show_sum("perfevent_hwcounters_INSTRUCTION_RETIRED_value")
-    val = show_sum("perfevent_hwcounters_FP_ARITH_SCALAR_DOUBLE_value")
-    #print("MFlops/s:", ((val / (1024*1024)) / time) )
-    #print("Ratio:", flops / val)
-    print("val:", val, "Ratio: ", flops / val)
-    val = show_sum("perfevent_hwcounters_UOPS_ISSUED_ANY_value")
-    val = show_sum("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_LOADS_value")
-    val = show_sum("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_STORES_value")
-    
-    #return times 
-    
-    
+    ##analyse here
+    unhalted_core, p, zp = get_sum("perfevent_hwcounters_UNHALTED_CORE_CYCLES_value")
+    unhalted_ref, p, zp = get_sum("perfevent_hwcounters_UNHALTED_REFERENCE_CYCLES_value")
+    inst_retired, p, zp = get_sum("perfevent_hwcounters_INSTRUCTION_RETIRED_value")
+    fp_arith_scalar_d, p, zp = get_sum("perfevent_hwcounters_FP_ARITH_SCALAR_DOUBLE_value")
+    uops_issued_any, p, zp = get_sum("perfevent_hwcounters_UOPS_ISSUED_ANY_value")
+    mem_uops_all_loads, p, zp = get_sum("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_LOADS_value")
+    mem_uops_all_stores, p, zp = get_sum("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_STORES_value")
+    #return times
 
+    print("fp_arith_scalar:", fp_arith_scalar_d)
+    print("####RATIOS####")
+    print("Wall / Time:", 1/(wall/time))
+    print("Cycles / Unhalted Core:", 1/(cycles/(unhalted_core/wall)))
+    print("Cycles / Unhalted Ref:", 1/(cycles/(unhalted_ref/wall)))
+    print("Instructions / Inst_Retired:", 1/(instructions / (inst_retired/wall)))
+    print("Uops / uops_issued_any:", 1 / (uops/(uops_issued_any/wall)))
+    print("No flops / fp_arith_scalar:", 1/(flops /(fp_arith_scalar_d/wall)))
+    print("Mflop/s / fp_arith_scalar/p:", 1/(mflops_s/(fp_arith_scalar_d/((p)*1000000))))
+    print("p:", p, "zp:", zp)
+
+    c = p+zp
+    
+    print("No flops:", flops, "MFlop/s:", mflops_s, "Time:", time, "Mflops/s*time:", mflops_s*time*1000000, "this:", (fp_arith_scalar_d/p)*time, ((fp_arith_scalar_d/p)*time)/flops)
+    
 def write_to_file(times, bench, interval, no_metrics):
 
     print("Writing file:", "--", times, "--", bench, "--", interval, "--", no_metrics)
@@ -247,7 +275,7 @@ if __name__ == "__main__":
     
     for bench in benchs:
         print("##################" + bench + "##################")
-        config = "-t 1 -c shortbench.conf :configured" 
+        config = "-t 0.01 -c shortbench.conf :configured" 
         times = one_run_sampled(my_superTwin, bench, config, "dolap_run")
         print("##################" + bench + "##################")
                 
