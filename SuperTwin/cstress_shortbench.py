@@ -203,90 +203,161 @@ def get_sum(metric):
     #print("points:", points)
     return val, points, zero_points
 
+########
+def write_accuracy_to_file(db, bench, metric, no_metrics, frequency, accuracy):
 
+    print("no_metrics:", no_metrics)
+    print("")
+    line = db + "," + bench + "," + metric + "," + str(no_metrics) + "," + str(frequency) + "," + str(accuracy) + "," + "1" + "\n"
+    
+    writer = open("dolap_cstress_accuracy.csv", "a")
+    writer.write(line)
+    writer.close()
+    print("Wrote line - ", line)
+########
+
+########
+def write_overhead_to_file(db, bench, no_metrics, frequency, overhead):
+
+    line = db + "," + bench + "," + str(no_metrics) + "," + str(frequency) + "," + str(overhead) + "," + "1" + "\n"
+
+    writer = open("dolap_cstress_overhead.csv", "a")
+    writer.write(line)
+    writer.close()
+    print("Wrote line - ", line)
+#######
 
 #time, cycles, flops, mflops_s, mbytes_s, instructions, uops
-def one_run_sampled(SuperTwin, bench, config, db, baseline, no_metrics, interval):
+def one_run_sampled(SuperTwin, bench, config, db, baseline, no_metrics, frequency):
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(SuperTwin.addr, username=SuperTwin.SSHuser, password=SuperTwin.SSHpass)
 
-    for i in range repeat:
+    fp_arith_inst_list = [-1] * repeat
+    unhalted_ref_list = [-1] * repeat
+    inst_retired_list = [-1] * repeat
+    fp_arith_scalar_d_list = [-1] * repeat
+    uops_retired_any_list  = [-1] * repeat
+    unhalted_refs = [-1] * repeat
+    unhalted_refs = [-1] * repeat
+
+    l1_bw_list = [-1] * repeat
+    ai_list = [-1] * repeat
+    ai_err_list = [-1] * repeat
+    overhead_list = []
     
-    client.drop_database(db)
-    client.create_database(db)
+    for i in range(repeat):
+        
+        client.drop_database(db)
+        client.create_database(db)
+        
+        sampling_command = "pcp2influxdb " + config
+        sampling_args = shlex.split(sampling_command)
+        sampling_process = Popen(sampling_args)
+        
+        wall = timer()
+        time, cycles, flops, mflops_s, databytes, mbytes_s, instructions, uops, stdout = decide_and_run(ssh, SuperTwin, bench)
+        sampling_process.kill()
+        wall = timer() - wall
+        #print("Wall time:", wall, "Reported time:", time, "Ratio:", wall/time)
+        
+        unhalted_ref = -1
+        inst_retired = -1
+        fp_arith_scalar_d = -1
+        uops_retired_any = -1
+        mem_uops_all_loads = -1
+        mem_uops_all_stores = -1
+        ai = -1
+        ai_err = -1
+
+        client.switch_database(db)
+        involved_dlist = list(client.query("SHOW MEASUREMENTS"))[0]
+        involved = []
+
+        for item in involved_dlist:
+            involved.append(item['name'])
     
-    sampling_command = "pcp2influxdb " + config
-    sampling_args = shlex.split(sampling_command)
-    sampling_process = Popen(sampling_args)
+        if("perfevent_hwcounters_UNHALTED_REFERENCE_CYCLES_value" in involved):
+            unhalted_ref, p, zp = get_sum("perfevent_hwcounters_UNHALTED_REFERENCE_CYCLES_value")
+        if("perfevent_hwcounters_INSTRUCTION_RETIRED_value" in involved):
+            inst_retired, p, zp = get_sum("perfevent_hwcounters_INSTRUCTION_RETIRED_value")
+        if("perfevent_hwcounters_UOPS_RETIRED_ANY_value" in involved):
+            uops_retired_any, p, zp = get_sum("perfevent_hwcounters_UOPS_RETIRED_ANY_value")
+        if("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_LOADS_value" in involved):
+            mem_uops_all_loads, p, zp = get_sum("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_LOADS_value")
+        if("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_STORES_value" in involved):
+            mem_uops_all_stores, p, zp = get_sum("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_STORES_value")
+
+        fp_arith_scalar_d, p, zp = get_sum("perfevent_hwcounters_FP_ARITH_SCALAR_DOUBLE_value") ##This is always on
+        fp_arith_scalar_err = (((fp_arith_scalar_d/p)*time) - flops) / flops
+        fp_arith_inst_list[i] = fp_arith_scalar_err
+
+        if(unhalted_ref != -1):
+            unhalted_ref_err = (((unhalted_ref/p)*time) - cycles)/ cycles
+            unhalted_ref_list[i] = unhalted_ref_err
+        if(inst_retired != -1):
+            inst_retired_err = (((inst_retired/p)*time) - instructions) / instructions
+            inst_retired_list[i] = inst_retired_err
+        if(uops_retired_any != -1):
+            uops_retired_any_err = (((uops_retired_any/p)*time) - uops) / uops
+            uops_retired_any_list[i] = uops_retired_any_err
+        if(mem_uops_all_loads != -1 and mem_uops_all_stores != -1):
+            l1_bw_err = (((((mem_uops_all_loads + mem_uops_all_stores)/p)*time)*8) - databytes) / databytes
+            ai_itself = ((fp_arith_scalar_d/(mem_uops_all_loads + mem_uops_all_stores))/8)
+            ai_err = (((fp_arith_scalar_d/(mem_uops_all_loads + mem_uops_all_stores))/8)) - AIs[bench] / AIs[bench]
+            ##
+            l1_bw_list[i] = l1_bw_err
+            ai_list[i] = ai_itself
+        ##append to own list
+        ##if not -1 write line
+        ##for AI, if all 3 is here
     
-    wall = timer()
-    time, cycles, flops, mflops_s, databytes, mbytes_s, instructions, uops, stdout = decide_and_run(ssh, SuperTwin, bench)
-    sampling_process.kill()
-    wall = timer() - wall
-    #print("Wall time:", wall, "Reported time:", time, "Ratio:", wall/time)
+        #make these lines modular, and then, profit! While writing to csv, absent values are -1
+        print("fp_arith_scalar:", fp_arith_scalar_d)
+        print("####RATIOS####")
+        print("Wall / Time:", (time/wall) )
+        #print("Cycles / Unhalted Core:", ((unhalted_core/p)*time) / (cycles) )
+        print("Cycles / Unhalted Ref:", ((unhalted_ref/p)*time) / (cycles) )
+        print("Instructions / Inst_Retired:", ((inst_retired/p)*time) / (instructions) )
+        print("Uops / uops_retired_any:", ((uops_retired_any/p)*time)/uops )
+        print("No flops / fp_arith_scalar:", ((fp_arith_scalar_d/p)*time) / flops )
+        print("Mflop/s / fp_arith_scalar/p:", (mflops_s/(fp_arith_scalar_d/((p)*1000000))))
+        print("All mem:", ((((mem_uops_all_loads + mem_uops_all_stores)/p)*time)*8) / (databytes))
+        print("AI:", (fp_arith_scalar_d/(mem_uops_all_loads + mem_uops_all_stores))/8)
+
+        print("fp?:", fp_arith_inst_list)
+        print(unhalted_ref_list)
+        print(inst_retired_list)
+        print(uops_retired_any_list)
+        print(l1_bw_list)
+        print(ai_list)
+        print(ai_err)
+
+        print("overhead:", time/baseline)
+        overhead_list.append(time/baseline)
+        
+    
     ssh.close()
 
-    #for line in stdout:
-        #print(line)
-    
-    unhalted_ref = -1
-    inst_retired = -1
-    fp_arith_scalar_d = -1
-    uops_retired_any = -1
-    mem_uops_all_loads = -1
-    mem_uops_all_stores = -1
-
-    involved = list(client.query("SHOW MEASUREMENTS"))[0]
-    
-    if("perfevent_hwcounters_UNHALTED_REFERENCE_CYCLES_value" in involved):
-        unhalted_ref, p, zp = get_sum("perfevent_hwcounters_UNHALTED_REFERENCE_CYCLES_value")
-    if("perfevent_hwcounters_INSTRUCTION_RETIRED_value" in involved):
-        inst_retired, p, zp = get_sum("perfevent_hwcounters_INSTRUCTION_RETIRED_value")
-    if("perfevent_hwcounters_UOPS_RETIRED_ANY_value" in involved):
-        uops_retired_any, p, zp = get_sum("perfevent_hwcounters_UOPS_RETIRED_ANY_value")
-    if("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_LOADS_value" in involved):
-        mem_uops_all_loads, p, zp = get_sum("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_LOADS_value")
-    if("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_STORES_value" in involved):
-        mem_uops_all_stores, p, zp = get_sum("perfevent_hwcounters_MEM_UOPS_RETIRED_ALL_STORES_value")
-    fp_arith_scalar_d, p, zp = get_sum("perfevent_hwcounters_FP_ARITH_SCALAR_DOUBLE_value")
-
-    
-    fp_arith_scalar_err = ((fp_arith_scalar_d/p)*time) / flops
-    if(unhalted_ref != -1):
-        unhalted_ref_err = ((unhalted_ref/p)*time) / (cycles)
-    if(inst_retired != -1):
-        inst_retired_err = ((inst_retired/p)*time) / (instructions)
-    if(uops_retired_any != -1):
-        uops_retired_any_err = ((uops_retired_any/p)*time)/uops
-    if(mem_uops_all_loads != -1 and mem_uops_all_stores != -1):
-        l1_bw_err = (((mem_uops_all_loads + mem_uops_all_stores)/p)*time)*8) / (databytes)
-        ai_itself = ((fp_arith_scalar_d/(mem_uops_all_loads + mem_uops_all_stores))/8)
-        ai_err = ((fp_arith_scalar_d/(mem_uops_all_loads + mem_uops_all_stores))/8) / AIs["bench"]
+    write_accuracy_to_file(db, bench, "fp_arith_scalar_double_err", no_metrics, frequency, statistics.mean(fp_arith_inst_list))
+    if(-1 not in unhalted_ref_list):
+        write_accuracy_to_file(db, bench, "unhalted_reference_cycles_err", no_metrics, frequency, statistics.mean(unhalted_ref_list))
+    if(-1 not in inst_retired_list):
+        write_accuracy_to_file(db, bench, "instruction_retired_err", no_metrics, frequency, statistics.mean(inst_retired_list))
+    if(-1 not in uops_retired_any_list):
+        write_accuracy_to_file(db, bench, "uops_retired_any_err", no_metrics, frequency, statistics.mean(uops_retired_any_list))
+    if(-1 not in l1_bw_list):
+        write_accuracy_to_file(db, bench, "l1_bw", no_metrics, frequency, statistics.mean(l1_bw_list))
+    if(-1 not in ai_list):
+        write_accuracy_to_file(db, bench, "ai", no_metrics, frequency, statistics.mean(ai_list))
+    if(ai_err != -1):
+        write_accuracy_to_file(db, bench, "ai_err", no_metrics, frequency, ai_err)
         
-    ##append to own list
-    ##if not -1 write line
-    ##for AI, if all 3 is here
-    
-    #make these lines modular, and then, profit! While writing to csv, absent values are -1
-    print("fp_arith_scalar:", fp_arith_scalar_d)
-    print("####RATIOS####")
-    print("Wall / Time:", (time/wall) )
-    #print("Cycles / Unhalted Core:", ((unhalted_core/p)*time) / (cycles) )
-    print("Cycles / Unhalted Ref:", ((unhalted_ref/p)*time) / (cycles) )
-    print("Instructions / Inst_Retired:", ((inst_retired/p)*time) / (instructions) )
-    print("Uops / uops_retired_any:", ((uops_retired_any/p)*time)/uops )
-    print("No flops / fp_arith_scalar:", ((fp_arith_scalar_d/p)*time) / flops )
-    print("Mflop/s / fp_arith_scalar/p:", (mflops_s/(fp_arith_scalar_d/((p)*1000000))))
-    print("All mem:", ((((mem_uops_all_loads + mem_uops_all_stores)/p)*time)*8) / (databytes))
-    print("AI:", (fp_arith_scalar_d/(mem_uops_all_loads + mem_uops_all_stores))/8)
+    #def write_overhead_to_file(db, bench, no_metrics, frequency, overhead):
+    write_overhead_to_file(db, bench, no_metrics, frequency, statistics.mean(overhead_list))
+        
 
-    
-
-    
-
-    
 def write_to_file(times, bench, interval, no_metrics):
 
     print("Writing file:", "--", times, "--", bench, "--", interval, "--", no_metrics)
@@ -308,12 +379,37 @@ if __name__ == "__main__":
     
     my_superTwin = supertwin.SuperTwin("10.36.54.195")
     benchs = ["triad", "sum", "stream", "peakflops", "ddot", "daxpy"]
-    
-    for bench in benchs:
-        print("##################" + bench + "##################")
-        config = "-t 1 -c dolap_shortbench_one.conf :configured"
-        baseline = one_run(my_superTwin, bench)[0] ##time
-        print("Baseline:", baseline)
-        one_run_sampled(my_superTwin, bench, config, "dolap_run", baseline, "1", "1")
-        print("##################" + bench + "##################")
+
+    for m in range(0,5):
+        for i in range(1,6):
+            for bench in benchs:
+                print("##################" + bench + "##################")
+                baseline1 = one_run(my_superTwin, bench)[0] ##time
+                baseline2 = one_run(my_superTwin, bench)[0] ##time
+                baseline3 = one_run(my_superTwin, bench)[0] ##time
+                baseline = (baseline2 + baseline3) / 2
+                mtr = (m*5)+i
+                str_mtr = str((m*5)+i)
                 
+                print("Baseline:", baseline)
+                
+                config = "-t 1 -c cstress_configs/dolap_" + str_mtr + ".conf :configured"
+                one_run_sampled(my_superTwin, bench, config, "dolap_run", baseline, mtr, 1)
+                print("##################" + bench + "##################")
+                
+                config = "-t 0.5 -c cstress_configs/dolap_" + str_mtr + ".conf :configured"
+                one_run_sampled(my_superTwin, bench, config, "dolap_run", baseline, mtr, 2)
+                print("##################" + bench + "##################")
+                
+                config = "-t 0.25 -c cstress_configs/dolap_" + str_mtr + ".conf :configured"
+                one_run_sampled(my_superTwin, bench, config, "dolap_run", baseline, mtr, 4)
+                print("##################" + bench + "##################")
+                
+                config = "-t 0.125 -c cstress_configs/dolap_" + str_mtr + ".conf :configured"
+                one_run_sampled(my_superTwin, bench, config, "dolap_run", baseline, mtr, 8)
+                print("##################" + bench + "##################")
+                
+                config = "-t 0.0625 -c cstress_configs/dolap_" + str_mtr + ".conf :configured"
+                one_run_sampled(my_superTwin, bench, config, "dolap_run", baseline, mtr, 16)
+                print("##################" + bench + "##################")
+
