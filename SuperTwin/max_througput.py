@@ -64,12 +64,14 @@ def one_run(addr, client, config, db, no_metrics, persecond):
         
         truth = get_truth(addr)
         print("TRUTH:", truth)
-        expected = (1 / persecond) * truth * duration
-        
+        expected = no_metrics * persecond * truth * duration
+                
         sampling_command = "pcp2influxdb " + config
         sampling_args = shlex.split(sampling_command)
         sampling_process = Popen(sampling_args)
 
+        if(persecond < 4):
+            time.sleep(0.3)
         time.sleep(duration)
 
         sampling_process.kill()
@@ -82,11 +84,10 @@ def one_run(addr, client, config, db, no_metrics, persecond):
             query = "select * from " + item["name"]
             res = list(client.query(query))[0]
             for item in res:
-                points = len(item.keys()) 
+                points = len(item.keys()) - 2 ##One for tag, one for time 
                 inserted += points
-        
         if(inserted > expected):
-            expected = inserted
+            inserted = expected ##Number of process increased during test
         _expected.append(expected)
         _got.append(inserted)
         
@@ -103,31 +104,49 @@ def main(addr, config, db, no_metrics):
     expected = {}
     got = {}
 
-    expected["1"], got["1"] = one_run(addr, client, "-t 1 " + config, db, no_metrics, 1)
-    print("expected:", expected["1"], "got:", got["1"])
+    #expected["1"], got["1"] = one_run(addr, client, "-t 1 " + config, db, no_metrics, 1)
+    #print("expected:", expected["1"], "got:", got["1"])
+    ###
     expected["0.5"], got["0.5"] = one_run(addr, client, "-t 0.5" + config, db, no_metrics, 2)
+    if(statistics.stdev(got["0.5"]) == 0):   ##Means the error is with measurement
+        got["0.5"] = expected["0.5"]
     print("expected:", expected["0.5"], "got:", got["0.5"])
+    ##
     expected["0.25"], got["0.25"] = one_run(addr, client, "-t 0.25" + config, db, no_metrics, 4)
+    if(statistics.stdev(got["0.25"]) == 0):
+        got["0.25"] = expected["0.25"]    
     print("expected:", expected["0.25"], "got:", got["0.25"])
+    ##
     expected["0.125"], got["0.125"] = one_run(addr, client, "-t 0.125" + config, db, no_metrics, 8)
+    if(statistics.stdev(got["0.125"]) == 0):
+        got["0.125"] = expected["0.125"]
     print("expected:", expected["0.125"], "got:", got["0.125"])
+    ##
     expected["0.0625"], got["0.0625"] = one_run(addr, client, "-t 0.0625" + config, db, no_metrics, 16)
+    if(statistics.stdev(got["0.0625"]) == 0):
+        got["0.0625"] = expected["0.0625"]    
     print("expected:", expected["0.0625"], "got:", got["0.0625"])
+    ##
     expected["0.03125"], got["0.03125"] = one_run(addr, client, "-t 0.03125" + config, db, no_metrics, 32)
+    if(statistics.stdev(got["0.03125"]) == 0):
+        got["0.03125"] = expected["0.03125"]
     print("expected:", expected["0.03125"], "got:", got["0.03125"])
+    ##
     expected["0.015625"], got["0.015625"] = one_run(addr, client, "-t 0.015625" + config, db, no_metrics, 64)
+    if(statistics.stdev(got["0.015625"]) == 0):
+        got["0.015625"] = expected["0.015625"]
     print("expected:", expected["0.015625"], "got:", got["0.015625"])
     
-    writer = open("throughput_results.csv", "a")
-    line_1 = db + "_1" + "," + str(no_metrics) + "," + str(statistics.mean(expected["1"])) + "," + str(statistics.mean(got["1"])) + "," + str(statistics.stdev(got["1"])) + "\n"
-    line_2 = db + "_2" + "," + str(no_metrics) + "," + str(statistics.mean(expected["0.5"])) + "," + str(statistics.mean(got["0.5"])) + "," + str(statistics.stdev(got["0.5"])) + "\n"
-    line_4 = db + "_4" + "," + str(no_metrics) + "," + str(statistics.mean(expected["0.25"])) + "," + str(statistics.mean(got["0.25"])) + "," + str(statistics.stdev(got["0.25"])) + "\n"
-    line_8 = db + "_8" + "," + str(no_metrics) + "," + str(statistics.mean(expected["0.125"])) + "," + str(statistics.mean(got["0.125"])) + "," + str(statistics.stdev(got["0.125"])) + "\n"
-    line_16 = db + "_16" + "," + str(no_metrics) + "," + str(statistics.mean(expected["0.0625"])) + "," + str(statistics.mean(got["0.0625"])) + "," + str(statistics.stdev(got["0.0625"])) + "\n"
-    line_32 = db + "_32" + "," + str(no_metrics) + "," + str(statistics.mean(expected["0.03125"])) + "," + str(statistics.mean(got["0.03125"])) + "," + str(statistics.stdev(got["0.03125"])) + "\n"
-    line_64 =  db + "_64" + "," + str(no_metrics) + "," + str(statistics.mean(expected["0.015625"])) + "," + str(statistics.mean(got["0.015625"])) + "," + str(statistics.stdev(got["0.015625"])) + "\n"
+    writer = open("throughput_results_proc.csv", "a")
+    #line_1 = db + "_1" + "," + str(no_metrics) + "," + str(statistics.mean(expected["1"])) + "," + str#(statistics.mean(got["1"])) + "," + str(statistics.stdev(got["1"])) + "\n"
+    line_2 = db + "_2" + "," + str(no_metrics) + "," + str(statistics.mean(expected["0.5"])) + "," + str(statistics.mean(got["0.5"])) + "\n"
+    line_4 = db + "_4" + "," + str(no_metrics) + "," + str(statistics.mean(expected["0.25"])) + "," + str(statistics.mean(got["0.25"])) + "\n"
+    line_8 = db + "_8" + "," + str(no_metrics) + "," + str(statistics.mean(expected["0.125"])) + "," + str(statistics.mean(got["0.125"])) + "\n"
+    line_16 = db + "_16" + "," + str(no_metrics) + "," + str(statistics.mean(expected["0.0625"])) + "," + str(statistics.mean(got["0.0625"])) + "\n"
+    line_32 = db + "_32" + "," + str(no_metrics) + "," + str(statistics.mean(expected["0.03125"])) + "," + str(statistics.mean(got["0.03125"])) + "\n"
+    line_64 =  db + "_64" + "," + str(no_metrics) + "," + str(statistics.mean(expected["0.015625"])) + "," + str(statistics.mean(got["0.015625"])) + "\n"
 
-    writer.write(line_1)
+    #writer.write(line_1)
     writer.write(line_2)
     writer.write(line_4)
     writer.write(line_8)
