@@ -42,7 +42,8 @@ def ret_trace(_data, metric, no_metrics, freq, name, colors, sl):
                              mode='lines',
                              name=name,
                              showlegend=sl,
-                             line=dict(color=colors[0], width=4)))
+                             #legendgroup='1',
+                             line=dict(color=colors[4], width=8)))
 
     return trace1
 
@@ -58,7 +59,8 @@ def ret_trace_dash(_data, metric, no_metrics, freq, name, colors, sl):
                              mode='lines',
                              name=name,
                              showlegend=sl,
-                             line=dict(color=colors[1], width=4, dash="dash")))
+                             #legendgroup='2',
+                             line=dict(color=colors[4], width=8, dash="dash")))
 
     return trace1
 
@@ -74,7 +76,8 @@ def ret_trace_dot(_data, metric, no_metrics, freq, name, colors, sl):
                              mode='lines',
                              name=name,
                              showlegend=sl,
-                             line=dict(color=colors[4], width=4, dash="dot")))
+                             #legendgroup='3',
+                             line=dict(color=colors[4], width=8, dash="dot")))
 
     return trace1
 
@@ -137,7 +140,7 @@ freqs = [1,2,4,8,16]
 xx = ["1", "1/2", "1/4", "1/8", "1/16"]
 
 fig = go.Figure()
-fig = make_subplots(rows=2, cols=2, column_widths=[0.5,0.5], row_heights=[0.5, 0.5], horizontal_spacing=0.1, vertical_spacing=0.1, shared_xaxes=True, subplot_titles=("FP_ARITH_SCALAR_DOBLE", "MEM_LOAD_UOPS", "UNHALTED_REFERENCE_CYCLES", "INSTRUCTIONS_RETIRED"))
+fig = make_subplots(rows=2, cols=2, column_widths=[0.5,0.5], row_heights=[0.5, 0.5], horizontal_spacing=0.1, vertical_spacing=0.1, shared_xaxes=True, subplot_titles=("FP_ARITH_SCALAR_DOUBLE", "MEM_LOAD_UOPS", "UNHALTED_REFERENCE_CYCLES", "INSTRUCTIONS_RETIRED"))
 
 
 #line = []
@@ -297,14 +300,15 @@ fig.append_trace(trace1, row=2, col=2)
 ############################################################################################
 ############################################################################################
 fig.update_layout(template="simple_white")
-fig.update_layout(legend=dict(yanchor="top",y=1.2,xanchor="left",x=0.01,orientation="h"))
+#fig.update_layout(legend=dict(yanchor="top",y=1.2,xanchor="left",x=0.4,orientation="v",itemwidth=400))
+fig.update_layout(legend=dict(yanchor="top",y=1.15,xanchor="left",x=0.01,orientation="h",itemwidth=100))
 
 
 fig.update_layout(                                                                              
     #title="Error in measurement",               
     font=dict(                                                                                  
         family="Courier New, monospace",                                                        
-        size=32,                                                                                
+        size=42,                                                                                
         color="black"                                                                           
     ),
     yaxis={'tickformat':'.1e','ticks': 'outside'},
@@ -329,7 +333,7 @@ fig.update_layout(
                 
                 "font": dict(                                                                   
                     family="Courier New, monospace",                                            
-                    size=32,                                                                    
+                    size=42,                                                                    
                     color="black"                                                               
                 ),                                                                              
                 
