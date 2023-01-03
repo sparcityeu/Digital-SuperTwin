@@ -4,7 +4,7 @@ export PYTHON_VERSION="3.10"
 export LOGGING_LEVEL="INFO"
 
 
-echo "Installing "$PYTHON_VERSION" and pip"
+echo "Installing python"$PYTHON_VERSION" and pip"
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         . /etc/os-release
         if [[ "$ID" == "ubuntu" ]]; then
