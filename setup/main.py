@@ -3,6 +3,7 @@ import execution.exeuction as execution
 import platform
 import distro
 import installer.ubuntu as ubuntu
+import installer.macos as macos
 
 def main() -> None:
     """
@@ -12,7 +13,10 @@ def main() -> None:
 
     match platform.system():
         case "Darwin":
-            pass
+            macos.mongo_db_install()
+            macos.influx_db_install()
+            macos.grafana_install()
+            macos.mongo_db_compass_install()
         case "Linux":
             distro_name, _, _ = distro.linux_distribution(full_distribution_name=False)
 
