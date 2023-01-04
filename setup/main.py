@@ -35,6 +35,14 @@ def main() -> None:
                     manjaro.mongo_db_compass_install()
                     manjaro.epm()
                     manjaro.install_sl()
+                case _:
+                    message = "linux distro not supported"
+                    logger.log(message, logger.level.ERROR)
+                    raise Exception(message)
+        case _:
+            message = "operating system not supported"
+            logger.log(message, logger.level.ERROR)
+            raise Exception(message)
                 
 
 if __name__ == "__main__":

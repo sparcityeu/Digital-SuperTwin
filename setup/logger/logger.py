@@ -1,6 +1,7 @@
 import logging
 import os 
 import sys
+from enum import Enum
 
 def create_logger(logging_level : str = None) -> logging.Logger:
     """
@@ -45,8 +46,9 @@ def create_logger(logging_level : str = None) -> logging.Logger:
     return logger
 
 LOGGER = create_logger()
+level = Enum("level", ["INFO", "WARNING", "ERROR"])
 
-def log(message : str) -> None:
+def log(message : str, level : level = level.INFO ) -> None:
     """
     function that logs information
 
@@ -54,9 +56,19 @@ def log(message : str) -> None:
     ----------
     first : message
         the 1st param, the information that will be logged
+    second : level
+        the 2nd param, in which level the message will be logged
 
     Returns
     -------
     None
     """
-    LOGGER.info(message)
+    match level:
+        case level.INFO:
+            LOGGER.info(message)
+        case level.WARNING:
+            LOGGER.warn(message)
+        case level.ERROR:
+            LOGGER.error(message)
+        case _:
+            raise Exception("logging level not recognized")
