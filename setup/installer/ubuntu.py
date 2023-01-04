@@ -72,4 +72,5 @@ def grafana_install() -> None:
     # logger.log("Update your server")
     # execution.execute_command("apt-get update")
     logger.log("Install Grafana")
-    execution.execute_command("snap install grafana")
+    execution.execute_command('wget https://s3-us-west-2.amazonaws.com/grafana-releases/release/grafana_5.1.0_amd64.deb 64')
+    execution.execute_command("dpkg -i grafana_5.1.0_amd64.deb")
