@@ -47,8 +47,6 @@ def influx_db_install() -> None:
     -------
     None
     """
-    logger.log("Switch to the root user")
-    execution.execute_command("sudo -i")
     logger.log("Download the GPG key")
     execution.execute_command("wget -qO- https://repos.influxdata.com/influxdb.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/influxdb.gpg > /dev/null")
     logger.log("Setup the repository")
@@ -58,7 +56,6 @@ def influx_db_install() -> None:
     logger.log("apt-get update")
     execution.execute_command("Install InfluxDB2")
     logger.log("apt-get install influxdb2")
-    execution.execute_command("Start InfluxDB Service")
 
 def grafana_install() -> None:
     """
@@ -68,11 +65,11 @@ def grafana_install() -> None:
     -------
     None
     """
-    logger.log("Install the dependencies")
-    execution.execute_command("apt-get install wget curl gnupg2 apt-transport-https software-properties-common -y")
-    logger.log("Add the Grafana GPG key")
-    execution.execute_command("Add the Grafana repository")
-    logger.log("Update your server")
-    execution.execute_command("apt-get update")
+    # logger.log("Install the dependencies")
+    # execution.execute_command("apt-get install wget curl gnupg2 apt-transport-https software-properties-common -y")
+    # logger.log("Add the Grafana GPG key")
+    # execution.execute_command("Add the Grafana repository")
+    # logger.log("Update your server")
+    # execution.execute_command("apt-get update")
     logger.log("Install Grafana")
-    execution.execute_command("apt-get install grafana -y")
+    execution.execute_command("snap install grafana")
