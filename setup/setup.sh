@@ -15,7 +15,10 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
             sudo apt-get -y install python3-pip
 
         elif [[ "$ID" == "manjaro" ]]; then
-            pacman -U $PYTHON_VERSION
+            sudo pamac search python
+            sudo pamac install python
+            sudo pamac install python-pymongo
+            sudo pamac install python-cryptography
         fi
 
 elif [[ "$OSTYPE" == "darwin"* ]]; then

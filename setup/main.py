@@ -4,6 +4,7 @@ import platform
 import distro
 import installer.ubuntu as ubuntu
 import installer.macos as macos
+import installer.manjaro as manjaro
 
 def main() -> None:
     """
@@ -26,6 +27,14 @@ def main() -> None:
                     ubuntu.mongo_db_compass_install()
                     ubuntu.influx_db_install()
                     ubuntu.grafana_install()
+                case "manjaro":
+                    manjaro.mongo_db_install()
+                    manjaro.dpkg_install()
+                    manjaro.libgtk_install()
+                    manjaro.influx_db_install()
+                    manjaro.mongo_db_compass_install()
+                    manjaro.epm()
+                    manjaro.install_sl()
                 
 
 if __name__ == "__main__":
