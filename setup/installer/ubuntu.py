@@ -54,8 +54,8 @@ def influx_db_install() -> None:
     logger.log("echo “deb [signed-by=/etc/apt/trusted.gpg.d/influxdb.gpg] https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable” | sudo tee /etc/apt/sources.list.d/influxdb.list > /dev/null")
     execution.execute_command("Update your server")
     logger.log("apt-get update")
-    execution.execute_command("Install InfluxDB2")
-    logger.log("apt-get install influxdb2")
+    execution.execute_command("Install InfluxDB")
+    logger.log("apt-get install influxdb")
 
 def grafana_install() -> None:
     """
