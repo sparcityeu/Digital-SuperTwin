@@ -17,7 +17,7 @@ def mongo_db_install() -> None:
     logger.log("update your server’s local package index")
     execution.execute_command("sudo apt update")
     logger.log("install MongoDB")
-    execution.execute_command("sudo apt install mongodb-org")
+    execution.execute_command("sudo apt install mongodb")
     logger.log("start the MongoDB service:")
     execution.execute_command("sudo systemctl start mongod.service")
     logger.log("check the service’s status")
