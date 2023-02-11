@@ -1,0 +1,76 @@
+Using database 'dolap_run' and tags 'tag=_monitor'.
+Sending 10 metrics to InfluxDB at http://127.0.0.1:8086 every 0.0 sec...
+(Ctrl-C to stop)
+
+With 10 metrics
+exist: True name: dolap twin_id: ef0c0857-0388-471e-8d03-264efd89ba32 collection_id: 639890fa01d26c3c731f7e88 args[0]: 10.36.54.195
+in query_twin_state: name:  dolap
+Found db..
+SuperTwin is reconstructed from db..
+pids: {'pmproxy': '2930', 'pmie': '3428', 'pmdaperfevent': '347803', 'pmcd': '750317', 'pmdalinux': '750325', 'pmdalmsensors': '1777593', 'pmdaproc': '3533914'}
+pids: {'pmproxy': '002930', 'pmie': '003428', 'pmdaperfevent': '347803', 'pmcd': '750317', 'pmdalinux': '750325', 'pmdalmsensors': '1777593', 'pmdaproc': '3533914'}
+METRICS: ['RAPL_ENERGY_PKG', 'RAPL_ENERGY_DRAM', 'UNHALTED_CORE_CYCLES', 'UNHALTED_REFERENCE_CYCLES', 'INSTRUCTION_RETIRED', 'L1D:REPLACEMENT', 'MEM_UOPS_RETIRED:ALL_LOADS', 'MEM_UOPS_RETIRED:ALL_STORES', 'MEM_LOAD_RETIRED:L1_HIT', 'MEM_LOAD_RETIRED:L2_HIT', 'MEM_LOAD_RETIRED:L3_HIT', 'FP_ARITH:SCALAR_SINGLE', 'FP_ARITH:SCALAR_DOUBLE']
+Generated new perfevent pmda configuration..
+Executing command on dolap : mkdir /tmp/dt_files
+Executing command on dolap : sudo sh /tmp/dt_files/reconfigure_perf.sh
+Reconfigured remote perfevent pmda
+Twin state is registered to db..
+pids: {'pmproxy': '2930', 'pmie': '3428', 'pmdaperfevent': '446617', 'pmcd': '750317', 'pmdalinux': '750325', 'pmdalmsensors': '1777593', 'pmdaproc': '3533914'}
+pids: {'pmproxy': '002930', 'pmie': '003428', 'pmdaperfevent': '446617', 'pmcd': '750317', 'pmdalinux': '750325', 'pmdalmsensors': '1777593', 'pmdaproc': '3533914'}
+Interval: 0.03125
+cpu_query: SELECT "_003428__usr_bin_pmie" from cpu_use
+mem_query: SELECT "_003428__usr_bin_pmie" from mem_use
+io_query: SELECT "_003428__usr_bin_pmie" from proc_io_total_bytes
+cpu_query: SELECT "_750317__usr_lib_pcp_bin_pmcd" from cpu_use
+mem_query: SELECT "_750317__usr_lib_pcp_bin_pmcd" from mem_use
+io_query: SELECT "_750317__usr_lib_pcp_bin_pmcd" from proc_io_total_bytes
+cpu_query: SELECT "_3533914__var_lib_pcp_pmdas_proc_pmdaproc" from cpu_use
+mem_query: SELECT "_3533914__var_lib_pcp_pmdas_proc_pmdaproc" from mem_use
+io_query: SELECT "_3533914__var_lib_pcp_pmdas_proc_pmdaproc" from proc_io_total_bytes
+cpu_query: SELECT "_750325__var_lib_pcp_pmdas_linux_pmdalinux" from cpu_use
+mem_query: SELECT "_750325__var_lib_pcp_pmdas_linux_pmdalinux" from mem_use
+io_query: SELECT "_750325__var_lib_pcp_pmdas_linux_pmdalinux" from proc_io_total_bytes
+cpu_query: SELECT "_446617__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from cpu_use
+mem_query: SELECT "_446617__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from mem_use
+io_query: SELECT "_446617__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from proc_io_total_bytes
+Interval: 0.03125
+cpu_query: SELECT "_003428__usr_bin_pmie" from cpu_use
+mem_query: SELECT "_003428__usr_bin_pmie" from mem_use
+io_query: SELECT "_003428__usr_bin_pmie" from proc_io_total_bytes
+cpu_query: SELECT "_750317__usr_lib_pcp_bin_pmcd" from cpu_use
+mem_query: SELECT "_750317__usr_lib_pcp_bin_pmcd" from mem_use
+io_query: SELECT "_750317__usr_lib_pcp_bin_pmcd" from proc_io_total_bytes
+cpu_query: SELECT "_3533914__var_lib_pcp_pmdas_proc_pmdaproc" from cpu_use
+mem_query: SELECT "_3533914__var_lib_pcp_pmdas_proc_pmdaproc" from mem_use
+io_query: SELECT "_3533914__var_lib_pcp_pmdas_proc_pmdaproc" from proc_io_total_bytes
+cpu_query: SELECT "_750325__var_lib_pcp_pmdas_linux_pmdalinux" from cpu_use
+mem_query: SELECT "_750325__var_lib_pcp_pmdas_linux_pmdalinux" from mem_use
+io_query: SELECT "_750325__var_lib_pcp_pmdas_linux_pmdalinux" from proc_io_total_bytes
+cpu_query: SELECT "_446617__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from cpu_use
+mem_query: SELECT "_446617__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from mem_use
+io_query: SELECT "_446617__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from proc_io_total_bytes
+Interval: 0.03125
+cpu_query: SELECT "_003428__usr_bin_pmie" from cpu_use
+mem_query: SELECT "_003428__usr_bin_pmie" from mem_use
+io_query: SELECT "_003428__usr_bin_pmie" from proc_io_total_bytes
+cpu_query: SELECT "_750317__usr_lib_pcp_bin_pmcd" from cpu_use
+mem_query: SELECT "_750317__usr_lib_pcp_bin_pmcd" from mem_use
+io_query: SELECT "_750317__usr_lib_pcp_bin_pmcd" from proc_io_total_bytes
+cpu_query: SELECT "_3533914__var_lib_pcp_pmdas_proc_pmdaproc" from cpu_use
+mem_query: SELECT "_3533914__var_lib_pcp_pmdas_proc_pmdaproc" from mem_use
+io_query: SELECT "_3533914__var_lib_pcp_pmdas_proc_pmdaproc" from proc_io_total_bytes
+cpu_query: SELECT "_750325__var_lib_pcp_pmdas_linux_pmdalinux" from cpu_use
+mem_query: SELECT "_750325__var_lib_pcp_pmdas_linux_pmdalinux" from mem_use
+io_query: SELECT "_750325__var_lib_pcp_pmdas_linux_pmdalinux" from proc_io_total_bytes
+cpu_query: SELECT "_446617__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from cpu_use
+mem_query: SELECT "_446617__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from mem_use
+io_query: SELECT "_446617__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from proc_io_total_bytes
+Interval: 0.03125
+Traceback (most recent call last):
+  File "overhead_measurements_dolap.py", line 346, in <module>
+    main("10.36.54.195", " -c overhead_configs/dolap_10.conf :configured", "dolap", "try0", "dolap10")
+  File "overhead_measurements_dolap.py", line 270, in main
+    _runs["0.03125"], _gots["0.03125"], _ios["0.03125"], _nets["0.03125"] = one_run_two_returns(client, "0.03125" , metric1, metric2, fields, sampler_config, duration, name)
+  File "overhead_measurements_dolap.py", line 119, in one_run_two_returns
+    time.sleep(duration)
+KeyboardInterrupt

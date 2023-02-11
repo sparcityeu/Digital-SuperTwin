@@ -1,0 +1,34 @@
+-------------------------------------------------------------
+STREAM version $Revision: 5.10 $
+-------------------------------------------------------------
+This system uses 8 bytes per array element.
+-------------------------------------------------------------
+Array size = 88000000 (elements), Offset = 0 (elements)
+Memory per array = 671.4 MiB (= 0.7 GiB).
+Total memory required = 2014.2 MiB (= 2.0 GiB).
+Each kernel will be executed 20 times.
+ The *best* time for each kernel (excluding the first iteration)
+ will be used to compute the reported bandwidth.
+-------------------------------------------------------------
+Number of Threads requested = 1
+Number of Threads counted = 1
+-------------------------------------------------------------
+Your clock granularity/precision appears to be 1 microseconds.
+Each test below will take on the order of 67140 microseconds.
+   (= 67140 clock ticks)
+Increase the size of the arrays if this shows that
+you are not getting at least 20 clock ticks per test.
+-------------------------------------------------------------
+WARNING -- The above is only a rough guideline.
+For best results, please be sure you know the
+precision of your system timer.
+-------------------------------------------------------------
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:            9878.5     0.147122     0.142532     0.170770
+Scale:           9743.1     0.149039     0.144513     0.171909
+Add:            12337.1     0.175812     0.171191     0.199923
+Triad:          12204.2     0.179136     0.173055     0.201000
+-------------------------------------------------------------
+Solution Validates: avg error less than 1.000000e-13 on all three arrays
+-------------------------------------------------------------
+[1;34m[likwid-pin] Main PID -> hwthread 0 - OK[0m

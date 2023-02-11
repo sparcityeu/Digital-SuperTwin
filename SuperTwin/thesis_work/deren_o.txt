@@ -1,0 +1,44 @@
+Using database 'deren_run' and tags 'tag=_monitor'.
+Sending 10 metrics to InfluxDB at http://127.0.0.1:8086 every 1.0 sec...
+(Ctrl-C to stop)
+
+With 10 metrics
+exist: True name: deren twin_id: d5a324b3-63cb-451e-b5f1-4d1e6ebf6481 collection_id: 639bc877ed8e62a5c2f82cd5 args[0]: 10.92.53.74
+in query_twin_state: name:  deren
+Found db..
+SuperTwin is reconstructed from db..
+pids: {'pmproxy': '1725', 'pmie': '2294', 'pmcd': '2590449', 'pmdaproc': '2590453', 'pmdalinux': '2590455', 'pmdalmsensors': '2590456', 'pmdaperfevent': '2912175'}
+pids: {'pmproxy': '001725', 'pmie': '002294', 'pmcd': '2590449', 'pmdaproc': '2590453', 'pmdalinux': '2590455', 'pmdalmsensors': '2590456', 'pmdaperfevent': '2912175'}
+METRICS: ['RAPL_ENERGY_PKG', 'UNHALTED_CORE_CYCLES', 'UNHALTED_REFERENCE_CYCLES', 'INSTRUCTION_RETIRED', 'L1D:REPLACEMENT', 'MEM_UOPS_RETIRED:ALL_LOADS', 'MEM_UOPS_RETIRED:ALL_STORES', 'MEM_LOAD_RETIRED:L1_HIT', 'MEM_LOAD_RETIRED:L2_HIT', 'MEM_LOAD_RETIRED:L3_HIT', 'FP_ARITH:SCALAR_SINGLE', 'FP_ARITH:SCALAR_DOUBLE']
+Generated new perfevent pmda configuration..
+Executing command on deren : mkdir /tmp/dt_files
+Executing command on deren : sudo sh /tmp/dt_files/reconfigure_perf.sh
+Reconfigured remote perfevent pmda
+Twin state is registered to db..
+pids: {'pmproxy': '1725', 'pmie': '2294', 'pmcd': '2590449', 'pmdaproc': '2590453', 'pmdalinux': '2590455', 'pmdalmsensors': '2590456', 'pmdaperfevent': '2952977'}
+pids: {'pmproxy': '001725', 'pmie': '002294', 'pmcd': '2590449', 'pmdaproc': '2590453', 'pmdalinux': '2590455', 'pmdalmsensors': '2590456', 'pmdaperfevent': '2952977'}
+Interval: 1
+cpu_query: SELECT "_002294__usr_bin_pmie" from cpu_use
+mem_query: SELECT "_002294__usr_bin_pmie" from mem_use
+io_query: SELECT "_002294__usr_bin_pmie" from proc_io_total_bytes
+cpu_query: SELECT "_2590449__usr_lib_pcp_bin_pmcd" from cpu_use
+mem_query: SELECT "_2590449__usr_lib_pcp_bin_pmcd" from mem_use
+io_query: SELECT "_2590449__usr_lib_pcp_bin_pmcd" from proc_io_total_bytes
+cpu_query: SELECT "_2590453__var_lib_pcp_pmdas_proc_pmdaproc" from cpu_use
+mem_query: SELECT "_2590453__var_lib_pcp_pmdas_proc_pmdaproc" from mem_use
+io_query: SELECT "_2590453__var_lib_pcp_pmdas_proc_pmdaproc" from proc_io_total_bytes
+cpu_query: SELECT "_2590455__var_lib_pcp_pmdas_linux_pmdalinux" from cpu_use
+mem_query: SELECT "_2590455__var_lib_pcp_pmdas_linux_pmdalinux" from mem_use
+io_query: SELECT "_2590455__var_lib_pcp_pmdas_linux_pmdalinux" from proc_io_total_bytes
+cpu_query: SELECT "_2952977__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from cpu_use
+mem_query: SELECT "_2952977__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from mem_use
+io_query: SELECT "_2952977__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from proc_io_total_bytes
+Interval: 1
+Traceback (most recent call last):
+  File "overhead_measurements_deren.py", line 344, in <module>
+    main("10.92.53.74", " -c overhead_configs/deren_10.conf :configured", "deren", "try0", "deren10")
+  File "overhead_measurements_deren.py", line 253, in main
+    _runs["1"], _gots["1"], _ios["1"], _nets["1"] = one_run_two_returns(client, "1", metric1, metric2, fields, sampler_config, duration, name)
+  File "overhead_measurements_deren.py", line 119, in one_run_two_returns
+    time.sleep(duration)
+KeyboardInterrupt

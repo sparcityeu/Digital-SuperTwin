@@ -1,0 +1,44 @@
+-------------------------------------------------------------
+STREAM version $Revision: 5.10 $
+-------------------------------------------------------------
+This system uses 8 bytes per array element.
+-------------------------------------------------------------
+Array size = 268435456 (elements), Offset = 0 (elements)
+Memory per array = 2048.0 MiB (= 2.0 GiB).
+Total memory required = 6144.0 MiB (= 6.0 GiB).
+Each kernel will be executed 5 times.
+ The *best* time for each kernel (excluding the first iteration)
+ will be used to compute the reported bandwidth.
+-------------------------------------------------------------
+[1;34m[pthread wrapper] 
+[0m[1;34m[pthread wrapper] MAIN -> 0
+[0m[1;34m[pthread wrapper] PIN_MASK: [0m[1;34m0->1  [0m[1;34m1->2  [0m[1;34m2->3  [0m[1;34m3->4  [0m[1;34m4->5  [0m[1;34m5->6  [0m[1;34m6->7  [0m[1;34m
+[pthread wrapper] SKIP MASK: 0x0
+[0m[1;34m	threadid 140606126761664 -> hwthread 1 - OK[0m[1;34m
+[0m[1;34m	threadid 140606118364992 -> hwthread 2 - OK[0m[1;34m
+[0m[1;34m	threadid 140606109968320 -> hwthread 3 - OK[0m[1;34m
+[0m[1;34m	threadid 140606101571648 -> hwthread 4 - OK[0m[1;34m
+[0m[1;34m	threadid 140605887867072 -> hwthread 5 - OK[0m[1;34m
+[0m[1;34m	threadid 140605879470400 -> hwthread 6 - OK[0m[1;34m
+[0m[1;34m	threadid 140605871073728 -> hwthread 7 - OK[0m[1;34m
+[0mNumber of Threads requested = 8
+Number of Threads counted = 8
+-------------------------------------------------------------
+Your clock granularity/precision appears to be 1 microseconds.
+Each test below will take on the order of 159618 microseconds.
+   (= 159618 clock ticks)
+Increase the size of the arrays if this shows that
+you are not getting at least 20 clock ticks per test.
+-------------------------------------------------------------
+WARNING -- The above is only a rough guideline.
+For best results, please be sure you know the
+precision of your system timer.
+-------------------------------------------------------------
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:           25132.1     0.170989     0.170896     0.171045
+Scale:          28047.5     0.153385     0.153132     0.153825
+Add:            27706.7     0.235083     0.232523     0.240073
+Triad:          27168.9     0.237233     0.237126     0.237411
+-------------------------------------------------------------
+Solution Validates: avg error less than 1.000000e-13 on all three arrays
+-------------------------------------------------------------

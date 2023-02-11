@@ -1,0 +1,60 @@
+Using database 'luna_run' and tags 'tag=_monitor'.
+Sending 20 metrics to InfluxDB at http://127.0.0.1:8086 every 1.0 sec...
+(Ctrl-C to stop)
+
+With 20 metrics
+exist: True name: luna twin_id: a65f8d9a-37ef-4880-8b68-a12e10340ad0 collection_id: 639bdb9ceb3bc57598f64938 args[0]: 10.36.52.109
+in query_twin_state: name:  luna
+Found db..
+SuperTwin is reconstructed from db..
+pids: {'pmdalmsensors': '2081', 'pmproxy': '2177', 'pmie': '2288', 'pmdaperfevent': '29057', 'pmcd': '32380', 'pmdaproc': '32383', 'pmdalinux': '32385'}
+pids: {'pmdalmsensors': '002081', 'pmproxy': '002177', 'pmie': '002288', 'pmdaperfevent': '029057', 'pmcd': '032380', 'pmdaproc': '032383', 'pmdalinux': '032385'}
+METRICS: ['RAPL_ENERGY_PKG', 'RAPL_ENERGY_DRAM', 'UNHALTED_CORE_CYCLES', 'UNHALTED_REFERENCE_CYCLES', 'INSTRUCTION_RETIRED', 'L1D:REPLACEMENT', 'MEM_UOPS_RETIRED:ALL_LOADS', 'MEM_UOPS_RETIRED:ALL_STORES', 'MEM_LOAD_RETIRED:L1_HIT', 'MEM_LOAD_RETIRED:L2_HIT', 'MEM_LOAD_RETIRED:L3_HIT', 'FP_ARITH:SCALAR_SINGLE', 'FP_ARITH:SCALAR_DOUBLE']
+Generated new perfevent pmda configuration..
+Executing command on luna : mkdir /tmp/dt_files
+Executing command on luna : sudo sh /tmp/dt_files/reconfigure_perf.sh
+Reconfigured remote perfevent pmda
+Twin state is registered to db..
+pids: {'pmdalmsensors': '2081', 'pmproxy': '2177', 'pmie': '2288', 'pmdaperfevent': '31210', 'pmcd': '32380', 'pmdaproc': '32383', 'pmdalinux': '32385'}
+pids: {'pmdalmsensors': '002081', 'pmproxy': '002177', 'pmie': '002288', 'pmdaperfevent': '031210', 'pmcd': '032380', 'pmdaproc': '032383', 'pmdalinux': '032385'}
+Interval: 1
+cpu_query: SELECT "_002288__usr_bin_pmie" from cpu_use
+mem_query: SELECT "_002288__usr_bin_pmie" from mem_use
+io_query: SELECT "_002288__usr_bin_pmie" from proc_io_total_bytes
+cpu_query: SELECT "_032380__usr_lib_pcp_bin_pmcd" from cpu_use
+mem_query: SELECT "_032380__usr_lib_pcp_bin_pmcd" from mem_use
+io_query: SELECT "_032380__usr_lib_pcp_bin_pmcd" from proc_io_total_bytes
+cpu_query: SELECT "_032383__var_lib_pcp_pmdas_proc_pmdaproc" from cpu_use
+mem_query: SELECT "_032383__var_lib_pcp_pmdas_proc_pmdaproc" from mem_use
+io_query: SELECT "_032383__var_lib_pcp_pmdas_proc_pmdaproc" from proc_io_total_bytes
+cpu_query: SELECT "_032385__var_lib_pcp_pmdas_linux_pmdalinux" from cpu_use
+mem_query: SELECT "_032385__var_lib_pcp_pmdas_linux_pmdalinux" from mem_use
+io_query: SELECT "_032385__var_lib_pcp_pmdas_linux_pmdalinux" from proc_io_total_bytes
+cpu_query: SELECT "_031210__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from cpu_use
+mem_query: SELECT "_031210__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from mem_use
+io_query: SELECT "_031210__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from proc_io_total_bytes
+Interval: 1
+cpu_query: SELECT "_002288__usr_bin_pmie" from cpu_use
+mem_query: SELECT "_002288__usr_bin_pmie" from mem_use
+io_query: SELECT "_002288__usr_bin_pmie" from proc_io_total_bytes
+cpu_query: SELECT "_032380__usr_lib_pcp_bin_pmcd" from cpu_use
+mem_query: SELECT "_032380__usr_lib_pcp_bin_pmcd" from mem_use
+io_query: SELECT "_032380__usr_lib_pcp_bin_pmcd" from proc_io_total_bytes
+cpu_query: SELECT "_032383__var_lib_pcp_pmdas_proc_pmdaproc" from cpu_use
+mem_query: SELECT "_032383__var_lib_pcp_pmdas_proc_pmdaproc" from mem_use
+io_query: SELECT "_032383__var_lib_pcp_pmdas_proc_pmdaproc" from proc_io_total_bytes
+cpu_query: SELECT "_032385__var_lib_pcp_pmdas_linux_pmdalinux" from cpu_use
+mem_query: SELECT "_032385__var_lib_pcp_pmdas_linux_pmdalinux" from mem_use
+io_query: SELECT "_032385__var_lib_pcp_pmdas_linux_pmdalinux" from proc_io_total_bytes
+cpu_query: SELECT "_031210__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from cpu_use
+mem_query: SELECT "_031210__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from mem_use
+io_query: SELECT "_031210__var_lib_pcp_pmdas_perfevent_pmdaperfevent" from proc_io_total_bytes
+Interval: 1
+Traceback (most recent call last):
+  File "overhead_measurements_luna.py", line 346, in <module>
+    main("10.36.52.109", " -c overhead_configs/luna_20.conf :configured", "luna", "try0", "luna20")
+  File "overhead_measurements_luna.py", line 252, in main
+    _runs["1"], _gots["1"], _ios["1"], _nets["1"] = one_run_two_returns(client, "1", metric1, metric2, fields, sampler_config, duration, name)
+  File "overhead_measurements_luna.py", line 126, in one_run_two_returns
+    val = netwatch_process.stdout.readline().decode("utf-8")
+KeyboardInterrupt

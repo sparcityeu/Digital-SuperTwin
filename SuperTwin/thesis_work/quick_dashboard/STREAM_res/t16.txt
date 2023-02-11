@@ -1,0 +1,52 @@
+-------------------------------------------------------------
+STREAM version $Revision: 5.10 $
+-------------------------------------------------------------
+This system uses 8 bytes per array element.
+-------------------------------------------------------------
+Array size = 88000000 (elements), Offset = 0 (elements)
+Memory per array = 671.4 MiB (= 0.7 GiB).
+Total memory required = 2014.2 MiB (= 2.0 GiB).
+Each kernel will be executed 20 times.
+ The *best* time for each kernel (excluding the first iteration)
+ will be used to compute the reported bandwidth.
+-------------------------------------------------------------
+[1;34m[pthread wrapper] 
+[0m[1;34m[pthread wrapper] MAIN -> 0
+[0m[1;34m[pthread wrapper] PIN_MASK: [0m[1;34m0->1  [0m[1;34m1->2  [0m[1;34m2->3  [0m[1;34m3->4  [0m[1;34m4->5  [0m[1;34m5->6  [0m[1;34m6->7  [0m[1;34m7->8  [0m[1;34m8->9  [0m[1;34m9->10  [0m[1;34m10->11  [0m[1;34m11->12  [0m[1;34m12->13  [0m[1;34m13->14  [0m[1;34m14->15  [0m[1;34m
+[pthread wrapper] SKIP MASK: 0x0
+[0m[1;34m	threadid 140650236651392 -> hwthread 1 - OK[0m[1;34m
+[0m[1;34m	threadid 140650228254720 -> hwthread 2 - OK[0m[1;34m
+[0m[1;34m	threadid 140650219858048 -> hwthread 3 - OK[0m[1;34m
+[0m[1;34m	threadid 140650211461376 -> hwthread 4 - OK[0m[1;34m
+[0m[1;34m	threadid 140650203064704 -> hwthread 5 - OK[0m[1;34m
+[0m[1;34m	threadid 140650194668032 -> hwthread 6 - OK[0m[1;34m
+[0m[1;34m	threadid 140649844173440 -> hwthread 7 - OK[0m[1;34m
+[0m[1;34m	threadid 140649835776768 -> hwthread 8 - OK[0m[1;34m
+[0m[1;34m	threadid 140649827380096 -> hwthread 9 - OK[0m[1;34m
+[0m[1;34m	threadid 140649818983424 -> hwthread 10 - OK[0m[1;34m
+[0m[1;34m	threadid 140649810586752 -> hwthread 11 - OK[0m[1;34m
+[0m[1;34m	threadid 140649802190080 -> hwthread 12 - OK[0m[1;34m
+[0m[1;34m	threadid 140649793793408 -> hwthread 13 - OK[0m[1;34m
+[0m[1;34m	threadid 140649240194560 -> hwthread 14 - OK[0m[1;34m
+[0m[1;34m	threadid 140649231797888 -> hwthread 15 - OK[0m[1;34m
+[0mNumber of Threads requested = 16
+Number of Threads counted = 16
+-------------------------------------------------------------
+Your clock granularity/precision appears to be 1 microseconds.
+Each test below will take on the order of 42717 microseconds.
+   (= 42717 clock ticks)
+Increase the size of the arrays if this shows that
+you are not getting at least 20 clock ticks per test.
+-------------------------------------------------------------
+WARNING -- The above is only a rough guideline.
+For best results, please be sure you know the
+precision of your system timer.
+-------------------------------------------------------------
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:           30700.2     0.046188     0.045863     0.047847
+Scale:          30815.7     0.046053     0.045691     0.048403
+Add:            34056.8     0.063827     0.062014     0.074536
+Triad:          33970.3     0.063032     0.062172     0.066056
+-------------------------------------------------------------
+Solution Validates: avg error less than 1.000000e-13 on all three arrays
+-------------------------------------------------------------

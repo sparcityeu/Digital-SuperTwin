@@ -1,0 +1,52 @@
+poseidon,-1,-1,triad,34.316956,0.3616017290196507,1
+poseidon,-1,-1,sum,34.257888,0.5721874422075343,1
+poseidon,-1,-1,stream,34.527852,0.09492215795060845,1
+poseidon,-1,-1,peakflops,34.460166,0.21250461731454295,1
+poseidon,-1,-1,ddot,34.157148,0.35015730867711486,1
+poseidon,-1,-1,daxpy,34.24295,0.4579145544749594,1
+poseidon,1, -c cstress/poseidon_1.conf,triad,34.483646,0.35534190849096164,1
+poseidon,1, -c cstress/poseidon_1.conf,sum,34.433776,0.12050415316494303,1
+poseidon,1, -c cstress/poseidon_1.conf,stream,34.276748,0.45546980807733106,1
+poseidon,1, -c cstress/poseidon_1.conf,peakflops,34.254454,0.38249251003124096,1
+poseidon,1, -c cstress/poseidon_1.conf,ddot,33.952508,0.5273813455840107,1
+poseidon,1, -c cstress/poseidon_1.conf,daxpy,34.396508,0.36490511790053,1
+poseidon,-1,-1,triad,17.19818,0.14754369691721933,1
+poseidon,-1,-1,sum,17.196826666666666,0.1518750052949242,1
+poseidon,-1,-1,triad,14.283206333333334,4.858088918159109,1
+poseidon,-1,-1,sum,17.253276666666668,0.05081667672460822,1
+poseidon,-1,-1,stream,17.199943333333334,0.22194187760162182,1
+poseidon,-1,-1,peakflops,17.181226666666667,0.14179532091480765,1
+poseidon,-1,-1,ddot,17.11758,0.04971332517544924,1
+poseidon,-1,-1,daxpy,17.135676666666665,0.1680985741561582,1
+poseidon,-1,-1,triad,17.104153333333333,0.23935175711352802,1
+poseidon,-1,-1,sum,16.92794333333333,0.2183551147404914,1
+poseidon,-1,-1,stream,17.2177,0.07021236429575602,1
+poseidon,-1,-1,peakflops,17.348946666666667,0.05701472996808236,1
+poseidon,-1,-1,ddot,16.959176666666668,0.332922496436233,1
+poseidon,-1,-1,daxpy,17.044596666666667,0.3255810031825167,1
+poseidon,1, -c cstress/poseidon_1.conf,triad,17.245034,0.08877172201776865,1
+poseidon,1, -c cstress/poseidon_1.conf,sum,17.153426,0.07833449387083537,1
+poseidon,1, -c cstress/poseidon_1.conf,stream,17.158158,0.1342193475993688,1
+poseidon,1, -c cstress/poseidon_1.conf,peakflops,17.255202,0.09519743205570147,1
+poseidon,1, -c cstress/poseidon_1.conf,ddot,17.192448,0.2656313043863619,1
+poseidon,1, -c cstress/poseidon_1.conf,daxpy,17.128156,0.19718800795180186,1
+poseidon,1, -c cstress/poseidon_8.conf,triad,17.067958,0.09392984174371972,1
+poseidon,1, -c cstress/poseidon_8.conf,sum,17.265364,0.16102633986401096,1
+poseidon,1, -c cstress/poseidon_8.conf,stream,17.222936,0.17673126557007401,1
+poseidon,1, -c cstress/poseidon_8.conf,peakflops,17.071946,0.2863818941204215,1
+poseidon,1, -c cstress/poseidon_8.conf,ddot,16.937984,0.310321912020406,1
+poseidon,1, -c cstress/poseidon_8.conf,daxpy,17.115234,0.2484920056661782,1
+poseidon,1, -c cstress/poseidon_16.conf,triad,17.263232,0.17504142701086414,1
+poseidon,1, -c cstress/poseidon_16.conf,sum,17.180484,0.18562833183541788,1
+poseidon,1, -c cstress/poseidon_16.conf,stream,17.102867999999997,0.24484791702197536,1
+poseidon,1, -c cstress/poseidon_16.conf,peakflops,17.096148,0.04795324097493285,1
+poseidon,1, -c cstress/poseidon_16.conf,ddot,17.119048,0.23713235780888173,1
+poseidon,1, -c cstress/poseidon_16.conf,daxpy,17.140718,0.15542748074262838,1
+poseidon,1, -c cstress/poseidon_24.conf,triad,17.27032,0.06674576278686073,1
+poseidon,1, -c cstress/poseidon_24.conf,sum,17.214734,0.14184030167762662,1
+poseidon,1, -c cstress/poseidon_24.conf,stream,17.11598,0.13350865084330568,1
+poseidon,1, -c cstress/poseidon_24.conf,peakflops,17.162972,0.322819705284544,1
+poseidon,1, -c cstress/poseidon_24.conf,ddot,17.270842000000002,0.24211918216035694,1
+poseidon,1, -c cstress/poseidon_24.conf,daxpy,17.295158,0.04957370240359333,1
+poseidon,0.5, -c cstress/poseidon_1.conf,triad,17.233356,0.11232530449547037,1
+poseidon,0.5, -c cstress/poseidon_1.conf,sum,17.110122,0.19481483495873694,1
