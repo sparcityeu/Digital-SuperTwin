@@ -27,6 +27,10 @@ from base64 import urlsafe_b64encode as b64e, urlsafe_b64decode as b64d
 
 import paramiko
 
+import sys
+sys.path.append("dashboards")
+import observation_standard
+
 ALWAYS_EXISTS_MONITOR = ["kernel.all.pressure.cpu.some.total",
                          "hinv.cpu.clock",
                          "lmsensors.coretemp_isa_0000.package_id_0",
@@ -1067,8 +1071,34 @@ def resolve_bind(SuperTwin, bind):
     return involved_threads
     #return list(sorted(involved_threads))
             
-        
-            
 
-        
-            
+def get_specific_observation(st, oid):
+
+    observations = get_observations(st)
+    db = get_mongo_database(st.name, st.mongodb_addr)["observations"]
+    meta_observations = loads(dumps(db.find({"uid": oid})))[0]
+    #print("Name:", st.name, "Observations:", observations)
+    #print("meta_observations:", meta_observations)
+    return meta_observations
+    
+def multinode_comparison(ev1, ev2, ev3, ev4):
+
+    st1 = ev1[0]
+    oid1 = ev1[1]
+
+    st2 = ev2[0]
+    oid2 = ev2[1]
+
+    st3 = ev3[0]
+    oid3 = ev3[1]
+
+    st4 = ev4[0]
+    oid4 = ev4[1]
+
+    o1 = get_specific_observation(st1, oid1)
+    o2 = get_specific_observation(st2, oid2)
+    o3 = get_specific_observation(st3, oid3)
+    o4 = get_specific_observation(st4, oid4)
+
+    observation_standard.multinode(st1, o1, st2, o2, st3, o3, st4, o4)
+    
