@@ -13,6 +13,7 @@ def mongo_db_install() -> None:
     """
 
     logger.log("installing mongodb")
+    execution.execute_command('sudo pacman install -S chrpath')    
     execution.execute_command('sudo pamac install php7-mongodb')
 
 def dpkg_install() -> None:
