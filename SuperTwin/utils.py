@@ -1102,3 +1102,15 @@ def multinode_comparison(ev1, ev2, ev3, ev4):
 
     observation_standard.multinode(st1, o1, st2, o2, st3, o3, st4, o4)
     
+
+def nested_search(keyword,node):
+    for key,val in (node.items() if isinstance(node,dict) 
+                    else enumerate(node) if isinstance(node,list) else []):
+        if key == keyword:
+            yield val
+        elif isinstance(val,list):
+            for res in nested_search(keyword,val):
+                yield res
+        elif isinstance(val,dict):
+            for res in nested_search(keyword,val):
+                yield res
