@@ -16,7 +16,6 @@ import sys
 
 import smart_utils_info
 
-
 def _parse_line(line):
     line = line.strip().decode(errors='ignore')
     return line

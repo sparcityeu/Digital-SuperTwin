@@ -14,9 +14,6 @@ sys.path.append("/tmp/dt_probing/pmu_event_query") ##For remote probing
 sys.path.append("../pmu_event_query") ##For local structure
 import parse_evtinfo
 
-def pretty_print_info(info):
-    pprint(info)
-
 def choose_info(hostname, system, cache_info, socket_groups, domains, cache_topology, affinity, gpu_info, PMUs, pmprobe):
     ##Chosen info to generate dtdl twin
     chosen_info = {}

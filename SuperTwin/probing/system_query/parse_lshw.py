@@ -5,7 +5,6 @@ import pprint
 #from collections.abc import MutableMapping
 import collections
 
-
 def generate_hardware_dict(to_gen, info_list):
 
     for item in info_list:
@@ -14,12 +13,10 @@ def generate_hardware_dict(to_gen, info_list):
             to_gen[item[0]]
         except:
             to_gen[item[0]] = {}
-
         try:
             to_gen[item[0]][item[1]]
         except:
             to_gen[item[0]][item[1]] = {}
-
         try:
             to_gen[item[0]][item[1]][item[2]]
         except:
@@ -60,136 +57,30 @@ def find_field(top_dict, _class, _description, found):
     return find_field_recursive(top_dict, _class, _description, found)
         
 
-
+ 
 def parse_lshw():
     
     out = detect_utils.cmd('lshw -json')[1]
-
     try:
         out = json.loads(out)[0]
     except:
         out = json.loads(out)
-    #pprint.pprint(out)
     
-    system = {}
-
-    #This is ok since system is always the top level dict
-    system['uuid'] = out['configuration']['uuid']
-
-
-    ##Parse system-motherboard info
-    system["system"] = {}
-    system["system"]["motherboard"] = {}
-
-    found = []
-    find_field(out, "bus", "Motherboard", found)
-
-    td = found[0] ##Since there is one motherboard, assume one dict will return
-    system["system"]["motherboard"]["name"] = td["product"]
-    system["system"]["motherboard"]["vendor"] = td["vendor"]
+    system = {"uuid":out.get('configuration',{}).get('uuid',None)}
     
-    
-    ##Parse bios info
-    system["firmware"] = {}
-    system["firmware"]["bios"] = {}
-    
-    found = []
-    find_field(out, "memory", "BIOS", found)
+    parse_motherboard_info(out,system)
+    parse_bios_info(out,system)
+    parse_memory_info(out,system)
+    parse_network_info(out,system)
+    parse_disk_info(out,system)
 
-    td = found[0] ##Since there is one BIOS, assume one dict will return
-    system["firmware"]["bios"]["version"] = td["version"]
-    system["firmware"]["bios"]["date"] = td["date"]
-    system["firmware"]["bios"]["vendor"] = td["vendor"]
-
-
-    ##Parse memory info
-    system["memory"] = {}
-    system["memory"]["total"] = {}
-
-    found = []
-    find_field(out, "memory", "System Memory", found)
-    td = found[0] ##System memory is top dictionary and banks are it's children
-    system["memory"]["total"]["size"] = td["size"]
-    system["memory"]["total"]["units"] = td["units"]
-    system["memory"]["total"]["banks"] = 0 ##Increment as filled slots found
-    
-    system["memory"]["banks"] = {}
-    
-    for i in range(len(td["children"])):
-        this_bank = td["children"][i]
-        
-        if(this_bank["description"].find("empty") == -1): ##if the slot is filled
-            system["memory"]["total"]["banks"] += 1
-            system["memory"]["banks"][this_bank["id"]] = {}
-            system["memory"]["banks"][this_bank["id"]]["size"] = this_bank["size"]
-            system["memory"]["banks"][this_bank["id"]]["slot"] = this_bank["slot"]
-            system["memory"]["banks"][this_bank["id"]]["clock"] = this_bank["clock"]
-            system["memory"]["banks"][this_bank["id"]]["description"] = this_bank["description"]
-            system["memory"]["banks"][this_bank["id"]]["vendor"] = this_bank["vendor"]
-            system["memory"]["banks"][this_bank["id"]]["model"] = this_bank["product"]
-
-
-    ##Parse network info
-    system["network"] = {}
-    found = []
-    find_field(out, "network", "Ethernet interface", found)
-    find_field(out, "network", "Wireless interface", found)
-
-    for network in found:
-        key = network["logicalname"] ## a name
-        conf = network["configuration"] ## a dict
-        
-        system["network"][key] = {}
-        if("ip" in conf):
-            system["network"][key]["ipv4"] = conf["ip"]
-        if("speed" in conf):
-            system["network"][key]["speed"] = conf["speed"]
-
-        system["network"][key]["link"] = conf["link"]
-        system["network"][key]["serial"] = network["serial"]
-        
-        if("firmware" in conf):
-            system["network"][key]["firmware"] = conf["firmware"]
-            system["network"][key]["businfo"] = network["businfo"]
-            system["network"][key]["vendor"] = network["vendor"]
-            system["network"][key]["model"] = network["product"]
-        
-
-
-    ##Parse disk info
-    system["disk"] = {}
-    found = []
-    find_field(out, "disk", "ATA Disk", found)
-    find_field(out, "storage", "NVMe device", found)
-
-    system["disk"]["logical"] = {}
-    system["disk"]["logical"]["count"] = len(found)
-
-    ##TO DO: Add other disk types as encountered
-    for f_disk in found:
-        if(f_disk["description"].find("NVMe") != -1):
-            try: ##If windows partition exists, tables are different
-                system["disk"][name]["size"] = f_disk["children"][0]["size"]
-                name = f_disk["children"][0]["logicalname"].strip("/dev/")
-                system["disk"][name] = {}
-                system["disk"][name]["model"] = f_disk["product"]
-                system["disk"][name]["size"] = f_disk["children"][0]["size"]
-                system["disk"][name]["units"] = f_disk["children"][0]["units"]
-            except: ##If windows partition exists, tables are different
-                system["disk"]["logical"]["count"] -= 1
-        else:
-            name = f_disk["logicalname"].strip("/dev/")
-            system["disk"][name] = {}
-            system["disk"][name]["model"] = f_disk["product"]
-            system["disk"][name]["size"] = f_disk["size"]
-            system["disk"][name]["units"] = f_disk["units"]
-
-
-    #This part is left to redhat code
     ##Parse CPU info
-    #system["cpu"] = {}
+    system["cpu"] = {}
+
     #find_field(out, "processor", "CPU", found)
     #print("Found:", found)
+    
+    #This part is left to redhat code
 
     ##Redhat tuples
     ##Remaining part is taken entirely from redhat-cip/hardware
@@ -218,12 +109,114 @@ def parse_lshw():
         hw_lst.append(('system', 'kernel', 'cmdline',
                        line.rstrip('\n').strip()))
 
-        
     generate_hardware_dict(system, hw_lst)
     pprint.pprint(system)
         
     return system
 
-if __name__ == "__main__":
+def parse_motherboard_info(out,system):
+    system["system"] = {}
+    system["system"]["motherboard"] = {}
 
+    found = []
+    find_field(out, "bus", "Motherboard", found)
+    
+    if(len(found) > 0):
+        td = found[0] ##Since there is one motherboard, assume one dict will return
+        system["system"]["motherboard"]["name"] = td.get("product","")    
+        system["system"]["motherboard"]["vendor"] = td.get("vendor","")    
+    
+def parse_bios_info(out,system):
+    system["firmware"] = {}
+    system["firmware"]["bios"] = {}
+    
+    found = []
+    find_field(out, "memory", "BIOS", found)
+
+    if(len(found) > 0):
+        td = found[0] ##Since there is one BIOS, assume one dict will return
+        system["firmware"]["bios"]["version"] = td.get("version","")
+        system["firmware"]["bios"]["date"] = td.get("date","")
+        system["firmware"]["bios"]["vendor"] = td.get("vendor","")
+
+def parse_memory_info(out,system):
+    system["memory"] = {}
+    system["memory"]["total"] = {}
+
+    found = []
+    find_field(out, "memory", "System Memory", found)
+    
+    if(len(found) > 0):
+        td = found[0] ##System memory is top dictionary and banks are it's children
+        system["memory"]["total"]["size"] = td.get("size","")
+        system["memory"]["total"]["units"] = td.get("units","")
+        system["memory"]["total"]["banks"] = 0 ##Increment as filled slots found
+        system["memory"]["banks"] = {}
+    
+        if "children" in td:
+            for i in range(len(td["children"])):
+                this_bank = td["children"][i]
+                if(this_bank["description"].find("empty") == -1): ##if the slot is filled
+                    system["memory"]["total"]["banks"] += 1
+                    system["memory"]["banks"][this_bank["id"]] = {}
+                    system["memory"]["banks"][this_bank["id"]] ["size"] = this_bank.get("size","")
+                    system["memory"]["banks"][this_bank["id"]] ["slot"] = this_bank.get("slot","")
+                    system["memory"]["banks"][this_bank["id"]] ["clock"] = this_bank.get("clock","")
+                    system["memory"]["banks"][this_bank["id"]] ["description"] = this_bank.get("description","")
+                    system["memory"]["banks"][this_bank["id"]] ["vendor"] = this_bank.get("vendor","")
+                    system["memory"]["banks"][this_bank["id"]] ["model"] = this_bank.get("product","")
+
+def parse_network_info(out,system):
+    system["network"] = {}
+    found = []
+    find_field(out, "network", "Ethernet interface", found)
+    find_field(out, "network", "Wireless interface", found)
+
+    if(len(found) > 0):
+        for network in found:
+            key = network.get("logicalname","") ## a name
+            conf = network.get("configuration","") ## a dict
+            
+            system["network"][key] = {}
+            if("ip" in conf):
+                system["network"][key]["ipv4"] = conf["ip"]
+            if("speed" in conf):
+                system["network"][key]["speed"] = conf["speed"]
+    
+            system["network"][key]["link"] = conf["link"]
+    
+            if("firmware" in conf):
+                system["network"][key]["firmware"] = conf.get("firmware","")
+                system["network"][key]["serial"] = network.get("serial","")
+                system["network"][key]["businfo"] = network.get("businfo","")
+                system["network"][key]["vendor"] = network.get("vendor","")
+                system["network"][key]["model"] = network.get("product","")
+            
+def parse_disk_info(out,system):
+    ##Parse disk info
+    system["disk"] = {}
+    found = []
+    find_field(out, "disk", "ATA Disk", found)
+    find_field(out, "storage", "NVMe device", found)
+
+    system["disk"]["logical"] = {}
+    system["disk"]["logical"]["count"] = len(found)
+
+    ##TO DO: Add other disk types as encountered
+    for f_disk in found:
+        if(f_disk["description"].find("NVMe") != -1):
+            name = f_disk["children"][0]["logicalname"].strip("/dev/")
+            system["disk"][name] = {}
+            system["disk"][name]["model"] = f_disk.get("product","")
+            system["disk"][name]["size"] = f_disk.get("children",[{}])[0].get("size","")
+            system["disk"][name]["units"] = f_disk.get("children",[{}])[0].get("units","")
+        else:
+            name = f_disk["logicalname"].strip("/dev/")
+            system["disk"][name] = {}
+            system["disk"][name]["model"] = f_disk.get("product","")
+            system["disk"][name]["size"] = f_disk.get("size","")
+            system["disk"][name]["units"] = f_disk.get("units","")
+
+
+if __name__ == "__main__":
     parse_lshw()

@@ -479,4 +479,24 @@ def parse_dmesg():
         if "ahci" in words[0]:
             ahci_output = parse_ahci(words)
 
-    return ahci_output
+    return ahci_output    
+
+def search_nested(keyword,node,default_return=None):
+    res = list(__nested_search(keyword, node))
+    return default_return if len(res) == 0 else res
+
+def __nested_search(keyword,node):
+    for key,val in (node.items() if isinstance(node,dict) 
+                    else enumerate(node) if isinstance(node,list) else []):
+        if key == keyword:
+            yield val
+        elif isinstance(val,list):
+            for res in __nested_search(keyword,val):
+                yield res
+        elif isinstance(val,dict):
+            for res in __nested_search(keyword,val):
+                yield res
+                
+                
+                
+                
