@@ -204,8 +204,6 @@ def main():
     system_list = system.detect()
     diskinfo_list = diskinfo.detect()
 
-    _system = {}
-    
     _system = parse_lshw.parse_lshw()
     cache_info = parse_cpuid.parse_cpuid()
     socket_groups, domains, cache_topology, gpu_info = parse_likwid_topology.parse_likwid()
