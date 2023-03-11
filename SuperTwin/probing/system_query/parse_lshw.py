@@ -73,7 +73,7 @@ def parse_lshw():
     parse_memory_info(out,system)
     parse_network_info(out,system)
     parse_disk_info(out,system)
-    generate_hardware_dict(system, get_cpu_info(system))
+    generate_hardware_dict(system, get_cpus() + get_kernel_info())
     
     pprint.pprint(system)
     return system
@@ -181,10 +181,14 @@ def parse_disk_info(out,system):
             system["disk"][name]["size"] = f_disk.get("size","")
             system["disk"][name]["units"] = f_disk.get("units","")
 
-def get_cpu_info(system):
+
+def get_cpus():
     hw_lst = []
     detect_utils.get_cpus(hw_lst)
+    return hw_lst
 
+def get_kernel_info():
+    hw_lst = []
     osvendor_cmd = detect_utils.output_lines("lsb_release -is")
     for line in osvendor_cmd:
         hw_lst.append(('system', 'os', 'vendor', line.rstrip('\n').strip()))
@@ -206,7 +210,6 @@ def get_cpu_info(system):
     for line in cmdline_cmd:
         hw_lst.append(('system', 'kernel', 'cmdline',
                        line.rstrip('\n').strip()))
-         
     return hw_lst
 
     
