@@ -59,7 +59,6 @@ def find_field(top_dict, _class, _description, found):
 
  
 def parse_lshw():
-    
     out = detect_utils.cmd('lshw -json')[1]
     try:
         out = json.loads(out)[0]

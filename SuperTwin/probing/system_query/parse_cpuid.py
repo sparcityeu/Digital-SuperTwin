@@ -30,7 +30,7 @@ def parse_cpuid():
 
     name = detect_utils.output_lines('sudo cpuid -1')[-1]
     faulty = check_faulty_report(name)
-        
+
     tlb = detect_utils.output_lines('sudo cpuid -1 -l 2')
     for item in tlb:
         if(item.find('data TLB') != -1):

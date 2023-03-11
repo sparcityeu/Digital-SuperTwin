@@ -269,7 +269,6 @@ def fix_bad_serial(hw_lst, system_uuid, mobo_id, nic_id):
 
                 break
 
-
 def get_cpus(hw_lst):
     def _maybe_int(v):
         try:
