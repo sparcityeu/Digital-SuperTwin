@@ -59,7 +59,6 @@ def find_field(top_dict, _class, _description, found):
 
  
 def parse_lshw():
-    
     out = detect_utils.cmd('lshw -json')[1]
     try:
         out = json.loads(out)[0]
@@ -73,45 +72,9 @@ def parse_lshw():
     parse_memory_info(out,system)
     parse_network_info(out,system)
     parse_disk_info(out,system)
-
-    ##Parse CPU info
-    system["cpu"] = {}
-
-    #find_field(out, "processor", "CPU", found)
-    #print("Found:", found)
+    generate_hardware_dict(system, get_cpus() + get_kernel_info())
     
-    #This part is left to redhat code
-
-    ##Redhat tuples
-    ##Remaining part is taken entirely from redhat-cip/hardware
-    hw_lst = []
-    detect_utils.get_cpus(hw_lst)
-
-    osvendor_cmd = detect_utils.output_lines("lsb_release -is")
-    for line in osvendor_cmd:
-        hw_lst.append(('system', 'os', 'vendor', line.rstrip('\n').strip()))
-
-    osinfo_cmd = detect_utils.output_lines("lsb_release -ds | tr -d '\"'")
-    for line in osinfo_cmd:
-        hw_lst.append(('system', 'os', 'version', line.rstrip('\n').strip()))
-
-    uname_cmd = detect_utils.output_lines("uname -r")
-    for line in uname_cmd:
-        hw_lst.append(('system', 'kernel', 'version',
-                       line.rstrip('\n').strip()))
-
-    arch_cmd = detect_utils.output_lines("uname -i")
-    for line in arch_cmd:
-        hw_lst.append(('system', 'kernel', 'arch', line.rstrip('\n').strip()))
-
-    cmdline_cmd = detect_utils.output_lines("cat /proc/cmdline")
-    for line in cmdline_cmd:
-        hw_lst.append(('system', 'kernel', 'cmdline',
-                       line.rstrip('\n').strip()))
-
-    generate_hardware_dict(system, hw_lst)
     pprint.pprint(system)
-        
     return system
 
 def parse_motherboard_info(out,system):
@@ -218,5 +181,36 @@ def parse_disk_info(out,system):
             system["disk"][name]["units"] = f_disk.get("units","")
 
 
+def get_cpus():
+    hw_lst = []
+    detect_utils.get_cpus(hw_lst)
+    return hw_lst
+
+def get_kernel_info():
+    hw_lst = []
+    osvendor_cmd = detect_utils.output_lines("lsb_release -is")
+    for line in osvendor_cmd:
+        hw_lst.append(('system', 'os', 'vendor', line.rstrip('\n').strip()))
+
+    osinfo_cmd = detect_utils.output_lines("lsb_release -ds | tr -d '\"'")
+    for line in osinfo_cmd:
+        hw_lst.append(('system', 'os', 'version', line.rstrip('\n').strip()))
+
+    uname_cmd = detect_utils.output_lines("uname -r")
+    for line in uname_cmd:
+        hw_lst.append(('system', 'kernel', 'version',
+                       line.rstrip('\n').strip()))
+
+    arch_cmd = detect_utils.output_lines("uname -i")
+    for line in arch_cmd:
+        hw_lst.append(('system', 'kernel', 'arch', line.rstrip('\n').strip()))
+
+    cmdline_cmd = detect_utils.output_lines("cat /proc/cmdline")
+    for line in cmdline_cmd:
+        hw_lst.append(('system', 'kernel', 'cmdline',
+                       line.rstrip('\n').strip()))
+    return hw_lst
+
+    
 if __name__ == "__main__":
     parse_lshw()
