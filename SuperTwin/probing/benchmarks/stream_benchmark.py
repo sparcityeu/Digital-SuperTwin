@@ -8,8 +8,6 @@ import utils
 import remote_probe
 import detect_utils
 import observation
-import sampling
-from bson.objectid import ObjectId
 
 import paramiko
 from scp import SCPClient

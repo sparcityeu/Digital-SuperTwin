@@ -136,6 +136,30 @@ def get_twin_description_from_file(hostProbFile, alias, SSHuser, SSHpass, addr):
     return _twin
 
 
+def register_twin_state(SuperTwin):
+
+    db = get_mongo_database(SuperTwin.name, SuperTwin.mongodb_addr)["twin"]
+    meta = loads(dumps(db.find({"_id": ObjectId(SuperTwin.mongodb_id)})))[0]
+
+    
+    meta["twin_state"] = {}
+    meta["twin_state"]["SSHuser"] = SuperTwin.SSHuser
+    meta["twin_state"]["SSHpass"] = obscure(str.encode(SuperTwin.SSHpass))
+    meta["twin_state"]["monitor_tag"] = SuperTwin.monitor_tag
+    meta["twin_state"]["benchmarks"] = SuperTwin.benchmarks
+    meta["twin_state"]["benchmark_results"] = SuperTwin.benchmark_results
+    meta["twin_state"]["monitor_metrics"] = SuperTwin.monitor_metrics
+    meta["twin_state"]["observation_metrics"] = SuperTwin.observation_metrics
+    meta["twin_state"]["grafana_datasource"] = SuperTwin.grafana_datasource
+    meta["twin_state"]["pcp_pids"] = SuperTwin.pcp_pids
+        
+        
+    db.replace_one({"_id": ObjectId(SuperTwin.mongodb_id)}, meta)
+    
+    print("Twin state is registered to db..")
+
+
+
 def insert_twin_description(_twin, supertwin):
 
     date = datetime.datetime.now()
@@ -903,7 +927,7 @@ def get_pid(line):
 
 
 def get_pcp_pids(SuperTwin):
-    return get_pcp_pids_by_credentials(SuperTwin.SSHuser,SuperTwin.SSHpass,SuperTwin.SSHaddr)
+    return get_pcp_pids_by_credentials(SuperTwin.SSHuser,SuperTwin.SSHpass,SuperTwin.addr)
 
 def get_pcp_pids_by_credentials(SSHuser, SSHpass, addr):
 

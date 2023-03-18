@@ -111,30 +111,7 @@ met = {
 
  
 
-
-def register_twin_state(SuperTwin):
-
-    db = utils.get_mongo_database(SuperTwin.name, SuperTwin.mongodb_addr)["twin"]
-    meta = loads(dumps(db.find({"_id": ObjectId(SuperTwin.mongodb_id)})))[0]
-
-    
-    meta["twin_state"] = {}
-    meta["twin_state"]["SSHuser"] = SuperTwin.SSHuser
-    meta["twin_state"]["SSHpass"] = utils.obscure(str.encode(SuperTwin.SSHpass))
-    meta["twin_state"]["monitor_tag"] = SuperTwin.monitor_tag
-    meta["twin_state"]["benchmarks"] = SuperTwin.benchmarks
-    meta["twin_state"]["benchmark_results"] = SuperTwin.benchmark_results
-    meta["twin_state"]["monitor_metrics"] = SuperTwin.monitor_metrics
-    meta["twin_state"]["observation_metrics"] = SuperTwin.observation_metrics
-    meta["twin_state"]["grafana_datasource"] = SuperTwin.grafana_datasource
-    meta["twin_state"]["pcp_pids"] = SuperTwin.pcp_pids
-        
-        
-    db.replace_one({"_id": ObjectId(SuperTwin.mongodb_id)}, meta)
-    
-    print("Twin state is registered to db..")
-
-
+ 
 def query_twin_state(name, mongodb_id, mongodb_addr):
 
     print("in query_twin_state: name: ", name)
@@ -182,11 +159,11 @@ class SuperTwin:
         self.monitor_tag = "_monitor"
         self.pcp_pids = utils.get_pcp_pids(self)
         
-        self.mongodb_id = utils.insert_twin_description(utils.get_twin_description_from_file(self.prob_file, self.name, self.SSHuser, self.SSHpass, self.addr),self)
+        self.mongodb_id = utils.insert_twin_description(
+                utils.get_twin_description_from_file(self.prob_file, self.name, self.SSHuser, self.SSHpass, self.addr)
+                ,self)
         print("Collection id:", self.mongodb_id)
-        #self.monitor_pid = sampling.main(self.name, self.addr, self.influxdb_name, self.monitor_tag, self.monitor_metrics)
-        
-        
+
         #benchmark members
         self.benchmarks = 0
         self.benchmark_results = 0
@@ -200,7 +177,7 @@ class SuperTwin:
         self.observation_metrics = [] #Start empty
         self.reconfigure_observation_events_beginning() ##Only add available power
         
-        self.monitor_pid = sampling.main(self)
+        self.monitor_pid = sampling.main(self)  
         
         utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
         self.kill_zombie_monitors() ##If there is any zombie monitor sampler
@@ -212,7 +189,7 @@ class SuperTwin:
         #self.add_adcarm_benchmark()
         #self.generate_roofline_dashboard()
         
-        register_twin_state(self)
+        utils.register_twin_state(self)
     
     def __reconstruct_twin(self, *args):
         
@@ -234,7 +211,7 @@ class SuperTwin:
         self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
         self.__load_twin_state(query_twin_state(self.name, self.mongodb_id, self.mongodb_addr))
         
-        self.kill_zombie_monitors() ##If there is any zombie monitor sampler
+        self.kill_zombie_monitors() 
         self.update_twin_document__assert_new_monitor_pid()
         print("SuperTwin:{} id:{} is reconstructed from db..".format(self.name,self.uid))
     
@@ -278,7 +255,6 @@ class SuperTwin:
                 if(pid != self.monitor_pid):
                     print("Killing zombie monitoring sampler with pid:", pid)
                     detect_utils.cmd("sudo kill " + str(pid))
-
                     
     def update_twin_document__assert_new_monitor_pid(self):
         
@@ -293,15 +269,6 @@ class SuperTwin:
         db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
         self.monitor_pid = new_pid
 
-    def update_twin_document__update_monitor_pid(self):
-        
-        db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
-        to_new = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
-        to_new["monitor_pid"] = self.monitor_pid
-        db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
-        self.monitor_pid = new_pid
-
-        
     def prepare_stream_content(self, stream_modifiers, stream_res):
 
         print("stream_modifiers:", stream_modifiers)
@@ -347,7 +314,6 @@ class SuperTwin:
         self.benchmark_results = benchmark_result_id
 
         return content
-
     
     def prepare_hpcg_content(self, hpcg_modifiers, hpcg_res):
 
@@ -396,7 +362,6 @@ class SuperTwin:
 
         return content
 
-    
     def prepare_adcarm_content(self, adcarm_modifiers, adcarm_res):
         ##We are not probably using adcarm_modifiers here
         ##It only contains global environment variable changes in the system
@@ -491,7 +456,6 @@ class SuperTwin:
         db.replace_one({"_id": ObjectId(self.mongodb_id)}, meta_with_twin)
         print("STREAM benchmark result added to Digital Twin")
         
-        
     def add_stream_benchmark(self):
         
         stream_modifiers, maker, runs = stream_benchmark.generate_stream_bench_sh(self)
@@ -499,8 +463,8 @@ class SuperTwin:
         stream_benchmark.execute_stream_runs(self, runs)
         stream_res = stream_benchmark.parse_stream_bench(self)
         self.update_twin_document__add_stream_benchmark(stream_modifiers, stream_res)
+        return self
         
-
     def update_twin_document__add_hpcg_benchmark(self, hpcg_modifiers, hpcg_res):
 
         db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
@@ -516,7 +480,6 @@ class SuperTwin:
         db.replace_one({"_id": ObjectId(self.mongodb_id)}, meta_with_twin)
         print("HPCG benchmark result added to Digital Twin")
 
-
     def add_hpcg_benchmark(self, HPCG_PARAM):
 
         hpcg_modifiers, runs = hpcg_benchmark.generate_hpcg_bench_sh(self, HPCG_PARAM)
@@ -524,6 +487,7 @@ class SuperTwin:
         hpcg_res = hpcg_benchmark.parse_hpcg_bench(self)
 
         self.update_twin_document__add_hpcg_benchmark(hpcg_modifiers, hpcg_res)
+        return self
 
     def update_twin_document__add_adcarm_benchmark(self, adcarm_modifiers, adcarm_res):
         ##Different from stream and hpcg benchmarks, adcarm have it's modifiers in result
@@ -541,7 +505,6 @@ class SuperTwin:
         meta_with_twin["twin_description"] = new_twin
         db.replace_one({"_id": ObjectId(self.mongodb_id)}, meta_with_twin)
         print("CARM benchmark result added to Digital Twin")
-        
 
     def add_adcarm_benchmark(self):
         adcarm_config = adcarm_benchmark.generate_adcarm_config(self)
@@ -550,8 +513,8 @@ class SuperTwin:
         adcarm_res = adcarm_benchmark.parse_adcarm_bench(self)
                         
         self.update_twin_document__add_adcarm_benchmark(adcarm_modifiers, adcarm_res)
+        return self
         
-
     def update_twin_document__add_roofline_dashboard(self, url):
 
         db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
@@ -560,7 +523,6 @@ class SuperTwin:
         to_new["roofline_dashboard"] = url
         db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
         print("Roofline dashboard added to Digital Twin")
-
         
     def update_twin_document__add_monitoring_dashboard(self, url):
 
@@ -571,19 +533,13 @@ class SuperTwin:
         db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
         print("Monitoring dashboard added to Digital Twin")
 
-    #def update_twin_document__update_monitoring_dashboard(self, url):
-    #monitoring_dashboard.update_dashboard(self)
-
-        
     def generate_roofline_dashboard(self):
         url = roofline_dashboard.generate_roofline_dashboard(self)
         self.update_twin_document__add_roofline_dashboard(url)
 
-        
     def generate_monitoring_dashboard(self):
         url = monitoring_dashboard.generate_monitoring_dashboard(self)
         self.update_twin_document__add_monitoring_dashboard(url)
-
         
     def reconfigure_monitor_events(self):
 
@@ -600,9 +556,8 @@ class SuperTwin:
 
         self.monitor_metrics = metrics
         self.update_twin_document__assert_new_monitor_pid()
-        register_twin_state(self)
+        utils.register_twin_state(self)
 
-        
     def reconfigure_observation_events(self, metrics):
 
         for item in ALWAYS_HAVE_OBSERVATION:
@@ -616,8 +571,7 @@ class SuperTwin:
 
         self.observation_metrics = metrics
         self.reconfigure_perfevent()
-        register_twin_state(self)
-
+        utils.register_twin_state(self)
         
     def reconfigure_observation_events_parameterized(self, obs_metric_file):
 
@@ -655,8 +609,7 @@ class SuperTwin:
 
         self.observation_metrics = metrics
         self.reconfigure_perfevent()
-        register_twin_state(self)
-
+        utils.register_twin_state(self)
 
     def reconfigure_observation_events_beginning(self):
 
@@ -677,21 +630,19 @@ class SuperTwin:
 
         self.observation_metrics = metrics
         self.reconfigure_perfevent()
-        register_twin_state(self)
+        utils.register_twin_state(self)
                     
     def reconfigure_perfevent(self):
 
         sampling.generate_perfevent_conf(self)
         sampling.reconfigure_perfevent(self)
         
-
     def execute_observation(self, command):
         observation_id = str(uuid.uuid4())
         obs_conf = sampling.generate_pcp2influxdb_config_observation(self, observation_id)
         duration = observation.observe_single(self, observation_id, command, obs_conf)
         print("Observation", observation_id, "is completed..")
         return duration
-
     
     def execute_observation_batch_element(self, command, observation_id, element_id):
         
@@ -701,7 +652,6 @@ class SuperTwin:
         print("Observation", this_observation_id, "is completed..")
         return duration
 
-    
     def execute_observation_batch_element_parameters(self, path, affinity, command, observation_id, element_id):
         print("Called")
         this_observation_id = observation_id + "_" + str(element_id)
@@ -711,7 +661,6 @@ class SuperTwin:
         print("Observation", this_observation_id, "is completed..")
         return duration
 
-        
     def execute_observation_batch(self, commands):
 
         observation = {}
@@ -761,6 +710,8 @@ class SuperTwin:
         
 
 
+
+
 def resolve_test(my_superTwin, threads):
 
     print("#############################################################################")
@@ -795,7 +746,6 @@ if __name__ == "__main__":
     else:
         addr = args[1]
         my_superTwin = SuperTwin(addr) ##Re-construct
-
 
     #my_superTwin.add_stream_benchmark()
     #my_superTwin.add_hpcg_benchmark(HPCG_PARAM) 
