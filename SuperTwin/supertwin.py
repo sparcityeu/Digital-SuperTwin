@@ -109,44 +109,7 @@ met = {
     }
 ##
 
-
-def get_twin_description(hostProbFile, alias, SSHuser, SSHpass, addr):
-
-    with open(hostProbFile, "r") as j:
-        _sys_dict = json.loads(j.read())
-
-    _twin = generate_dt.main(_sys_dict, alias, SSHuser, SSHpass, addr)
-    return _twin
-
-
-def insert_twin_description(_twin, supertwin):
-
-    date = datetime.datetime.now()
-    date = date.strftime("%d-%m-%Y")
-
-    hostname = supertwin.name
-    CONNECTION_STRING = supertwin.mongodb_addr
-    
-    mongodb = utils.get_mongo_database(hostname, CONNECTION_STRING)
-    collection = mongodb["twin"]
-    
-    metadata = {
-        "uid": supertwin.uid,
-        "address": supertwin.addr,
-        "hostname": supertwin.name,
-        "date": date,
-        "twin_description": _twin,
-        "influxdb_name": supertwin.influxdb_name,
-        "influxdb_tag": supertwin.monitor_tag,
-        "monitor_pid": "",
-        "prob_file": supertwin.prob_file,
-        "roofline_dashboard": "to be added",
-        "monitoring_dashboard": "to be added"}
-
-    result = collection.insert_one(metadata)
-    twin_id = str(result.inserted_id)
-
-    return twin_id
+ 
 
 
 def register_twin_state(SuperTwin):
@@ -184,111 +147,115 @@ def query_twin_state(name, mongodb_id, mongodb_addr):
             
 class SuperTwin:
 
-    def __init__(self, *args):
-
-        exist = False
-        name = None
-        twin_id = None
-        collection_id =None
+    def __init__(self, *args): 
         
-        if(len(args) == 1): ##Check if existed and wanted to be reconstructed from non-existed
-            try:
-                exist, name, twin_id, collection_id = utils.check_state(args[0])
-                print("exist:", exist, "name:", name, "twin_id:", twin_id, "collection_id:", collection_id, "args[0]:", args[0])
-            except:
-                print("A SuperTwin instance is tried to be reconstructed from address", args[0])
-                print("However, there is no such twin with that address..")
-                exit(1)
-        
-        if(len(args) == 1 and exist): ##Reconstruct from db
+        if(len(args) == 1):
+            self.__reconstruct_twin(args)
 
-            self.addr = args[0]
-            self.name = name
-            self.mongodb_id = collection_id
-            self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
-            meta = query_twin_state(self.name, self.mongodb_id, self.mongodb_addr)
-            self.monitor_metrics = meta["twin_state"]["monitor_metrics"]
-            self.observation_metrics = meta["twin_state"]["observation_metrics"]
-            self.SSHuser = meta["twin_state"]["SSHuser"]
-            self.SSHpass = utils.unobscure(meta["twin_state"]["SSHpass"]).decode()
-            self.monitor_tag = meta["twin_state"]["monitor_tag"]
-            self.benchmarks = meta["twin_state"]["benchmarks"]
-            self.benchmark_results = meta["twin_state"]["benchmark_results"]
-            self.grafana_datasource = meta["twin_state"]["grafana_datasource"]
-            self.prob_file = meta["prob_file"]
-            self.uid = meta["uid"]
-            self.influxdb_name = meta["influxdb_name"]
-            self.monitor_tag = meta["influxdb_tag"]
-            self.monitor_pid = meta["monitor_pid"]
-            self.roofline_dashboard = meta["roofline_dashboard"]
-            self.monitoring_dashboard = meta["monitoring_dashboard"]
-            self.pcp_pids = meta["twin_state"]["pcp_pids"]
+        else: 
+            self.__build_twin_from_scratch(args)
+             
             
-            print("SuperTwin is reconstructed from db..")
-
-        else: ##Construct from scratch
-
-            if(len(args) == 3):
-                
-                self.addr = args[0]
-                self.SSHuser = args[1]
-                self.SSHpass = args[2]
-                self.name, self.prob_file  = remote_probe.main(self.addr, self.SSHuser, self.SSHpass)
-                
-            else:
-                self.addr = input("Address of the remote system: ")
-                alias = input("Alias for hostname: ")
-                self.name, self.prob_file, self.SSHuser, self.SSHpass = remote_probe.main(self.addr)
-
+    def __build_twin_from_scratch(self,*args):
+        args = args[0]
+        if(len(args) == 3):
+            self.addr = args[0]
+            self.SSHuser = args[1]
+            self.SSHpass = args[2]
+            self.name, self.prob_file  = remote_probe.main(self.addr, self.SSHuser, self.SSHpass)
+        else:
+            self.addr = input("Address of the remote system: ")
+            alias = input("Alias for hostname: ")
+            self.name, self.prob_file, self.SSHuser, self.SSHpass = remote_probe.main(self.addr)
             if(alias != ""):
                 self.name = alias
 
-            print("!!self.name:", self.name)
-            self.uid = str(uuid.uuid4())
-            print("Creating a new digital twin with id:", self.uid)
-            
-            self.influxdb_name = self.name #+ "_main"
-            self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
-            utils.get_influx_database(self.influxdb_addr, self.influxdb_name)
-            self.grafana_datasource = utils.create_grafana_datasource(self.name, self.uid, self.grafana_token, self.grafana_addr, self.influxdb_addr)["datasource"]["uid"]
-            #self.monitor_metrics = utils.read_monitor_metrics() ##These are the continuously sampled metrics
+        self.uid = str(uuid.uuid4())
+        print("Creating a new digital twin with name:{} id:{}".format(self.name, self.uid))
+        
+        self.influxdb_name = self.name 
+        self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
+        self.influx_datasource = utils.get_influx_database(self.influxdb_addr, self.influxdb_name)
+        self.grafana_datasource = utils.create_grafana_datasource(self.name, self.uid, self.grafana_token, self.grafana_addr, self.influxdb_addr)["datasource"]["uid"]
+        #self.monitor_metrics = utils.read_monitor_metrics() ##These are the continuously sampled metrics
 
-            self.monitor_tag = "_monitor"
-            self.pcp_pids = utils.get_pcp_pids(self)
-            
-            self.mongodb_id = insert_twin_description(get_twin_description(self.prob_file, self.name, self.SSHuser, self.SSHpass, self.addr),self)
-            print("Collection id:", self.mongodb_id)
-            #self.monitor_pid = sampling.main(self.name, self.addr, self.influxdb_name, self.monitor_tag, self.monitor_metrics)
-            
-            
-            #benchmark members
-            self.benchmarks = 0
-            self.benchmark_results = 0
-            
-            ##
-            ##This is a breaking point where we know everything and can configure now
-            ##
-            
-            #self.observation_metrics = utils.read_observation_metrics() #This may become problematic with multinode
-            self.monitor_metrics = []
-            self.observation_metrics = [] #Start empty
-            self.reconfigure_observation_events_beginning() ##Only add available power
-            
-            self.monitor_pid = sampling.main(self)
-            
-            utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
-            self.kill_zombie_monitors() ##If there is any zombie monitor sampler
-            self.generate_monitoring_dashboard()
-            
-            ##benchmark functions
-            #self.add_stream_benchmark()
-            #self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
-            #self.add_adcarm_benchmark()
-            #self.generate_roofline_dashboard()
-            
-            register_twin_state(self)
-            
-            
+        self.monitor_tag = "_monitor"
+        self.pcp_pids = utils.get_pcp_pids(self)
+        
+        self.mongodb_id = utils.insert_twin_description(utils.get_twin_description_from_file(self.prob_file, self.name, self.SSHuser, self.SSHpass, self.addr),self)
+        print("Collection id:", self.mongodb_id)
+        #self.monitor_pid = sampling.main(self.name, self.addr, self.influxdb_name, self.monitor_tag, self.monitor_metrics)
+        
+        
+        #benchmark members
+        self.benchmarks = 0
+        self.benchmark_results = 0
+        
+        ##
+        ##This is a breaking point where we know everything and can configure now
+        ##
+        
+        #self.observation_metrics = utils.read_observation_metrics() #This may become problematic with multinode
+        self.monitor_metrics = []
+        self.observation_metrics = [] #Start empty
+        self.reconfigure_observation_events_beginning() ##Only add available power
+        
+        self.monitor_pid = sampling.main(self)
+        
+        utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
+        self.kill_zombie_monitors() ##If there is any zombie monitor sampler
+        self.generate_monitoring_dashboard()
+        
+        ##benchmark functions
+        #self.add_stream_benchmark()
+        #self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
+        #self.add_adcarm_benchmark()
+        #self.generate_roofline_dashboard()
+        
+        register_twin_state(self)
+    
+    def __reconstruct_twin(self, *args):
+        
+        args = args[0]
+        try:
+            exist, name, twin_id, collection_id = utils.check_state(args[0])
+            print("exist:", exist, "name:", name, "twin_id:", twin_id, "collection_id:", collection_id, "args[0]:", args[0])
+            if(not exist):
+                raise Exception()
+        except:
+            print("A SuperTwin instance is tried to be reconstructed from address", args[0])
+            print("However, there is no such twin with that address..")
+            exit(1)
+        
+        self.addr = args[0]
+        self.name = name
+        self.uid = twin_id
+        self.mongodb_id = collection_id
+        self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
+        self.__load_twin_state(query_twin_state(self.name, self.mongodb_id, self.mongodb_addr))
+        
+        self.kill_zombie_monitors() ##If there is any zombie monitor sampler
+        self.update_twin_document__assert_new_monitor_pid()
+        print("SuperTwin:{} id:{} is reconstructed from db..".format(self.name,self.uid))
+    
+    def __load_twin_state(self,meta):
+        self.monitor_metrics = meta["twin_state"]["monitor_metrics"]
+        self.observation_metrics = meta["twin_state"]["observation_metrics"]
+        self.SSHuser = meta["twin_state"]["SSHuser"]
+        self.SSHpass = utils.unobscure(meta["twin_state"]["SSHpass"]).decode()
+        self.monitor_tag = meta["twin_state"]["monitor_tag"]
+        self.benchmarks = meta["twin_state"]["benchmarks"]
+        self.benchmark_results = meta["twin_state"]["benchmark_results"]
+        self.grafana_datasource = meta["twin_state"]["grafana_datasource"]
+        self.prob_file = meta["prob_file"]
+        self.uid = meta["uid"]
+        self.influxdb_name = meta["influxdb_name"]
+        self.monitor_tag = meta["influxdb_tag"]
+        self.monitor_pid = meta["monitor_pid"]
+        self.roofline_dashboard = meta["roofline_dashboard"]
+        self.monitoring_dashboard = meta["monitoring_dashboard"]
+        self.pcp_pids = meta["twin_state"]["pcp_pids"]
+    
     def kill_zombie_monitors(self):
         
         out = detect_utils.output_lines("ps aux | grep pcp2influxdb")
@@ -318,7 +285,7 @@ class SuperTwin:
         db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
         print("Killing existed monitor sampler with pid:", self.monitor_pid)
         detect_utils.cmd("sudo kill " + str(self.monitor_pid))
-        new_pid = sampling.main(self.name, self.addr, self.influxdb_name, self.monitor_tag, self.monitor_metrics)
+        new_pid = sampling.main(self)
         print("New sampler pid: ", new_pid)
         to_new = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
         #print(to_new)
