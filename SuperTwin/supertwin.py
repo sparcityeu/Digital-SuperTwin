@@ -9,7 +9,6 @@ sys.path.append("dashboards")
 import utils
 import remote_probe
 import detect_utils
-import generate_dt
 import sampling
 import stream_benchmark
 import hpcg_benchmark
@@ -19,27 +18,12 @@ import influx_help
 import observation_standard
 import roofline_dashboard
 import monitoring_dashboard
-import monitoring_dashboard_modular as mdm
-
-import static_data
-
 import uuid
-
-#from influxdb import InfluxDBClient
-#import pymongo
-#from pymongo import MongoClient
-
 from bson.objectid import ObjectId
 from bson.json_util import dumps
 from bson.json_util import loads
 
 import datetime
-import json
-
-#sys.path.append("quick_dashboard")
-#import generate_plotly_panels_dd_go ##delete dis
-#import unique
-import observation_standard
 
 ##HPCG benchmark parameters are set to be separate from classes, so hpcg is repeatable and easily mutable
 HPCG_PARAM = {}
@@ -48,69 +32,6 @@ HPCG_PARAM["ny"] = 104
 HPCG_PARAM["nz"] = 104
 HPCG_PARAM["time"] = 60
 ##HPCG benchmark parameters
-
-ALWAYS_EXISTS_MONITOR = ["kernel.all.pressure.cpu.some.total",
-                         "hinv.cpu.clock",
-                         "lmsensors.coretemp_isa_0000.package_id_0",
-                         "kernel.pernode.cpu.idle",
-                         "kernel.percpu.cpu.idle",
-                         "disk.dev.read",
-                         "disk.dev.write",
-                         "disk.dev.total",
-                         "disk.dev.read_bytes",
-                         "disk.dev.write_bytes",
-                         "disk.dev.total_bytes",
-                         "swap.pagesin",
-                         "kernel.all.nusers",
-                         "kernel.all.nprocs",
-                         "network.all.in.bytes",
-                         "network.all.out.bytes"]
-
-ALWAYS_HAVE_MONITOR_NUMA = ALWAYS_EXISTS_MONITOR + ["lmsensors.coretemp_isa_0001.package_id_1",
-                                                    "mem.numa.util.free",
-                                                    "mem.numa.util.used",
-                                                    "mem.numa.alloc.hit",
-                                                    "mem.numa.alloc.miss",
-                                                    "mem.numa.alloc.local_node",
-                                                    "mem.numa.alloc.other_node",
-                                                    "perfevent.hwcounters.RAPL_ENERGY_PKG.value",
-                                                    "perfevent.hwcounters.RAPL_ENERGY_DRAM.value"]
-
-ALWAYS_HAVE_MONITOR_SINGLE_SOCKET = ALWAYS_EXISTS_MONITOR + ["mem.util.used",
-                                                             "mem.util.free",
-                                                             "perfevent.hwcounters.RAPL_ENERGY_PKG.value",
-                                                             "perfevent.hwcounters.RAPL_ENERGY_DRAM.value"]
-
-SKL_DONT_HAVE = ["perfevent.hwcounters.RAPL_ENERGY_DRAM.value"]
-ICL_DONT_HAVE = ["perfevent.hwcounters.RAPL_ENERGY_DRAM.value",
-                 "perfevent.hwcounters.RAPL_ENERGY_PKG.value"] ##RAPL is not currenty available on Icelake
-ALWAYS_HAVE_MONITOR_SKL = [x for x in ALWAYS_HAVE_MONITOR_SINGLE_SOCKET if x not in SKL_DONT_HAVE]
-ALWAYS_HAVE_MONITOR_ICL = [x for x in ALWAYS_HAVE_MONITOR_SINGLE_SOCKET if x not in ICL_DONT_HAVE]
-
-
-ALWAYS_HAVE_OBSERVATION = ["RAPL_ENERGY_PKG",
-                           "RAPL_ENERGY_DRAM"]
-ALWAYS_HAVE_OBSERVATION_SKL = ["RAPL_ENERGY_PKG"]
-ALWAYS_HAVE_OBSERVATION_ICL = [] ##RAPL is not currently available on Icelake
-
-##
-met = {
-        'monitor':{
-            'general_single': ALWAYS_HAVE_MONITOR_SINGLE_SOCKET,
-            'general_numa': ALWAYS_HAVE_MONITOR_NUMA,
-            'skl': ALWAYS_HAVE_MONITOR_SKL,
-            'icl': ALWAYS_HAVE_MONITOR_ICL
-        },
-        'observation': {
-            'general': ALWAYS_HAVE_OBSERVATION,
-            'skl': ALWAYS_HAVE_OBSERVATION_SKL,
-            'icl': ALWAYS_HAVE_OBSERVATION_ICL
-        }
-    }
-##
-
- 
-
  
 def query_twin_state(name, mongodb_id, mongodb_addr):
 
@@ -154,7 +75,6 @@ class SuperTwin:
         self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
         self.influx_datasource = utils.get_influx_database(self.influxdb_addr, self.influxdb_name)
         self.grafana_datasource = utils.create_grafana_datasource(self.name, self.uid, self.grafana_token, self.grafana_addr, self.influxdb_addr)["datasource"]["uid"]
-        #self.monitor_metrics = utils.read_monitor_metrics() ##These are the continuously sampled metrics
 
         self.monitor_tag = "_monitor"
         self.pcp_pids = utils.get_pcp_pids(self)
@@ -178,7 +98,6 @@ class SuperTwin:
         self.reconfigure_observation_events_beginning() ##Only add available power
         
         self.monitor_pid = sampling.main(self)  
-        
         utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
         self.kill_zombie_monitors() ##If there is any zombie monitor sampler
         self.generate_monitoring_dashboard()
@@ -251,7 +170,7 @@ class SuperTwin:
                 except:
                     continue
                                     
-                #print("pid:", pid, "state:", state, "conf_file:", conf_file)
+                print("pid:", pid, "state:", state, "conf_file:", conf_file)
                 if(pid != self.monitor_pid):
                     print("Killing zombie monitoring sampler with pid:", pid)
                     detect_utils.cmd("sudo kill " + str(pid))
@@ -545,7 +464,7 @@ class SuperTwin:
 
         metrics = self.observation_metrics
         
-        for item in ALWAYS_HAVE_MONITOR_WIDER:
+        for item in utils.ALWAYS_HAVE_MONITOR_WIDER:
             if item not in metrics:
                 metrics.append(item)
         
@@ -560,7 +479,7 @@ class SuperTwin:
 
     def reconfigure_observation_events(self, metrics):
 
-        for item in ALWAYS_HAVE_OBSERVATION:
+        for item in utils.ALWAYS_HAVE_OBSERVATION:
             if item not in metrics:
                 metrics.append(item)
         
@@ -587,17 +506,17 @@ class SuperTwin:
         print("METRICS:", metrics)
         
         if(msr == "icl"):
-            for item in ALWAYS_HAVE_OBSERVATION_ICL:
+            for item in utils.ALWAYS_HAVE_OBSERVATION_ICL:
                 if item not in metrics:
                     metrics.append(item)
 
         elif(msr == "skl"):
-            for item in ALWAYS_HAVE_OBSERVATION_SKL:
+            for item in utils.ALWAYS_HAVE_OBSERVATION_SKL:
                 if item not in metrics:
                     metrics.append(item)
 
         else:
-            for item in ALWAYS_HAVE_OBSERVATION:
+            for item in utils.ALWAYS_HAVE_OBSERVATION:
                 if item not in metrics:
                     metrics.append(item)
         
@@ -613,13 +532,11 @@ class SuperTwin:
 
     def reconfigure_observation_events_beginning(self):
 
-        msr = utils.get_msr(self)
-        metrics = self.observation_metrics
         always_have_metrics = utils.always_have_metrics("observation", self)
 
         for item in always_have_metrics:
-            if item not in metrics:
-                metrics.append(item)
+            if item not in self.observation_metrics:
+                self.observation_metrics.append(item)
 
         '''
         writer = open("last_observation_metrics.txt", "w+")
@@ -628,7 +545,6 @@ class SuperTwin:
         writer.close()
         '''
 
-        self.observation_metrics = metrics
         self.reconfigure_perfevent()
         utils.register_twin_state(self)
                     
@@ -663,16 +579,11 @@ class SuperTwin:
 
     def execute_observation_batch(self, commands):
 
-        observation = {}
-        
         observation_id = str(uuid.uuid4())
         for i in range(len(commands)):
-            tag = observation_id + "_" + str(i)
-            observation_id
             self.execute_observation_batch_element(commands[i], observation_id, i)
         
         influx_help.normalize_tag(self, observation_id, len(commands))
-        #update_twin_document__add_observation(times, commands)
 
     def update_twin_document__add_observation(self, observation):
 

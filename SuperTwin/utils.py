@@ -224,8 +224,6 @@ def read_observation_metrics():
 def update_state(name, addr, twin_id, collection_id):
 
     writer = open("supertwin.state", "a")
-    #writer.write("#--------------------------------------------------#")
-    #writer.write("\n")
     writer.write(name + "|" + addr + "|" + twin_id + "|" + collection_id)
     writer.write("\n")
     writer.close()
@@ -236,18 +234,13 @@ def check_state(addr):
     name = None
     twin_id = None
     collection_id = None
-
+    
     try:
         reader = open("supertwin.state", "r")
         lines = reader.readlines()
-
     except:
         lines = []
-
-
-    #print("check_state: lines:", lines)
     for line in lines:
-        #if(line.find("#---") == -1):
         fields = line.strip("\n").split("|")
         
         if(addr == fields[1]):
@@ -256,7 +249,6 @@ def check_state(addr):
             addr = fields[1]
             twin_id = fields[2]
             collection_id = fields[3]
-            #return exist, name, twin_id, collection_id
             
     return exist, name, twin_id, collection_id
 
@@ -684,25 +676,6 @@ def always_have_metrics(purpose, SuperTwin):
                 msr = "general_single"
 
     return met[purpose][msr]
-
-##always have metrics adjusted to msrs
-def always_have_metrics_td(purpose, td):
-
-    numa = is_numa_td(td)
-    msr = get_msr_td(td)
-    
-    if(msr != "icl" and msr != "skl"):
-        msr = "general"
-        
-    if(purpose == "monitor"):
-        if(numa):
-            msr = "general_numa"
-        else:
-            if(msr != "icl" and msr != "skl"):
-                msr = "general_single"
-
-    return met[purpose][msr]
-
 
 def get_biggest_vector_inst(td):
 
