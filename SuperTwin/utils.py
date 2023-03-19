@@ -13,6 +13,7 @@ import requests
 
 from grafanalib.core import Dashboard
 from grafanalib._gen import DashboardEncoder
+import generate_dt
 
 import secrets
 from base64 import urlsafe_b64encode as b64e, urlsafe_b64decode as b64d
@@ -103,14 +104,10 @@ def get_mongo_database(mongodb_name, CONNECTION_STRING):
 def get_influx_database(address, influxdb_name):
 
     fields = address.split("//")[1]
-    #print("fields:", fields)
     fields = fields.split(":")
     host = fields[0]
     port = fields[1]
-    #print("host:", host, "port:", port)
-    influxdb = InfluxDBClient(host=host, port=port)
-
-    return influxdb
+    return InfluxDBClient(host=host, port=port)
 
 def read_env():
     reader = open("env.txt", "r")
@@ -128,6 +125,69 @@ def read_env():
     #print("grafana_token:", grafana_token)
     
     return mongodb_addr, influxdb_addr, grafana_addr, grafana_token
+
+
+def get_twin_description_from_file(hostProbFile, alias, SSHuser, SSHpass, addr):
+
+    with open(hostProbFile, "r") as j:
+        _sys_dict = json.loads(j.read())
+
+    _twin = generate_dt.main(_sys_dict, alias, SSHuser, SSHpass, addr)
+    return _twin
+
+
+def register_twin_state(SuperTwin):
+
+    db = get_mongo_database(SuperTwin.name, SuperTwin.mongodb_addr)["twin"]
+    meta = loads(dumps(db.find({"_id": ObjectId(SuperTwin.mongodb_id)})))[0]
+
+    
+    meta["twin_state"] = {}
+    meta["twin_state"]["SSHuser"] = SuperTwin.SSHuser
+    meta["twin_state"]["SSHpass"] = obscure(str.encode(SuperTwin.SSHpass))
+    meta["twin_state"]["monitor_tag"] = SuperTwin.monitor_tag
+    meta["twin_state"]["benchmarks"] = SuperTwin.benchmarks
+    meta["twin_state"]["benchmark_results"] = SuperTwin.benchmark_results
+    meta["twin_state"]["monitor_metrics"] = SuperTwin.monitor_metrics
+    meta["twin_state"]["observation_metrics"] = SuperTwin.observation_metrics
+    meta["twin_state"]["grafana_datasource"] = SuperTwin.grafana_datasource
+    meta["twin_state"]["pcp_pids"] = SuperTwin.pcp_pids
+        
+        
+    db.replace_one({"_id": ObjectId(SuperTwin.mongodb_id)}, meta)
+    
+    print("Twin state is registered to db..")
+
+
+
+def insert_twin_description(_twin, supertwin):
+
+    date = datetime.datetime.now()
+    date = date.strftime("%d-%m-%Y")
+
+    hostname = supertwin.name
+    CONNECTION_STRING = supertwin.mongodb_addr
+    
+    mongodb = get_mongo_database(hostname, CONNECTION_STRING)
+    collection = mongodb["twin"]
+    
+    metadata = {
+        "uid": supertwin.uid,
+        "address": supertwin.addr,
+        "hostname": supertwin.name,
+        "date": date,
+        "twin_description": _twin,
+        "influxdb_name": supertwin.influxdb_name,
+        "influxdb_tag": supertwin.monitor_tag,
+        "monitor_pid": "",
+        "prob_file": supertwin.prob_file,
+        "roofline_dashboard": "to be added",
+        "monitoring_dashboard": "to be added"}
+
+    result = collection.insert_one(metadata)
+    twin_id = str(result.inserted_id)
+
+    return twin_id
 
 def read_monitor_metrics():
 
@@ -164,8 +224,6 @@ def read_observation_metrics():
 def update_state(name, addr, twin_id, collection_id):
 
     writer = open("supertwin.state", "a")
-    #writer.write("#--------------------------------------------------#")
-    #writer.write("\n")
     writer.write(name + "|" + addr + "|" + twin_id + "|" + collection_id)
     writer.write("\n")
     writer.close()
@@ -176,18 +234,13 @@ def check_state(addr):
     name = None
     twin_id = None
     collection_id = None
-
+    
     try:
         reader = open("supertwin.state", "r")
         lines = reader.readlines()
-
     except:
         lines = []
-
-
-    #print("check_state: lines:", lines)
     for line in lines:
-        #if(line.find("#---") == -1):
         fields = line.strip("\n").split("|")
         
         if(addr == fields[1]):
@@ -196,7 +249,6 @@ def check_state(addr):
             addr = fields[1]
             twin_id = fields[2]
             collection_id = fields[3]
-            #return exist, name, twin_id, collection_id
             
     return exist, name, twin_id, collection_id
 
@@ -625,25 +677,6 @@ def always_have_metrics(purpose, SuperTwin):
 
     return met[purpose][msr]
 
-##always have metrics adjusted to msrs
-def always_have_metrics_td(purpose, td):
-
-    numa = is_numa_td(td)
-    msr = get_msr_td(td)
-    
-    if(msr != "icl" and msr != "skl"):
-        msr = "general"
-        
-    if(purpose == "monitor"):
-        if(numa):
-            msr = "general_numa"
-        else:
-            if(msr != "icl" and msr != "skl"):
-                msr = "general_single"
-
-    return met[purpose][msr]
-
-
 def get_biggest_vector_inst(td):
 
     avx = False
@@ -866,49 +899,10 @@ def get_pid(line):
     return fields[1]
 
 
-
 def get_pcp_pids(SuperTwin):
+    return get_pcp_pids_by_credentials(SuperTwin.SSHuser,SuperTwin.SSHpass,SuperTwin.addr)
 
-    SSHuser = SuperTwin.SSHuser
-    SSHpass = SuperTwin.SSHpass
-
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(SuperTwin.addr, username = SSHuser, password = SSHpass)
-
-    stdin, stdout, stderr = ssh.exec_command("ps aux | grep pcp")
-    output = stdout.read()
-    #print("pcps:", output, type(output))
-    #print("#########3")
-    #print(output.decode("utf-8"))
-    output = output.decode("utf-8")
-    output = output.split("\n")
-
-    pids = {}
-    
-    for item in output:
-        
-        if(item.find("pmproxy") != -1):
-            pids["pmproxy"] = get_pid(item)
-        if(item.find("pmie") != -1):
-            pids["pmie"] = get_pid(item)
-        if(item.find("pmcd") != -1):
-            pids["pmcd"] = get_pid(item)
-        if(item.find("pmdaproc") != -1):
-            pids["pmdaproc"] = get_pid(item)
-        if(item.find("pmdalinux") != -1):
-            pids["pmdalinux"] = get_pid(item)
-        if(item.find("pmdalmsensors") != -1):
-            pids["pmdalmsensors"] = get_pid(item)
-        if(item.find("pmdaperfevent") != -1):
-            pids["pmdaperfevent"] = get_pid(item)
-
-    print("pids:", pids)
-    pids = complete_to_six(pids)
-    print("pids:", pids)
-    return pids
-
-def get_pcp_pids_beginning(SSHuser, SSHpass, addr):
+def get_pcp_pids_by_credentials(SSHuser, SSHpass, addr):
 
     
     ssh = paramiko.SSHClient()
@@ -917,9 +911,6 @@ def get_pcp_pids_beginning(SSHuser, SSHpass, addr):
 
     stdin, stdout, stderr = ssh.exec_command("ps aux | grep pcp")
     output = stdout.read()
-    #print("pcps:", output, type(output))
-    #print("#########3")
-    #print(output.decode("utf-8"))
     output = output.decode("utf-8")
     output = output.split("\n")
 

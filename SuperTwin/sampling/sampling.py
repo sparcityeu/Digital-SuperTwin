@@ -59,9 +59,6 @@ def add_pcp(SuperTwin, config_lines):
                      
     return config_lines + pcp_lines
                 
-
-    
-#def generate_pcp2influxdb_config(db_name, db_tag, sourceIP, source_name, metrics):
 def generate_pcp2influxdb_config(SuperTwin):
 
     db_name = SuperTwin.name
@@ -97,7 +94,6 @@ def generate_pcp2influxdb_config(SuperTwin):
     for line in config_lines:
         writer.write(line)
     writer.close()
-
 
     return pcp_conf_name
 
@@ -196,29 +192,20 @@ def reconfigure_perfevent(SuperTwin):
 
 
 
-#def main(hostname, hostIP, db_name, db_tag, metrics):
 def main(SuperTwin):
-
-    ##Get influxdb
-    #pcp_conf_name = generate_pcp2influxdb_config(db_name, db_tag, hostIP, hostname, metrics)
     pcp_conf_name = generate_pcp2influxdb_config(SuperTwin)
     print("pcp2influxdb configuration:", pcp_conf_name, "generated")
     
-    ##This is where actual thing happens
-    #####################################################################
+    #This command is executed on monitoring server
+    #Metrics to be monitored are defined in pcp_conf_name
+    #Then pcp2influxdb connects to monitored server to get metric resutls.
     p0_command = "pcp2influxdb -t 1 -c " + pcp_conf_name + " :configured"
-    p0_args = shlex.split(p0_command)
+    p0 = Popen(shlex.split(p0_command))
+    print("A daemon with pid:", p0.pid, "is started monitoring", SuperTwin.name)
     
-    p0 = Popen(p0_args)
-    monitor_pid = p0.pid
-    #####################################################################
-    print("A daemon with pid:", monitor_pid, "is started monitoring", SuperTwin.name)
-    
-    return monitor_pid
+    return p0.pid
     
 if __name__ == "__main__":
-
-    
     main()
     
 

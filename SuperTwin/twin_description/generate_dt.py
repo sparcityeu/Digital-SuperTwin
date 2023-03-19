@@ -1006,7 +1006,7 @@ def main(_sys_dict, alias, SSHuser, SSHpass, addr):
     models_dict = add_disk(models_dict, _sys_dict, top_id, hostname)
     models_dict = add_network(models_dict, _sys_dict, top_id, hostname)
 
-    pids = utils.get_pcp_pids_beginning(SSHuser, SSHpass, addr)
+    pids = utils.get_pcp_pids_by_credentials(SSHuser, SSHpass, addr)
     models_dict = add_pcp(models_dict, hostname, _sys_dict, top_id, pids)
     #models_dict = add_proc(models_dict, _sys_dict, top_id, hostname)
     
