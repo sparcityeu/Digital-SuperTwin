@@ -111,7 +111,7 @@ def parse_memory_info(out,system):
     
     if(len(found) > 0):
         td = found[0] ##System memory is top dictionary and banks are it's children
-        system["memory"]["total"]["size"] = td.get("size","")
+        system["memory"]["total"]["size"] = td.get("size",0)
         system["memory"]["total"]["units"] = td.get("units","")
         system["memory"]["total"]["banks"] = 0 ##Increment as filled slots found
         system["memory"]["banks"] = {}
