@@ -160,7 +160,7 @@ def register_twin_state(SuperTwin):
 
 
 
-def insert_twin_description(_twin, supertwin):
+def insert_twin_description(twin_desc, supertwin):
 
     date = datetime.datetime.now()
     date = date.strftime("%d-%m-%Y")
@@ -176,7 +176,7 @@ def insert_twin_description(_twin, supertwin):
         "address": supertwin.addr,
         "hostname": supertwin.name,
         "date": date,
-        "twin_description": _twin,
+        "twin_description": twin_desc,
         "influxdb_name": supertwin.influxdb_name,
         "influxdb_tag": supertwin.monitor_tag,
         "monitor_pid": "",
