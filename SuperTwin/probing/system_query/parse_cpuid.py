@@ -65,7 +65,7 @@ def parse_cpuid():
     info['cache']['L1D']['associativity'] = gv_parentheses(cache_0[10])
     info['cache']['L1D']['number_of_sets'] = gv_parentheses(cache_0[11])
     if not faulty:
-        info['cache']['L1D']['size'] = gv_parentheses_space(cache_0[16])
+        info['cache']['L1D']['size'] = gv_parentheses_space(cache_0[16]) if 16 < len(cache_0)  else 0
     
     cache_1 = detect_utils.output_lines('sudo cpuid -1 -l 4 -s 1')
     info['cache']['L1I'] = {}
@@ -74,7 +74,7 @@ def parse_cpuid():
     info['cache']['L1I']['associativity'] = gv_parentheses(cache_1[10])
     info['cache']['L1I']['number_of_sets'] = gv_parentheses(cache_1[11])
     if not faulty:
-        info['cache']['L1I']['size'] = gv_parentheses_space(cache_1[16])
+         info['cache']['L1I']['size'] = gv_parentheses_space(cache_1[16])  if 16 < len(cache_1)  else 0
     
     cache_2 = detect_utils.output_lines('sudo cpuid -1 -l 4 -s 2')
     info['cache']['L2'] = {}
@@ -83,7 +83,7 @@ def parse_cpuid():
     info['cache']['L2']['associativity'] = gv_parentheses(cache_2[10])
     info['cache']['L2']['number_of_sets'] = gv_parentheses(cache_2[11])
     if not faulty:
-        info['cache']['L2']['size'] = gv_parentheses_space(cache_2[16])
+        info['cache']['L2']['size'] = gv_parentheses_space(cache_2[16])  if 16 < len(cache_2)  else 0
 
     cache_3 = detect_utils.output_lines('sudo cpuid -1 -l 4 -s 3')
     info['cache']['L3'] = {}
@@ -92,7 +92,7 @@ def parse_cpuid():
     info['cache']['L3']['associativity'] = gv_parentheses(cache_3[10])
     info['cache']['L3']['number_of_sets'] = gv_parentheses(cache_3[11])
     if not faulty:
-        info['cache']['L3']['size'] = gv_parentheses_space(cache_3[16])
+        info['cache']['L3']['size'] = gv_parentheses_space(cache_3[16])  if 16 < len(cache_3)  else 0
 
     monitoring = detect_utils.output_lines('sudo cpuid -1 -l 10')
     info['monitoring']['no_of_pmcs'] = gv_parentheses(monitoring[3])

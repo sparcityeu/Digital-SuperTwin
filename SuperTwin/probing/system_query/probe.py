@@ -198,14 +198,16 @@ def main():
     system_list = system.detect()
     diskinfo_list = diskinfo.detect()
 
-    _system = parse_lshw.parse_lshw()
+    system_hw = parse_lshw.parse_lshw()
     cache_info = parse_cpuid.parse_cpuid()
     socket_groups, domains, cache_topology, gpu_info = parse_likwid_topology.parse_likwid()
     affinity = parse_likwid_topology.parse_affinity()
+    
+    ## where we get PMY's 
     PMUs = parse_evtinfo.main()
     pmprobe = get_pmprobe()
     
-    info = choose_info(hostname, _system, cache_info, 
+    info = choose_info(hostname, system_hw, cache_info, 
                        socket_groups, domains, cache_topology, 
                        affinity, gpu_info, PMUs, pmprobe)
 

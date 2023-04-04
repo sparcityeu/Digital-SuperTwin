@@ -185,9 +185,7 @@ def reconfigure_perfevent(SuperTwin):
     writer.close()
 
     scp.put("reconfigure_perf.sh", remote_path="/tmp/dt_files")
-    
     remote_probe.run_sudo_command(ssh, SuperTwin.SSHpass, SuperTwin.name, "sudo sh /tmp/dt_files/reconfigure_perf.sh")
-
     print("Reconfigured remote perfevent pmda")
 
 

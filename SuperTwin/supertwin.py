@@ -71,19 +71,23 @@ class SuperTwin:
         self.uid = str(uuid.uuid4())
         print("Creating a new digital twin with name:{} id:{}".format(self.name, self.uid))
         
-        self.influxdb_name = self.name 
+        
         self.mongodb_addr, self.influxdb_addr, self.grafana_addr, self.grafana_token = utils.read_env()
-        self.influx_datasource = utils.get_influx_database(self.influxdb_addr, self.influxdb_name)
         self.grafana_datasource = utils.create_grafana_datasource(self.name, self.uid, self.grafana_token, self.grafana_addr, self.influxdb_addr)["datasource"]["uid"]
-
+        
         self.monitor_tag = "_monitor"
         self.pcp_pids = utils.get_pcp_pids(self)
+        
+        
+        self.influxdb_name = self.name 
+        self.influx_datasource = utils.get_influx_datasource(self.influxdb_addr)
+        utils.create_influx_database(self.influx_datasource, self.influxdb_name)
         
         self.mongodb_id = utils.insert_twin_description(
                 utils.get_twin_description_from_file(self.prob_file, self.name, self.SSHuser, self.SSHpass, self.addr)
                 ,self)
         print("Collection id:", self.mongodb_id)
-
+ 
         #benchmark members
         self.benchmarks = 0
         self.benchmark_results = 0

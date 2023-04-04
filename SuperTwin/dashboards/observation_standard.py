@@ -254,7 +254,7 @@ def main(SuperTwin, observation):
 
     #locate time and upload
     ######################################
-    db = utils.get_influx_database(SuperTwin.influxdb_addr, SuperTwin.influxdb_name)
+    db = utils.get_influx_datasource(SuperTwin.influxdb_addr)
     db.switch_database(SuperTwin.influxdb_name)
             
     _, metric_field = get_field_and_metric(SuperTwin, involved, metric)

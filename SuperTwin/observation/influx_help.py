@@ -32,7 +32,7 @@ def normalized(to_normal, difference): ##Other observation, vs. itself
 
 def normalize_tag(SuperTwin, _tag, no_subtags):
 
-    db = utils.get_influx_database(SuperTwin.influxdb_addr, SuperTwin.influxdb_name)
+    db = utils.get_influx_datasource(SuperTwin.influxdb_addr)
     db.switch_database(SuperTwin.influxdb_name)
 
     ###Zeroth settings
