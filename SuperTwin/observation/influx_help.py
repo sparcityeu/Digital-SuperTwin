@@ -78,8 +78,8 @@ def normalize_tag(SuperTwin, _tag, no_subtags):
           db.write_points(my_write)
     
             
-
-def normalize_twin_tags(st1, st2, st3, st4):
+ 
+def normalize_twin_tags(st1, st2, st3, st4): 
 
   twin1 = st1[0]
   twin1_tag = st1[1]

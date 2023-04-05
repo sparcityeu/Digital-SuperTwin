@@ -32,9 +32,12 @@ import sys
 sys.path.append("dashboards")
 import observation_standard
 
-ALWAYS_EXISTS_MONITOR = ["kernel.all.pressure.cpu.some.total",
+
+## pmprobe
+ALWAYS_EXISTS_MONITOR = [
+                        #"kernel.all.pressure.cpu.some.total",
                          "hinv.cpu.clock",
-                         "lmsensors.coretemp_isa_0000.package_id_0",
+                         #"lmsensors.coretemp_isa_0000.package_id_0",
                          "kernel.pernode.cpu.idle",
                          "kernel.percpu.cpu.idle",
                          "disk.dev.read",
@@ -46,23 +49,27 @@ ALWAYS_EXISTS_MONITOR = ["kernel.all.pressure.cpu.some.total",
                          "swap.pagesin",
                          "kernel.all.nusers",
                          "kernel.all.nprocs",
-                         "network.all.in.bytes",
-                         "network.all.out.bytes"]
+                         #"network.all.in.bytes",
+                         #"network.all.out.bytes"
+                         ]
 
-ALWAYS_HAVE_MONITOR_NUMA = ALWAYS_EXISTS_MONITOR + ["lmsensors.coretemp_isa_0001.package_id_1",
+ALWAYS_HAVE_MONITOR_NUMA = ALWAYS_EXISTS_MONITOR + [
+        #"lmsensors.coretemp_isa_0001.package_id_1",
                                                     "mem.numa.util.free",
                                                     "mem.numa.util.used",
                                                     "mem.numa.alloc.hit",
                                                     "mem.numa.alloc.miss",
                                                     "mem.numa.alloc.local_node",
                                                     "mem.numa.alloc.other_node",
-                                                    "perfevent.hwcounters.RAPL_ENERGY_PKG.value",
-                                                    "perfevent.hwcounters.RAPL_ENERGY_DRAM.value"]
+                                                    #"perfevent.hwcounters.RAPL_ENERGY_PKG.value",
+                                                    #"perfevent.hwcounters.RAPL_ENERGY_DRAM.value"
+                                                    ]
 
 ALWAYS_HAVE_MONITOR_SINGLE_SOCKET = ALWAYS_EXISTS_MONITOR + ["mem.util.used",
                                                              "mem.util.free",
-                                                             "perfevent.hwcounters.RAPL_ENERGY_PKG.value",
-                                                             "perfevent.hwcounters.RAPL_ENERGY_DRAM.value"]
+                                                             #"perfevent.hwcounters.RAPL_ENERGY_PKG.value",
+                                                             #"perfevent.hwcounters.RAPL_ENERGY_DRAM.value"
+                                                             ]
 
 SKL_DONT_HAVE = ["perfevent.hwcounters.RAPL_ENERGY_DRAM.value"]
 ICL_DONT_HAVE = ["perfevent.hwcounters.RAPL_ENERGY_DRAM.value",
@@ -101,7 +108,7 @@ def get_mongo_database(mongodb_name, CONNECTION_STRING):
     return client[mongodb_name]
 
 
-def get_influx_database(address, influxdb_name):
+def get_influx_datasource(address):
 
     fields = address.split("//")[1]
     fields = fields.split(":")
@@ -279,6 +286,10 @@ def get_multithreading_info(data):
             
 
     return mt_info
+
+def create_influx_database(influx_datasource,db_name):
+    influx_datasource.create_database(db_name);
+    
 
 def create_grafana_datasource(hostname, uid, api_key, grafana_server, influxdb_server, verify=True):
 

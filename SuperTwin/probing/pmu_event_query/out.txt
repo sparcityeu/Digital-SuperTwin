@@ -1,0 +1,2735 @@
+Supported PMU models:
+	[7, netburst, "Pentium4"]
+	[8, netburst_p, "Pentium4 (Prescott)"]
+	[11, core, "Intel Core"]
+	[14, atom, "Intel Atom"]
+	[15, nhm, "Intel Nehalem"]
+	[16, nhm_ex, "Intel Nehalem EX"]
+	[17, nhm_unc, "Intel Nehalem uncore"]
+	[18, ix86arch, "Intel X86 architectural PMU"]
+	[51, perf, "perf_events generic PMU"]
+	[52, wsm, "Intel Westmere (single-socket)"]
+	[53, wsm_dp, "Intel Westmere DP"]
+	[54, wsm_unc, "Intel Westmere uncore"]
+	[55, amd64_k7, "AMD64 K7"]
+	[56, amd64_k8_revb, "AMD64 K8 RevB"]
+	[57, amd64_k8_revc, "AMD64 K8 RevC"]
+	[58, amd64_k8_revd, "AMD64 K8 RevD"]
+	[59, amd64_k8_reve, "AMD64 K8 RevE"]
+	[60, amd64_k8_revf, "AMD64 K8 RevF"]
+	[61, amd64_k8_revg, "AMD64 K8 RevG"]
+	[62, amd64_fam10h_barcelona, "AMD64 Fam10h Barcelona"]
+	[63, amd64_fam10h_shanghai, "AMD64 Fam10h Shanghai"]
+	[64, amd64_fam10h_istanbul, "AMD64 Fam10h Istanbul"]
+	[68, snb, "Intel Sandy Bridge"]
+	[69, amd64_fam14h_bobcat, "AMD64 Fam14h Bobcat"]
+	[70, amd64_fam15h_interlagos, "AMD64 Fam15h Interlagos"]
+	[71, snb_ep, "Intel Sandy Bridge EP"]
+	[72, amd64_fam12h_llano, "AMD64 Fam12h Llano"]
+	[73, amd64_fam11h_turion, "AMD64 Fam11h Turion"]
+	[74, ivb, "Intel Ivy Bridge"]
+	[76, snb_unc_cbo0, "Intel Sandy Bridge C-box0 uncore"]
+	[77, snb_unc_cbo1, "Intel Sandy Bridge C-box1 uncore"]
+	[78, snb_unc_cbo2, "Intel Sandy Bridge C-box2 uncore"]
+	[79, snb_unc_cbo3, "Intel Sandy Bridge C-box3 uncore"]
+	[80, snbep_unc_cbo0, "Intel Sandy Bridge-EP C-Box 0 uncore"]
+	[81, snbep_unc_cbo1, "Intel Sandy Bridge-EP C-Box 1 uncore"]
+	[82, snbep_unc_cbo2, "Intel Sandy Bridge-EP C-Box 2 uncore"]
+	[83, snbep_unc_cbo3, "Intel Sandy Bridge-EP C-Box 3 uncore"]
+	[84, snbep_unc_cbo4, "Intel Sandy Bridge-EP C-Box 4 uncore"]
+	[85, snbep_unc_cbo5, "Intel Sandy Bridge-EP C-Box 5 uncore"]
+	[86, snbep_unc_cbo6, "Intel Sandy Bridge-EP C-Box 6 uncore"]
+	[87, snbep_unc_cbo7, "Intel Sandy Bridge-EP C-Box 7 uncore"]
+	[88, snbep_unc_ha, "Intel Sandy Bridge-EP HA uncore"]
+	[89, snbep_unc_imc0, "Intel Sandy Bridge-EP IMC0 uncore"]
+	[90, snbep_unc_imc1, "Intel Sandy Bridge-EP IMC1 uncore"]
+	[91, snbep_unc_imc2, "Intel Sandy Bridge-EP IMC2 uncore"]
+	[92, snbep_unc_imc3, "Intel Sandy Bridge-EP IMC3 uncore"]
+	[93, snbep_unc_pcu, "Intel Sandy Bridge-EP PCU uncore"]
+	[94, snbep_unc_qpi0, "Intel Sandy Bridge-EP QPI0 uncore"]
+	[95, snbep_unc_qpi1, "Intel Sandy Bridge-EP QPI1 uncore"]
+	[96, snbep_unc_ubo, "Intel Sandy Bridge-EP U-Box uncore"]
+	[97, snbep_unc_r2pcie, "Intel Sandy Bridge-EP R2PCIe uncore"]
+	[98, snbep_unc_r3qpi0, "Intel Sandy Bridge-EP R3QPI0 uncore"]
+	[99, snbep_unc_r3qpi1, "Intel Sandy Bridge-EP R3QPI1 uncore"]
+	[100, knc, "Intel Knights Corner"]
+	[103, ivb_ep, "Intel Ivy Bridge EP"]
+	[104, hsw, "Intel Haswell"]
+	[105, ivb_unc_cbo0, "Intel Ivy Bridge C-box0 uncore"]
+	[106, ivb_unc_cbo1, "Intel Ivy Bridge C-box1 uncore"]
+	[107, ivb_unc_cbo2, "Intel Ivy Bridge C-box2 uncore"]
+	[108, ivb_unc_cbo3, "Intel Ivy Bridge C-box3 uncore"]
+	[110, rapl, "Intel RAPL"]
+	[111, slm, "Intel Silvermont"]
+	[112, amd64_fam15h_nb, "AMD64 Fam15h NorthBridge"]
+	[114, perf_raw, "perf_events raw PMU"]
+	[115, ivbep_unc_cbo0, "Intel Ivy Bridge-EP C-Box 0 uncore"]
+	[116, ivbep_unc_cbo1, "Intel Ivy Bridge-EP C-Box 1 uncore"]
+	[117, ivbep_unc_cbo2, "Intel Ivy Bridge-EP C-Box 2 uncore"]
+	[118, ivbep_unc_cbo3, "Intel Ivy Bridge-EP C-Box 3 uncore"]
+	[119, ivbep_unc_cbo4, "Intel Ivy Bridge-EP C-Box 4 uncore"]
+	[120, ivbep_unc_cbo5, "Intel Ivy Bridge-EP C-Box 5 uncore"]
+	[121, ivbep_unc_cbo6, "Intel Ivy Bridge-EP C-Box 6 uncore"]
+	[122, ivbep_unc_cbo7, "Intel Ivy Bridge-EP C-Box 7 uncore"]
+	[123, ivbep_unc_cbo8, "Intel Ivy Bridge-EP C-Box 8 uncore"]
+	[124, ivbep_unc_cbo9, "Intel Ivy Bridge-EP C-Box 9 uncore"]
+	[125, ivbep_unc_cbo10, "Intel Ivy Bridge-EP C-Box 10 uncore"]
+	[126, ivbep_unc_cbo11, "Intel Ivy Bridge-EP C-Box 11 uncore"]
+	[127, ivbep_unc_cbo12, "Intel Ivy Bridge-EP C-Box 12 uncore"]
+	[128, ivbep_unc_cbo13, "Intel Ivy Bridge-EP C-Box 13 uncore"]
+	[129, ivbep_unc_cbo14, "Intel Ivy Bridge-EP C-Box 14 uncore"]
+	[130, ivbep_unc_ha0, "Intel Ivy Bridge-EP HA 0 uncore"]
+	[131, ivbep_unc_ha1, "Intel Ivy Bridge-EP HA 1 uncore"]
+	[132, ivbep_unc_imc0, "Intel Iyy Bridge-EP IMC0 uncore"]
+	[133, ivbep_unc_imc1, "Intel Iyy Bridge-EP IMC1 uncore"]
+	[134, ivbep_unc_imc2, "Intel Iyy Bridge-EP IMC2 uncore"]
+	[135, ivbep_unc_imc3, "Intel Iyy Bridge-EP IMC3 uncore"]
+	[136, ivbep_unc_imc4, "Intel Iyy Bridge-EP IMC4 uncore"]
+	[137, ivbep_unc_imc5, "Intel Iyy Bridge-EP IMC5 uncore"]
+	[138, ivbep_unc_imc6, "Intel Iyy Bridge-EP IMC6 uncore"]
+	[139, ivbep_unc_imc7, "Intel Iyy Bridge-EP IMC7 uncore"]
+	[140, ivbep_unc_pcu, "Intel Ivy Bridge-EP PCU uncore"]
+	[141, ivbep_unc_qpi0, "Intel Ivy Bridge-EP QPI0 uncore"]
+	[142, ivbep_unc_qpi1, "Intel Ivy Bridge-EP QPI1 uncore"]
+	[143, ivbep_unc_qpi2, "Intel Ivy Bridge-EP QPI2 uncore"]
+	[144, ivbep_unc_ubo, "Intel Ivy Bridge-EP U-Box uncore"]
+	[145, ivbep_unc_r2pcie, "Intel Ivy Bridge-EP R2PCIe uncore"]
+	[146, ivbep_unc_r3qpi0, "Intel Ivy Bridge-EP R3QPI0 uncore"]
+	[147, ivbep_unc_r3qpi1, "Intel Ivy Bridge-EP R3QPI1 uncore"]
+	[148, ivbep_unc_r3qpi2, "Intel Ivy Bridge-EP R3QPI2 uncore"]
+	[149, ivbep_unc_irp, "Intel Ivy Bridge-EP IRP uncore"]
+	[154, hsw_ep, "Intel Haswell EP"]
+	[155, bdw, "Intel Broadwell"]
+	[157, hswep_unc_cbo0, "Intel Haswell-EP C-Box 0 uncore"]
+	[158, hswep_unc_cbo1, "Intel Haswell-EP C-Box 1 uncore"]
+	[159, hswep_unc_cbo2, "Intel Haswell-EP C-Box 2 uncore"]
+	[160, hswep_unc_cbo3, "Intel Haswell-EP C-Box 3 uncore"]
+	[161, hswep_unc_cbo4, "Intel Haswell-EP C-Box 4 uncore"]
+	[162, hswep_unc_cbo5, "Intel Haswell-EP C-Box 5 uncore"]
+	[163, hswep_unc_cbo6, "Intel Haswell-EP C-Box 6 uncore"]
+	[164, hswep_unc_cbo7, "Intel Haswell-EP C-Box 7 uncore"]
+	[165, hswep_unc_cbo8, "Intel Haswell-EP C-Box 8 uncore"]
+	[166, hswep_unc_cbo9, "Intel Haswell-EP C-Box 9 uncore"]
+	[167, hswep_unc_cbo10, "Intel Haswell-EP C-Box 10 uncore"]
+	[168, hswep_unc_cbo11, "Intel Haswell-EP C-Box 11 uncore"]
+	[169, hswep_unc_cbo12, "Intel Haswell-EP C-Box 12 uncore"]
+	[170, hswep_unc_cbo13, "Intel Haswell-EP C-Box 13 uncore"]
+	[171, hswep_unc_cbo14, "Intel Haswell-EP C-Box 14 uncore"]
+	[172, hswep_unc_cbo15, "Intel Haswell-EP C-Box 15 uncore"]
+	[173, hswep_unc_cbo16, "Intel Haswell-EP C-Box 16 uncore"]
+	[174, hswep_unc_cbo17, "Intel Haswell-EP C-Box 17 uncore"]
+	[175, hswep_unc_ha0, "Intel Haswell-EP HA 0 uncore"]
+	[176, hswep_unc_ha1, "Intel Haswell-EP HA 1 uncore"]
+	[177, hswep_unc_imc0, "Intel Haswell-EP IMC0 uncore"]
+	[178, hswep_unc_imc1, "Intel Haswell-EP IMC1 uncore"]
+	[179, hswep_unc_imc2, "Intel Haswell-EP IMC2 uncore"]
+	[180, hswep_unc_imc3, "Intel Haswell-EP IMC3 uncore"]
+	[181, hswep_unc_imc4, "Intel Haswell-EP IMC4 uncore"]
+	[182, hswep_unc_imc5, "Intel Haswell-EP IMC5 uncore"]
+	[183, hswep_unc_imc6, "Intel Haswell-EP IMC6 uncore"]
+	[184, hswep_unc_imc7, "Intel Haswell-EP IMC7 uncore"]
+	[185, hswep_unc_pcu, "Intel Haswell-EP PCU uncore"]
+	[186, hswep_unc_qpi0, "Intel Haswell-EP QPI0 uncore"]
+	[187, hswep_unc_qpi1, "Intel Haswell-EP QPI1 uncore"]
+	[188, hswep_unc_ubo, "Intel Haswell-EP U-Box uncore"]
+	[189, hswep_unc_r2pcie, "Intel Haswell-EP R2PCIe uncore"]
+	[190, hswep_unc_r3qpi0, "Intel Haswell-EP R3QPI0 uncore"]
+	[191, hswep_unc_r3qpi1, "Intel Haswell-EP R3QPI1 uncore"]
+	[192, hswep_unc_r3qpi2, "Intel Haswell-EP R3QPI2 uncore"]
+	[193, hswep_unc_irp, "Intel Haswell-EP IRP uncore"]
+	[194, hswep_unc_sbo0, "Intel Haswell-EP S-BOX0 uncore"]
+	[195, hswep_unc_sbo1, "Intel Haswell-EP S-BOX1 uncore"]
+	[196, hswep_unc_sbo2, "Intel Haswell-EP S-BOX2 uncore"]
+	[197, hswep_unc_sbo3, "Intel Haswell-EP S-BOX3 uncore"]
+	[200, skl, "Intel Skylake"]
+	[201, bdw_ep, "Intel Broadwell EP"]
+	[202, glm, "Intel Goldmont"]
+	[203, knl, "Intel Knights Landing"]
+	[204, knl_unc_imc0, "Intel KnightLanding IMC 0 uncore"]
+	[205, knl_unc_imc1, "Intel KnightLanding IMC 1 uncore"]
+	[206, knl_unc_imc2, "Intel KnightLanding IMC 2 uncore"]
+	[207, knl_unc_imc3, "Intel KnightLanding IMC 3 uncore"]
+	[208, knl_unc_imc4, "Intel KnightLanding IMC 4 uncore"]
+	[209, knl_unc_imc5, "Intel KnightLanding IMC 5 uncore"]
+	[210, knl_unc_imc_uclk0, "Intel KnightLanding IMC UCLK 0 uncore"]
+	[211, knl_unc_imc_uclk1, "Intel KnightLanding IMC UCLK 1 uncore"]
+	[212, knl_unc_edc_eclk0, "Intel KnightLanding EDC_ECLK_0 uncore"]
+	[213, knl_unc_edc_eclk1, "Intel KnightLanding EDC_ECLK_1 uncore"]
+	[214, knl_unc_edc_eclk2, "Intel KnightLanding EDC_ECLK_2 uncore"]
+	[215, knl_unc_edc_eclk3, "Intel KnightLanding EDC_ECLK_3 uncore"]
+	[216, knl_unc_edc_eclk4, "Intel KnightLanding EDC_ECLK_4 uncore"]
+	[217, knl_unc_edc_eclk5, "Intel KnightLanding EDC_ECLK_5 uncore"]
+	[218, knl_unc_edc_eclk6, "Intel KnightLanding EDC_ECLK_6 uncore"]
+	[219, knl_unc_edc_eclk7, "Intel KnightLanding EDC_ECLK_7 uncore"]
+	[220, knl_unc_edc_uclk0, "Intel KnightLanding EDC_UCLK_0 uncore"]
+	[221, knl_unc_edc_uclk1, "Intel KnightLanding EDC_UCLK_1 uncore"]
+	[222, knl_unc_edc_uclk2, "Intel KnightLanding EDC_UCLK_2 uncore"]
+	[223, knl_unc_edc_uclk3, "Intel KnightLanding EDC_UCLK_3 uncore"]
+	[224, knl_unc_edc_uclk4, "Intel KnightLanding EDC_UCLK_4 uncore"]
+	[225, knl_unc_edc_uclk5, "Intel KnightLanding EDC_UCLK_5 uncore"]
+	[226, knl_unc_edc_uclk6, "Intel KnightLanding EDC_UCLK_6 uncore"]
+	[227, knl_unc_edc_uclk7, "Intel KnightLanding EDC_UCLK_7 uncore"]
+	[228, knl_unc_cha0, "Intel KnightLanding CHA 0 uncore"]
+	[229, knl_unc_cha1, "Intel KnightLanding CHA 1 uncore"]
+	[230, knl_unc_cha2, "Intel KnightLanding CHA 2 uncore"]
+	[231, knl_unc_cha3, "Intel KnightLanding CHA 3 uncore"]
+	[232, knl_unc_cha4, "Intel KnightLanding CHA 4 uncore"]
+	[233, knl_unc_cha5, "Intel KnightLanding CHA 5 uncore"]
+	[234, knl_unc_cha6, "Intel KnightLanding CHA 6 uncore"]
+	[235, knl_unc_cha7, "Intel KnightLanding CHA 7 uncore"]
+	[236, knl_unc_cha8, "Intel KnightLanding CHA 8 uncore"]
+	[237, knl_unc_cha9, "Intel KnightLanding CHA 9 uncore"]
+	[238, knl_unc_cha10, "Intel KnightLanding CHA 10 uncore"]
+	[239, knl_unc_cha11, "Intel KnightLanding CHA 11 uncore"]
+	[240, knl_unc_cha12, "Intel KnightLanding CHA 12 uncore"]
+	[241, knl_unc_cha13, "Intel KnightLanding CHA 13 uncore"]
+	[242, knl_unc_cha14, "Intel KnightLanding CHA 14 uncore"]
+	[243, knl_unc_cha15, "Intel KnightLanding CHA 15 uncore"]
+	[244, knl_unc_cha16, "Intel KnightLanding CHA 16 uncore"]
+	[245, knl_unc_cha17, "Intel KnightLanding CHA 17 uncore"]
+	[246, knl_unc_cha18, "Intel KnightLanding CHA 18 uncore"]
+	[247, knl_unc_cha19, "Intel KnightLanding CHA 19 uncore"]
+	[248, knl_unc_cha20, "Intel KnightLanding CHA 20 uncore"]
+	[249, knl_unc_cha21, "Intel KnightLanding CHA 21 uncore"]
+	[250, knl_unc_cha22, "Intel KnightLanding CHA 22 uncore"]
+	[251, knl_unc_cha23, "Intel KnightLanding CHA 23 uncore"]
+	[252, knl_unc_cha24, "Intel KnightLanding CHA 24 uncore"]
+	[253, knl_unc_cha25, "Intel KnightLanding CHA 25 uncore"]
+	[254, knl_unc_cha26, "Intel KnightLanding CHA 26 uncore"]
+	[255, knl_unc_cha27, "Intel KnightLanding CHA 27 uncore"]
+	[256, knl_unc_cha28, "Intel KnightLanding CHA 28 uncore"]
+	[257, knl_unc_cha29, "Intel KnightLanding CHA 29 uncore"]
+	[258, knl_unc_cha30, "Intel KnightLanding CHA 30 uncore"]
+	[259, knl_unc_cha31, "Intel KnightLanding CHA 31 uncore"]
+	[260, knl_unc_cha32, "Intel KnightLanding CHA 32 uncore"]
+	[261, knl_unc_cha33, "Intel KnightLanding CHA 33 uncore"]
+	[262, knl_unc_cha34, "Intel KnightLanding CHA 34 uncore"]
+	[263, knl_unc_cha35, "Intel KnightLanding CHA 35 uncore"]
+	[264, knl_unc_cha36, "Intel KnightLanding CHA 36 uncore"]
+	[265, knl_unc_cha37, "Intel KnightLanding CHA 37 uncore"]
+	[267, knl_unc_m2pcie, "Intel Knights Landing M2PCIe uncore"]
+	[269, bdx_unc_cbo0, "Intel BroadwellX C-Box 0 uncore"]
+	[270, bdx_unc_cbo1, "Intel BroadwellX C-Box 1 uncore"]
+	[271, bdx_unc_cbo2, "Intel BroadwellX C-Box 2 uncore"]
+	[272, bdx_unc_cbo3, "Intel BroadwellX C-Box 3 uncore"]
+	[273, bdx_unc_cbo4, "Intel BroadwellX C-Box 4 uncore"]
+	[274, bdx_unc_cbo5, "Intel BroadwellX C-Box 5 uncore"]
+	[275, bdx_unc_cbo6, "Intel BroadwellX C-Box 6 uncore"]
+	[276, bdx_unc_cbo7, "Intel BroadwellX C-Box 7 uncore"]
+	[277, bdx_unc_cbo8, "Intel BroadwellX C-Box 8 uncore"]
+	[278, bdx_unc_cbo9, "Intel BroadwellX C-Box 9 uncore"]
+	[279, bdx_unc_cbo10, "Intel BroadwellX C-Box 10 uncore"]
+	[280, bdx_unc_cbo11, "Intel BroadwellX C-Box 11 uncore"]
+	[281, bdx_unc_cbo12, "Intel BroadwellX C-Box 12 uncore"]
+	[282, bdx_unc_cbo13, "Intel BroadwellX C-Box 13 uncore"]
+	[283, bdx_unc_cbo14, "Intel BroadwellX C-Box 14 uncore"]
+	[284, bdx_unc_cbo15, "Intel BroadwellX C-Box 15 uncore"]
+	[285, bdx_unc_cbo16, "Intel BroadwellX C-Box 16 uncore"]
+	[286, bdx_unc_cbo17, "Intel BroadwellX C-Box 17 uncore"]
+	[287, bdx_unc_cbo18, "Intel BroadwellX C-Box 18 uncore"]
+	[288, bdx_unc_cbo19, "Intel BroadwellX C-Box 19 uncore"]
+	[289, bdx_unc_cbo20, "Intel BroadwellX C-Box 20 uncore"]
+	[290, bdx_unc_cbo21, "Intel BroadwellX C-Box 21 uncore"]
+	[291, bdx_unc_cbo22, "Intel BroadwellX C-Box 22 uncore"]
+	[292, bdx_unc_cbo23, "Intel BroadwellX C-Box 23 uncore"]
+	[293, bdx_unc_ha0, "Intel BroadwellX HA 0 uncore"]
+	[294, bdx_unc_ha1, "Intel BroadwellX HA 1 uncore"]
+	[295, bdx_unc_imc0, "Intel BroadwellX IMC0 uncore"]
+	[296, bdx_unc_imc1, "Intel BroadwellX IMC1 uncore"]
+	[297, bdx_unc_imc2, "Intel BroadwellX IMC2 uncore"]
+	[298, bdx_unc_imc3, "Intel BroadwellX IMC3 uncore"]
+	[299, bdx_unc_imc4, "Intel BroadwellX IMC4 uncore"]
+	[300, bdx_unc_imc5, "Intel BroadwellX IMC5 uncore"]
+	[301, bdx_unc_imc6, "Intel BroadwellX IMC6 uncore"]
+	[302, bdx_unc_imc7, "Intel BroadwellX IMC7 uncore"]
+	[303, bdx_unc_pcu, "Intel BroadwellX PCU uncore"]
+	[304, bdx_unc_qpi0, "Intel BroadwellX QPI0 uncore"]
+	[305, bdx_unc_qpi1, "Intel BroadwellX QPI1 uncore"]
+	[306, bdx_unc_qpi2, "Intel BroadwellX QPI2 uncore"]
+	[307, bdx_unc_ubo, "Intel BroadwellX U-Box uncore"]
+	[308, bdx_unc_r2pcie, "Intel BroadwellX R2PCIe uncore"]
+	[309, bdx_unc_r3qpi0, "Intel BroadwellX R3QPI0 uncore"]
+	[310, bdx_unc_r3qpi1, "Intel BroadwellX R3QPI1 uncore"]
+	[311, bdx_unc_r3qpi2, "Intel BroadwellX R3QPI2 uncore"]
+	[312, bdx_unc_irp, "Intel BroadwellX IRP uncore"]
+	[313, bdx_unc_sbo0, "Intel BroadwellX S-BOX0 uncore"]
+	[314, bdx_unc_sbo1, "Intel BroadwellX S-BOX1 uncore"]
+	[315, bdx_unc_sbo2, "Intel BroadwellX S-BOX2 uncore"]
+	[316, bdx_unc_sbo3, "Intel BroadwellX S-BOX3 uncore"]
+	[317, amd64_fam17h, "AMD64 Fam17h Zen1 (deprecated - use amd_fam17h_zen1 instead)"]
+	[318, amd64_fam16h, "AMD64 Fam16h Jaguar"]
+	[319, skx, "Intel Skylake X"]
+	[320, skx_unc_cha0, "Intel SkylakeX CHA0 uncore"]
+	[321, skx_unc_cha1, "Intel SkylakeX CHA1 uncore"]
+	[322, skx_unc_cha2, "Intel SkylakeX CHA2 uncore"]
+	[323, skx_unc_cha3, "Intel SkylakeX CHA3 uncore"]
+	[324, skx_unc_cha4, "Intel SkylakeX CHA4 uncore"]
+	[325, skx_unc_cha5, "Intel SkylakeX CHA5 uncore"]
+	[326, skx_unc_cha6, "Intel SkylakeX CHA6 uncore"]
+	[327, skx_unc_cha7, "Intel SkylakeX CHA7 uncore"]
+	[328, skx_unc_cha8, "Intel SkylakeX CHA8 uncore"]
+	[329, skx_unc_cha9, "Intel SkylakeX CHA9 uncore"]
+	[330, skx_unc_cha10, "Intel SkylakeX CHA10 uncore"]
+	[331, skx_unc_cha11, "Intel SkylakeX CHA11 uncore"]
+	[332, skx_unc_cha12, "Intel SkylakeX CHA12 uncore"]
+	[333, skx_unc_cha13, "Intel SkylakeX CHA13 uncore"]
+	[334, skx_unc_cha14, "Intel SkylakeX CHA14 uncore"]
+	[335, skx_unc_cha15, "Intel SkylakeX CHA15 uncore"]
+	[336, skx_unc_cha16, "Intel SkylakeX CHA16 uncore"]
+	[337, skx_unc_cha17, "Intel SkylakeX CHA17 uncore"]
+	[338, skx_unc_cha18, "Intel SkylakeX CHA18 uncore"]
+	[339, skx_unc_cha19, "Intel SkylakeX CHA19 uncore"]
+	[340, skx_unc_cha20, "Intel SkylakeX CHA20 uncore"]
+	[341, skx_unc_cha21, "Intel SkylakeX CHA21 uncore"]
+	[342, skx_unc_cha22, "Intel SkylakeX CHA22 uncore"]
+	[343, skx_unc_cha23, "Intel SkylakeX CHA23 uncore"]
+	[344, skx_unc_cha24, "Intel SkylakeX CHA24 uncore"]
+	[345, skx_unc_cha25, "Intel SkylakeX CHA25 uncore"]
+	[346, skx_unc_cha26, "Intel SkylakeX CHA26 uncore"]
+	[347, skx_unc_cha27, "Intel SkylakeX CHA27 uncore"]
+	[348, skx_unc_iio0, "Intel SkylakeX IIO0 uncore"]
+	[349, skx_unc_iio1, "Intel SkylakeX IIO1 uncore"]
+	[350, skx_unc_iio2, "Intel SkylakeX IIO2 uncore"]
+	[351, skx_unc_iio3, "Intel SkylakeX IIO3 uncore"]
+	[352, skx_unc_iio4, "Intel SkylakeX IIO4 uncore"]
+	[353, skx_unc_iio5, "Intel SkylakeX IIO5 uncore"]
+	[354, skx_unc_imc0, "Intel SkylakeX IMC0 uncore"]
+	[355, skx_unc_imc1, "Intel SkylakeX IMC1 uncore"]
+	[356, skx_unc_imc2, "Intel SkylakeX IMC2 uncore"]
+	[357, skx_unc_imc3, "Intel SkylakeX IMC3 uncore"]
+	[358, skx_unc_imc4, "Intel SkylakeX IMC4 uncore"]
+	[359, skx_unc_imc5, "Intel SkylakeX IMC5 uncore"]
+	[360, skx_unc_irp, "Intel SkylakeX IRP uncore"]
+	[361, skx_unc_m2m0, "Intel SkylakeX M2M0 uncore"]
+	[362, skx_unc_m2m1, "Intel SkylakeX M2M1 uncore"]
+	[363, skx_unc_m3upi0, "Intel SkylakeX M3UPI0 uncore"]
+	[364, skx_unc_m3upi1, "Intel SkylakeX M3UPI1 uncore"]
+	[365, skx_unc_m3upi2, "Intel SkylakeX M3UPI2 uncore"]
+	[366, skx_unc_pcu, "Intel SkylakeX PCU uncore"]
+	[367, skx_unc_ubo, "Intel SkylakeX U-Box uncore"]
+	[368, skx_unc_upi0, "Intel SkylakeX UPI0 uncore"]
+	[369, skx_unc_upi1, "Intel SkylakeX UPI1 uncore"]
+	[370, skx_unc_upi2, "Intel SkylakeX UPI2 uncore"]
+	[371, knm, "Intel Knights Mill"]
+	[372, knm_unc_imc0, "Intel Knights Mill IMC 0 uncore"]
+	[373, knm_unc_imc1, "Intel Knights Mill IMC 1 uncore"]
+	[374, knm_unc_imc2, "Intel Knights Mill IMC 2 uncore"]
+	[375, knm_unc_imc3, "Intel Knights Mill IMC 3 uncore"]
+	[376, knm_unc_imc4, "Intel Knights Mill IMC 4 uncore"]
+	[377, knm_unc_imc5, "Intel Knights Mill IMC 5 uncore"]
+	[378, knm_unc_imc_uclk0, "Intel Knights Mill IMC UCLK 0 uncore"]
+	[379, knm_unc_imc_uclk1, "Intel Knights Mill IMC UCLK 1 uncore"]
+	[380, knm_unc_edc_eclk0, "Intel Knights Mill EDC_ECLK_0 uncore"]
+	[381, knm_unc_edc_eclk1, "Intel Knights Mill EDC_ECLK_1 uncore"]
+	[382, knm_unc_edc_eclk2, "Intel Knights Mill EDC_ECLK_2 uncore"]
+	[383, knm_unc_edc_eclk3, "Intel Knights Mill EDC_ECLK_3 uncore"]
+	[384, knm_unc_edc_eclk4, "Intel Knights Mill EDC_ECLK_4 uncore"]
+	[385, knm_unc_edc_eclk5, "Intel Knights Mill EDC_ECLK_5 uncore"]
+	[386, knm_unc_edc_eclk6, "Intel Knights Mill EDC_ECLK_6 uncore"]
+	[387, knm_unc_edc_eclk7, "Intel Knights Mill EDC_ECLK_7 uncore"]
+	[388, knm_unc_edc_uclk0, "Intel Knights Mill EDC_UCLK_0 uncore"]
+	[389, knm_unc_edc_uclk1, "Intel Knights Mill EDC_UCLK_1 uncore"]
+	[390, knm_unc_edc_uclk2, "Intel Knights Mill EDC_UCLK_2 uncore"]
+	[391, knm_unc_edc_uclk3, "Intel Knights Mill EDC_UCLK_3 uncore"]
+	[392, knm_unc_edc_uclk4, "Intel Knights Mill EDC_UCLK_4 uncore"]
+	[393, knm_unc_edc_uclk5, "Intel Knights Mill EDC_UCLK_5 uncore"]
+	[394, knm_unc_edc_uclk6, "Intel Knights Mill EDC_UCLK_6 uncore"]
+	[395, knm_unc_edc_uclk7, "Intel Knights Mill EDC_UCLK_7 uncore"]
+	[396, knm_unc_cha0, "Intel Knights Mill CHA 0 uncore"]
+	[397, knm_unc_cha1, "Intel Knights Mill CHA 1 uncore"]
+	[398, knm_unc_cha2, "Intel Knights Mill CHA 2 uncore"]
+	[399, knm_unc_cha3, "Intel Knights Mill CHA 3 uncore"]
+	[400, knm_unc_cha4, "Intel Knights Mill CHA 4 uncore"]
+	[401, knm_unc_cha5, "Intel Knights Mill CHA 5 uncore"]
+	[402, knm_unc_cha6, "Intel Knights Mill CHA 6 uncore"]
+	[403, knm_unc_cha7, "Intel Knights Mill CHA 7 uncore"]
+	[404, knm_unc_cha8, "Intel Knights Mill CHA 8 uncore"]
+	[405, knm_unc_cha9, "Intel Knights Mill CHA 9 uncore"]
+	[406, knm_unc_cha10, "Intel Knights Mill CHA 10 uncore"]
+	[407, knm_unc_cha11, "Intel Knights Mill CHA 11 uncore"]
+	[408, knm_unc_cha12, "Intel Knights Mill CHA 12 uncore"]
+	[409, knm_unc_cha13, "Intel Knights Mill CHA 13 uncore"]
+	[410, knm_unc_cha14, "Intel Knights Mill CHA 14 uncore"]
+	[411, knm_unc_cha15, "Intel Knights Mill CHA 15 uncore"]
+	[412, knm_unc_cha16, "Intel Knights Mill CHA 16 uncore"]
+	[413, knm_unc_cha17, "Intel Knights Mill CHA 17 uncore"]
+	[414, knm_unc_cha18, "Intel Knights Mill CHA 18 uncore"]
+	[415, knm_unc_cha19, "Intel Knights Mill CHA 19 uncore"]
+	[416, knm_unc_cha20, "Intel Knights Mill CHA 20 uncore"]
+	[417, knm_unc_cha21, "Intel Knights Mill CHA 21 uncore"]
+	[418, knm_unc_cha22, "Intel Knights Mill CHA 22 uncore"]
+	[419, knm_unc_cha23, "Intel Knights Mill CHA 23 uncore"]
+	[420, knm_unc_cha24, "Intel Knights Mill CHA 24 uncore"]
+	[421, knm_unc_cha25, "Intel Knights Mill CHA 25 uncore"]
+	[422, knm_unc_cha26, "Intel Knights Mill CHA 26 uncore"]
+	[423, knm_unc_cha27, "Intel Knights Mill CHA 27 uncore"]
+	[424, knm_unc_cha28, "Intel Knights Mill CHA 28 uncore"]
+	[425, knm_unc_cha29, "Intel Knights Mill CHA 29 uncore"]
+	[426, knm_unc_cha30, "Intel Knights Mill CHA 30 uncore"]
+	[427, knm_unc_cha31, "Intel Knights Mill CHA 31 uncore"]
+	[428, knm_unc_cha32, "Intel Knights Mill CHA 32 uncore"]
+	[429, knm_unc_cha33, "Intel Knights Mill CHA 33 uncore"]
+	[430, knm_unc_cha34, "Intel Knights Mill CHA 34 uncore"]
+	[431, knm_unc_cha35, "Intel Knights Mill CHA 35 uncore"]
+	[432, knm_unc_cha36, "Intel Knights Mill CHA 36 uncore"]
+	[433, knm_unc_cha37, "Intel Knights Mill CHA 37 uncore"]
+	[435, knm_unc_m2pcie, "Intel Knights Mill M2PCIe uncore"]
+	[437, clx, "Intel CascadeLake X"]
+	[444, amd64_fam17h_zen1, "AMD64 Fam17h Zen1"]
+	[445, amd64_fam17h_zen2, "AMD64 Fam17h Zen2"]
+	[446, tmt, "Intel Tremont"]
+	[447, icl, "Intel Icelake"]
+	[450, amd64_fam19h_zen3, "AMD64 Fam19h Zen3"]
+	[451, amd64_rapl, "AMD64 RAPL"]
+	[452, amd64_fam19h_zen3_l3, "AMD64 Fam19h Zen3 L3"]
+	[453, icx, "Intel IcelakeX"]
+	[512, spr, "Intel SapphireRapid"]
+Detected PMU models:
+	[18, ix86arch, "Intel X86 architectural PMU", 7 events, 1 max encoding, 12 counters, core PMU]
+	[51, perf, "perf_events generic PMU", 87 events, 1 max encoding, 0 counters, OS generic PMU]
+	[114, perf_raw, "perf_events raw PMU", 1 events, 1 max encoding, 0 counters, OS generic PMU]
+	[447, icl, "Intel Icelake", 69 events, 2 max encoding, 20 counters, core PMU]
+Total events: 18322 available, 164 supported
+#-----------------------------
+IDX	 : 37748736
+PMU name : ix86arch (Intel X86 architectural PMU)
+Name     : UNHALTED_CORE_CYCLES
+Equiv	 : None
+Flags    : None
+Desc     : count core clock cycles whenever the clock signal on the specific core is running (not halted)
+Code     : 0x3c
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+#-----------------------------
+IDX	 : 37748737
+PMU name : ix86arch (Intel X86 architectural PMU)
+Name     : INSTRUCTION_RETIRED
+Equiv	 : None
+Flags    : None
+Desc     : count the number of instructions at retirement. For instructions that consists of multiple micro-ops, this event counts the retirement of the last micro-op of the instruction
+Code     : 0xc0
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+#-----------------------------
+IDX	 : 37748738
+PMU name : ix86arch (Intel X86 architectural PMU)
+Name     : UNHALTED_REFERENCE_CYCLES
+Equiv	 : None
+Flags    : None
+Desc     : count reference clock cycles while the clock signal on the specific core is running. The reference clock operates at a fixed frequency, irrespective of core frequency changes due to performance state transitions
+Code     : 0x13c
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+#-----------------------------
+IDX	 : 37748739
+PMU name : ix86arch (Intel X86 architectural PMU)
+Name     : LLC_REFERENCES
+Equiv	 : None
+Flags    : None
+Desc     : count each request originating from the core to reference a cache line in the last level cache. The count may include speculation, but excludes cache line fills due to hardware prefetch
+Code     : 0x4f2e
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+#-----------------------------
+IDX	 : 37748740
+PMU name : ix86arch (Intel X86 architectural PMU)
+Name     : LLC_MISSES
+Equiv	 : None
+Flags    : None
+Desc     : count each cache miss condition for references to the last level cache. The event count may include speculation, but excludes cache line fills due to hardware prefetch
+Code     : 0x412e
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+#-----------------------------
+IDX	 : 37748741
+PMU name : ix86arch (Intel X86 architectural PMU)
+Name     : BRANCH_INSTRUCTIONS_RETIRED
+Equiv	 : None
+Flags    : None
+Desc     : count branch instructions at retirement. Specifically, this event counts the retirement of the last micro-op of a branch instruction
+Code     : 0xc4
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+#-----------------------------
+IDX	 : 37748742
+PMU name : ix86arch (Intel X86 architectural PMU)
+Name     : MISPREDICTED_BRANCH_RETIRED
+Equiv	 : None
+Flags    : None
+Desc     : count mispredicted branch instructions at retirement. Specifically, this event counts at retirement of the last micro-op of a branch instruction in the architectural path of the execution and experienced misprediction in the branch prediction hardware
+Code     : 0xc5
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+#-----------------------------
+IDX	 : 106954752
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_CPU_CYCLES
+Equiv	 : None
+Flags    : [precise] [hw_smpl] 
+Desc     : PERF_COUNT_HW_CPU_CYCLES
+Code     : 0x0
+#-----------------------------
+IDX	 : 106954753
+PMU name : perf (perf_events generic PMU)
+Name     : CYCLES
+Equiv	 : PERF_COUNT_HW_CPU_CYCLES
+Flags    : None
+Desc     : PERF_COUNT_HW_CPU_CYCLES
+Code     : 0x0
+#-----------------------------
+IDX	 : 106954754
+PMU name : perf (perf_events generic PMU)
+Name     : CPU-CYCLES
+Equiv	 : PERF_COUNT_HW_CPU_CYCLES
+Flags    : None
+Desc     : PERF_COUNT_HW_CPU_CYCLES
+Code     : 0x0
+#-----------------------------
+IDX	 : 106954755
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_INSTRUCTIONS
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_HW_INSTRUCTIONS
+Code     : 0x1
+#-----------------------------
+IDX	 : 106954756
+PMU name : perf (perf_events generic PMU)
+Name     : INSTRUCTIONS
+Equiv	 : PERF_COUNT_HW_INSTRUCTIONS
+Flags    : None
+Desc     : PERF_COUNT_HW_INSTRUCTIONS
+Code     : 0x1
+#-----------------------------
+IDX	 : 106954757
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_CACHE_REFERENCES
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_HW_CACHE_REFERENCES
+Code     : 0x2
+#-----------------------------
+IDX	 : 106954758
+PMU name : perf (perf_events generic PMU)
+Name     : CACHE-REFERENCES
+Equiv	 : PERF_COUNT_HW_CACHE_REFERENCES
+Flags    : None
+Desc     : PERF_COUNT_HW_CACHE_REFERENCES
+Code     : 0x2
+#-----------------------------
+IDX	 : 106954759
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_CACHE_MISSES
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_HW_CACHE_MISSES
+Code     : 0x3
+#-----------------------------
+IDX	 : 106954760
+PMU name : perf (perf_events generic PMU)
+Name     : CACHE-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_MISSES
+Flags    : None
+Desc     : PERF_COUNT_HW_CACHE_MISSES
+Code     : 0x3
+#-----------------------------
+IDX	 : 106954761
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_BRANCH_INSTRUCTIONS
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_HW_BRANCH_INSTRUCTIONS
+Code     : 0x4
+#-----------------------------
+IDX	 : 106954762
+PMU name : perf (perf_events generic PMU)
+Name     : BRANCH-INSTRUCTIONS
+Equiv	 : PERF_COUNT_HW_BRANCH_INSTRUCTIONS
+Flags    : None
+Desc     : PERF_COUNT_HW_BRANCH_INSTRUCTIONS
+Code     : 0x4
+#-----------------------------
+IDX	 : 106954763
+PMU name : perf (perf_events generic PMU)
+Name     : BRANCHES
+Equiv	 : PERF_COUNT_HW_BRANCH_INSTRUCTIONS
+Flags    : None
+Desc     : PERF_COUNT_HW_BRANCH_INSTRUCTIONS
+Code     : 0x4
+#-----------------------------
+IDX	 : 106954764
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_BRANCH_MISSES
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_HW_BRANCH_MISSES
+Code     : 0x5
+#-----------------------------
+IDX	 : 106954765
+PMU name : perf (perf_events generic PMU)
+Name     : BRANCH-MISSES
+Equiv	 : PERF_COUNT_HW_BRANCH_MISSES
+Flags    : None
+Desc     : PERF_COUNT_HW_BRANCH_MISSES
+Code     : 0x5
+#-----------------------------
+IDX	 : 106954766
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_BUS_CYCLES
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_HW_BUS_CYCLES
+Code     : 0x6
+#-----------------------------
+IDX	 : 106954767
+PMU name : perf (perf_events generic PMU)
+Name     : BUS-CYCLES
+Equiv	 : PERF_COUNT_HW_BUS_CYCLES
+Flags    : None
+Desc     : PERF_COUNT_HW_BUS_CYCLES
+Code     : 0x6
+#-----------------------------
+IDX	 : 106954768
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_STALLED_CYCLES_FRONTEND
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_HW_STALLED_CYCLES_FRONTEND
+Code     : 0x7
+#-----------------------------
+IDX	 : 106954769
+PMU name : perf (perf_events generic PMU)
+Name     : STALLED-CYCLES-FRONTEND
+Equiv	 : PERF_COUNT_HW_STALLED_CYCLES_FRONTEND
+Flags    : None
+Desc     : PERF_COUNT_HW_STALLED_CYCLES_FRONTEND
+Code     : 0x7
+#-----------------------------
+IDX	 : 106954770
+PMU name : perf (perf_events generic PMU)
+Name     : IDLE-CYCLES-FRONTEND
+Equiv	 : PERF_COUNT_HW_STALLED_CYCLES_FRONTEND
+Flags    : None
+Desc     : PERF_COUNT_HW_STALLED_CYCLES_FRONTEND
+Code     : 0x7
+#-----------------------------
+IDX	 : 106954771
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_STALLED_CYCLES_BACKEND
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_HW_STALLED_CYCLES_BACKEND
+Code     : 0x8
+#-----------------------------
+IDX	 : 106954772
+PMU name : perf (perf_events generic PMU)
+Name     : STALLED-CYCLES-BACKEND
+Equiv	 : PERF_COUNT_HW_STALLED_CYCLES_BACKEND
+Flags    : None
+Desc     : PERF_COUNT_HW_STALLED_CYCLES_BACKEND
+Code     : 0x8
+#-----------------------------
+IDX	 : 106954773
+PMU name : perf (perf_events generic PMU)
+Name     : IDLE-CYCLES-BACKEND
+Equiv	 : PERF_COUNT_HW_STALLED_CYCLES_BACKEND
+Flags    : None
+Desc     : PERF_COUNT_HW_STALLED_CYCLES_BACKEND
+Code     : 0x8
+#-----------------------------
+IDX	 : 106954774
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_REF_CPU_CYCLES
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_HW_REF_CPU_CYCLES
+Code     : 0x9
+#-----------------------------
+IDX	 : 106954775
+PMU name : perf (perf_events generic PMU)
+Name     : REF-CYCLES
+Equiv	 : PERF_COUNT_HW_REF_CPU_CYCLES
+Flags    : None
+Desc     : PERF_COUNT_HW_REF_CPU_CYCLES
+Code     : 0x9
+#-----------------------------
+IDX	 : 106954776
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_SW_CPU_CLOCK
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_SW_CPU_CLOCK
+Code     : 0x0
+#-----------------------------
+IDX	 : 106954777
+PMU name : perf (perf_events generic PMU)
+Name     : CPU-CLOCK
+Equiv	 : PERF_COUNT_SW_CPU_CLOCK
+Flags    : None
+Desc     : PERF_COUNT_SW_CPU_CLOCK
+Code     : 0x0
+#-----------------------------
+IDX	 : 106954778
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_SW_TASK_CLOCK
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_SW_TASK_CLOCK
+Code     : 0x1
+#-----------------------------
+IDX	 : 106954779
+PMU name : perf (perf_events generic PMU)
+Name     : TASK-CLOCK
+Equiv	 : PERF_COUNT_SW_TASK_CLOCK
+Flags    : None
+Desc     : PERF_COUNT_SW_TASK_CLOCK
+Code     : 0x1
+#-----------------------------
+IDX	 : 106954780
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_SW_PAGE_FAULTS
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_SW_PAGE_FAULTS
+Code     : 0x2
+#-----------------------------
+IDX	 : 106954781
+PMU name : perf (perf_events generic PMU)
+Name     : PAGE-FAULTS
+Equiv	 : PERF_COUNT_SW_PAGE_FAULTS
+Flags    : None
+Desc     : PERF_COUNT_SW_PAGE_FAULTS
+Code     : 0x2
+#-----------------------------
+IDX	 : 106954782
+PMU name : perf (perf_events generic PMU)
+Name     : FAULTS
+Equiv	 : PERF_COUNT_SW_PAGE_FAULTS
+Flags    : None
+Desc     : PERF_COUNT_SW_PAGE_FAULTS
+Code     : 0x2
+#-----------------------------
+IDX	 : 106954783
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_SW_CONTEXT_SWITCHES
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_SW_CONTEXT_SWITCHES
+Code     : 0x3
+#-----------------------------
+IDX	 : 106954784
+PMU name : perf (perf_events generic PMU)
+Name     : CONTEXT-SWITCHES
+Equiv	 : PERF_COUNT_SW_CONTEXT_SWITCHES
+Flags    : None
+Desc     : PERF_COUNT_SW_CONTEXT_SWITCHES
+Code     : 0x3
+#-----------------------------
+IDX	 : 106954785
+PMU name : perf (perf_events generic PMU)
+Name     : CS
+Equiv	 : PERF_COUNT_SW_CONTEXT_SWITCHES
+Flags    : None
+Desc     : PERF_COUNT_SW_CONTEXT_SWITCHES
+Code     : 0x3
+#-----------------------------
+IDX	 : 106954786
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_SW_CPU_MIGRATIONS
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_SW_CPU_MIGRATIONS
+Code     : 0x4
+#-----------------------------
+IDX	 : 106954787
+PMU name : perf (perf_events generic PMU)
+Name     : CPU-MIGRATIONS
+Equiv	 : PERF_COUNT_SW_CPU_MIGRATIONS
+Flags    : None
+Desc     : PERF_COUNT_SW_CPU_MIGRATIONS
+Code     : 0x4
+#-----------------------------
+IDX	 : 106954788
+PMU name : perf (perf_events generic PMU)
+Name     : MIGRATIONS
+Equiv	 : PERF_COUNT_SW_CPU_MIGRATIONS
+Flags    : None
+Desc     : PERF_COUNT_SW_CPU_MIGRATIONS
+Code     : 0x4
+#-----------------------------
+IDX	 : 106954789
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_SW_PAGE_FAULTS_MIN
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_SW_PAGE_FAULTS_MIN
+Code     : 0x5
+#-----------------------------
+IDX	 : 106954790
+PMU name : perf (perf_events generic PMU)
+Name     : MINOR-FAULTS
+Equiv	 : PERF_COUNT_SW_PAGE_FAULTS_MIN
+Flags    : None
+Desc     : PERF_COUNT_SW_PAGE_FAULTS_MIN
+Code     : 0x5
+#-----------------------------
+IDX	 : 106954791
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_SW_PAGE_FAULTS_MAJ
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_SW_PAGE_FAULTS_MAJ
+Code     : 0x6
+#-----------------------------
+IDX	 : 106954792
+PMU name : perf (perf_events generic PMU)
+Name     : MAJOR-FAULTS
+Equiv	 : PERF_COUNT_SW_PAGE_FAULTS_MAJ
+Flags    : None
+Desc     : PERF_COUNT_SW_PAGE_FAULTS_MAJ
+Code     : 0x6
+#-----------------------------
+IDX	 : 106954793
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_SW_CGROUP_SWITCHES
+Equiv	 : None
+Flags    : None
+Desc     : PERF_COUNT_SW_CGROUP_SWITCHES
+Code     : 0xb
+#-----------------------------
+IDX	 : 106954794
+PMU name : perf (perf_events generic PMU)
+Name     : CGROUP-SWITCHES
+Equiv	 : PERF_COUNT_SW_CGROUP_SWITCHES
+Flags    : None
+Desc     : PERF_COUNT_SW_CGROUP_SWITCHES
+Code     : 0xb
+#-----------------------------
+IDX	 : 106954795
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_CACHE_L1D
+Equiv	 : None
+Flags    : None
+Desc     : L1 data cache
+Code     : 0x0
+Umask-00 : 0x00 : PMU : [READ] : None : read access
+Umask-01 : 0x100 : PMU : [WRITE] : None : write access
+Umask-02 : 0x200 : PMU : [PREFETCH] : None : prefetch access
+Umask-03 : 0x00 : PMU : [ACCESS] : None : hit access
+Umask-04 : 0x10000 : PMU : [MISS] : None : miss access
+#-----------------------------
+IDX	 : 106954796
+PMU name : perf (perf_events generic PMU)
+Name     : L1-DCACHE-LOADS
+Equiv	 : PERF_COUNT_HW_CACHE_L1D:READ:ACCESS
+Flags    : None
+Desc     : L1 cache load accesses
+Code     : 0x0
+#-----------------------------
+IDX	 : 106954797
+PMU name : perf (perf_events generic PMU)
+Name     : L1-DCACHE-LOAD-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_L1D:READ:MISS
+Flags    : None
+Desc     : L1 cache load misses
+Code     : 0x0
+#-----------------------------
+IDX	 : 106954798
+PMU name : perf (perf_events generic PMU)
+Name     : L1-DCACHE-STORES
+Equiv	 : PERF_COUNT_HW_CACHE_L1D:WRITE:ACCESS
+Flags    : None
+Desc     : L1 cache store accesses
+Code     : 0x0
+#-----------------------------
+IDX	 : 106954799
+PMU name : perf (perf_events generic PMU)
+Name     : L1-DCACHE-STORE-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_L1D:WRITE:MISS
+Flags    : None
+Desc     : L1 cache store misses
+Code     : 0x0
+#-----------------------------
+IDX	 : 106954800
+PMU name : perf (perf_events generic PMU)
+Name     : L1-DCACHE-PREFETCHES
+Equiv	 : PERF_COUNT_HW_CACHE_L1D:PREFETCH:ACCESS
+Flags    : None
+Desc     : L1 cache prefetch accesses
+Code     : 0x0
+#-----------------------------
+IDX	 : 106954801
+PMU name : perf (perf_events generic PMU)
+Name     : L1-DCACHE-PREFETCH-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_L1D:PREFETCH:MISS
+Flags    : None
+Desc     : L1 cache prefetch misses
+Code     : 0x0
+#-----------------------------
+IDX	 : 106954802
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_CACHE_L1I
+Equiv	 : None
+Flags    : None
+Desc     : L1 instruction cache
+Code     : 0x1
+Umask-00 : 0x00 : PMU : [READ] : None : read access
+Umask-01 : 0x200 : PMU : [PREFETCH] : None : prefetch access
+Umask-02 : 0x00 : PMU : [ACCESS] : None : hit access
+Umask-03 : 0x10000 : PMU : [MISS] : None : miss access
+#-----------------------------
+IDX	 : 106954803
+PMU name : perf (perf_events generic PMU)
+Name     : L1-ICACHE-LOADS
+Equiv	 : PERF_COUNT_HW_CACHE_L1I:READ:ACCESS
+Flags    : None
+Desc     : L1I cache load accesses
+Code     : 0x1
+#-----------------------------
+IDX	 : 106954804
+PMU name : perf (perf_events generic PMU)
+Name     : L1-ICACHE-LOAD-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_L1I:READ:MISS
+Flags    : None
+Desc     : L1I cache load misses
+Code     : 0x1
+#-----------------------------
+IDX	 : 106954805
+PMU name : perf (perf_events generic PMU)
+Name     : L1-ICACHE-PREFETCHES
+Equiv	 : PERF_COUNT_HW_CACHE_L1I:PREFETCH:ACCESS
+Flags    : None
+Desc     : L1I cache prefetch accesses
+Code     : 0x1
+#-----------------------------
+IDX	 : 106954806
+PMU name : perf (perf_events generic PMU)
+Name     : L1-ICACHE-PREFETCH-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_L1I:PREFETCH:MISS
+Flags    : None
+Desc     : L1I cache prefetch misses
+Code     : 0x1
+#-----------------------------
+IDX	 : 106954807
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_CACHE_LL
+Equiv	 : None
+Flags    : None
+Desc     : Last level cache
+Code     : 0x2
+Umask-00 : 0x00 : PMU : [READ] : None : read access
+Umask-01 : 0x100 : PMU : [WRITE] : None : write access
+Umask-02 : 0x200 : PMU : [PREFETCH] : None : prefetch access
+Umask-03 : 0x00 : PMU : [ACCESS] : None : hit access
+Umask-04 : 0x10000 : PMU : [MISS] : None : miss access
+#-----------------------------
+IDX	 : 106954808
+PMU name : perf (perf_events generic PMU)
+Name     : LLC-LOADS
+Equiv	 : PERF_COUNT_HW_CACHE_LL:READ:ACCESS
+Flags    : None
+Desc     : Last level cache load accesses
+Code     : 0x2
+#-----------------------------
+IDX	 : 106954809
+PMU name : perf (perf_events generic PMU)
+Name     : LLC-LOAD-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_LL:READ:MISS
+Flags    : None
+Desc     : Last level cache load misses
+Code     : 0x2
+#-----------------------------
+IDX	 : 106954810
+PMU name : perf (perf_events generic PMU)
+Name     : LLC-STORES
+Equiv	 : PERF_COUNT_HW_CACHE_LL:WRITE:ACCESS
+Flags    : None
+Desc     : Last level cache store accesses
+Code     : 0x2
+#-----------------------------
+IDX	 : 106954811
+PMU name : perf (perf_events generic PMU)
+Name     : LLC-STORE-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_LL:WRITE:MISS
+Flags    : None
+Desc     : Last level cache store misses
+Code     : 0x2
+#-----------------------------
+IDX	 : 106954812
+PMU name : perf (perf_events generic PMU)
+Name     : LLC-PREFETCHES
+Equiv	 : PERF_COUNT_HW_CACHE_LL:PREFETCH:ACCESS
+Flags    : None
+Desc     : Last level cache prefetch accesses
+Code     : 0x2
+#-----------------------------
+IDX	 : 106954813
+PMU name : perf (perf_events generic PMU)
+Name     : LLC-PREFETCH-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_LL:PREFETCH:MISS
+Flags    : None
+Desc     : Last level cache prefetch misses
+Code     : 0x2
+#-----------------------------
+IDX	 : 106954814
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_CACHE_DTLB
+Equiv	 : None
+Flags    : None
+Desc     : Data Translation Lookaside Buffer
+Code     : 0x3
+Umask-00 : 0x00 : PMU : [READ] : None : read access
+Umask-01 : 0x100 : PMU : [WRITE] : None : write access
+Umask-02 : 0x200 : PMU : [PREFETCH] : None : prefetch access
+Umask-03 : 0x00 : PMU : [ACCESS] : None : hit access
+Umask-04 : 0x10000 : PMU : [MISS] : None : miss access
+#-----------------------------
+IDX	 : 106954815
+PMU name : perf (perf_events generic PMU)
+Name     : DTLB-LOADS
+Equiv	 : PERF_COUNT_HW_CACHE_DTLB:READ:ACCESS
+Flags    : None
+Desc     : Data TLB load accesses
+Code     : 0x3
+#-----------------------------
+IDX	 : 106954816
+PMU name : perf (perf_events generic PMU)
+Name     : DTLB-LOAD-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_DTLB:READ:MISS
+Flags    : None
+Desc     : Data TLB load misses
+Code     : 0x3
+#-----------------------------
+IDX	 : 106954817
+PMU name : perf (perf_events generic PMU)
+Name     : DTLB-STORES
+Equiv	 : PERF_COUNT_HW_CACHE_DTLB:WRITE:ACCESS
+Flags    : None
+Desc     : Data TLB store accesses
+Code     : 0x3
+#-----------------------------
+IDX	 : 106954818
+PMU name : perf (perf_events generic PMU)
+Name     : DTLB-STORE-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_DTLB:WRITE:MISS
+Flags    : None
+Desc     : Data TLB store misses
+Code     : 0x3
+#-----------------------------
+IDX	 : 106954819
+PMU name : perf (perf_events generic PMU)
+Name     : DTLB-PREFETCHES
+Equiv	 : PERF_COUNT_HW_CACHE_DTLB:PREFETCH:ACCESS
+Flags    : None
+Desc     : Data TLB prefetch accesses
+Code     : 0x3
+#-----------------------------
+IDX	 : 106954820
+PMU name : perf (perf_events generic PMU)
+Name     : DTLB-PREFETCH-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_DTLB:PREFETCH:MISS
+Flags    : None
+Desc     : Data TLB prefetch misses
+Code     : 0x3
+#-----------------------------
+IDX	 : 106954821
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_CACHE_ITLB
+Equiv	 : None
+Flags    : None
+Desc     : Instruction Translation Lookaside Buffer
+Code     : 0x4
+Umask-00 : 0x00 : PMU : [READ] : None : read access
+Umask-01 : 0x00 : PMU : [ACCESS] : None : hit access
+Umask-02 : 0x10000 : PMU : [MISS] : None : miss access
+#-----------------------------
+IDX	 : 106954822
+PMU name : perf (perf_events generic PMU)
+Name     : ITLB-LOADS
+Equiv	 : PERF_COUNT_HW_CACHE_ITLB:READ:ACCESS
+Flags    : None
+Desc     : Instruction TLB load accesses
+Code     : 0x4
+#-----------------------------
+IDX	 : 106954823
+PMU name : perf (perf_events generic PMU)
+Name     : ITLB-LOAD-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_ITLB:READ:MISS
+Flags    : None
+Desc     : Instruction TLB load misses
+Code     : 0x4
+#-----------------------------
+IDX	 : 106954824
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_CACHE_BPU
+Equiv	 : None
+Flags    : None
+Desc     : Branch Prediction Unit
+Code     : 0x5
+Umask-00 : 0x00 : PMU : [READ] : None : read access
+Umask-01 : 0x00 : PMU : [ACCESS] : None : hit access
+Umask-02 : 0x10000 : PMU : [MISS] : None : miss access
+#-----------------------------
+IDX	 : 106954825
+PMU name : perf (perf_events generic PMU)
+Name     : BRANCH-LOADS
+Equiv	 : PERF_COUNT_HW_CACHE_BPU:READ:ACCESS
+Flags    : None
+Desc     : Branch  load accesses
+Code     : 0x5
+#-----------------------------
+IDX	 : 106954826
+PMU name : perf (perf_events generic PMU)
+Name     : BRANCH-LOAD-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_BPU:READ:MISS
+Flags    : None
+Desc     : Branch  load misses
+Code     : 0x5
+#-----------------------------
+IDX	 : 106954827
+PMU name : perf (perf_events generic PMU)
+Name     : PERF_COUNT_HW_CACHE_NODE
+Equiv	 : None
+Flags    : None
+Desc     : Node memory access
+Code     : 0x6
+Umask-00 : 0x00 : PMU : [READ] : None : read access
+Umask-01 : 0x100 : PMU : [WRITE] : None : write access
+Umask-02 : 0x200 : PMU : [PREFETCH] : None : prefetch access
+Umask-03 : 0x00 : PMU : [ACCESS] : None : hit access
+Umask-04 : 0x10000 : PMU : [MISS] : None : miss access
+#-----------------------------
+IDX	 : 106954828
+PMU name : perf (perf_events generic PMU)
+Name     : NODE-LOADS
+Equiv	 : PERF_COUNT_HW_CACHE_NODE:READ:ACCESS
+Flags    : None
+Desc     : Node  load accesses
+Code     : 0x6
+#-----------------------------
+IDX	 : 106954829
+PMU name : perf (perf_events generic PMU)
+Name     : NODE-LOAD-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_NODE:READ:MISS
+Flags    : None
+Desc     : Node  load misses
+Code     : 0x6
+#-----------------------------
+IDX	 : 106954830
+PMU name : perf (perf_events generic PMU)
+Name     : NODE-STORES
+Equiv	 : PERF_COUNT_HW_CACHE_NODE:WRITE:ACCESS
+Flags    : None
+Desc     : Node  store accesses
+Code     : 0x6
+#-----------------------------
+IDX	 : 106954831
+PMU name : perf (perf_events generic PMU)
+Name     : NODE-STORE-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_NODE:WRITE:MISS
+Flags    : None
+Desc     : Node  store misses
+Code     : 0x6
+#-----------------------------
+IDX	 : 106954832
+PMU name : perf (perf_events generic PMU)
+Name     : NODE-PREFETCHES
+Equiv	 : PERF_COUNT_HW_CACHE_NODE:PREFETCH:ACCESS
+Flags    : None
+Desc     : Node  prefetch accesses
+Code     : 0x6
+#-----------------------------
+IDX	 : 106954833
+PMU name : perf (perf_events generic PMU)
+Name     : NODE-PREFETCH-MISSES
+Equiv	 : PERF_COUNT_HW_CACHE_NODE:PREFETCH:MISS
+Flags    : None
+Desc     : Node  prefetch misses
+Code     : 0x6
+#-----------------------------
+IDX	 : 106954834
+PMU name : perf (perf_events generic PMU)
+Name     : slots
+Equiv	 : None
+Flags    : None
+Desc     : issue slots per logical CPU (used for topdown toplevel computation, must be first event in the group)
+Code     : 0x400
+#-----------------------------
+IDX	 : 106954835
+PMU name : perf (perf_events generic PMU)
+Name     : topdown-retiring
+Equiv	 : None
+Flags    : None
+Desc     : topdown useful slots retiring uops (must be used in a group with the other topdown- events with slots as leader)
+Code     : 0x8000
+#-----------------------------
+IDX	 : 106954836
+PMU name : perf (perf_events generic PMU)
+Name     : topdown-bad-spec
+Equiv	 : None
+Flags    : None
+Desc     : topdown wasted slots due to bad speculation (must be used in a group with the other topdown- events with slots as leader)
+Code     : 0x8100
+#-----------------------------
+IDX	 : 106954837
+PMU name : perf (perf_events generic PMU)
+Name     : topdown-fe-bound
+Equiv	 : None
+Flags    : None
+Desc     : topdown wasted slots due to frontend (must be used in a group with the other topdown- events with slots as leader)
+Code     : 0x8200
+#-----------------------------
+IDX	 : 106954838
+PMU name : perf (perf_events generic PMU)
+Name     : topdown-be-bound
+Equiv	 : None
+Flags    : None
+Desc     : topdown wasted slots due to backend (must be used in a group with the other topdown- events with slots as leader)
+Code     : 0x8300
+#-----------------------------
+IDX	 : 239075328
+PMU name : perf_raw (perf_events raw PMU)
+Name     : r0000
+Equiv	 : None
+Flags    : None
+Desc     : perf_events raw event syntax: r[0-9a-fA-F]+
+Code     : 0x0
+#-----------------------------
+IDX	 : 937426944
+PMU name : icl (Intel Icelake)
+Name     : UNHALTED_CORE_CYCLES
+Equiv	 : None
+Flags    : [hw_smpl] [non-speculative] 
+Desc     : Count core clock cycles whenever the clock signal on the specific core is running (not halted)
+Code     : 0x3c
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+#-----------------------------
+IDX	 : 937426945
+PMU name : icl (Intel Icelake)
+Name     : UNHALTED_REFERENCE_CYCLES
+Equiv	 : None
+Flags    : [hw_smpl] [non-speculative] 
+Desc     : Unhalted reference cycles
+Code     : 0x300
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x05 : PMU : [t] : measure any thread (boolean)
+#-----------------------------
+IDX	 : 937426946
+PMU name : icl (Intel Icelake)
+Name     : INSTRUCTION_RETIRED
+Equiv	 : None
+Flags    : [hw_smpl] [non-speculative] 
+Desc     : Number of instructions at retirement
+Code     : 0xc0
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+#-----------------------------
+IDX	 : 937426947
+PMU name : icl (Intel Icelake)
+Name     : INSTRUCTIONS_RETIRED
+Equiv	 : INSTRUCTION_RETIRED
+Flags    : [hw_smpl] [non-speculative] 
+Desc     : Number of instructions at retirement
+Code     : 0xc0
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+#-----------------------------
+IDX	 : 937426948
+PMU name : icl (Intel Icelake)
+Name     : SQ_MISC
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : SuperQueue miscellaneous.
+Code     : 0xf4
+Umask-00 : 0x04 : PMU : [SQ_FULL] : [default] [hw_smpl] [speculative] : Cycles the thread is active and superQ cannot take any more entries.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426949
+PMU name : icl (Intel Icelake)
+Name     : L2_LINES_OUT
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : L2 lines evicted.
+Code     : 0xf2
+Umask-00 : 0x04 : PMU : [USELESS_HWPF] : [hw_smpl] [speculative] : Cache lines that have been L2 hardware prefetched but not used by demand accesses
+Umask-01 : 0x02 : PMU : [NON_SILENT] : [hw_smpl] [speculative] : Modified cache lines that are evicted by L2 cache when triggered by an L2 cache fill.
+Umask-02 : 0x01 : PMU : [SILENT] : [hw_smpl] [speculative] : Non-modified cache lines that are silently dropped by L2 cache when triggered by an L2 cache fill.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426950
+PMU name : icl (Intel Icelake)
+Name     : L2_LINES_IN
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : L2 lines allocated.
+Code     : 0xf1
+Umask-00 : 0x1f : PMU : [ALL] : [default] [hw_smpl] [speculative] : L2 cache lines filling L2
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426951
+PMU name : icl (Intel Icelake)
+Name     : L2_TRANS
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : L2 transactions.
+Code     : 0xf0
+Umask-00 : 0x40 : PMU : [L2_WB] : [default] [hw_smpl] [speculative] : L2 writebacks that access L2 cache
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426952
+PMU name : icl (Intel Icelake)
+Name     : BACLEARS
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Branch re-steers.
+Code     : 0xe6
+Umask-00 : 0x01 : PMU : [ANY] : [default] [hw_smpl] [speculative] : Counts the total number when the front end is resteered, mainly when the BPU cannot provide a correct prediction and this is corrected by other branch handling mechanisms at the front end.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426953
+PMU name : icl (Intel Icelake)
+Name     : MEM_LOAD_L3_HIT_RETIRED
+Equiv	 : None
+Flags    : [precise] [hw_smpl] [non-speculative] 
+Desc     : L3 hit load uops retired.
+Code     : 0xd2
+Umask-00 : 0x08 : PMU : [XSNP_NONE] : [precise] [hw_smpl] [non-speculative] : Retired load instructions whose data sources were hits in L3 without snoops required
+Umask-01 : 0x04 : PMU : [XSNP_HITM] : [precise] [hw_smpl] [non-speculative] : Retired load instructions whose data sources were HitM responses from shared L3
+Umask-02 : 0x02 : PMU : [XSNP_HIT] : [precise] [hw_smpl] [non-speculative] : Retired load instructions whose data sources were L3 and cross-core snoop hits in on-pkg core cache
+Umask-03 : 0x01 : PMU : [XSNP_MISS] : [precise] [hw_smpl] [non-speculative] : Retired load instructions whose data sources were L3 hit and cross-core snoop missed in on-pkg core cache.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426954
+PMU name : icl (Intel Icelake)
+Name     : MEM_LOAD_RETIRED
+Equiv	 : None
+Flags    : [precise] [hw_smpl] [non-speculative] 
+Desc     : Retired load uops.
+Code     : 0xd1
+Umask-00 : 0x40 : PMU : [FB_HIT] : [precise] [hw_smpl] [non-speculative] : Number of completed demand load requests that missed the L1, but hit the FB(fill buffer), because a preceding miss to the same cacheline initiated the line to be brought into L1, but data is not yet ready in L1.
+Umask-01 : 0x20 : PMU : [L3_MISS] : [precise] [hw_smpl] [non-speculative] : Retired load instructions missed L3 cache as data sources
+Umask-02 : 0x10 : PMU : [L2_MISS] : [precise] [hw_smpl] [non-speculative] : Retired load instructions missed L2 cache as data sources
+Umask-03 : 0x08 : PMU : [L1_MISS] : [precise] [hw_smpl] [non-speculative] : Retired load instructions missed L1 cache as data sources
+Umask-04 : 0x04 : PMU : [L3_HIT] : [precise] [hw_smpl] [non-speculative] : Retired load instructions with L3 cache hits as data sources
+Umask-05 : 0x02 : PMU : [L2_HIT] : [precise] [hw_smpl] [non-speculative] : Retired load instructions with L2 cache hits as data sources
+Umask-06 : 0x01 : PMU : [L1_HIT] : [precise] [hw_smpl] [non-speculative] : Retired load instructions with L1 cache hits as data sources
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426955
+PMU name : icl (Intel Icelake)
+Name     : MEM_INST_RETIRED
+Equiv	 : None
+Flags    : [precise] [hw_smpl] [non-speculative] 
+Desc     : Memory instructions retired.
+Code     : 0xd0
+Umask-00 : 0x82 : PMU : [ALL_STORES] : [precise] [hw_smpl] [non-speculative] : All retired store instructions.
+Umask-01 : 0x81 : PMU : [ALL_LOADS] : [precise] [hw_smpl] [non-speculative] : All retired load instructions.
+Umask-02 : 0x42 : PMU : [SPLIT_STORES] : [precise] [hw_smpl] [non-speculative] : Retired store instructions that split across a cacheline boundary.
+Umask-03 : 0x41 : PMU : [SPLIT_LOADS] : [precise] [hw_smpl] [non-speculative] : Retired load instructions that split across a cacheline boundary.
+Umask-04 : 0x21 : PMU : [LOCK_LOADS] : [precise] [hw_smpl] [non-speculative] : Retired load instructions with locked access.
+Umask-05 : 0x12 : PMU : [STLB_MISS_STORES] : [precise] [hw_smpl] [non-speculative] : Retired store instructions that miss the STLB.
+Umask-06 : 0x11 : PMU : [STLB_MISS_LOADS] : [precise] [hw_smpl] [non-speculative] : Retired load instructions that miss the STLB.
+Umask-07 : 0x83 : PMU : [ANY] : [default] [precise] [hw_smpl] [non-speculative] : All retired memory instructions.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426956
+PMU name : icl (Intel Icelake)
+Name     : MEM_LOAD_L3_MISS_RETIRED
+Equiv	 : None
+Flags    : [precise] [hw_smpl] [non-speculative] 
+Desc     : Retired load instructions which data sources missed L3 but serviced from local dram
+Code     : 0xd3
+Umask-00 : 0x01 : PMU : [LOCAL_DRAM] : [precise] [hw_smpl] [non-speculative] : Retired load instructions which data sources missed L3 but serviced from local dram
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426957
+PMU name : icl (Intel Icelake)
+Name     : MEM_TRANS_RETIRED
+Equiv	 : None
+Flags    : [precise] [hw_smpl] [non-speculative] 
+Desc     : Memory transactions retired,
+Code     : 0xcd
+Umask-00 : 0x01 : PMU : [LOAD_LATENCY] : [default] [precise] [hw_smpl] [non-speculative] : Memory load instructions retired above programmed clocks, minimum threshold value is 3 (Precise Event and ldlat required)
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x06 : PMU : [ldlat] : load latency threshold (cycles, [3-65535]) (integer)
+Modif-06 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-07 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426958
+PMU name : icl (Intel Icelake)
+Name     : MISC_RETIRED
+Equiv	 : None
+Flags    : [hw_smpl] [non-speculative] 
+Desc     : Miscellaneous retired events.
+Code     : 0xcc
+Umask-00 : 0x40 : PMU : [PAUSE_INST] : [hw_smpl] [non-speculative] : Number of retired PAUSE instructions.
+Umask-01 : 0x20 : PMU : [LBR_INSERTS] : [hw_smpl] [non-speculative] : Increments whenever there is an update to the LBR array.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426959
+PMU name : icl (Intel Icelake)
+Name     : RTM_RETIRED
+Equiv	 : None
+Flags    : [hw_smpl] [non-speculative] 
+Desc     : RTM (Restricted Transaction Memory) execution.
+Code     : 0xc9
+Umask-00 : 0x80 : PMU : [ABORTED_EVENTS] : [hw_smpl] [non-speculative] : Number of times an RTM execution aborted due to none of the previous 4 categories (e.g. interrupt)
+Umask-01 : 0x40 : PMU : [ABORTED_MEMTYPE] : [hw_smpl] [non-speculative] : Number of times an RTM execution aborted due to incompatible memory type
+Umask-02 : 0x20 : PMU : [ABORTED_UNFRIENDLY] : [hw_smpl] [non-speculative] : Number of times an RTM execution aborted due to HLE-unfriendly instructions
+Umask-03 : 0x08 : PMU : [ABORTED_MEM] : [hw_smpl] [non-speculative] : Number of times an RTM execution aborted due to various memory events (e.g. read/write capacity and conflicts)
+Umask-04 : 0x04 : PMU : [ABORTED] : [hw_smpl] [non-speculative] : Number of times an RTM execution aborted.
+Umask-05 : 0x02 : PMU : [COMMIT] : [hw_smpl] [non-speculative] : Number of times an RTM execution successfully committed
+Umask-06 : 0x01 : PMU : [START] : [hw_smpl] [non-speculative] : Number of times an RTM execution started.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426960
+PMU name : icl (Intel Icelake)
+Name     : HLE_RETIRED
+Equiv	 : None
+Flags    : [hw_smpl] [non-speculative] 
+Desc     : HLE (Hardware Lock Elision) execution.
+Code     : 0xc8
+Umask-00 : 0x80 : PMU : [ABORTED_EVENTS] : [hw_smpl] [non-speculative] : Number of times an HLE execution aborted due to unfriendly events (such as interrupts).
+Umask-01 : 0x20 : PMU : [ABORTED_UNFRIENDLY] : [hw_smpl] [non-speculative] : Number of times an HLE execution aborted due to HLE-unfriendly instructions and certain unfriendly events (such as AD assists etc.).
+Umask-02 : 0x08 : PMU : [ABORTED_MEM] : [hw_smpl] [non-speculative] : Number of times an HLE execution aborted due to various memory events (e.g., read/write capacity and conflicts).
+Umask-03 : 0x04 : PMU : [ABORTED] : [hw_smpl] [non-speculative] : Number of times an HLE execution aborted due to any reasons (multiple categories may count as one).
+Umask-04 : 0x02 : PMU : [COMMIT] : [hw_smpl] [non-speculative] : Number of times an HLE execution successfully committed
+Umask-05 : 0x01 : PMU : [START] : [hw_smpl] [non-speculative] : Number of times an HLE execution started.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426961
+PMU name : icl (Intel Icelake)
+Name     : FP_ARITH_INST_RETIRED
+Equiv	 : None
+Flags    : [hw_smpl] [non-speculative] 
+Desc     : Floating-point instructions retired.
+Code     : 0xc7
+Umask-00 : 0x80 : PMU : [512B_PACKED_SINGLE] : [hw_smpl] [non-speculative] : Counts number of SSE/AVX computational 512-bit packed double precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 16 computation operations, one for each element.  Applies to SSE* and AVX* packed double precision floating-point instructions: ADD SUB MUL DIV MIN MAX SQRT RSQRT14 RCP14 FM(N)ADD/SUB. FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element. The DAZ and FTZ flags in the MXCSR register need to be set when using this event.
+Umask-01 : 0x40 : PMU : [512B_PACKED_DOUBLE] : [hw_smpl] [non-speculative] : Counts number of SSE/AVX computational 512-bit packed double precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 8 computation operations, one for each element.  Applies to SSE* and AVX* packed double precision floating-point instructions: ADD SUB MUL DIV MIN MAX SQRT RSQRT14 RCP14 FM(N)ADD/SUB. FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element. The DAZ and FTZ flags in the MXCSR register need to be set when using this event
+Umask-02 : 0x20 : PMU : [256B_PACKED_SINGLE] : [hw_smpl] [non-speculative] : Counts number of SSE/AVX computational 256-bit packed single precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 8 computation operations, one for each element.  Applies to SSE* and AVX* packed single precision floating-point instructions: ADD SUB HADD HSUB SUBADD MUL DIV MIN MAX SQRT RSQRT RCP DPP FM(N)ADD/SUB.  DPP and FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element. The DAZ and FTZ flags in the MXCSR register need to be set when using this event.
+Umask-03 : 0x10 : PMU : [256B_PACKED_DOUBLE] : [hw_smpl] [non-speculative] : Counts number of SSE/AVX computational 256-bit packed double precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 4 computation operations, one for each element.  Applies to SSE* and AVX* packed double precision floating-point instructions: ADD SUB HADD HSUB SUBADD MUL DIV MIN MAX SQRT FM(N)ADD/SUB.  FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element. The DAZ and FTZ flags in the MXCSR register need to be set when using this event.
+Umask-04 : 0x08 : PMU : [128B_PACKED_SINGLE] : [hw_smpl] [non-speculative] : Number of SSE/AVX computational 128-bit packed single precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 4 computation operations, one for each element.  Applies to SSE* and AVX* packed single precision floating-point instructions: ADD SUB MUL DIV MIN MAX RCP14 RSQRT14 SQRT DPP FM(N)ADD/SUB.  DPP and FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element. The DAZ and FTZ flags in the MXCSR register need to be set when using this event.
+Umask-05 : 0x04 : PMU : [128B_PACKED_DOUBLE] : [hw_smpl] [non-speculative] : Counts number of SSE/AVX computational 128-bit packed double precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 2 computation operations, one for each element.  Applies to SSE* and AVX* packed double precision floating-point instructions: ADD SUB HADD HSUB SUBADD MUL DIV MIN MAX SQRT DPP FM(N)ADD/SUB.  DPP and FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element. The DAZ and FTZ flags in the MXCSR register need to be set when using this event.
+Umask-06 : 0x02 : PMU : [SCALAR_SINGLE] : [hw_smpl] [non-speculative] : Counts number of SSE/AVX computational scalar single precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 1 computational operation. Applies to SSE* and AVX* scalar single precision floating-point instructions: ADD SUB MUL DIV MIN MAX SQRT RSQRT RCP FM(N)ADD/SUB.  FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element. The DAZ and FTZ flags in the MXCSR register need to be set when using this event.
+Umask-07 : 0x01 : PMU : [SCALAR_DOUBLE] : [hw_smpl] [non-speculative] : Counts number of SSE/AVX computational scalar double precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 1 computational operation. Applies to SSE* and AVX* scalar double precision floating-point instructions: ADD SUB MUL DIV MIN MAX SQRT FM(N)ADD/SUB.  FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element. The DAZ and FTZ flags in the MXCSR register need to be set when using this event.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426962
+PMU name : icl (Intel Icelake)
+Name     : FP_ARITH
+Equiv	 : FP_ARITH_INST_RETIRED
+Flags    : [hw_smpl] [non-speculative] 
+Desc     : Floating-point instructions retired.
+Code     : 0xc7
+Umask-00 : 0x80 : PMU : [512B_PACKED_SINGLE] : [hw_smpl] [non-speculative] : Counts number of SSE/AVX computational 512-bit packed double precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 16 computation operations, one for each element.  Applies to SSE* and AVX* packed double precision floating-point instructions: ADD SUB MUL DIV MIN MAX SQRT RSQRT14 RCP14 FM(N)ADD/SUB. FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element. The DAZ and FTZ flags in the MXCSR register need to be set when using this event.
+Umask-01 : 0x40 : PMU : [512B_PACKED_DOUBLE] : [hw_smpl] [non-speculative] : Counts number of SSE/AVX computational 512-bit packed double precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 8 computation operations, one for each element.  Applies to SSE* and AVX* packed double precision floating-point instructions: ADD SUB MUL DIV MIN MAX SQRT RSQRT14 RCP14 FM(N)ADD/SUB. FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element. The DAZ and FTZ flags in the MXCSR register need to be set when using this event
+Umask-02 : 0x20 : PMU : [256B_PACKED_SINGLE] : [hw_smpl] [non-speculative] : Counts number of SSE/AVX computational 256-bit packed single precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 8 computation operations, one for each element.  Applies to SSE* and AVX* packed single precision floating-point instructions: ADD SUB HADD HSUB SUBADD MUL DIV MIN MAX SQRT RSQRT RCP DPP FM(N)ADD/SUB.  DPP and FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element. The DAZ and FTZ flags in the MXCSR register need to be set when using this event.
+Umask-03 : 0x10 : PMU : [256B_PACKED_DOUBLE] : [hw_smpl] [non-speculative] : Counts number of SSE/AVX computational 256-bit packed double precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 4 computation operations, one for each element.  Applies to SSE* and AVX* packed double precision floating-point instructions: ADD SUB HADD HSUB SUBADD MUL DIV MIN MAX SQRT FM(N)ADD/SUB.  FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element. The DAZ and FTZ flags in the MXCSR register need to be set when using this event.
+Umask-04 : 0x08 : PMU : [128B_PACKED_SINGLE] : [hw_smpl] [non-speculative] : Number of SSE/AVX computational 128-bit packed single precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 4 computation operations, one for each element.  Applies to SSE* and AVX* packed single precision floating-point instructions: ADD SUB MUL DIV MIN MAX RCP14 RSQRT14 SQRT DPP FM(N)ADD/SUB.  DPP and FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element. The DAZ and FTZ flags in the MXCSR register need to be set when using this event.
+Umask-05 : 0x04 : PMU : [128B_PACKED_DOUBLE] : [hw_smpl] [non-speculative] : Counts number of SSE/AVX computational 128-bit packed double precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 2 computation operations, one for each element.  Applies to SSE* and AVX* packed double precision floating-point instructions: ADD SUB HADD HSUB SUBADD MUL DIV MIN MAX SQRT DPP FM(N)ADD/SUB.  DPP and FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element. The DAZ and FTZ flags in the MXCSR register need to be set when using this event.
+Umask-06 : 0x02 : PMU : [SCALAR_SINGLE] : [hw_smpl] [non-speculative] : Counts number of SSE/AVX computational scalar single precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 1 computational operation. Applies to SSE* and AVX* scalar single precision floating-point instructions: ADD SUB MUL DIV MIN MAX SQRT RSQRT RCP FM(N)ADD/SUB.  FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element. The DAZ and FTZ flags in the MXCSR register need to be set when using this event.
+Umask-07 : 0x01 : PMU : [SCALAR_DOUBLE] : [hw_smpl] [non-speculative] : Counts number of SSE/AVX computational scalar double precision floating-point instructions retired; some instructions will count twice as noted below.  Each count represents 1 computational operation. Applies to SSE* and AVX* scalar double precision floating-point instructions: ADD SUB MUL DIV MIN MAX SQRT FM(N)ADD/SUB.  FM(N)ADD/SUB instructions count twice as they perform 2 calculations per element. The DAZ and FTZ flags in the MXCSR register need to be set when using this event.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426963
+PMU name : icl (Intel Icelake)
+Name     : FRONTEND_RETIRED
+Equiv	 : None
+Flags    : [precise] [hw_smpl] [non-speculative] 
+Desc     : Precise frontend retired events.
+Code     : 0x1c6
+Umask-00 : 0x500106 : PMU : [LATENCY_GE_1] : [precise] [hw_smpl] [non-speculative] : Retired instructions after front-end starvation of at least 1 cycle
+Umask-01 : 0x100206 : PMU : [LATENCY_GE_2_BUBBLES_GE_1] : [precise] [hw_smpl] [non-speculative] : Retired instructions that are fetched after an interval where the front-end had at least 1 bubble-slot for a period of 2 cycles which was not interrupted by a back-end stall.
+Umask-02 : 0x520006 : PMU : [LATENCY_GE_512] : [precise] [hw_smpl] [non-speculative] : Retired instructions that are fetched after an interval where the front-end delivered no uops for a period of 512 cycles which was not interrupted by a back-end stall.
+Umask-03 : 0x510006 : PMU : [LATENCY_GE_256] : [precise] [hw_smpl] [non-speculative] : Retired instructions that are fetched after an interval where the front-end delivered no uops for a period of 256 cycles which was not interrupted by a back-end stall.
+Umask-04 : 0x508006 : PMU : [LATENCY_GE_128] : [precise] [hw_smpl] [non-speculative] : Retired instructions that are fetched after an interval where the front-end delivered no uops for a period of 128 cycles which was not interrupted by a back-end stall.
+Umask-05 : 0x504006 : PMU : [LATENCY_GE_64] : [precise] [hw_smpl] [non-speculative] : Retired instructions that are fetched after an interval where the front-end delivered no uops for a period of 64 cycles which was not interrupted by a back-end stall.
+Umask-06 : 0x502006 : PMU : [LATENCY_GE_32] : [precise] [hw_smpl] [non-speculative] : Retired instructions that are fetched after an interval where the front-end delivered no uops for a period of 32 cycles which was not interrupted by a back-end stall.
+Umask-07 : 0x501006 : PMU : [LATENCY_GE_16] : [precise] [hw_smpl] [non-speculative] : Retired instructions that are fetched after an interval where the front-end delivered no uops for a period of 16 cycles which was not interrupted by a back-end stall.
+Umask-08 : 0x500806 : PMU : [LATENCY_GE_8] : [precise] [hw_smpl] [non-speculative] : Retired instructions that are fetched after an interval where the front-end delivered no uops for a period of 8 cycles which was not interrupted by a back-end stall.
+Umask-09 : 0x500406 : PMU : [LATENCY_GE_4] : [precise] [hw_smpl] [non-speculative] : Retired instructions that are fetched after an interval where the front-end delivered no uops for a period of 4 cycles which was not interrupted by a back-end stall.
+Umask-10 : 0x500206 : PMU : [LATENCY_GE_2] : [precise] [hw_smpl] [non-speculative] : Retired instructions after front-end starvation of at least 2 cycles
+Umask-11 : 0x15 : PMU : [STLB_MISS] : [precise] [hw_smpl] [non-speculative] : Retired Instructions who experienced STLB (2nd level TLB) true miss.
+Umask-12 : 0x14 : PMU : [ITLB_MISS] : [precise] [hw_smpl] [non-speculative] : Retired Instructions who experienced iTLB true miss.
+Umask-13 : 0x13 : PMU : [L2_MISS] : [precise] [hw_smpl] [non-speculative] : Retired Instructions who experienced Instruction L2 Cache true miss.
+Umask-14 : 0x12 : PMU : [L1I_MISS] : [precise] [hw_smpl] [non-speculative] : Retired Instructions who experienced Instruction L1 Cache true miss.
+Umask-15 : 0x11 : PMU : [DSB_MISS] : [precise] [hw_smpl] [non-speculative] : Retired Instructions experiencing a critical DSB miss.
+Umask-16 : 0x01 : PMU : [ANY_DSB_MISS] : [precise] [hw_smpl] [non-speculative] : Retired Instructions experiencing a DSB miss.
+Umask-17 : 0x400006 : PMU : [IDQ_4_BUBBLES] : [precise] [hw_smpl] [non-speculative] : Retired instructions after an interval where the front-end did not deliver any uops (4 bubbles) for a period determined by the fe_thres modifier (set to 1 cycle by default) and which was not interrupted by a back-end stall
+Umask-18 : 0x300006 : PMU : [IDQ_3_BUBBLES] : [precise] [hw_smpl] [non-speculative] : Counts instructions retired after an interval where the front-end did not deliver more than 1 uop (3 bubbles) for a period determined by the fe_thres modifier (set to 1 cycle by default) and which was not interrupted by a back-end stall
+Umask-19 : 0x200006 : PMU : [IDQ_2_BUBBLES] : [precise] [hw_smpl] [non-speculative] : Counts instructions retired after an interval where the front-end did not deliver more than 2 uops (2 bubbles) for a period determined by the fe_thres modifier (set to 1 cycle by default) and which was not interrupted by a back-end stall
+Umask-20 : 0x100006 : PMU : [IDQ_1_BUBBLE] : [precise] [hw_smpl] [non-speculative] : Counts instructions retired after an interval where the front-end did not deliver more than 3 uops (1 bubble) for a period determined by the fe_thres modifier (set to 1 cycle by default) and which was not interrupted by a back-end stall
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+Modif-07 : 0x09 : PMU : [fe_thres] : frontend bubble latency threshold in cycles ([1-4095] (integer)
+#-----------------------------
+IDX	 : 937426964
+PMU name : icl (Intel Icelake)
+Name     : BR_MISP_RETIRED
+Equiv	 : None
+Flags    : [precise] [hw_smpl] [non-speculative] 
+Desc     : Mispredicted branch instructions retired.
+Code     : 0xc5
+Umask-00 : 0x80 : PMU : [INDIRECT] : [precise] [hw_smpl] [non-speculative] : All miss-predicted indirect branch instructions retired (excluding RETs. TSX aborts is considered indirect branch).
+Umask-01 : 0x20 : PMU : [NEAR_TAKEN] : [precise] [hw_smpl] [non-speculative] : Number of near branch instructions retired that were mispredicted and taken.
+Umask-02 : 0x11 : PMU : [COND] : [precise] [hw_smpl] [non-speculative] : Mispredicted conditional branch instructions retired.
+Umask-03 : 0x10 : PMU : [COND_NTAKEN] : [precise] [hw_smpl] [non-speculative] : Mispredicted non-taken conditional branch instructions retired.
+Umask-04 : 0x02 : PMU : [INDIRECT_CALL] : [precise] [hw_smpl] [non-speculative] : Mispredicted indirect CALL instructions retired.
+Umask-05 : 0x01 : PMU : [COND_TAKEN] : [precise] [hw_smpl] [non-speculative] : number of branch instructions retired that were mispredicted and taken. Non PEBS
+Umask-06 : 0x00 : PMU : [ALL_BRANCHES] : [precise] [hw_smpl] [non-speculative] : All mispredicted branch instructions retired.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426965
+PMU name : icl (Intel Icelake)
+Name     : BR_INST_RETIRED
+Equiv	 : None
+Flags    : [precise] [hw_smpl] [non-speculative] 
+Desc     : Branch instructions retired.
+Code     : 0xc4
+Umask-00 : 0x80 : PMU : [INDIRECT] : [precise] [hw_smpl] [non-speculative] : Indirect near branch instructions retired (excluding returns)
+Umask-01 : 0x40 : PMU : [FAR_BRANCH] : [precise] [hw_smpl] [non-speculative] : Far branch instructions retired.
+Umask-02 : 0x20 : PMU : [NEAR_TAKEN] : [precise] [hw_smpl] [non-speculative] : Taken branch instructions retired.
+Umask-03 : 0x11 : PMU : [COND] : [precise] [hw_smpl] [non-speculative] : Conditional branch instructions retired.
+Umask-04 : 0x10 : PMU : [COND_NTAKEN] : [precise] [hw_smpl] [non-speculative] : Not taken branch instructions retired.
+Umask-05 : 0x08 : PMU : [NEAR_RETURN] : [precise] [hw_smpl] [non-speculative] : Return instructions retired.
+Umask-06 : 0x02 : PMU : [NEAR_CALL] : [precise] [hw_smpl] [non-speculative] : Direct and indirect near call instructions retired.
+Umask-07 : 0x01 : PMU : [COND_TAKEN] : [precise] [hw_smpl] [non-speculative] : Taken conditional branch instructions retired.
+Umask-08 : 0x00 : PMU : [ALL_BRANCHES] : [precise] [hw_smpl] [non-speculative] : All branch instructions retired.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426966
+PMU name : icl (Intel Icelake)
+Name     : MACHINE_CLEARS
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Machine clear asserted.
+Code     : 0xc3
+Umask-00 : 0x04 : PMU : [SMC] : [hw_smpl] [speculative] : Self-modifying code (SMC) detected.
+Umask-01 : 0x02 : PMU : [MEMORY_ORDERING] : [hw_smpl] [speculative] : Number of machine clears due to memory ordering conflicts.
+Umask-02 : 0x10401 : PMU : [COUNT] : [hw_smpl] [speculative] : Number of machine clears (nukes) of any type.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426967
+PMU name : icl (Intel Icelake)
+Name     : UOPS_RETIRED
+Equiv	 : None
+Flags    : [hw_smpl] [non-speculative] 
+Desc     : Retired uops.
+Code     : 0xc2
+Umask-00 : 0x02 : PMU : [SLOTS] : [hw_smpl] [non-speculative] : Retirement slots used.
+Umask-01 : 0xa8002 : PMU : [TOTAL_CYCLES] : [hw_smpl] [non-speculative] : Cycles with less than 10 actually retired uops.
+Umask-02 : 0x18002 : PMU : [STALL_CYCLES] : [hw_smpl] [non-speculative] : Cycles without actually retired uops.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426968
+PMU name : icl (Intel Icelake)
+Name     : ASSISTS
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Software assist.
+Code     : 0xc1
+Umask-00 : 0x07 : PMU : [ANY] : [hw_smpl] [speculative] : Number of occurrences where a microcode assist is invoked by hardware.
+Umask-01 : 0x02 : PMU : [FP] : [hw_smpl] [speculative] : Counts all microcode FP assists.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426969
+PMU name : icl (Intel Icelake)
+Name     : TLB_FLUSH
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Data TLB flushes.
+Code     : 0xbd
+Umask-00 : 0x20 : PMU : [STLB_ANY] : [hw_smpl] [speculative] : STLB flush attempts
+Umask-01 : 0x01 : PMU : [DTLB_THREAD] : [hw_smpl] [speculative] : DTLB flush attempts of the thread-specific entries
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426970
+PMU name : icl (Intel Icelake)
+Name     : UOPS_EXECUTED
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Uops executed.
+Code     : 0xb1
+Umask-00 : 0x10 : PMU : [X87] : [hw_smpl] [speculative] : Counts the number of x87 uops dispatched.
+Umask-01 : 0x40002 : PMU : [CORE_CYCLES_GE_4] : [hw_smpl] [speculative] : Cycles at least 4 micro-op is executed from any thread on physical core.
+Umask-02 : 0x30002 : PMU : [CORE_CYCLES_GE_3] : [hw_smpl] [speculative] : Cycles at least 3 micro-op is executed from any thread on physical core.
+Umask-03 : 0x20002 : PMU : [CORE_CYCLES_GE_2] : [hw_smpl] [speculative] : Cycles at least 2 micro-op is executed from any thread on physical core.
+Umask-04 : 0x10002 : PMU : [CORE_CYCLES_GE_1] : [hw_smpl] [speculative] : Cycles at least 1 micro-op is executed from any thread on physical core.
+Umask-05 : 0x02 : PMU : [CORE] : [hw_smpl] [speculative] : Number of uops executed on the core.
+Umask-06 : 0x40001 : PMU : [CYCLES_GE_4] : [hw_smpl] [speculative] : Cycles where at least 4 uops were executed per-thread
+Umask-07 : 0x30001 : PMU : [CYCLES_GE_3] : [hw_smpl] [speculative] : Cycles where at least 3 uops were executed per-thread
+Umask-08 : 0x20001 : PMU : [CYCLES_GE_2] : [hw_smpl] [speculative] : Cycles where at least 2 uops were executed per-thread
+Umask-09 : 0x10001 : PMU : [CYCLES_GE_1] : [hw_smpl] [speculative] : Cycles where at least 1 uop was executed per-thread
+Umask-10 : 0x18001 : PMU : [STALL_CYCLES] : [hw_smpl] [speculative] : Counts number of cycles no uops were dispatched to be executed on this thread.
+Umask-11 : 0x01 : PMU : [THREAD] : [hw_smpl] [speculative] : Counts the number of uops to be executed per-thread each cycle.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426971
+PMU name : icl (Intel Icelake)
+Name     : OFFCORE_REQUESTS
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Requests sent to uncore.
+Code     : 0xb0
+Umask-00 : 0x80 : PMU : [ALL_REQUESTS] : [default] [hw_smpl] [speculative] : Any memory transaction that reached the SQ.
+Umask-01 : 0x10 : PMU : [L3_MISS_DEMAND_DATA_RD] : [hw_smpl] [speculative] : Demand Data Read requests who miss L3 cache
+Umask-02 : 0x08 : PMU : [ALL_DATA_RD] : [hw_smpl] [speculative] : Demand and prefetch data reads
+Umask-03 : 0x04 : PMU : [DEMAND_RFO] : [hw_smpl] [speculative] : Demand RFO requests including regular RFOs, locks, ItoM
+Umask-04 : 0x01 : PMU : [DEMAND_DATA_RD] : [hw_smpl] [speculative] : Demand Data Read requests sent to uncore
+Umask-05 : 0x02 : PMU : [DEMAND_CODE_RD] : [hw_smpl] [speculative] : Counts cacheable and non-cacheable code reads to the core.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426972
+PMU name : icl (Intel Icelake)
+Name     : DSB2MITE_SWITCHES
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Number of DSB to MITE switches.
+Code     : 0xab
+Umask-00 : 0x10402 : PMU : [COUNT] : [hw_smpl] [speculative] : DSB-to-MITE transitions count.
+Umask-01 : 0x02 : PMU : [PENALTY_CYCLES] : [hw_smpl] [speculative] : DSB-to-MITE switch true penalty cycles.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426973
+PMU name : icl (Intel Icelake)
+Name     : LSD
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : LSD (Loop stream detector) operations.
+Code     : 0xa8
+Umask-00 : 0x50001 : PMU : [CYCLES_OK] : [hw_smpl] [speculative] : Cycles optimal number of Uops delivered by the LSD, but did not come from the decoder.
+Umask-01 : 0x10001 : PMU : [CYCLES_ACTIVE] : [hw_smpl] [speculative] : Cycles Uops delivered by the LSD, but didn't come from the decoder.
+Umask-02 : 0x01 : PMU : [UOPS] : [hw_smpl] [speculative] : Number of Uops delivered by the LSD.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426974
+PMU name : icl (Intel Icelake)
+Name     : EXE_ACTIVITY
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Execution activity,
+Code     : 0xa6
+Umask-00 : 0x80 : PMU : [EXE_BOUND_0_PORTS] : [hw_smpl] [speculative] : Cycles where no uops were executed, the Reservation Station was not empty, the Store Buffer was full and there was no outstanding load.
+Umask-01 : 0x20040 : PMU : [BOUND_ON_STORES] : [hw_smpl] [speculative] : Cycles where the Store Buffer was full and no loads caused an execution stall.
+Umask-02 : 0x10 : PMU : [4_PORTS_UTIL] : [hw_smpl] [speculative] : Cycles total of 4 uops are executed on all ports and Reservation Station was not empty.
+Umask-03 : 0x08 : PMU : [3_PORTS_UTIL] : [hw_smpl] [speculative] : Cycles total of 3 uops are executed on all ports and Reservation Station was not empty.
+Umask-04 : 0x04 : PMU : [2_PORTS_UTIL] : [hw_smpl] [speculative] : Cycles total of 2 uops are executed on all ports and Reservation Station was not empty.
+Umask-05 : 0x02 : PMU : [1_PORTS_UTIL] : [hw_smpl] [speculative] : Cycles total of 1 uop is executed on all ports and Reservation Station was not empty.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426975
+PMU name : icl (Intel Icelake)
+Name     : CYCLE_ACTIVITY
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Stalled cycles.
+Code     : 0xa3
+Umask-00 : 0x140014 : PMU : [STALLS_MEM_ANY] : [hw_smpl] [speculative] : Execution stalls while memory subsystem has an outstanding load.
+Umask-01 : 0x100010 : PMU : [CYCLES_MEM_ANY] : [hw_smpl] [speculative] : Cycles while memory subsystem has an outstanding load.
+Umask-02 : 0xc000c : PMU : [STALLS_L1D_MISS] : [hw_smpl] [speculative] : Execution stalls while L1 cache miss demand load is outstanding.
+Umask-03 : 0x80008 : PMU : [CYCLES_L1D_MISS] : [hw_smpl] [speculative] : Cycles while L1 cache miss demand load is outstanding.
+Umask-04 : 0x60006 : PMU : [STALLS_L3_MISS] : [hw_smpl] [speculative] : Execution stalls while L3 cache miss demand load is outstanding.
+Umask-05 : 0x50005 : PMU : [STALLS_L2_MISS] : [hw_smpl] [speculative] : Execution stalls while L2 cache miss demand load is outstanding.
+Umask-06 : 0x40004 : PMU : [STALLS_TOTAL] : [hw_smpl] [speculative] : Total execution stalls.
+Umask-07 : 0x20002 : PMU : [CYCLES_L3_MISS] : [hw_smpl] [speculative] : Cycles while L3 cache miss demand load is outstanding.
+Umask-08 : 0x10001 : PMU : [CYCLES_L2_MISS] : [hw_smpl] [speculative] : Cycles while L2 cache miss demand load is outstanding.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426976
+PMU name : icl (Intel Icelake)
+Name     : RESOURCE_STALLS
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Cycles where Allocation is stalled due to Resource Related reasons.
+Code     : 0xa2
+Umask-00 : 0x08 : PMU : [SB] : [hw_smpl] [speculative] : Cycles stalled due to no store buffers available. (not including draining form sync).
+Umask-01 : 0x02 : PMU : [SCOREBOARD] : [hw_smpl] [speculative] : Counts cycles where the pipeline is stalled due to serializing operations.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426977
+PMU name : icl (Intel Icelake)
+Name     : UOPS_DISPATCHED
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Uops dispatched to specific ports
+Code     : 0xa1
+Umask-00 : 0x80 : PMU : [PORT_7_8] : [hw_smpl] [speculative] : Number of uops executed on port 7 and 8
+Umask-01 : 0x40 : PMU : [PORT_6] : [hw_smpl] [speculative] : Number of uops executed on port 6
+Umask-02 : 0x20 : PMU : [PORT_5] : [hw_smpl] [speculative] : Number of uops executed on port 5
+Umask-03 : 0x10 : PMU : [PORT_4_9] : [hw_smpl] [speculative] : Number of uops executed on port 4 and 9
+Umask-04 : 0x04 : PMU : [PORT_2_3] : [hw_smpl] [speculative] : Number of uops executed on port 2 and 3
+Umask-05 : 0x02 : PMU : [PORT_1] : [hw_smpl] [speculative] : Number of uops executed on port 1
+Umask-06 : 0x01 : PMU : [PORT_0] : [hw_smpl] [speculative] : Number of uops executed on port 0
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426978
+PMU name : icl (Intel Icelake)
+Name     : UOPS_DISPATCHED_PORT
+Equiv	 : UOPS_DISPATCHED
+Flags    : [hw_smpl] [speculative] 
+Desc     : Uops dispatched to specific ports
+Code     : 0xa1
+Umask-00 : 0x80 : PMU : [PORT_7_8] : [hw_smpl] [speculative] : Number of uops executed on port 7 and 8
+Umask-01 : 0x40 : PMU : [PORT_6] : [hw_smpl] [speculative] : Number of uops executed on port 6
+Umask-02 : 0x20 : PMU : [PORT_5] : [hw_smpl] [speculative] : Number of uops executed on port 5
+Umask-03 : 0x10 : PMU : [PORT_4_9] : [hw_smpl] [speculative] : Number of uops executed on port 4 and 9
+Umask-04 : 0x04 : PMU : [PORT_2_3] : [hw_smpl] [speculative] : Number of uops executed on port 2 and 3
+Umask-05 : 0x02 : PMU : [PORT_1] : [hw_smpl] [speculative] : Number of uops executed on port 1
+Umask-06 : 0x01 : PMU : [PORT_0] : [hw_smpl] [speculative] : Number of uops executed on port 0
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426979
+PMU name : icl (Intel Icelake)
+Name     : IDQ_UOPS_NOT_DELIVERED
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Uops not delivered.
+Code     : 0x9c
+Umask-00 : 0x18001 : PMU : [CYCLES_FE_WAS_OK] : [hw_smpl] [speculative] : Cycles when optimal number of uops was delivered to the back-end when the back-end is not stalled
+Umask-01 : 0x50001 : PMU : [CYCLES_0_UOPS_DELIV_CORE] : [hw_smpl] [speculative] : Cycles when no uops are not delivered by the IDQ when backend of the machine is not stalled
+Umask-02 : 0x01 : PMU : [CORE] : [hw_smpl] [speculative] : Uops not delivered by IDQ when backend of the machine is not stalled
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426980
+PMU name : icl (Intel Icelake)
+Name     : ILD_STALL
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : ILD (Instruction Length Decoder) stalls.
+Code     : 0x87
+Umask-00 : 0x01 : PMU : [LCP] : [default] [hw_smpl] [speculative] : Stalls caused by changing prefix length of the instruction.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426981
+PMU name : icl (Intel Icelake)
+Name     : ITLB_MISSES
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Instruction TLB misses.
+Code     : 0x85
+Umask-00 : 0x20 : PMU : [STLB_HIT] : [hw_smpl] [speculative] : Instruction fetch requests that miss the ITLB and hit the STLB.
+Umask-01 : 0x10010 : PMU : [WALK_ACTIVE] : [hw_smpl] [speculative] : Cycles when at least one PMH is busy with a page walk for code (instruction fetch) request.
+Umask-02 : 0x10 : PMU : [WALK_PENDING] : [hw_smpl] [speculative] : Number of page walks outstanding for an outstanding code request in the PMH each cycle.
+Umask-03 : 0x0e : PMU : [WALK_COMPLETED] : [hw_smpl] [speculative] : Code miss in all TLB levels causes a page walk that completes. (All page sizes)
+Umask-04 : 0x04 : PMU : [WALK_COMPLETED_2M_4M] : [hw_smpl] [speculative] : Code miss in all TLB levels causes a page walk that completes. (2M/4M)
+Umask-05 : 0x02 : PMU : [WALK_COMPLETED_4K] : [hw_smpl] [speculative] : Code miss in all TLB levels causes a page walk that completes. (4K)
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426982
+PMU name : icl (Intel Icelake)
+Name     : ICACHE_64B
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Instruction Cache.
+Code     : 0x83
+Umask-00 : 0x04 : PMU : [IFTAG_STALL] : [hw_smpl] [speculative] : Cycles where a code fetch is stalled due to L1 instruction cache tag miss.
+Umask-01 : 0x02 : PMU : [IFTAG_MISS] : [hw_smpl] [speculative] : Instruction fetch tag lookups that miss in the instruction cache (L1I). Counts at 64-byte cache-line granularity.
+Umask-02 : 0x01 : PMU : [IFTAG_HIT] : [hw_smpl] [speculative] : Instruction fetch tag lookups that hit in the instruction cache (L1I). Counts at 64-byte cache-line granularity.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426983
+PMU name : icl (Intel Icelake)
+Name     : ICACHE_16B
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Instruction Cache.
+Code     : 0x80
+Umask-00 : 0x04 : PMU : [IFDATA_STALL] : [default] [hw_smpl] [speculative] : Cycles where a code fetch is stalled due to L1 instruction cache miss.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426984
+PMU name : icl (Intel Icelake)
+Name     : IDQ
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : IDQ (Instruction Decoded Queue) operations
+Code     : 0x79
+Umask-00 : 0x10030 : PMU : [MS_CYCLES_ANY] : [hw_smpl] [speculative] : Cycles when uops are being delivered to IDQ while MS is busy
+Umask-01 : 0x30 : PMU : [MS_UOPS] : [hw_smpl] [speculative] : Uops delivered to IDQ while MS is busy
+Umask-02 : 0x10430 : PMU : [MS_SWITCHES] : [hw_smpl] [speculative] : Number of switches from DSB or MITE to the MS
+Umask-03 : 0x10008 : PMU : [DSB_CYCLES_ANY] : [hw_smpl] [speculative] : Cycles Decode Stream Buffer (DSB) is delivering any Uop
+Umask-04 : 0x50008 : PMU : [DSB_CYCLES_OK] : [hw_smpl] [speculative] : Cycles DSB is delivering optimal number of Uops
+Umask-05 : 0x08 : PMU : [DSB_UOPS] : [hw_smpl] [speculative] : Uops delivered to Instruction Decode Queue (IDQ) from the Decode Stream Buffer (DSB) path
+Umask-06 : 0x10004 : PMU : [MITE_CYCLES_ANY] : [hw_smpl] [speculative] : Cycles MITE is delivering any Uop
+Umask-07 : 0x50004 : PMU : [MITE_CYCLES_OK] : [hw_smpl] [speculative] : Cycles MITE is delivering optimal number of Uops
+Umask-08 : 0x04 : PMU : [MITE_UOPS] : [hw_smpl] [speculative] : Uops delivered to Instruction Decode Queue (IDQ) from MITE path
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426985
+PMU name : icl (Intel Icelake)
+Name     : OFFCORE_REQUESTS_OUTSTANDING
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Outstanding offcore requests.
+Code     : 0x60
+Umask-00 : 0x01 : PMU : [DEMAND_DATA_RD] : [hw_smpl] [speculative] : For every cycle, increments by the number of outstanding demand data read requests pending.
+Umask-01 : 0x02 : PMU : [DEMAND_CODE_RD] : [hw_smpl] [speculative] : For every cycle, increments by the number of outstanding code read requests pending.
+Umask-02 : 0x10002 : PMU : [CYCLES_WITH_DEMAND_CODE_RD] : [hw_smpl] [speculative] : Cycles with outstanding code read requests pending.
+Umask-03 : 0x10004 : PMU : [CYCLES_WITH_DEMAND_RFO] : [hw_smpl] [speculative] : Cycles where at least 1 outstanding Demand RFO request is pending.
+Umask-04 : 0x08 : PMU : [ALL_DATA_RD] : [hw_smpl] [speculative] : For every cycle, increments by the number of outstanding data read requests pending.
+Umask-05 : 0x10008 : PMU : [CYCLES_WITH_DATA_RD] : [hw_smpl] [speculative] : Cycles where at least 1 outstanding data read request is pending.
+Umask-06 : 0x10 : PMU : [L3_MISS_DEMAND_DATA_RD] : [hw_smpl] [speculative] : For every cycle, increments by the number of demand data read requests pending that are known to have missed the L3 cache.
+Umask-07 : 0x10010 : PMU : [CYCLES_WITH_L3_MISS_DEMAND_DATA_RD] : [hw_smpl] [speculative] : Cycles where at least one demand data read request known to have missed the L3 cache is pending.
+Umask-08 : 0x60010 : PMU : [L3_MISS_DEMAND_DATA_RD_GE_6] : [hw_smpl] [speculative] : Cycles where the core is waiting on at least 6 outstanding demand data read requests known to have missed the L3 cache.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426986
+PMU name : icl (Intel Icelake)
+Name     : RS_EVENTS
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Reservation Station.
+Code     : 0x5e
+Umask-00 : 0x18401 : PMU : [EMPTY_END] : [hw_smpl] [speculative] : Counts end of periods where the Reservation Station (RS) was empty.
+Umask-01 : 0x01 : PMU : [EMPTY_CYCLES] : [hw_smpl] [speculative] : Cycles when Reservation Station (RS) is empty for the thread
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426987
+PMU name : icl (Intel Icelake)
+Name     : TX_EXEC
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Transactional execution.
+Code     : 0x5d
+Umask-00 : 0x04 : PMU : [MISC3] : [hw_smpl] [speculative] : Number of times an instruction execution caused the transactional nest count supported to be exceeded
+Umask-01 : 0x02 : PMU : [MISC2] : [hw_smpl] [speculative] : Counts the number of times a class of instructions that may cause a transactional abort was executed inside a transactional region
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426988
+PMU name : icl (Intel Icelake)
+Name     : TX_MEM
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Transactional memory.
+Code     : 0x54
+Umask-00 : 0x80 : PMU : [ABORT_CAPACITY_READ] : [hw_smpl] [speculative] : Speculatively counts the number of TSX aborts due to a data capacity limitation for transactional reads
+Umask-01 : 0x40 : PMU : [HLE_ELISION_BUFFER_FULL] : [hw_smpl] [speculative] : Number of times HLE lock could not be elided due to ElisionBufferAvailable being zero.
+Umask-02 : 0x20 : PMU : [ABORT_HLE_ELISION_BUFFER_UNSUPPORTED_ALIGNMENT] : [hw_smpl] [speculative] : Number of times an HLE transactional execution aborted due to an unsupported read alignment from the elision buffer.
+Umask-03 : 0x10 : PMU : [ABORT_HLE_ELISION_BUFFER_MISMATCH] : [hw_smpl] [speculative] : Number of times an HLE transactional execution aborted due to XRELEASE lock not satisfying the address and value requirements in the elision buffer
+Umask-04 : 0x08 : PMU : [ABORT_HLE_ELISION_BUFFER_NOT_EMPTY] : [hw_smpl] [speculative] : Number of times an HLE transactional execution aborted due to NoAllocatedElisionBuffer being non-zero.
+Umask-05 : 0x04 : PMU : [ABORT_HLE_STORE_TO_ELIDED_LOCK] : [hw_smpl] [speculative] : Number of times a HLE transactional region aborted due to a non XRELEASE prefixed instruction writing to an elided lock in the elision buffer
+Umask-06 : 0x02 : PMU : [ABORT_CAPACITY_WRITE] : [hw_smpl] [speculative] : Speculatively counts the number of TSX aborts due to a data capacity limitation for transactional writes.
+Umask-07 : 0x01 : PMU : [ABORT_CONFLICT] : [hw_smpl] [speculative] : Number of times a transactional abort was signaled due to a data conflict on a transactionally accessed address
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426989
+PMU name : icl (Intel Icelake)
+Name     : L1D
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : L1D cache.
+Code     : 0x51
+Umask-00 : 0x01 : PMU : [REPLACEMENT] : [default] [hw_smpl] [speculative] : Counts the number of cache lines replaced in L1 data cache.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426990
+PMU name : icl (Intel Icelake)
+Name     : LOAD_HIT_PREFETCH
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Load dispatches.
+Code     : 0x4c
+Umask-00 : 0x01 : PMU : [SWPF] : [default] [hw_smpl] [speculative] : Counts the number of demand load dispatches that hit L1D fill buffer (FB) allocated for software prefetch.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426991
+PMU name : icl (Intel Icelake)
+Name     : LOAD_HIT_PRE
+Equiv	 : LOAD_HIT_PREFETCH
+Flags    : [hw_smpl] [speculative] 
+Desc     : Load dispatches.
+Code     : 0x4c
+Umask-00 : 0x01 : PMU : [SWPF] : [default] [hw_smpl] [speculative] : Counts the number of demand load dispatches that hit L1D fill buffer (FB) allocated for software prefetch.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426992
+PMU name : icl (Intel Icelake)
+Name     : DTLB_STORE_MISSES
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Data TLB store misses.
+Code     : 0x49
+Umask-00 : 0x20 : PMU : [STLB_HIT] : [hw_smpl] [speculative] : Stores that miss the DTLB and hit the STLB.
+Umask-01 : 0x10010 : PMU : [WALK_ACTIVE] : [hw_smpl] [speculative] : Cycles when at least one PMH is busy with a page walk for a store.
+Umask-02 : 0x10 : PMU : [WALK_PENDING] : [hw_smpl] [speculative] : Number of page walks outstanding for a store in the PMH each cycle.
+Umask-03 : 0x0e : PMU : [WALK_COMPLETED] : [hw_smpl] [speculative] : Store misses in all TLB levels causes a page walk that completes. (All page sizes)
+Umask-04 : 0x04 : PMU : [WALK_COMPLETED_2M_4M] : [hw_smpl] [speculative] : Page walks completed due to a demand data store to a 2M/4M page.
+Umask-05 : 0x02 : PMU : [WALK_COMPLETED_4K] : [hw_smpl] [speculative] : Page walks completed due to a demand data store to a 4K page.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426993
+PMU name : icl (Intel Icelake)
+Name     : L1D_PEND_MISS
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : L1D pending misses.
+Code     : 0x48
+Umask-00 : 0x04 : PMU : [L2_STALL] : [hw_smpl] [speculative] : Number of cycles a demand request has waited due to L1D due to lack of L2 resources.
+Umask-01 : 0x10402 : PMU : [FB_FULL_PERIODS] : [hw_smpl] [speculative] : Number of phases a demand request has waited due to L1D Fill Buffer (FB) unavailablability.
+Umask-02 : 0x02 : PMU : [FB_FULL] : [hw_smpl] [speculative] : Number of cycles a demand request has waited due to L1D Fill Buffer (FB) unavailability.
+Umask-03 : 0x10001 : PMU : [PENDING_CYCLES] : [hw_smpl] [speculative] : Cycles with L1D load Misses outstanding.
+Umask-04 : 0x01 : PMU : [PENDING] : [hw_smpl] [speculative] : Number of L1D misses that are outstanding
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426994
+PMU name : icl (Intel Icelake)
+Name     : SW_PREFETCH_ACCESS
+Equiv	 : None
+Flags    : [hw_smpl] [non-speculative] 
+Desc     : Software prefetches.
+Code     : 0x32
+Umask-00 : 0x08 : PMU : [PREFETCHW] : [hw_smpl] [non-speculative] : Number of PREFETCHW instructions executed.
+Umask-01 : 0x04 : PMU : [T1_T2] : [hw_smpl] [non-speculative] : Number of PREFETCHT1 or PREFETCHT2 instructions executed.
+Umask-02 : 0x02 : PMU : [T0] : [hw_smpl] [non-speculative] : Number of PREFETCHT0 instructions executed.
+Umask-03 : 0x01 : PMU : [NTA] : [hw_smpl] [non-speculative] : Number of PREFETCHNTA instructions executed.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426995
+PMU name : icl (Intel Icelake)
+Name     : SW_PREFETCH
+Equiv	 : SW_PREFETCH_ACCESS
+Flags    : [hw_smpl] [speculative] 
+Desc     : Software prefetches.
+Code     : 0x32
+Umask-00 : 0x08 : PMU : [PREFETCHW] : [hw_smpl] [speculative] : Number of PREFETCHW instructions executed.
+Umask-01 : 0x04 : PMU : [T1_T2] : [hw_smpl] [speculative] : Number of PREFETCHT1 or PREFETCHT2 instructions executed.
+Umask-02 : 0x02 : PMU : [T0] : [hw_smpl] [speculative] : Number of PREFETCHT0 instructions executed.
+Umask-03 : 0x01 : PMU : [NTA] : [hw_smpl] [speculative] : Number of PREFETCHNTA instructions executed.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426996
+PMU name : icl (Intel Icelake)
+Name     : LONGEST_LAT_CACHE
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : L3 cache.
+Code     : 0x2e
+Umask-00 : 0x41 : PMU : [MISS] : [hw_smpl] [speculative] : Core-originated cacheable demand requests missed L3 (except hardware prefetches to L3).
+Umask-01 : 0x4f : PMU : [REFERENCES] : [hw_smpl] [speculative] : Core-originated cacheable requests that refer to L3 (Except hardware prefetches to the L3).
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426997
+PMU name : icl (Intel Icelake)
+Name     : CORE_POWER
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Power power cycles.
+Code     : 0x28
+Umask-00 : 0x20 : PMU : [LVL2_TURBO_LICENSE] : [hw_smpl] [speculative] : Core cycles where the core was running in a manner where Turbo may be clipped to the AVX512 turbo schedule.
+Umask-01 : 0x18 : PMU : [LVL1_TURBO_LICENSE] : [hw_smpl] [speculative] : Core cycles where the core was running in a manner where Turbo may be clipped to the AVX2 turbo schedule.
+Umask-02 : 0x07 : PMU : [LVL0_TURBO_LICENSE] : [hw_smpl] [speculative] : Core cycles where the core was running in a manner where Turbo may be clipped to the Non-AVX turbo schedule.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426998
+PMU name : icl (Intel Icelake)
+Name     : L2_RQSTS
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : L2 requests.
+Code     : 0x24
+Umask-00 : 0xe7 : PMU : [ALL_DEMAND_REFERENCES] : [hw_smpl] [speculative] : Demand requests to L2 cache
+Umask-01 : 0xe4 : PMU : [ALL_CODE_RD] : [hw_smpl] [speculative] : L2 code requests
+Umask-02 : 0xe2 : PMU : [ALL_RFO] : [hw_smpl] [speculative] : RFO requests to L2 cache
+Umask-03 : 0xe1 : PMU : [ALL_DEMAND_DATA_RD] : [hw_smpl] [speculative] : Demand Data Read requests
+Umask-04 : 0xc8 : PMU : [SWPF_HIT] : [hw_smpl] [speculative] : SW prefetch requests that hit L2 cache. Accounts for PREFETCHNTA and PREFETCH0/1/2 instructions when FB is not full.
+Umask-05 : 0xc4 : PMU : [CODE_RD_HIT] : [hw_smpl] [speculative] : L2 cache hits when fetching instructions, code reads.
+Umask-06 : 0xc2 : PMU : [RFO_HIT] : [hw_smpl] [speculative] : RFO requests that hit L2 cache
+Umask-07 : 0xc1 : PMU : [DEMAND_DATA_RD_HIT] : [hw_smpl] [speculative] : Demand Data Read requests that hit L2 cache
+Umask-08 : 0x28 : PMU : [SWPF_MISS] : [hw_smpl] [speculative] : SW prefetch requests that miss L2 cache. Accounts for PREFETCHNTA and PREFETCH0/1/2 instructions when FB is not full.
+Umask-09 : 0x27 : PMU : [ALL_DEMAND_MISS] : [hw_smpl] [speculative] : Demand requests that miss L2 cache
+Umask-10 : 0x24 : PMU : [CODE_RD_MISS] : [hw_smpl] [speculative] : L2 cache misses when fetching instructions
+Umask-11 : 0x22 : PMU : [RFO_MISS] : [hw_smpl] [speculative] : RFO requests that miss L2 cache
+Umask-12 : 0x21 : PMU : [DEMAND_DATA_RD_MISS] : [hw_smpl] [speculative] : Demand Data Read miss L2, no rejects
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937426999
+PMU name : icl (Intel Icelake)
+Name     : ARITH
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Arithmetic uops.
+Code     : 0x14
+Umask-00 : 0x10009 : PMU : [DIVIDER_ACTIVE] : [default] [hw_smpl] [speculative] : Cycles when divide unit is busy executing divide or square root operations.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937427000
+PMU name : icl (Intel Icelake)
+Name     : UOPS_ISSUED
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Uops issued.
+Code     : 0xe
+Umask-00 : 0x18001 : PMU : [STALL_CYCLES] : [hw_smpl] [speculative] : Cycles when RAT does not issue Uops to RS for the thread
+Umask-01 : 0x02 : PMU : [VECTOR_WIDTH_MISMATCH] : [hw_smpl] [speculative] : Uops inserted at issue-stage in order to preserve upper bits of vector registers.
+Umask-02 : 0x01 : PMU : [ANY] : [hw_smpl] [speculative] : Uops that RAT issues to RS
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937427001
+PMU name : icl (Intel Icelake)
+Name     : INT_MISC
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Miscellaneous interruptions.
+Code     : 0xd
+Umask-00 : 0x80 : PMU : [CLEAR_RESTEER_CYCLES] : [hw_smpl] [speculative] : Counts cycles after recovery from a branch misprediction or machine clear till the first uop is issued from the resteered path.
+Umask-01 : 0x10 : PMU : [UOP_DROPPING] : [hw_smpl] [speculative] : TMA slots where uops got dropped
+Umask-02 : 0x10003 : PMU : [ALL_RECOVERY_CYCLES] : [hw_smpl] [speculative] : Cycles the Backend cluster is recovering after a miss-speculation or a Store Buffer or Load Buffer drain stall.
+Umask-03 : 0x01 : PMU : [RECOVERY_CYCLES] : [hw_smpl] [speculative] : Core cycles the allocator was stalled due to recovery from earlier clear event for this thread
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937427002
+PMU name : icl (Intel Icelake)
+Name     : DTLB_LOAD_MISSES
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Data TLB load misses.
+Code     : 0x8
+Umask-00 : 0x20 : PMU : [STLB_HIT] : [hw_smpl] [speculative] : Loads that miss the DTLB and hit the STLB.
+Umask-01 : 0x10010 : PMU : [WALK_ACTIVE] : [hw_smpl] [speculative] : Cycles when at least one PMH is busy with a page walk for a demand load.
+Umask-02 : 0x10 : PMU : [WALK_PENDING] : [hw_smpl] [speculative] : Number of page walks outstanding for a demand load in the PMH each cycle.
+Umask-03 : 0x0e : PMU : [WALK_COMPLETED] : [hw_smpl] [speculative] : Load miss in all TLB levels causes a page walk that completes. (All page sizes)
+Umask-04 : 0x04 : PMU : [WALK_COMPLETED_2M_4M] : [hw_smpl] [speculative] : Page walks completed due to a demand data load to a 2M/4M page.
+Umask-05 : 0x02 : PMU : [WALK_COMPLETED_4K] : [hw_smpl] [speculative] : Page walks completed due to a demand data load to a 4K page.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937427003
+PMU name : icl (Intel Icelake)
+Name     : LD_BLOCKS_PARTIAL
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Partial load blocks.
+Code     : 0x7
+Umask-00 : 0x01 : PMU : [ADDRESS_ALIAS] : [default] [hw_smpl] [speculative] : False dependencies in MOB due to partial compare on address.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937427004
+PMU name : icl (Intel Icelake)
+Name     : LD_BLOCKS
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Blocking loads.
+Code     : 0x3
+Umask-00 : 0x08 : PMU : [NO_SR] : [hw_smpl] [speculative] : The number of times that split load operations are temporarily blocked because all resources for handling the split accesses are in use.
+Umask-01 : 0x02 : PMU : [STORE_FORWARD] : [hw_smpl] [speculative] : Loads blocked due to overlapping with a preceding store that cannot be forwarded.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937427005
+PMU name : icl (Intel Icelake)
+Name     : TOPDOWN
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : TMA slots available for an unhalted logical processor.
+Code     : 0x0
+Umask-00 : 0x08 : PMU : [BR_MISPREDICT_SLOTS] : [hw_smpl] [speculative] : TMA slots wasted due to incorrect speculation by branch mispredictions
+Umask-01 : 0x02 : PMU : [BACKEND_BOUND_SLOTS] : [hw_smpl] [speculative] : TMA slots where no uops were being issued due to lack of back-end resources.
+Umask-02 : 0x1a4 : PMU : [SLOTS_P] : [hw_smpl] [speculative] : TMA slots available for an unhalted logical processor. General counter - architectural event
+Umask-03 : 0x04 : PMU : [SLOTS] : [hw_smpl] [speculative] : TMA slots available for an unhalted logical processor. Fixed counter - architectural event
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937427006
+PMU name : icl (Intel Icelake)
+Name     : CPU_CLK_UNHALTED
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Count core clock cycles whenever the clock signal on the specific core is running (not halted).
+Code     : 0x3c
+Umask-00 : 0x2ec : PMU : [DISTRIBUTED] : [hw_smpl] [speculative] : Cycle counts are evenly distributed between active threads in the Core.
+Umask-01 : 0x8ec : PMU : [REF_DISTRIBUTED] : [hw_smpl] [speculative] : Core crystal clock cycles. Cycle counts are evenly distributed between active threads in the Core.
+Umask-02 : 0x02 : PMU : [ONE_THREAD_ACTIVE] : [hw_smpl] [speculative] : Core crystal clock cycles when this thread is unhalted and the other thread is halted.
+Umask-03 : 0x01 : PMU : [REF_XCLK] : [hw_smpl] [speculative] : Core crystal clock cycles when the thread is unhalted.
+Umask-04 : 0x00 : PMU : [THREAD_P] : [hw_smpl] [speculative] : Thread cycles when thread is not in halt state
+Umask-05 : 0x300 : PMU : [REF_TSC] : [hw_smpl] [speculative] : Reference cycles when the core is not in halt state.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937427007
+PMU name : icl (Intel Icelake)
+Name     : INST_RETIRED
+Equiv	 : None
+Flags    : [precise] [hw_smpl] [non-speculative] 
+Desc     : Number of instructions retired
+Code     : 0xc0
+Umask-00 : 0x18001 : PMU : [STALL_CYCLES] : [hw_smpl] [non-speculative] : Cycles without actually retired instructions.
+Umask-01 : 0x00 : PMU : [ANY_P] : [hw_smpl] [non-speculative] : Number of instructions retired. General Counter - architectural event
+Umask-02 : 0x100 : PMU : [PREC_DIST] : [precise] [hw_smpl] [non-speculative] : Precise instruction retired event with a reduced effect of PEBS shadow in IP distribution (Fixed counter 0 only. c, e, i, intx, intxcp modifiers not available)
+Umask-03 : 0x100 : PMU : [ANY] : [hw_smpl] [non-speculative] : Number of instructions retired. Fixed Counter - architectural event (c, e, i, intx, intxcp modifiers not available)
+Umask-04 : 0x02 : PMU : [NOP] : [hw_smpl] [non-speculative] : Number of retired NOP instructions.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937427008
+PMU name : icl (Intel Icelake)
+Name     : UOPS_DECODED
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Number of instructions decoded
+Code     : 0x56
+Umask-00 : 0x01 : PMU : [DEC0] : [default] [hw_smpl] [speculative] : Number of uops decoded out of instructions exclusively fetched by decoder 0
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937427009
+PMU name : icl (Intel Icelake)
+Name     : MEM_LOAD_MISC_RETIRED
+Equiv	 : None
+Flags    : [precise] [hw_smpl] [non-speculative] 
+Desc     : Miscellaneous loads retired
+Code     : 0xc4
+Umask-00 : 0x04 : PMU : [UC] : [default] [precise] [hw_smpl] [non-speculative] : Retired instructions with at least 1 uncacheable load or Bus Lock.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937427011
+PMU name : icl (Intel Icelake)
+Name     : OFFCORE_RESPONSE_0
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Offcore response event
+Code     : 0x1b7
+Umask-00 : 0x10004 : PMU : [DEMAND_CODE_RD_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that have any type of response.
+Umask-01 : 0x184000004 : PMU : [DEMAND_CODE_RD_DRAM] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that DRAM supplied the request.
+Umask-02 : 0x3fc03c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-03 : 0x10003c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_SNOOP_HITM] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop hit in another cores caches, data forwarding is required as the data is modified.
+Umask-04 : 0x4003c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-05 : 0x2003c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-06 : 0x1003c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-07 : 0x1e003c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop was sent.
+Umask-08 : 0x3fffc00004 : PMU : [DEMAND_CODE_RD_L3_MISS] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that was not supplied by the L3 cache.
+Umask-09 : 0x184000004 : PMU : [DEMAND_CODE_RD_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that DRAM supplied the request.
+Umask-10 : 0x10001 : PMU : [DEMAND_DATA_RD_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts demand data reads that have any type of response.
+Umask-11 : 0x184000001 : PMU : [DEMAND_DATA_RD_DRAM] : [hw_smpl] [speculative] : Counts demand data reads that DRAM supplied the request.
+Umask-12 : 0x3fc03c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-13 : 0x10003c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_SNOOP_HITM] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop hit in another cores caches, data forwarding is required as the data is modified.
+Umask-14 : 0x4003c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-15 : 0x2003c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-16 : 0x1003c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-17 : 0x1e003c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop was sent.
+Umask-18 : 0x3fffc00001 : PMU : [DEMAND_DATA_RD_L3_MISS] : [hw_smpl] [speculative] : Counts demand data reads that was not supplied by the L3 cache.
+Umask-19 : 0x184000001 : PMU : [DEMAND_DATA_RD_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts demand data reads that DRAM supplied the request.
+Umask-20 : 0x10002 : PMU : [DEMAND_RFO_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that have any type of response.
+Umask-21 : 0x184000002 : PMU : [DEMAND_RFO_DRAM] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that DRAM supplied the request.
+Umask-22 : 0x3fc03c0002 : PMU : [DEMAND_RFO_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-23 : 0x10003c0002 : PMU : [DEMAND_RFO_L3_HIT_SNOOP_HITM] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop hit in another cores caches, data forwarding is required as the data is modified.
+Umask-24 : 0x4003c0002 : PMU : [DEMAND_RFO_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-25 : 0x2003c0002 : PMU : [DEMAND_RFO_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-26 : 0x1003c0002 : PMU : [DEMAND_RFO_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-27 : 0x1e003c0002 : PMU : [DEMAND_RFO_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop was sent.
+Umask-28 : 0x3fffc00002 : PMU : [DEMAND_RFO_L3_MISS] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that was not supplied by the L3 cache.
+Umask-29 : 0x184000002 : PMU : [DEMAND_RFO_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that DRAM supplied the request.
+Umask-30 : 0x10400 : PMU : [HWPF_L1D_AND_SWPF_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that have any type of response.
+Umask-31 : 0x184000400 : PMU : [HWPF_L1D_AND_SWPF_DRAM] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that DRAM supplied the request.
+Umask-32 : 0x3fc03c0400 : PMU : [HWPF_L1D_AND_SWPF_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-33 : 0x2003c0400 : PMU : [HWPF_L1D_AND_SWPF_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-34 : 0x1003c0400 : PMU : [HWPF_L1D_AND_SWPF_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-35 : 0x3fffc00400 : PMU : [HWPF_L1D_AND_SWPF_L3_MISS] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that was not supplied by the L3 cache.
+Umask-36 : 0x184000400 : PMU : [HWPF_L1D_AND_SWPF_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that DRAM supplied the request.
+Umask-37 : 0x10010 : PMU : [HWPF_L2_DATA_RD_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that have any type of response.
+Umask-38 : 0x184000010 : PMU : [HWPF_L2_DATA_RD_DRAM] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that DRAM supplied the request.
+Umask-39 : 0x3fc03c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-40 : 0x10003c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_SNOOP_HITM] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop hit in another cores caches, data forwarding is required as the data is modified.
+Umask-41 : 0x4003c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-42 : 0x2003c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-43 : 0x1003c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-44 : 0x1e003c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop was sent.
+Umask-45 : 0x3fffc00010 : PMU : [HWPF_L2_DATA_RD_L3_MISS] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that was not supplied by the L3 cache.
+Umask-46 : 0x184000010 : PMU : [HWPF_L2_DATA_RD_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that DRAM supplied the request.
+Umask-47 : 0x10020 : PMU : [HWPF_L2_RFO_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that have any type of response.
+Umask-48 : 0x184000020 : PMU : [HWPF_L2_RFO_DRAM] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that DRAM supplied the request.
+Umask-49 : 0x3fc03c0020 : PMU : [HWPF_L2_RFO_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-50 : 0x10003c0020 : PMU : [HWPF_L2_RFO_L3_HIT_SNOOP_HITM] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop hit in another cores caches, data forwarding is required as the data is modified.
+Umask-51 : 0x4003c0020 : PMU : [HWPF_L2_RFO_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-52 : 0x2003c0020 : PMU : [HWPF_L2_RFO_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-53 : 0x1003c0020 : PMU : [HWPF_L2_RFO_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-54 : 0x1e003c0020 : PMU : [HWPF_L2_RFO_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop was sent.
+Umask-55 : 0x3fffc00020 : PMU : [HWPF_L2_RFO_L3_MISS] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that was not supplied by the L3 cache.
+Umask-56 : 0x184000020 : PMU : [HWPF_L2_RFO_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that DRAM supplied the request.
+Umask-57 : 0x3fc03c2380 : PMU : [HWPF_L3_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts hardware prefetches to the L3 only that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-58 : 0x18000 : PMU : [OTHER_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that have any type of response.
+Umask-59 : 0x184008000 : PMU : [OTHER_DRAM] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that DRAM supplied the request.
+Umask-60 : 0x4003c8000 : PMU : [OTHER_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-61 : 0x2003c8000 : PMU : [OTHER_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-62 : 0x1003c8000 : PMU : [OTHER_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-63 : 0x1e003c8000 : PMU : [OTHER_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that hit a cacheline in the L3 where a snoop was sent.
+Umask-64 : 0x3fffc08000 : PMU : [OTHER_L3_MISS] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that was not supplied by the L3 cache.
+Umask-65 : 0x184008000 : PMU : [OTHER_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that DRAM supplied the request.
+Umask-66 : 0x10800 : PMU : [STREAMING_WR_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts streaming stores that have any type of response.
+Umask-67 : 0x184000800 : PMU : [STREAMING_WR_DRAM] : [hw_smpl] [speculative] : Counts streaming stores that DRAM supplied the request.
+Umask-68 : 0x3fc03c0800 : PMU : [STREAMING_WR_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts streaming stores that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-69 : 0x3fffc00800 : PMU : [STREAMING_WR_L3_MISS] : [hw_smpl] [speculative] : Counts streaming stores that was not supplied by the L3 cache.
+Umask-70 : 0x184000800 : PMU : [STREAMING_WR_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts streaming stores that DRAM supplied the request.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937427013
+PMU name : icl (Intel Icelake)
+Name     : OFFCORE_RESPONSE_1
+Equiv	 : None
+Flags    : [hw_smpl] [speculative] 
+Desc     : Offcore response event
+Code     : 0x1bb
+Umask-00 : 0x10004 : PMU : [DEMAND_CODE_RD_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that have any type of response.
+Umask-01 : 0x184000004 : PMU : [DEMAND_CODE_RD_DRAM] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that DRAM supplied the request.
+Umask-02 : 0x3fc03c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-03 : 0x10003c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_SNOOP_HITM] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop hit in another cores caches, data forwarding is required as the data is modified.
+Umask-04 : 0x4003c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-05 : 0x2003c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-06 : 0x1003c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-07 : 0x1e003c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop was sent.
+Umask-08 : 0x3fffc00004 : PMU : [DEMAND_CODE_RD_L3_MISS] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that was not supplied by the L3 cache.
+Umask-09 : 0x184000004 : PMU : [DEMAND_CODE_RD_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that DRAM supplied the request.
+Umask-10 : 0x10001 : PMU : [DEMAND_DATA_RD_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts demand data reads that have any type of response.
+Umask-11 : 0x184000001 : PMU : [DEMAND_DATA_RD_DRAM] : [hw_smpl] [speculative] : Counts demand data reads that DRAM supplied the request.
+Umask-12 : 0x3fc03c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-13 : 0x10003c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_SNOOP_HITM] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop hit in another cores caches, data forwarding is required as the data is modified.
+Umask-14 : 0x4003c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-15 : 0x2003c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-16 : 0x1003c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-17 : 0x1e003c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop was sent.
+Umask-18 : 0x3fffc00001 : PMU : [DEMAND_DATA_RD_L3_MISS] : [hw_smpl] [speculative] : Counts demand data reads that was not supplied by the L3 cache.
+Umask-19 : 0x184000001 : PMU : [DEMAND_DATA_RD_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts demand data reads that DRAM supplied the request.
+Umask-20 : 0x10002 : PMU : [DEMAND_RFO_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that have any type of response.
+Umask-21 : 0x184000002 : PMU : [DEMAND_RFO_DRAM] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that DRAM supplied the request.
+Umask-22 : 0x3fc03c0002 : PMU : [DEMAND_RFO_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-23 : 0x10003c0002 : PMU : [DEMAND_RFO_L3_HIT_SNOOP_HITM] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop hit in another cores caches, data forwarding is required as the data is modified.
+Umask-24 : 0x4003c0002 : PMU : [DEMAND_RFO_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-25 : 0x2003c0002 : PMU : [DEMAND_RFO_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-26 : 0x1003c0002 : PMU : [DEMAND_RFO_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-27 : 0x1e003c0002 : PMU : [DEMAND_RFO_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop was sent.
+Umask-28 : 0x3fffc00002 : PMU : [DEMAND_RFO_L3_MISS] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that was not supplied by the L3 cache.
+Umask-29 : 0x184000002 : PMU : [DEMAND_RFO_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that DRAM supplied the request.
+Umask-30 : 0x10400 : PMU : [HWPF_L1D_AND_SWPF_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that have any type of response.
+Umask-31 : 0x184000400 : PMU : [HWPF_L1D_AND_SWPF_DRAM] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that DRAM supplied the request.
+Umask-32 : 0x3fc03c0400 : PMU : [HWPF_L1D_AND_SWPF_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-33 : 0x2003c0400 : PMU : [HWPF_L1D_AND_SWPF_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-34 : 0x1003c0400 : PMU : [HWPF_L1D_AND_SWPF_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-35 : 0x3fffc00400 : PMU : [HWPF_L1D_AND_SWPF_L3_MISS] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that was not supplied by the L3 cache.
+Umask-36 : 0x184000400 : PMU : [HWPF_L1D_AND_SWPF_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that DRAM supplied the request.
+Umask-37 : 0x10010 : PMU : [HWPF_L2_DATA_RD_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that have any type of response.
+Umask-38 : 0x184000010 : PMU : [HWPF_L2_DATA_RD_DRAM] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that DRAM supplied the request.
+Umask-39 : 0x3fc03c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-40 : 0x10003c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_SNOOP_HITM] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop hit in another cores caches, data forwarding is required as the data is modified.
+Umask-41 : 0x4003c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-42 : 0x2003c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-43 : 0x1003c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-44 : 0x1e003c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop was sent.
+Umask-45 : 0x3fffc00010 : PMU : [HWPF_L2_DATA_RD_L3_MISS] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that was not supplied by the L3 cache.
+Umask-46 : 0x184000010 : PMU : [HWPF_L2_DATA_RD_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that DRAM supplied the request.
+Umask-47 : 0x10020 : PMU : [HWPF_L2_RFO_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that have any type of response.
+Umask-48 : 0x184000020 : PMU : [HWPF_L2_RFO_DRAM] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that DRAM supplied the request.
+Umask-49 : 0x3fc03c0020 : PMU : [HWPF_L2_RFO_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-50 : 0x10003c0020 : PMU : [HWPF_L2_RFO_L3_HIT_SNOOP_HITM] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop hit in another cores caches, data forwarding is required as the data is modified.
+Umask-51 : 0x4003c0020 : PMU : [HWPF_L2_RFO_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-52 : 0x2003c0020 : PMU : [HWPF_L2_RFO_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-53 : 0x1003c0020 : PMU : [HWPF_L2_RFO_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-54 : 0x1e003c0020 : PMU : [HWPF_L2_RFO_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop was sent.
+Umask-55 : 0x3fffc00020 : PMU : [HWPF_L2_RFO_L3_MISS] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that was not supplied by the L3 cache.
+Umask-56 : 0x184000020 : PMU : [HWPF_L2_RFO_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that DRAM supplied the request.
+Umask-57 : 0x3fc03c2380 : PMU : [HWPF_L3_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts hardware prefetches to the L3 only that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-58 : 0x18000 : PMU : [OTHER_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that have any type of response.
+Umask-59 : 0x184008000 : PMU : [OTHER_DRAM] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that DRAM supplied the request.
+Umask-60 : 0x4003c8000 : PMU : [OTHER_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-61 : 0x2003c8000 : PMU : [OTHER_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-62 : 0x1003c8000 : PMU : [OTHER_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-63 : 0x1e003c8000 : PMU : [OTHER_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that hit a cacheline in the L3 where a snoop was sent.
+Umask-64 : 0x3fffc08000 : PMU : [OTHER_L3_MISS] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that was not supplied by the L3 cache.
+Umask-65 : 0x184008000 : PMU : [OTHER_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that DRAM supplied the request.
+Umask-66 : 0x10800 : PMU : [STREAMING_WR_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts streaming stores that have any type of response.
+Umask-67 : 0x184000800 : PMU : [STREAMING_WR_DRAM] : [hw_smpl] [speculative] : Counts streaming stores that DRAM supplied the request.
+Umask-68 : 0x3fc03c0800 : PMU : [STREAMING_WR_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts streaming stores that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-69 : 0x3fffc00800 : PMU : [STREAMING_WR_L3_MISS] : [hw_smpl] [speculative] : Counts streaming stores that was not supplied by the L3 cache.
+Umask-70 : 0x184000800 : PMU : [STREAMING_WR_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts streaming stores that DRAM supplied the request.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
+#-----------------------------
+IDX	 : 937427015
+PMU name : icl (Intel Icelake)
+Name     : OCR
+Equiv	 : OFFCORE_RESPONSE_0
+Flags    : [hw_smpl] [speculative] 
+Desc     : Offcore response event
+Code     : 0x1b7
+Umask-00 : 0x10004 : PMU : [DEMAND_CODE_RD_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that have any type of response.
+Umask-01 : 0x184000004 : PMU : [DEMAND_CODE_RD_DRAM] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that DRAM supplied the request.
+Umask-02 : 0x3fc03c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-03 : 0x10003c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_SNOOP_HITM] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop hit in another cores caches, data forwarding is required as the data is modified.
+Umask-04 : 0x4003c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-05 : 0x2003c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-06 : 0x1003c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-07 : 0x1e003c0004 : PMU : [DEMAND_CODE_RD_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that hit a cacheline in the L3 where a snoop was sent.
+Umask-08 : 0x3fffc00004 : PMU : [DEMAND_CODE_RD_L3_MISS] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that was not supplied by the L3 cache.
+Umask-09 : 0x184000004 : PMU : [DEMAND_CODE_RD_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts demand instruction fetches and L1 instruction cache prefetches that DRAM supplied the request.
+Umask-10 : 0x10001 : PMU : [DEMAND_DATA_RD_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts demand data reads that have any type of response.
+Umask-11 : 0x184000001 : PMU : [DEMAND_DATA_RD_DRAM] : [hw_smpl] [speculative] : Counts demand data reads that DRAM supplied the request.
+Umask-12 : 0x3fc03c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-13 : 0x10003c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_SNOOP_HITM] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop hit in another cores caches, data forwarding is required as the data is modified.
+Umask-14 : 0x4003c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-15 : 0x2003c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-16 : 0x1003c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-17 : 0x1e003c0001 : PMU : [DEMAND_DATA_RD_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts demand data reads that hit a cacheline in the L3 where a snoop was sent.
+Umask-18 : 0x3fffc00001 : PMU : [DEMAND_DATA_RD_L3_MISS] : [hw_smpl] [speculative] : Counts demand data reads that was not supplied by the L3 cache.
+Umask-19 : 0x184000001 : PMU : [DEMAND_DATA_RD_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts demand data reads that DRAM supplied the request.
+Umask-20 : 0x10002 : PMU : [DEMAND_RFO_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that have any type of response.
+Umask-21 : 0x184000002 : PMU : [DEMAND_RFO_DRAM] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that DRAM supplied the request.
+Umask-22 : 0x3fc03c0002 : PMU : [DEMAND_RFO_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-23 : 0x10003c0002 : PMU : [DEMAND_RFO_L3_HIT_SNOOP_HITM] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop hit in another cores caches, data forwarding is required as the data is modified.
+Umask-24 : 0x4003c0002 : PMU : [DEMAND_RFO_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-25 : 0x2003c0002 : PMU : [DEMAND_RFO_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-26 : 0x1003c0002 : PMU : [DEMAND_RFO_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-27 : 0x1e003c0002 : PMU : [DEMAND_RFO_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that hit a cacheline in the L3 where a snoop was sent.
+Umask-28 : 0x3fffc00002 : PMU : [DEMAND_RFO_L3_MISS] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that was not supplied by the L3 cache.
+Umask-29 : 0x184000002 : PMU : [DEMAND_RFO_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts demand reads for ownership (RFO) requests and software prefetches for exclusive ownership (PREFETCHW) that DRAM supplied the request.
+Umask-30 : 0x10400 : PMU : [HWPF_L1D_AND_SWPF_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that have any type of response.
+Umask-31 : 0x184000400 : PMU : [HWPF_L1D_AND_SWPF_DRAM] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that DRAM supplied the request.
+Umask-32 : 0x3fc03c0400 : PMU : [HWPF_L1D_AND_SWPF_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-33 : 0x2003c0400 : PMU : [HWPF_L1D_AND_SWPF_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-34 : 0x1003c0400 : PMU : [HWPF_L1D_AND_SWPF_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-35 : 0x3fffc00400 : PMU : [HWPF_L1D_AND_SWPF_L3_MISS] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that was not supplied by the L3 cache.
+Umask-36 : 0x184000400 : PMU : [HWPF_L1D_AND_SWPF_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts L1 data cache prefetch requests and software prefetches (except PREFETCHW) that DRAM supplied the request.
+Umask-37 : 0x10010 : PMU : [HWPF_L2_DATA_RD_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that have any type of response.
+Umask-38 : 0x184000010 : PMU : [HWPF_L2_DATA_RD_DRAM] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that DRAM supplied the request.
+Umask-39 : 0x3fc03c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-40 : 0x10003c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_SNOOP_HITM] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop hit in another cores caches, data forwarding is required as the data is modified.
+Umask-41 : 0x4003c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-42 : 0x2003c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-43 : 0x1003c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-44 : 0x1e003c0010 : PMU : [HWPF_L2_DATA_RD_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that hit a cacheline in the L3 where a snoop was sent.
+Umask-45 : 0x3fffc00010 : PMU : [HWPF_L2_DATA_RD_L3_MISS] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that was not supplied by the L3 cache.
+Umask-46 : 0x184000010 : PMU : [HWPF_L2_DATA_RD_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts hardware prefetch data reads (which bring data to L2)  that DRAM supplied the request.
+Umask-47 : 0x10020 : PMU : [HWPF_L2_RFO_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that have any type of response.
+Umask-48 : 0x184000020 : PMU : [HWPF_L2_RFO_DRAM] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that DRAM supplied the request.
+Umask-49 : 0x3fc03c0020 : PMU : [HWPF_L2_RFO_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-50 : 0x10003c0020 : PMU : [HWPF_L2_RFO_L3_HIT_SNOOP_HITM] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop hit in another cores caches, data forwarding is required as the data is modified.
+Umask-51 : 0x4003c0020 : PMU : [HWPF_L2_RFO_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-52 : 0x2003c0020 : PMU : [HWPF_L2_RFO_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-53 : 0x1003c0020 : PMU : [HWPF_L2_RFO_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-54 : 0x1e003c0020 : PMU : [HWPF_L2_RFO_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that hit a cacheline in the L3 where a snoop was sent.
+Umask-55 : 0x3fffc00020 : PMU : [HWPF_L2_RFO_L3_MISS] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that was not supplied by the L3 cache.
+Umask-56 : 0x184000020 : PMU : [HWPF_L2_RFO_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts hardware prefetch RFOs (which bring data to L2) that DRAM supplied the request.
+Umask-57 : 0x3fc03c2380 : PMU : [HWPF_L3_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts hardware prefetches to the L3 only that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-58 : 0x18000 : PMU : [OTHER_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that have any type of response.
+Umask-59 : 0x184008000 : PMU : [OTHER_DRAM] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that DRAM supplied the request.
+Umask-60 : 0x4003c8000 : PMU : [OTHER_L3_HIT_SNOOP_HIT_NO_FWD] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that hit a cacheline in the L3 where a snoop hit in another core, data forwarding is not required.
+Umask-61 : 0x2003c8000 : PMU : [OTHER_L3_HIT_SNOOP_MISS] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that hit a cacheline in the L3 where a snoop was sent but no other cores had the data.
+Umask-62 : 0x1003c8000 : PMU : [OTHER_L3_HIT_SNOOP_NOT_NEEDED] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that hit a cacheline in the L3 where a snoop was not needed to satisfy the request.
+Umask-63 : 0x1e003c8000 : PMU : [OTHER_L3_HIT_SNOOP_SENT] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that hit a cacheline in the L3 where a snoop was sent.
+Umask-64 : 0x3fffc08000 : PMU : [OTHER_L3_MISS] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that was not supplied by the L3 cache.
+Umask-65 : 0x184008000 : PMU : [OTHER_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts miscellaneous requests, such as I/O and un-cacheable accesses that DRAM supplied the request.
+Umask-66 : 0x10800 : PMU : [STREAMING_WR_ANY_RESPONSE] : [hw_smpl] [speculative] : Counts streaming stores that have any type of response.
+Umask-67 : 0x184000800 : PMU : [STREAMING_WR_DRAM] : [hw_smpl] [speculative] : Counts streaming stores that DRAM supplied the request.
+Umask-68 : 0x3fc03c0800 : PMU : [STREAMING_WR_L3_HIT_ANY] : [hw_smpl] [speculative] : Counts streaming stores that hit a cacheline in the L3 where a snoop was sent or not.
+Umask-69 : 0x3fffc00800 : PMU : [STREAMING_WR_L3_MISS] : [hw_smpl] [speculative] : Counts streaming stores that was not supplied by the L3 cache.
+Umask-70 : 0x184000800 : PMU : [STREAMING_WR_LOCAL_DRAM] : [hw_smpl] [speculative] : Counts streaming stores that DRAM supplied the request.
+Modif-00 : 0x00 : PMU : [k] : monitor at priv level 0 (boolean)
+Modif-01 : 0x01 : PMU : [u] : monitor at priv level 1, 2, 3 (boolean)
+Modif-02 : 0x02 : PMU : [e] : edge level (may require counter-mask >= 1) (boolean)
+Modif-03 : 0x03 : PMU : [i] : invert (boolean)
+Modif-04 : 0x04 : PMU : [c] : counter-mask in range [0-255] (integer)
+Modif-05 : 0x07 : PMU : [intx] : monitor only inside transactional memory region (boolean)
+Modif-06 : 0x08 : PMU : [intxcp] : do not count occurrences inside aborted transactional memory region (boolean)
