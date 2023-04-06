@@ -261,6 +261,11 @@ def generate_monitoring_dashboard(SuperTwin):
     topology = get_topology(td)
     datasource = SuperTwin.grafana_datasource
 
+
+    ##Hostname
+    empty_dash["panels"].append(mp.name_panel(datasource, get_next_id(), SuperTwin.name))
+
+
     ##Mem Numa Alloc Hit
     panel_id = get_next_id()
     empty_dash["panels"].append(mp.stat_panel(datasource, panel_id, 5, 4, 16, 0, "continuous-GrYlRd", "Mem Numa Alloc Hit"))
@@ -359,9 +364,6 @@ def generate_monitoring_dashboard(SuperTwin):
         empty_dash["panels"][panel_id]["targets"][idx]["select"][0].append({"params": [" / 1048576"],"type": "math"})
         empty_dash["panels"][panel_id]["fieldConfig"]["defaults"]["unit"] = "decgbytes"
 
-
-    ##name
-    empty_dash["panels"].append(mp.name_panel(datasource, get_next_id(), SuperTwin.name))
 
     #print("topology:", topology)
     

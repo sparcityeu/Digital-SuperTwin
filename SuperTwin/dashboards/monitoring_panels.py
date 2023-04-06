@@ -103,7 +103,61 @@ def stat_query(datasource, alias, measurement, param):
 
     return query
 
-def name_panel(datasource, _id, name):
+def name_panel_html(datasource,_id,hostname):
+    panel = {
+      "id": _id,
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "type": "text",
+      "title": "Hostname",
+      "datasource": {
+        "type": "influxdb",
+        "uid": datasource
+      },
+      "pluginVersion": "9.3.6",
+      "options": {
+        "mode": "html",
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": False,
+          "showMiniMap": False
+        },
+        "content": "<h1 style=\"display=inline-block; background: linear-gradient(120deg, rgb(60, 66, 76), rgb(44, 52, 56)); padding:20px;padding-top:50px; padding-bottom:50px; text-align:center; color:rgb(247, 248, 250)\"><b>"+ hostname +"\n</b></h1>\n\n"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": datasource
+          },
+          "groupBy": [
+            {
+              "params": [
+                "1s"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "0"
+              ],
+              "type": "fill"
+            }
+          ],
+          "tags": []
+        }
+      ],
+      "transparent": True,
+      "description": ""
+    }
+    
+    return panel;
+
+def name_panel(datasource, _id, hostname):
 
     name = {
         "id": _id,
@@ -127,7 +181,7 @@ def name_panel(datasource, _id, name):
                         "options": {
                             "0": {
                                 "index": 0,
-                                "text": name
+                                "text": hostname
                             }
           },
                     "type": "value"
@@ -154,7 +208,7 @@ def name_panel(datasource, _id, name):
                 "calcs": [
                     "lastNotNull"
                 ],
-                "fields": ""
+                "fields": "/.*/"
             },
             "orientation": "auto",
             "textMode": "auto",

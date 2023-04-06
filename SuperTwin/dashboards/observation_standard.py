@@ -22,11 +22,6 @@ import time
 import plotly.graph_objects as go
 import plotly.io as io
 
-
-##These should be in a config file
-grafana_api_key = "eyJrIjoiM1JDaHR3Y1VENzFtSXZsNTh0Mzh0ZFpGRWhCdENvTDAiLCJuIjoiZHQwIiwiaWQiOjF9"
-grafana_server = "localhost:3000"
-
 y = -2
 
 def next_y():

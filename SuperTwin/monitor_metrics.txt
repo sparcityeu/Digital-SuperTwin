@@ -5,7 +5,7 @@ hinv.cpu.clock
 ##TEMPERATURE##
 lmsensors.coretemp_isa_0000.package_id_0
 lmsensors.coretemp_isa_0001.package_id_1
-##PER CPU##
+##PER CPU##'])
 kernel.percpu.cpu.idle
 kernel.pernode.cpu.idle
 ##ENERGY##
