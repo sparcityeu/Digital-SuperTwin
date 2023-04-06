@@ -117,12 +117,16 @@ def get_topology(td):
 def generate_monitoring_dashboard(SuperTwin):
 
     td = utils.get_twin_description(SuperTwin)
-
     empty_dash = obs.template_dict(SuperTwin.name + " Monitor-" + str(uuid.uuid4()))
     empty_dash["panels"] = []
     
     topology = get_topology(td)
     datasource = SuperTwin.grafana_datasource
+
+    
+    ##Hostname
+    empty_dash["panels"].append(mp.name_panel_html(datasource, get_next_id(), SuperTwin.name))
+
 
     ##Mem Numa Alloc Hit
     panel_id = get_next_id()
@@ -221,10 +225,7 @@ def generate_monitoring_dashboard(SuperTwin):
         empty_dash["panels"][panel_id]["targets"][idx]["select"][0].append({"params": [" / 1048576"],"type": "math"})
         empty_dash["panels"][panel_id]["fieldConfig"]["defaults"]["unit"] = "decgbytes"
 
-
-    ##name
-    empty_dash["panels"].append(mp.name_panel(datasource, get_next_id(), SuperTwin.name))
-
+ 
     #print("topology:", topology)
     
     ##cpu frequency
