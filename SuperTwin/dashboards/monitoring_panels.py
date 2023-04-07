@@ -126,7 +126,7 @@ def name_panel_html(datasource,_id,hostname):
           "showLineNumbers": False,
           "showMiniMap": False
         },
-        "content": "<h1 style=\"display=inline-block; background: linear-gradient(120deg, rgb(60, 66, 76), rgb(44, 52, 56)); padding:20px;padding-top:50px; padding-bottom:50px; text-align:center; color:rgb(247, 248, 250)\"><b>"+ hostname +"\n</b></h1>\n\n"
+          "content": "<h1 style=\"display=inline-block; font-family:Roboto, Helvetica, Arial, sans-serif; background: linear-gradient(120deg, rgb(60, 66, 76), rgb(44, 52, 56)); padding:20px;padding-top:50px; padding-bottom:50px; text-align:center; color:rgb(247, 248, 250)\"><b>"+ hostname +"\n</b></h1>\n\n"
       },
       "targets": [
         {
