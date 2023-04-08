@@ -122,15 +122,17 @@ def read_env():
     lines = reader.readlines()
     reader.close()
 
-    mongodb_addr = lines[0].split("=")[1].strip("\n")
-    influxdb_addr = lines[1].split("=")[1].strip("\n")
-    grafana_addr = lines[2].split("=")[1].strip("\n")
-    grafana_token = lines[3].split("=")[1].strip("\n")
 
-    # print("mongodb_addr:", mongodb_addr)
-    # print("influxdb_addr:", influxdb_addr)
-    # print("grafana_addr:", grafana_addr)
-    # print("grafana_token:", grafana_token)
+    mongodb_addr = lines[0].split("MONGODB_SERVER=")[1].strip("\n")
+    influxdb_addr = lines[1].split("INFLUX_1.8_SERVER=")[1].strip("\n")
+    grafana_addr = lines[2].split("GRAFANA_SERVER=")[1].strip("\n")
+    grafana_token = lines[3].split("GRAFANA_TOKEN=")[1].strip("\n")
+    
+    #print("mongodb_addr:", mongodb_addr)
+    #print("influxdb_addr:", influxdb_addr)
+    #print("grafana_addr:", grafana_addr)
+    #print("grafana_token:", grafana_token)
+    
 
     return mongodb_addr, influxdb_addr, grafana_addr, grafana_token
 
@@ -319,14 +321,14 @@ def create_grafana_datasource(
         "access": "proxy",
         "basicAuth": False,
     }
+
     r = requests.post(
         f"http://{grafana_server}/api/datasources",
         data=json.dumps(data),
         headers=headers,
         verify=verify,
     )
-    # print(f"{r.status_code} - {r.content}")
-
+    print(f"{r.status_code} - {r.content}")
     return dict(r.json())
 
 
@@ -1221,3 +1223,8 @@ def nested_search(keyword, node):
         elif isinstance(val, dict):
             for res in nested_search(keyword, val):
                 yield res
+
+        elif isinstance(val,dict):
+            for res in nested_search(keyword,val):
+                yield res
+

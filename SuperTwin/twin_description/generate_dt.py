@@ -740,6 +740,7 @@ def add_network(models_dict, _sys_dict, top_id, hostname):
 ##need to implement get pcp_pids without SuperTwin
 def add_pcp(models_dict, hostname, _sys_dict, top_id, pcp_pids):
 
+    '''
     ######
     ##pmproxy
     displayName = "pmproxy"
@@ -756,7 +757,8 @@ def add_pcp(models_dict, hostname, _sys_dict, top_id, pcp_pids):
     contains = c()
     models_dict[top_id]["contents"].append(get_relationship(get_uid(hostname, "system", "ownership" + contains, 1), "contains" + contains, component_id))
     #####
-
+    '''
+    
     #####
     ##pmie
     displayName = "pmie"
