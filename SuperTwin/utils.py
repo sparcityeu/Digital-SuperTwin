@@ -234,7 +234,7 @@ def update_state(name, addr, twin_id, collection_id):
     writer.write(name + "|" + addr + "|" + twin_id + "|" + collection_id)
     writer.write("\n")
     writer.close()
-get_influx_datasource
+
 
 def check_state(addr):
 
