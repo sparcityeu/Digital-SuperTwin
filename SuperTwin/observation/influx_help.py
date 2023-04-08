@@ -91,6 +91,7 @@ def normalize_tag(SuperTwin, _tag, no_subtags):
                     db.write_points(my_write)
 
 
+'''
 def normalize_twin_tags(st1, st2, st3, st4):
 
     twin1 = st1[0]
@@ -112,18 +113,19 @@ def normalize_twin_tags(st1, st2, st3, st4):
   compare_time = result[0]["time"]
   ###Zeroth settings
 
-    
+
   ##Setback all sets
   for i in range(no_subtags):
     tagkey = _tag + "_" + str(i)
+
     for metric in metrics:
     
-      qs = query_string(metric, tagkey)
-      print("Normalize measurement time:", qs)
-      result = list(db.query(qs))[0]
-      my_difference = difference(result[0]['time'], compare_time)
-      my_write = []
-      ##Need to write ALL points
+        qs = query_string(metric, tagkey)
+        print("Normalize measurement time:", qs)
+        result = list(db.query(qs))[0]
+        my_difference = difference(result[0]['time'], compare_time)
+        my_write = []
+        ##Need to write ALL points
           
       for i in range(len(result)):
         time = ""
@@ -141,6 +143,6 @@ def normalize_twin_tags(st1, st2, st3, st4):
             to_write["fields"][key] = result[i][key]
             my_write.append(to_write)
       db.write_points(my_write)
-  
+'''  
             
 
