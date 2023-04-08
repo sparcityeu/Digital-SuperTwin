@@ -25,7 +25,6 @@ import sys
 sys.path.append("dashboards")
 import observation_standard
 
-
 ## pmprobe
 ALWAYS_EXISTS_MONITOR = [
     "kernel.all.pressure.cpu.some.total",
@@ -85,15 +84,15 @@ ALWAYS_HAVE_OBSERVATION_ICL = []  ##RAPL is not currently available on Icelake
 ##
 met = {
     "monitor": {
-        "general_single": ALWAYS_HAVE_MONITOR_SINGLE_SOCKET,
-        "general_numa": ALWAYS_HAVE_MONITOR_NUMA,
+        "general_single": ALWAYS_HAVE_MONITOR_SINGLE_SOCKET,  # single sockets
+        "general_numa": ALWAYS_HAVE_MONITOR_NUMA,  # multiple sockets
         "skl": ALWAYS_HAVE_MONITOR_SKL,
         "icl": ALWAYS_HAVE_MONITOR_ICL,
     },
     "observation": {
-        "general": ALWAYS_HAVE_OBSERVATION,
-        "skl": ALWAYS_HAVE_OBSERVATION_SKL,
-        "icl": ALWAYS_HAVE_OBSERVATION_ICL,
+        "general": ALWAYS_HAVE_OBSERVATION,  # general
+        "skl": ALWAYS_HAVE_OBSERVATION_SKL,  # skylake
+        "icl": ALWAYS_HAVE_OBSERVATION_ICL,  # icelake
     },
 }
 ##
@@ -108,7 +107,7 @@ def get_mongo_database(mongodb_name, CONNECTION_STRING):
     return client[mongodb_name]
 
 
-def get_influx_datasource(address):
+def get_influx_database(address):
 
     fields = address.split("//")[1]
     fields = fields.split(":")
@@ -118,23 +117,18 @@ def get_influx_datasource(address):
 
 
 def read_env():
-    reader = open("env.txt", "r")
-    lines = reader.readlines()
-    reader.close()
+    env_variables = {}
+    with open("env.txt", "r") as env:
+        for x in env.readlines():
+            key, value = x.split("=")
+            env_variables[key] = value.strip("\n")
 
-
-    mongodb_addr = lines[0].split("MONGODB_SERVER=")[1].strip("\n")
-    influxdb_addr = lines[1].split("INFLUX_1.8_SERVER=")[1].strip("\n")
-    grafana_addr = lines[2].split("GRAFANA_SERVER=")[1].strip("\n")
-    grafana_token = lines[3].split("GRAFANA_TOKEN=")[1].strip("\n")
-    
-    #print("mongodb_addr:", mongodb_addr)
-    #print("influxdb_addr:", influxdb_addr)
-    #print("grafana_addr:", grafana_addr)
-    #print("grafana_token:", grafana_token)
-    
-
-    return mongodb_addr, influxdb_addr, grafana_addr, grafana_token
+    return (
+        env_variables["MONGODB_SERVER"],
+        env_variables["INFLUX_1.8_SERVER"],
+        env_variables["GRAFANA_SERVER"],
+        env_variables["GRAFANA_TOKEN"],
+    )
 
 
 def get_twin_description_from_file(
@@ -240,7 +234,7 @@ def update_state(name, addr, twin_id, collection_id):
     writer.write(name + "|" + addr + "|" + twin_id + "|" + collection_id)
     writer.write("\n")
     writer.close()
-
+get_influx_datasource
 
 def check_state(addr):
 
@@ -1223,8 +1217,3 @@ def nested_search(keyword, node):
         elif isinstance(val, dict):
             for res in nested_search(keyword, val):
                 yield res
-
-        elif isinstance(val,dict):
-            for res in nested_search(keyword,val):
-                yield res
-

@@ -100,7 +100,7 @@ class SuperTwin:
         self.pcp_pids = utils.get_pcp_pids(self)
 
         self.influxdb_name = self.name
-        self.influx_datasource = utils.get_influx_datasource(
+        self.influx_datasource = utils.get_influx_database(
             self.influxdb_addr
         )
         utils.create_influx_database(
