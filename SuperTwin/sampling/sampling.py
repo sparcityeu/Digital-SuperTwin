@@ -71,12 +71,10 @@ def generate_pcp2influxdb_config(SuperTwin):
     source_name = SuperTwin.name
     metrics = SuperTwin.monitor_metrics
     always_have_metrics = utils.always_have_metrics("monitor", SuperTwin)
-
-    with open(SuperTwin.prob_file, "r") as j:
-        twin_probe_desc = json.loads(j.read())
+ 
 
     for item in always_have_metrics:
-        if item not in metrics and item in twin_probe_desc["metrics_avail"]:
+        if item not in metrics and item in SuperTwin.pcp_metrics:
             metrics.append(item)
 
     config_lines = [
