@@ -108,7 +108,7 @@ def get_mongo_database(mongodb_name, CONNECTION_STRING):
     return client[mongodb_name]
 
 
-def get_influx_datasource(address):
+def get_influx_database(address):
 
     fields = address.split("//")[1]
     fields = fields.split(":")
