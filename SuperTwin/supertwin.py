@@ -100,7 +100,7 @@ class SuperTwin:
         self.pcp_pids = utils.get_pcp_pids(self)
 
         self.influxdb_name = self.name
-        self.influx_datasource = utils.get_influx_datasource(
+        self.influx_datasource = utils.get_influx_database(
             self.influxdb_addr
         )
         utils.create_influx_database(
@@ -118,7 +118,9 @@ class SuperTwin:
             self,
         )
         print("Collection id:", self.mongodb_id)
-
+        self.pcp_metrics = [x["metric_name"] for x in utils.get_monitoring_metrics(self,"SWTelemetry")]
+        self.pmu_metrics = [x["metric_name"] for x in utils.get_monitoring_metrics(self,"HWTelemetry")]
+        
         # benchmark members
         self.benchmarks = 0
         self.benchmark_results = 0
@@ -185,8 +187,10 @@ class SuperTwin:
         self.__load_twin_state(
             query_twin_state(self.name, self.mongodb_id, self.mongodb_addr)
         )
-
         self.kill_zombie_monitors()
+        
+        self.pcp_metrics = [x["metric_name"] for x in utils.get_monitoring_metrics(self,"SWTelemetry")]
+        self.pmu_metrics = [x["metric_name"] for x in utils.get_monitoring_metrics(self,"HWTelemetry")]
         self.update_twin_document__assert_new_monitor_pid()
         print(
             "SuperTwin:{} id:{} is reconstructed from db..".format(
