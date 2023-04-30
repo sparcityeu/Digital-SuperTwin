@@ -25,7 +25,7 @@ import sys
 sys.path.append("dashboards")
 import observation_standard
 
-## pmprobe
+## can be listed with pmprobe
 ALWAYS_EXISTS_MONITOR = [
     "kernel.all.pressure.cpu.some.total",
     "hinv.cpu.clock",
@@ -1219,12 +1219,12 @@ def nested_search(keyword, node):
                 yield res
 
 
-def get_monitoring_metrics(SuperTwin,metric_type):
+def get_monitoring_metrics(SuperTwin, metric_type):
     """
 
     Parameters
     ----------
-    SuperTwin : 
+    SuperTwin :
         Created or reconstructed supertwin object
     metric_type : String
         must be HWTelemetry for 'pmu' metrics or SWTelemetry for 'pcp' metrics.
@@ -1237,58 +1237,67 @@ def get_monitoring_metrics(SuperTwin,metric_type):
     """
     db = get_mongo_database(SuperTwin.name, SuperTwin.mongodb_addr)["twin"]
     twin_data = loads(dumps(db.find({"_id": ObjectId(SuperTwin.mongodb_id)})))
-    dtdl_twin = twin_data[0]['twin_description']
+    dtdl_twin = twin_data[0]["twin_description"]
 
     metrics = []
     for key, values in dtdl_twin.items():
-        for metric in values['contents']:
-            if metric['@type'] == metric_type:
-                metrics.append({"metric_name":metric['SamplerName'],"type":get_metric_type(metric["SamplerName"])})
+        for metric in values["contents"]:
+            if metric["@type"] == metric_type:
+                metrics.append(
+                    {
+                        "metric_name": metric["SamplerName"],
+                        "type": get_metric_type(metric["SamplerName"]),
+                    }
+                )
 
     return metrics
 
 
 def get_metric_type(param_metric):
-    
-    _type = ''
 
-    f_metric = ''
-    if(type(param_metric) == list):
+    _type = ""
+
+    f_metric = ""
+    if type(param_metric) == list:
         f_metric = param_metric[0]
     else:
         f_metric = param_metric
 
-    if(f_metric.find('percpu') != -1):                                                                
-        _type = 'percpu'                                                                            
-    elif(f_metric.find('pernode') != -1):                                                             
-        _type = 'pernode'                                                                           
-    elif(f_metric.find('kernel') != -1 and f_metric.find("kernel.all") == -1):                                                              
-        _type = 'kernel'
-    elif(f_metric.find('kernel.all') != -1):
-        _type = 'kernel.all'
-    elif(f_metric.find('numa') != -1):                                                                
-        _type = 'pernode'                                                                           
-    elif(f_metric.find('mem') != -1):                                                                 
-        _type = 'mem'                                                                               
-    elif(f_metric.find('network.interface') != -1):                                                   
-        _type = 'network.interface'   
-    elif(f_metric.find('network') != -1 and f_metric.find("network.interface") == -1): #Only top level metrics
-        _type = 'network.top'    
-    elif(f_metric.find('disk.dev') != -1):
-        _type = 'disk.dev'
-    elif(f_metric.find('disk.all') != -1):
-        _type = 'disk.all'
-    elif(f_metric.find('UNC') != -1):                                                      
-        _type = 'uncore PMU'
-    elif(f_metric.find('OFFC') != -1):                                                      
-        _type = 'offcore PMU'                                                                            
-    elif(f_metric.find('ENERGY') != -1):                                                              
-        _type = 'energy'                                                                           
-    elif(f_metric.find(':') != -1 and f_metric.find('UNC') == -1 and f_metric.find('OFFC') == -1):                                               
-        _type = 'core PMU'
-    elif(f_metric.find('proc.') != -1):
-        _type = 'proc'
+    if f_metric.find("percpu") != -1:
+        _type = "percpu"
+    elif f_metric.find("pernode") != -1:
+        _type = "pernode"
+    elif f_metric.find("kernel") != -1 and f_metric.find("kernel.all") == -1:
+        _type = "kernel"
+    elif f_metric.find("kernel.all") != -1:
+        _type = "kernel.all"
+    elif f_metric.find("numa") != -1:
+        _type = "pernode"
+    elif f_metric.find("mem") != -1:
+        _type = "mem"
+    elif f_metric.find("network.interface") != -1:
+        _type = "network.interface"
+    elif (
+        f_metric.find("network") != -1
+        and f_metric.find("network.interface") == -1
+    ):  # Only top level metrics
+        _type = "network.top"
+    elif f_metric.find("disk.dev") != -1:
+        _type = "disk.dev"
+    elif f_metric.find("disk.all") != -1:
+        _type = "disk.all"
+    elif f_metric.find("UNC") != -1:
+        _type = "uncore PMU"
+    elif f_metric.find("OFFC") != -1:
+        _type = "offcore PMU"
+    elif f_metric.find("ENERGY") != -1:
+        _type = "energy"
+    elif (
+        f_metric.find(":") != -1
+        and f_metric.find("UNC") == -1
+        and f_metric.find("OFFC") == -1
+    ):
+        _type = "core PMU"
+    elif f_metric.find("proc.") != -1:
+        _type = "proc"
     return _type
-
-
-

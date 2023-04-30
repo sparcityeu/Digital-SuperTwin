@@ -71,11 +71,13 @@ def generate_pcp2influxdb_config(SuperTwin):
     source_name = SuperTwin.name
     metrics = SuperTwin.monitor_metrics
     always_have_metrics = utils.always_have_metrics("monitor", SuperTwin)
- 
 
     for item in always_have_metrics:
         if item not in metrics and item in SuperTwin.pcp_metrics:
             metrics.append(item)
+
+    if "hinv.cpu.clock" not in metrics:
+        metrics.append("hinv.cpu.clock")
 
     config_lines = [
         "[options]" + "\n",

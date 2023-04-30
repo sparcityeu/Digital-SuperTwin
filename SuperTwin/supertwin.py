@@ -100,9 +100,7 @@ class SuperTwin:
         self.pcp_pids = utils.get_pcp_pids(self)
 
         self.influxdb_name = self.name
-        self.influx_datasource = utils.get_influx_database(
-            self.influxdb_addr
-        )
+        self.influx_datasource = utils.get_influx_database(self.influxdb_addr)
         utils.create_influx_database(
             self.influx_datasource, self.influxdb_name
         )
@@ -118,9 +116,15 @@ class SuperTwin:
             self,
         )
         print("Collection id:", self.mongodb_id)
-        self.pcp_metrics = [x["metric_name"] for x in utils.get_monitoring_metrics(self,"SWTelemetry")]
-        self.pmu_metrics = [x["metric_name"] for x in utils.get_monitoring_metrics(self,"HWTelemetry")]
-        
+        self.pcp_metrics = [
+            x["metric_name"]
+            for x in utils.get_monitoring_metrics(self, "SWTelemetry")
+        ]
+        self.pmu_metrics = [
+            x["metric_name"]
+            for x in utils.get_monitoring_metrics(self, "HWTelemetry")
+        ]
+
         # benchmark members
         self.benchmarks = 0
         self.benchmark_results = 0
@@ -133,6 +137,7 @@ class SuperTwin:
         self.monitor_metrics = []
         self.observation_metrics = []  # Start empty
         self.reconfigure_observation_events_beginning()  ##Only add available power
+        self.generate_roofline_dashboard()
 
         self.monitor_pid = sampling.main(self)
         utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
@@ -188,9 +193,15 @@ class SuperTwin:
             query_twin_state(self.name, self.mongodb_id, self.mongodb_addr)
         )
         self.kill_zombie_monitors()
-        
-        self.pcp_metrics = [x["metric_name"] for x in utils.get_monitoring_metrics(self,"SWTelemetry")]
-        self.pmu_metrics = [x["metric_name"] for x in utils.get_monitoring_metrics(self,"HWTelemetry")]
+
+        self.pcp_metrics = [
+            x["metric_name"]
+            for x in utils.get_monitoring_metrics(self, "SWTelemetry")
+        ]
+        self.pmu_metrics = [
+            x["metric_name"]
+            for x in utils.get_monitoring_metrics(self, "HWTelemetry")
+        ]
         self.update_twin_document__assert_new_monitor_pid()
         print(
             "SuperTwin:{} id:{} is reconstructed from db..".format(
@@ -484,7 +495,6 @@ class SuperTwin:
         print("STREAM benchmark result added to Digital Twin")
 
     def add_stream_benchmark(self):
-
         (
             stream_modifiers,
             maker,
@@ -664,7 +674,10 @@ class SuperTwin:
 
     def reconfigure_observation_events_beginning(self):
 
-        always_have_metrics = utils.always_have_metrics("observation", self)
+        always_have_metrics = [
+            item.replace("perfevent.hwcounters.", "")
+            for item in self.pmu_metrics
+        ]  # utils.always_have_metrics("observation", self)
 
         for item in always_have_metrics:
             if item not in self.observation_metrics:
