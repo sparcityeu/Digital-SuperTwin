@@ -1249,6 +1249,10 @@ def get_monitoring_metrics(SuperTwin, metric_type):
                         "type": get_metric_type(metric["SamplerName"]),
                     }
                 )
+                if "pmu_group" in metric.keys():
+                    metrics[-1]["pmu_group"] = metric["pmu_group"]
+                if "PMUName" in metric.keys():
+                    metrics[-1]["pmu_name"] = metric["PMUName"]
 
     return metrics
 

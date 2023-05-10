@@ -207,20 +207,50 @@ def reconfigure_perfevent(SuperTwin):
     print("Reconfigured remote perfevent pmda")
 
 
-def main(SuperTwin):
+def begin_sampling_pcp(SuperTwin):
     pcp_conf_name = generate_pcp2influxdb_config(SuperTwin)
     print("pcp2influxdb configuration:", pcp_conf_name, "generated")
 
     # This command is executed on monitoring server
     # Metrics to be monitored are defined in pcp_conf_name
     # Then pcp2influxdb connects to monitored server to get metric resutls.
-    p0_command = "pcp2influxdb -t 1 -c " + pcp_conf_name + " :configured"
+    p0_command = (
+        "pcp2influxdb -t 1 -c "
+        + pcp_conf_name
+        + "  --ignore-unknown :configured"
+    )
     p0 = Popen(shlex.split(p0_command))
     print(
         "A daemon with pid:", p0.pid, "is started monitoring", SuperTwin.name
     )
 
     return p0.pid
+
+
+def begin_sampling_pmu(SuperTwin):
+    pcp_conf_name = generate_pcp2influxdb_config_observation(
+        SuperTwin, SuperTwin.monitor_tag
+    )
+    print("pcp2influxdb configuration:", pcp_conf_name, "generated")
+
+    # This command is executed on monitoring server
+    # Metrics to be monitored are defined in pcp_conf_name
+    # Then pcp2influxdb connects to monitored server to get metric resutls.
+    p0_command = (
+        "pcp2influxdb -t 1 -c "
+        + pcp_conf_name
+        + " --ignore-unknown :configured"
+    )
+    p0 = Popen(shlex.split(p0_command))
+    print(
+        "A daemon with pid:", p0.pid, "is started monitoring", SuperTwin.name
+    )
+
+    return p0.pid
+
+
+def main(SuperTwin):
+    return (begin_sampling_pcp(SuperTwin), begin_sampling_pmu(SuperTwin))
 
 
 if __name__ == "__main__":

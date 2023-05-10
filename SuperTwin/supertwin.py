@@ -20,6 +20,7 @@ import observation_standard
 import roofline_dashboard
 import monitoring_dashboard
 import uuid
+import subprocess
 from bson.objectid import ObjectId
 from bson.json_util import dumps
 from bson.json_util import loads
@@ -116,14 +117,7 @@ class SuperTwin:
             self,
         )
         print("Collection id:", self.mongodb_id)
-        self.pcp_metrics = [
-            x["metric_name"]
-            for x in utils.get_monitoring_metrics(self, "SWTelemetry")
-        ]
-        self.pmu_metrics = [
-            x["metric_name"]
-            for x in utils.get_monitoring_metrics(self, "HWTelemetry")
-        ]
+        self.__load_pcp_and_pmu_metrics()
 
         # benchmark members
         self.benchmarks = 0
@@ -136,12 +130,14 @@ class SuperTwin:
         # self.observation_metrics = utils.read_observation_metrics() #This may become problematic with multinode
         self.monitor_metrics = []
         self.observation_metrics = []  # Start empty
-        self.reconfigure_observation_events_beginning()  ##Only add available power
-        self.generate_roofline_dashboard()
+        self.reconfigure_observation_events_with_pmu_events()  ##Only add available power
+        # self.generate_roofline_dashboard()
 
-        self.monitor_pid = sampling.main(self)
+        self.monitor_pid = sampling.begin_sampling_pcp(self)
+        self.monitor_pmu_pid = sampling.begin_sampling_pmu(self)
+        self.kill_zombie_monitors()
+
         utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
-        self.kill_zombie_monitors()  ##If there is any zombie monitor sampler
         self.generate_monitoring_dashboard()
 
         ##benchmark functions
@@ -192,22 +188,37 @@ class SuperTwin:
         self.__load_twin_state(
             query_twin_state(self.name, self.mongodb_id, self.mongodb_addr)
         )
+        self.monitor_pmu_pid = -99
         self.kill_zombie_monitors()
 
-        self.pcp_metrics = [
-            x["metric_name"]
-            for x in utils.get_monitoring_metrics(self, "SWTelemetry")
-        ]
-        self.pmu_metrics = [
-            x["metric_name"]
-            for x in utils.get_monitoring_metrics(self, "HWTelemetry")
-        ]
+        self.__load_pcp_and_pmu_metrics()
+        self.reconfigure_observation_events_with_pmu_events()  ##Only add available power
         self.update_twin_document__assert_new_monitor_pid()
         print(
             "SuperTwin:{} id:{} is reconstructed from db..".format(
                 self.name, self.uid
             )
         )
+
+    def __load_pcp_and_pmu_metrics(self):
+        self.pcp_metrics = [
+            x["metric_name"]
+            for x in utils.get_monitoring_metrics(self, "SWTelemetry")
+        ]
+        self.pmu_metrics = {}
+        appended_metric_names = []
+        for x in utils.get_monitoring_metrics(self, "HWTelemetry"):
+            if x["pmu_group"] not in self.pmu_metrics:
+                self.pmu_metrics[x["pmu_group"]] = []
+
+            if x["metric_name"] not in appended_metric_names:
+                self.pmu_metrics[x["pmu_group"]].append(
+                    {
+                        "metric_name": x["metric_name"],
+                        "pmu_name": x["pmu_name"],
+                    }
+                )
+                appended_metric_names.append(x["metric_name"])
 
     def __load_twin_state(self, meta):
         self.monitor_metrics = meta["twin_state"]["monitor_metrics"]
@@ -246,7 +257,7 @@ class SuperTwin:
                     continue
 
                 print("pid:", pid, "state:", state, "conf_file:", conf_file)
-                if pid != self.monitor_pid:
+                if pid != self.monitor_pid and pid != self.monitor_pmu_pid:
                     print("Killing zombie monitoring sampler with pid:", pid)
                     detect_utils.cmd("sudo kill " + str(pid))
 
@@ -255,7 +266,7 @@ class SuperTwin:
         db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
         print("Killing existed monitor sampler with pid:", self.monitor_pid)
         detect_utils.cmd("sudo kill " + str(self.monitor_pid))
-        new_pid = sampling.main(self)
+        new_pid = sampling.begin_sampling_pcp(self)
         print("New sampler pid: ", new_pid)
         to_new = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
         # print(to_new)
@@ -672,23 +683,46 @@ class SuperTwin:
         self.reconfigure_perfevent()
         utils.register_twin_state(self)
 
-    def reconfigure_observation_events_beginning(self):
+    def reconfigure_observation_events_with_pmu_events(self):
 
-        always_have_metrics = [
-            item.replace("perfevent.hwcounters.", "")
-            for item in self.pmu_metrics
-        ]  # utils.always_have_metrics("observation", self)
+        always_have_metrics = []
+        for pmu_group in self.pmu_metrics.keys():
+            for pmu_event in self.pmu_metrics[pmu_group]:
+                always_have_metrics.append(
+                    pmu_event["metric_name"].replace(
+                        "perfevent.hwcounters.", ""
+                    )
+                )
 
         for item in always_have_metrics:
             if item not in self.observation_metrics:
                 self.observation_metrics.append(item)
 
-        """
-        writer = open("last_observation_metrics.txt", "w+")
-        for item in metrics:
-            writer.write(item + "\n")
+        writer = open("perfevent.conf", "w+")
+        for pmu_group in self.pmu_metrics.keys():
+            writer.write("[" + pmu_group + "]" + "\n")
+            for pmu_event in self.pmu_metrics[pmu_group]:
+                writer.write(pmu_event["pmu_name"] + "\n")
         writer.close()
-        """
+
+        subprocess.run(
+            [
+                "cp",
+                "./perfevent.conf",
+                "./perfevent_" + self.name + ".conf",
+            ]
+        )
+        print("Generated new perfevent pmda configuration..")
+        sampling.reconfigure_perfevent(self)
+        utils.register_twin_state(self)
+
+    def reconfigure_observation_events_beginning(self):
+
+        always_have_metrics = utils.always_have_metrics("observation", self)
+
+        for item in always_have_metrics:
+            if item not in self.observation_metrics:
+                self.observation_metrics.append(item)
 
         self.reconfigure_perfevent()
         utils.register_twin_state(self)
