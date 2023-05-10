@@ -120,8 +120,13 @@ def read_env():
     env_variables = {}
     with open("env.txt", "r") as env:
         for x in env.readlines():
-            key, value = x.split("=")
-            env_variables[key] = value.strip("\n")
+            try:
+                key, value = x.split("=")
+                env_variables[key] = value.strip("\n")
+            except: ##GRAFANA TOKEN MAY INCLUDE ADDITIONAL = SIGNS
+                key = "GRAFANA_TOKEN"
+                value = x.split("GRAFANA_TOKEN=")[1]
+                env_variables[key] = value.strip("\n")
 
     return (
         env_variables["MONGODB_SERVER"],

@@ -1,4 +1,4 @@
-def ret_ts_panel(y, title):
+def ret_ts_panel(datasource, y, title):
     ts = {
         "id": 2,
         "gridPos": {
@@ -11,7 +11,7 @@ def ret_ts_panel(y, title):
         "title": title,
         "datasource": {
             "type": "influxdb",
-            "uid": "54U16937k"
+            "uid": datasource
         },
         "fieldConfig": {
             "defaults": {
@@ -136,7 +136,7 @@ def ret_query(alias, measurement, field, tag):
             }
     return query
 
-def ret_gauge_panel(title, y):
+def ret_gauge_panel(datasource, title, y):
 
     gp = {
         "id": 3,
@@ -150,7 +150,7 @@ def ret_gauge_panel(title, y):
         "title": title,
         "datasource": {
             "type": "influxdb",
-            "uid": "54U16937k"
+            "uid": datasource
         },
         "pluginVersion": "9.2.2",
         "fieldConfig": {
