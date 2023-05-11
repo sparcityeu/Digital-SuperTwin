@@ -259,7 +259,7 @@ class SuperTwin:
                 print("pid:", pid, "state:", state, "conf_file:", conf_file)
                 if pid != self.monitor_pid and pid != self.monitor_pmu_pid:
                     print("Killing zombie monitoring sampler with pid:", pid)
-                    detect_utils.cmd("sudo kill " + str(pid))
+                    detect_utils.cmd("sudo kill -9 " + str(pid))
 
     def update_twin_document__assert_new_monitor_pid(self):
 

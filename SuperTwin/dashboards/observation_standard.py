@@ -128,7 +128,7 @@ def template_dict(observation_id):
 def find_from_likwid_pin(affinity):
 
     fields = affinity.split(" ")
-    affinity = fields[2]
+    affinity = fields[3]
 
     involved = {}
     socket_threads = affinity.split("@")
@@ -191,8 +191,8 @@ def main(SuperTwin, observation):
             metrics_to_vis.append(item)
             
     for metric in metrics_to_vis:
-        ts = ps.ret_ts_panel(next_y(), metric) ##For metric, get time series panel
-        gp = ps.ret_gauge_panel(metric + " MEAN", current_y()) ##For metric, get gauge panel
+        ts = ps.ret_ts_panel(SuperTwin.grafana_datasource, next_y(), metric) ##For metric, get time series panel
+        gp = ps.ret_gauge_panel(SuperTwin.grafana_datasource, metric + " MEAN", current_y()) ##For metric, get gauge panel
         cpu_field, metric_field = get_field_and_metric(SuperTwin, involved, metric)
         
         for _id in observation["elements"].keys():
