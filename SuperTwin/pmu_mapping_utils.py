@@ -132,7 +132,3 @@ def get(pmu_name, pmu_generic_event):
             "Module not initialized. Please call initialize() before using get()."
         )
     return copy.deepcopy(_COMMON_PMU_DICT[pmu_name][pmu_generic_event])
-
-
-initialize()
-add_configuration("amd64_fam15_pmu_emapping.txt")
