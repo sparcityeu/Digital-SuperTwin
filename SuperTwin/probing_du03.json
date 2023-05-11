@@ -2716,7 +2716,7 @@
                 ["ANY_DATA_CACHE_FILLS_FROM_SYSTEM:MEM_IO_RMT", "Any Data Cache fills by data source. Fill from DRAM or IO connected in different node."],
                 ["L1_DTLB_MISS:TLB_RELOAD_1G_L2_MISS", "L1 Data TLB misses. Data TLB reload to a 1GB page that missed in the L2 TLB."],
                 ["L1_DTLB_MISS:TLB_RELOAD_2M_L2_MISS", "L1 Data TLB misses. Data TLB reload to a 2MB page that missed in the L2 TLB."],
-                ["L1_DTLB_MISS:TLB_RELOAD_COALESCED_PAGE_MISS", "L1 Data TLB misses. Data TLB reload to a coalesced page that also missed in the L2 TLB."],
+                ["z_DTLB_MISS:TLB_RELOAD_COALESCED_PAGE_MISS", "L1 Data TLB misses. Data TLB reload to a coalesced page that also missed in the L2 TLB."],
                 ["L1_DTLB_MISS:TLB_RELOAD_4K_L2_MISS", "L1 Data TLB misses. Data TLB reload to a 4KB page that missed in the L2 TLB."],
                 ["L1_DTLB_MISS:TLB_RELOAD_1G_L2_HIT", "L1 Data TLB misses. Data TLB reload to a 1GB page that hit in the L2 TLB."],
                 ["L1_DTLB_MISS:TLB_RELOAD_2M_L2_HIT", "L1 Data TLB misses. Data TLB reload to a 2MB page that hit in the L2 TLB."],

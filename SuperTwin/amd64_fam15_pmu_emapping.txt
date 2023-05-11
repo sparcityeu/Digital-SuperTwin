@@ -1,0 +1,2 @@
+[amd64_fam15h]
+L1_cache_access : L1_cache_miss + L1_cache_hit
