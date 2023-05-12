@@ -40,6 +40,22 @@ def _fill_default_pmu_event_names():
     _DEFAULT_GENERIC_PMU_EVENTS.append("L3_CACHE_HIT")
 
 
+def _fill_common_pmu_dict__intel_common():
+    """
+    Events that all Intel processors have.
+    """
+    key = "ix86arch"
+    _COMMON_PMU_DICT[key] = {}
+    _COMMON_PMU_DICT[key]["RETIRED_INSTRUCTIONS"] = ["INSTRUCTIONS_RETIRED"]
+    _COMMON_PMU_DICT[key]["RETIRED_BRANCH_INSTRUCTIONS"] = [
+        "BRANCH_INSTRUCTIONS_RETIRED"
+    ]
+
+
+def _fill_common_pmu_dict__intel_icl():
+    pass
+
+
 def _fill_common_pmu_dict__amd64_common():
     """
     Events that all AMD processors have.
@@ -87,6 +103,8 @@ def initialize():
         _fill_common_pmu_dict__amd64_fam19h_zen3()
 
         ## Intel init.
+        _fill_common_pmu_dict__intel_common()
+        _fill_common_pmu_dict__intel_icl()
 
         _initialized = True
 
@@ -98,24 +116,31 @@ def add_configuration(file_name):
 
     pmu_name = None
     for line in lines:
-        line = line.strip()
+        line = re.sub(r"\s", "", line)
         if len(line) == 0:
             continue
         if line.startswith("["):
-            pmu_name = line.replace("[", "").replace("]", "")
-            _COMMON_PMU_DICT[pmu_name] = {}
+            pmu_line = line.replace("[", "").replace("]", "")
+            pmu_name = ""
+            pmu_conf = ""
+            if ":" in pmu_line:
+                pmu_name = pmu_line.split(":")[0]
+                pmu_conf = pmu_line.split(":")[1]
+            else:
+                pmu_name = pmu_line
+
+            if (
+                "override" in pmu_conf
+                or pmu_name not in _COMMON_PMU_DICT.keys()
+            ):
+                _COMMON_PMU_DICT[pmu_name] = {}
+
         else:
-            if pmu_name == None:
+            if pmu_name == "":
                 raise RuntimeError(
-                    """File format is erronous!! follow the structure below
-[pmu_name]
-<generic_event_name1> : <specific_pmu_event_1>
-<generic_event_name2> : <specific_pmu_event_1> <OP> <specific_pmu_event_2>
-(<OP>: + || - || * || / )
-"""
+                    "File format is erronous!!" + help_conf_file()
                 )
             else:
-                line = re.sub(r"\s", "", line)
                 line = line.split(":")
                 common_event_name = line[0]
                 common_event_formula = re.split(r"(\+|\-|\*|/)", line[1])
@@ -132,3 +157,18 @@ def get(pmu_name, pmu_generic_event):
             "Module not initialized. Please call initialize() before using get()."
         )
     return copy.deepcopy(_COMMON_PMU_DICT[pmu_name][pmu_generic_event])
+
+
+def help_conf_file():
+    return """Follow the structure below
+[pmu_name] : <(add | override)>
+<generic_event_name1> : <specific_pmu_event_1>
+<generic_event_name2> : <specific_pmu_event_1> <OP> <specific_pmu_event_2>
+(<OP>: + || - || * || / )
+([pmu_name] : override) -> deletes all default pmu events defined with this pmu_name
+([pmu_name] : add) -> adds new pmu generic events with formula, if previously defined it overrides the formula
+"""
+
+
+initialize()
+add_configuration("amd64_fam15_pmu_emapping.txt")
