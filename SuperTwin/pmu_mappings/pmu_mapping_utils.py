@@ -7,19 +7,12 @@ Created on Wed May 10 13:29:41 2023
 
 import copy
 import re
+import amd64_common
+import amd64_fam17h_zen2
+import amd64_fam17h_zen3
+import intel_common
 
 _DEFAULT_GENERIC_PMU_EVENTS = []
-_COMMON_PMU_DICT = {
-    "pmu_name": {
-        "generic_pmu_event_name": [
-            "specific_pmu_event",  ## sub pmu event name
-            "*",  ## operator
-            "specific_pmu_event_2",  ## sub pmu event name 2
-        ]
-    }
-}
-
-_initialized = False
 
 
 def _fill_default_pmu_event_names():
@@ -40,56 +33,17 @@ def _fill_default_pmu_event_names():
     _DEFAULT_GENERIC_PMU_EVENTS.append("L3_CACHE_HIT")
 
 
-def _fill_common_pmu_dict__intel_common():
-    """
-    Events that all Intel processors have.
-    """
-    key = "ix86arch"
-    _COMMON_PMU_DICT[key] = {}
-    _COMMON_PMU_DICT[key]["RETIRED_INSTRUCTIONS"] = ["INSTRUCTIONS_RETIRED"]
-    _COMMON_PMU_DICT[key]["RETIRED_BRANCH_INSTRUCTIONS"] = [
-        "BRANCH_INSTRUCTIONS_RETIRED"
-    ]
+_COMMON_PMU_DICT = {
+    "pmu_name": {
+        "generic_pmu_event_name": [
+            "specific_pmu_event",  ## sub pmu event name
+            "*",  ## operator
+            "specific_pmu_event_2",  ## sub pmu event name 2
+        ]
+    }
+}
 
-
-def _fill_common_pmu_dict__intel_icl():
-    pass
-
-
-def _fill_common_pmu_dict__amd64_common():
-    """
-    Events that all AMD processors have.
-    """
-
-    key = "amd64_common"
-    _COMMON_PMU_DICT[key] = {}
-    _COMMON_PMU_DICT[key]["RETIRED_INSTRUCTIONS"] = ["RETIRED_INSTRUCTIONS"]
-    _COMMON_PMU_DICT[key]["RETIRED_BRANCH_INSTRUCTIONS"] = [
-        "RETIRED_BRANCH_INSTRUCTIONS"
-    ]
-    _COMMON_PMU_DICT[key]["RAPL_ENERGY_PKG"] = ["RAPL_ENERGY_PKG"]
-
-    ## OTHER COMMON EVENTS GOES HERE
-
-
-def _fill_common_pmu_dict__amd64_fam17h_zen2():
-    """
-    Events that only zen2 processors have
-    """
-    key = "amd64_fam17h_zen2"
-    _COMMON_PMU_DICT[key] = copy.deepcopy(_COMMON_PMU_DICT["amd64_common"])
-    _COMMON_PMU_DICT[key]["L1_CACHE_MISS"] = ["AMD64_FAM17H_L1_MISS_EVENT"]
-    _COMMON_PMU_DICT[key]["L1_CACHE_HIT"] = ["AMD64_FAM17H_L1_HIT_EVENT"]
-
-
-def _fill_common_pmu_dict__amd64_fam19h_zen3():
-    """
-    Events that only zen3 processors have
-    """
-    key = "amd64_fam19h_zen3"
-    _COMMON_PMU_DICT[key] = copy.deepcopy(_COMMON_PMU_DICT["amd64_common"])
-    _COMMON_PMU_DICT[key]["L1_CACHE_MISS"] = ["AMD64_FAM19H_L1_MISS_EVENT"]
-    _COMMON_PMU_DICT[key]["L1_CACHE_HIT"] = ["AMD64_FAM19H_L1_HIT_EVENT"]
+_initialized = False
 
 
 def initialize():
@@ -98,13 +52,16 @@ def initialize():
         _fill_default_pmu_event_names()
 
         ## AMD init.
-        _fill_common_pmu_dict__amd64_common()
-        _fill_common_pmu_dict__amd64_fam17h_zen2()
-        _fill_common_pmu_dict__amd64_fam19h_zen3()
-
+        amd64_common.initialize(_DEFAULT_GENERIC_PMU_EVENTS, _COMMON_PMU_DICT)
+        amd64_fam17h_zen2.initialize(
+            _DEFAULT_GENERIC_PMU_EVENTS, _COMMON_PMU_DICT
+        )
+        amd64_fam17h_zen3.initialize(
+            _DEFAULT_GENERIC_PMU_EVENTS, _COMMON_PMU_DICT
+        )
         ## Intel init.
-        _fill_common_pmu_dict__intel_common()
-        _fill_common_pmu_dict__intel_icl()
+
+        intel_common.initialize(_DEFAULT_GENERIC_PMU_EVENTS, _COMMON_PMU_DICT)
 
         _initialized = True
 
@@ -156,7 +113,21 @@ def get(pmu_name, pmu_generic_event):
         raise RuntimeError(
             "Module not initialized. Please call initialize() before using get()."
         )
-    return copy.deepcopy(_COMMON_PMU_DICT[pmu_name][pmu_generic_event])
+
+    if pmu_name not in _COMMON_PMU_DICT.keys():
+        print("pmu_name:", pmu_name, "not found in pmu_mapping_utils")
+    else:
+        if pmu_generic_event not in _COMMON_PMU_DICT[pmu_name]:
+            print(
+                "pmu_generic_event:",
+                pmu_generic_event,
+                "not found in pmu_mapping_utils for pmu_name:",
+                pmu_name,
+            )
+
+    return copy.deepcopy(
+        _COMMON_PMU_DICT.get(pmu_name, {}).get(pmu_generic_event, "")
+    )
 
 
 def help_conf_file():
@@ -171,4 +142,4 @@ def help_conf_file():
 
 
 initialize()
-add_configuration("amd64_fam15_pmu_emapping.txt")
+# add_configuration("amd64_fam15_pmu_emapping.txt")

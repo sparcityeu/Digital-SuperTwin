@@ -6,6 +6,7 @@ sys.path.append("observation")
 sys.path.append("twin_description")
 sys.path.append("sampling")
 sys.path.append("dashboards")
+sys.path.append("pmu_mappings")
 
 import utils
 import remote_probe
@@ -17,6 +18,7 @@ import adcarm_benchmark
 import observation
 import influx_help
 import observation_standard
+import pmu_mapping_utils
 import roofline_dashboard
 import monitoring_dashboard
 import uuid
@@ -89,6 +91,7 @@ class SuperTwin:
             self.grafana_addr,
             self.grafana_token,
         ) = utils.read_env()
+
         self.grafana_datasource = utils.create_grafana_datasource(
             self.name,
             self.uid,
@@ -117,8 +120,8 @@ class SuperTwin:
             self,
         )
         print("Collection id:", self.mongodb_id)
-        self.__load_pcp_and_pmu_metrics()
 
+        self.__load_pcp_and_pmu_metrics()
         # benchmark members
         self.benchmarks = 0
         self.benchmark_results = 0
@@ -215,7 +218,7 @@ class SuperTwin:
                 self.pmu_metrics[x["pmu_group"]].append(
                     {
                         "metric_name": x["metric_name"],
-                        "pmu_name": x["pmu_name"],
+                        "pmu_event": x["pmu_name"],
                     }
                 )
                 appended_metric_names.append(x["metric_name"])
@@ -685,26 +688,33 @@ class SuperTwin:
 
     def reconfigure_observation_events_with_pmu_events(self):
 
-        always_have_metrics = []
-        for pmu_group in self.pmu_metrics.keys():
-            for pmu_event in self.pmu_metrics[pmu_group]:
-                always_have_metrics.append(
-                    pmu_event["metric_name"].replace(
-                        "perfevent.hwcounters.", ""
-                    )
-                )
-
-        for item in always_have_metrics:
-            if item not in self.observation_metrics:
-                self.observation_metrics.append(item)
-
         writer = open("perfevent.conf", "w+")
-        for pmu_group in self.pmu_metrics.keys():
-            writer.write("[" + pmu_group + "]" + "\n")
-            for pmu_event in self.pmu_metrics[pmu_group]:
-                writer.write(pmu_event["pmu_name"] + "\n")
-        writer.close()
+        added_events = {}
+        for pmu_name in self.pmu_metrics.keys():
+            writer.write("[" + pmu_name + "]" + "\n")
+            added_events[pmu_name] = []
+            for (
+                pmu_generic_event
+            ) in pmu_mapping_utils._DEFAULT_GENERIC_PMU_EVENTS:
+                formula = [
+                    pmu_event
+                    for pmu_event in pmu_mapping_utils.get(
+                        pmu_name, pmu_generic_event
+                    )
+                    if pmu_event.isupper()
+                ]
 
+                for event in formula:
+                    if event not in added_events and event != "":
+                        writer.write(event + "\n")
+                        added_events[pmu_name].append(event)
+
+                        observation_event = event.replace(":", "_")
+                        if observation_event not in self.observation_metrics:
+                            self.observation_metrics.append(
+                                observation_event.replace(":", "_")
+                            )
+        writer.close()
         subprocess.run(
             [
                 "cp",
@@ -864,6 +874,11 @@ def resolve_test(my_superTwin, threads):
 
 
 if __name__ == "__main__":
+
+    ## CONFIGURE PMU_MAPPING_UTILS
+
+    pmu_mapping_utils.initialize()
+    # add_configuration("amd64_fam15_pmu_emapping.txt")
 
     # user_name = "ftasyaran"
 

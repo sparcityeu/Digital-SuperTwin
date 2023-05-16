@@ -113,11 +113,6 @@ def generate_pcp2influxdb_config_observation(SuperTwin, observation_id):
     sourceIP = SuperTwin.addr
     source_name = SuperTwin.name
     metrics = SuperTwin.observation_metrics
-    always_have_metrics = utils.always_have_metrics("observation", SuperTwin)
-
-    for item in always_have_metrics:
-        if item not in metrics:
-            metrics.append(item)
 
     metrics = [x.strip("node").strip(" ") for x in metrics]
     metrics = [
