@@ -23,7 +23,9 @@ def _fill_common_pmu_dict__intel_common(_COMMON_PMU_DICT):
 
 def _fill_common_pmu_dict__intel_icl(_COMMON_PMU_DICT):
     key = "icl"
+    alias = "icl"
     _COMMON_PMU_DICT[key] = copy.deepcopy(_COMMON_PMU_DICT["intel_common"])
+    _COMMON_PMU_DICT[key]["alias"] = alias
 
 
 def initialize(_DEFAULT_GENERIC_PMU_EVENTS, _COMMON_PMU_DICT):

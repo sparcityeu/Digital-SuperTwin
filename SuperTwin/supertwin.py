@@ -195,8 +195,10 @@ class SuperTwin:
         self.kill_zombie_monitors()
 
         self.__load_pcp_and_pmu_metrics()
-        self.reconfigure_observation_events_with_pmu_events()  ##Only add available power
         self.update_twin_document__assert_new_monitor_pid()
+        self.reconfigure_observation_events_with_pmu_events()  ##Only add available power
+        self.monitor_pmu_pid = sampling.begin_sampling_pmu(self)
+
         print(
             "SuperTwin:{} id:{} is reconstructed from db..".format(
                 self.name, self.uid
@@ -691,8 +693,10 @@ class SuperTwin:
         writer = open("perfevent.conf", "w+")
         added_events = {}
         for pmu_name in self.pmu_metrics.keys():
-            writer.write("[" + pmu_name + "]" + "\n")
-            added_events[pmu_name] = []
+            pmu_alias = pmu_mapping_utils.get(pmu_name, "alias")
+
+            writer.write("[" + pmu_alias + "]" + "\n")
+            added_events[pmu_alias] = []
             for (
                 pmu_generic_event
             ) in pmu_mapping_utils._DEFAULT_GENERIC_PMU_EVENTS:
@@ -707,7 +711,7 @@ class SuperTwin:
                 for event in formula:
                     if event not in added_events and event != "":
                         writer.write(event + "\n")
-                        added_events[pmu_name].append(event)
+                        added_events[pmu_alias].append(event)
 
                         observation_event = event.replace(":", "_")
                         if observation_event not in self.observation_metrics:

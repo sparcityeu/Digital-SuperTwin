@@ -13,7 +13,9 @@ def _fill_common_pmu_dict__amd64_common(_COMMON_PMU_DICT):
     """
 
     key = "amd64_common"
+    alias = key
     _COMMON_PMU_DICT[key] = {}
+    _COMMON_PMU_DICT[key]["alias"] = alias
     _COMMON_PMU_DICT[key]["RETIRED_INSTRUCTIONS"] = ["RETIRED_INSTRUCTIONS"]
     _COMMON_PMU_DICT[key]["RETIRED_BRANCH_INSTRUCTIONS"] = [
         "RETIRED_BRANCH_INSTRUCTIONS"
@@ -24,7 +26,9 @@ def _fill_common_pmu_dict__amd64_common(_COMMON_PMU_DICT):
 
 def _fill_common_pmu_dict__amd64_rapl(_COMMON_PMU_DICT):
     key = "amd64_rapl"
+    alias = key
     _COMMON_PMU_DICT[key] = {}
+    _COMMON_PMU_DICT[key]["alias"] = alias
     _COMMON_PMU_DICT[key]["RAPL_ENERGY_PKG"] = ["RAPL_ENERGY_PKG"]
 
 

@@ -3,6 +3,24 @@
 """
 Created on Wed May 10 13:29:41 2023
 @author: rt7
+
+usage:
+    initialize()
+    add_configuration("amd64_fam15_pmu_emapping.txt") // optional
+    
+    get("amd64_fam17h","FP_RETIRED") 
+        returns ["pmu_specific_event1","<op>","...param"]
+        op = (+ , - , * , /)
+        param = (pmu_specific_event2 || <numeric>)
+        
+    before to create pcp pmu configuration file make sure you put "alias"
+    as a pmu name.
+        
+        libpfm4 reports "amd64_fam17h_zen2" but pcp reports "amd64_fam17h" only
+                        | used as pmu name|                  | used as alias |
+                        
+        if both are equal set alias as pmu_name reported by showevtinfo of libpfm4
+    
 """
 
 import copy
@@ -35,7 +53,7 @@ def _fill_default_pmu_event_names():
     _DEFAULT_GENERIC_PMU_EVENTS.append("L2_CACHE_DATA_HIT")
     _DEFAULT_GENERIC_PMU_EVENTS.append("L3_CACHE_DATA_MISS")
     _DEFAULT_GENERIC_PMU_EVENTS.append("L3_CACHE_DATA_HIT")
-    _DEFAULT_GENERIC_PMU_EVENTS.append("TOTAL_CACHE_MISS")
+    _DEFAULT_GENERIC_PMU_EVENTS.append("TOTAL_DATA_CACHE_MISS")
 
 
 _COMMON_PMU_DICT = {
