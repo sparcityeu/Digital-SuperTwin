@@ -29,6 +29,7 @@ import amd64_common
 import amd64_fam17h_zen2
 import amd64_fam17h_zen3
 import intel_common
+import pmu_grafana_utils
 
 _DEFAULT_GENERIC_PMU_EVENTS = []
 
@@ -102,6 +103,7 @@ def add_configuration(file_name):
         if line.startswith("["):
             pmu_line = line.replace("[", "").replace("]", "")
             pmu_name = ""
+            pmu_alias = ""
             pmu_conf = ""
             if ":" in pmu_line:
                 pmu_name = pmu_line.split(":")[0]
@@ -109,11 +111,18 @@ def add_configuration(file_name):
             else:
                 pmu_name = pmu_line
 
+            if "|" in pmu_name:
+                pmu_alias = pmu_name.split("|")[1]
+                pmu_name = pmu_name.split("|")[0]
+
             if (
                 "override" in pmu_conf
                 or pmu_name not in _COMMON_PMU_DICT.keys()
             ):
                 _COMMON_PMU_DICT[pmu_name] = {}
+
+            if pmu_alias != "":
+                _COMMON_PMU_DICT[pmu_name]["alias"] = pmu_alias
 
         else:
             if pmu_name == "":
@@ -155,7 +164,7 @@ def get(pmu_name, pmu_generic_event):
 
 def help_conf_file():
     return """Follow the structure below
-[pmu_name] : <(add | override)>
+[pmu_name <|alias>] : <(add | override)>
 <generic_event_name1> : <specific_pmu_event_1>
 <generic_event_name2> : <specific_pmu_event_1> <OP> <specific_pmu_event_2>
 (<OP>: + || - || * || / )
@@ -164,5 +173,9 @@ def help_conf_file():
 """
 
 
-initialize()
-# add_configuration("amd64_fam15_pmu_emapping.txt")
+# initialize()
+# add_configuration("../amd64_fam15_pmu_emapping.txt")
+
+# import pprint
+
+# pprint.pprint(_COMMON_PMU_DICT)

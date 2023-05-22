@@ -576,7 +576,11 @@ def fill_data(data, hostname, hostip):
         if key.find("disk;1") != -1:
             system_no_disks = int(data[key]["contents"][0]["description"])
 
-    cpu_ghz = float(cpu_model.split("@")[1].strip("GHz"))
+    cpu_ghz = (
+        float(cpu_model.split("@")[1].strip("GHz"))
+        if len(cpu_model.split("@")) > 1
+        else cpu_minmhz / 1000.0
+    )
 
     # print("sse_vector:", sse_vector)
     # print("avx_vector:", avx_vector)

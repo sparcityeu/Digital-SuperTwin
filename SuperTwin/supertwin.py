@@ -134,7 +134,6 @@ class SuperTwin:
         self.monitor_metrics = []
         self.observation_metrics = []  # Start empty
         self.reconfigure_observation_events_with_pmu_events()  ##Only add available power
-        # self.generate_roofline_dashboard()
 
         self.monitor_pid = sampling.begin_sampling_pcp(self)
         self.monitor_pmu_pid = sampling.begin_sampling_pmu(self)
@@ -147,7 +146,7 @@ class SuperTwin:
         # self.add_stream_benchmark()
         # self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
         # self.add_adcarm_benchmark()
-        # self.generate_roofline_dashboard()
+        self.generate_roofline_dashboard()
 
         utils.register_twin_state(self)
 
@@ -195,6 +194,7 @@ class SuperTwin:
         self.kill_zombie_monitors()
 
         self.__load_pcp_and_pmu_metrics()
+        # self.generate_roofline_dashboard()
         self.update_twin_document__assert_new_monitor_pid()
         self.reconfigure_observation_events_with_pmu_events()  ##Only add available power
         self.monitor_pmu_pid = sampling.begin_sampling_pmu(self)

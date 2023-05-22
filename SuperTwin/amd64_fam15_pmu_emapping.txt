@@ -1,5 +1,5 @@
 [amd64_fam15h]
 L1_cache_access : L1_cache_miss + L1_cache_hit
 
-[amd64_fam17h_zen2]
+[amd64_fam17h_zen2 | hello_there]
 L1_CACHE_MISS: osman   +   yasal
