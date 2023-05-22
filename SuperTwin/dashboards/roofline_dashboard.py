@@ -1213,7 +1213,15 @@ def generate_roofline_dashboard(SuperTwin):
             if len(formula) == 0:
                 continue
             empty_dash["panels"].append(
-                pmu_grafana_utils.dashboard_pmu_unit(
+                pmu_grafana_utils.dashboard_pmu_table(
+                    SuperTwin.grafana_datasource,
+                    pmu_generic_event,
+                    int(data["cpu_threads"] * data["cpu_threads_per_core"]),
+                    formula,
+                )
+            )
+            empty_dash["panels"].append(
+                pmu_grafana_utils.dashboard_pmu_gauge(
                     SuperTwin.grafana_datasource,
                     pmu_generic_event,
                     int(data["cpu_threads"] * data["cpu_threads_per_core"]),
