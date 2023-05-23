@@ -194,7 +194,6 @@ class SuperTwin:
         self.kill_zombie_monitors()
 
         self.__load_pcp_and_pmu_metrics()
-        self.generate_roofline_dashboard()
         self.update_twin_document__assert_new_monitor_pid()
         self.reconfigure_observation_events_with_pmu_events()  ##Only add available power
         self.monitor_pmu_pid = sampling.begin_sampling_pmu(self)
