@@ -6,6 +6,7 @@ sys.path.append("observation")
 sys.path.append("twin_description")
 sys.path.append("sampling")
 sys.path.append("dashboards")
+sys.path.append("pmu_mappings")
 
 import utils
 import remote_probe
@@ -17,9 +18,11 @@ import adcarm_benchmark
 import observation
 import influx_help
 import observation_standard
+import pmu_mapping_utils
 import roofline_dashboard
 import monitoring_dashboard
 import uuid
+import subprocess
 from bson.objectid import ObjectId
 from bson.json_util import dumps
 from bson.json_util import loads
@@ -88,6 +91,7 @@ class SuperTwin:
             self.grafana_addr,
             self.grafana_token,
         ) = utils.read_env()
+
         self.grafana_datasource = utils.create_grafana_datasource(
             self.name,
             self.uid,
@@ -100,9 +104,7 @@ class SuperTwin:
         self.pcp_pids = utils.get_pcp_pids(self)
 
         self.influxdb_name = self.name
-        self.influx_datasource = utils.get_influx_database(
-            self.influxdb_addr
-        )
+        self.influx_datasource = utils.get_influx_database(self.influxdb_addr)
         utils.create_influx_database(
             self.influx_datasource, self.influxdb_name
         )
@@ -118,9 +120,8 @@ class SuperTwin:
             self,
         )
         print("Collection id:", self.mongodb_id)
-        self.pcp_metrics = [x["metric_name"] for x in utils.get_monitoring_metrics(self,"SWTelemetry")]
-        self.pmu_metrics = [x["metric_name"] for x in utils.get_monitoring_metrics(self,"HWTelemetry")]
-        
+
+        self.__load_pcp_and_pmu_metrics()
         # benchmark members
         self.benchmarks = 0
         self.benchmark_results = 0
@@ -132,18 +133,20 @@ class SuperTwin:
         # self.observation_metrics = utils.read_observation_metrics() #This may become problematic with multinode
         self.monitor_metrics = []
         self.observation_metrics = []  # Start empty
-        self.reconfigure_observation_events_beginning()  ##Only add available power
+        self.reconfigure_observation_events_with_pmu_events()  ##Only add available power
 
-        self.monitor_pid = sampling.main(self)
+        self.monitor_pid = sampling.begin_sampling_pcp(self)
+        self.monitor_pmu_pid = sampling.begin_sampling_pmu(self)
+        self.kill_zombie_monitors()
+
         utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
-        self.kill_zombie_monitors()  ##If there is any zombie monitor sampler
         self.generate_monitoring_dashboard()
 
         ##benchmark functions
         # self.add_stream_benchmark()
         # self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
         # self.add_adcarm_benchmark()
-        # self.generate_roofline_dashboard()
+        self.generate_roofline_dashboard()
 
         utils.register_twin_state(self)
 
@@ -187,16 +190,39 @@ class SuperTwin:
         self.__load_twin_state(
             query_twin_state(self.name, self.mongodb_id, self.mongodb_addr)
         )
+        self.monitor_pmu_pid = -99
         self.kill_zombie_monitors()
-        
-        self.pcp_metrics = [x["metric_name"] for x in utils.get_monitoring_metrics(self,"SWTelemetry")]
-        self.pmu_metrics = [x["metric_name"] for x in utils.get_monitoring_metrics(self,"HWTelemetry")]
+
+        self.__load_pcp_and_pmu_metrics()
         self.update_twin_document__assert_new_monitor_pid()
+        self.reconfigure_observation_events_with_pmu_events()  ##Only add available power
+        self.monitor_pmu_pid = sampling.begin_sampling_pmu(self)
+
         print(
             "SuperTwin:{} id:{} is reconstructed from db..".format(
                 self.name, self.uid
             )
         )
+
+    def __load_pcp_and_pmu_metrics(self):
+        self.pcp_metrics = [
+            x["metric_name"]
+            for x in utils.get_monitoring_metrics(self, "SWTelemetry")
+        ]
+        self.pmu_metrics = {}
+        appended_metric_names = []
+        for x in utils.get_monitoring_metrics(self, "HWTelemetry"):
+            if x["pmu_group"] not in self.pmu_metrics:
+                self.pmu_metrics[x["pmu_group"]] = []
+
+            if x["metric_name"] not in appended_metric_names:
+                self.pmu_metrics[x["pmu_group"]].append(
+                    {
+                        "metric_name": x["metric_name"],
+                        "pmu_event": x["pmu_name"],
+                    }
+                )
+                appended_metric_names.append(x["metric_name"])
 
     def __load_twin_state(self, meta):
         self.monitor_metrics = meta["twin_state"]["monitor_metrics"]
@@ -235,7 +261,7 @@ class SuperTwin:
                     continue
 
                 print("pid:", pid, "state:", state, "conf_file:", conf_file)
-                if pid != self.monitor_pid:
+                if pid != self.monitor_pid and pid != self.monitor_pmu_pid:
                     print("Killing zombie monitoring sampler with pid:", pid)
                     detect_utils.cmd("sudo kill -9 " + str(pid))
 
@@ -244,7 +270,7 @@ class SuperTwin:
         db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
         print("Killing existed monitor sampler with pid:", self.monitor_pid)
         detect_utils.cmd("sudo kill " + str(self.monitor_pid))
-        new_pid = sampling.main(self)
+        new_pid = sampling.begin_sampling_pcp(self)
         print("New sampler pid: ", new_pid)
         to_new = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
         # print(to_new)
@@ -484,7 +510,6 @@ class SuperTwin:
         print("STREAM benchmark result added to Digital Twin")
 
     def add_stream_benchmark(self):
-
         (
             stream_modifiers,
             maker,
@@ -662,6 +687,48 @@ class SuperTwin:
         self.reconfigure_perfevent()
         utils.register_twin_state(self)
 
+    def reconfigure_observation_events_with_pmu_events(self):
+
+        writer = open("perfevent.conf", "w+")
+        added_events = {}
+        for pmu_name in self.pmu_metrics.keys():
+            pmu_alias = pmu_mapping_utils.get(pmu_name, "alias")
+
+            writer.write("[" + pmu_alias + "]" + "\n")
+            added_events[pmu_alias] = []
+            for (
+                pmu_generic_event
+            ) in pmu_mapping_utils._DEFAULT_GENERIC_PMU_EVENTS:
+                formula = [
+                    pmu_event
+                    for pmu_event in pmu_mapping_utils.get(
+                        pmu_name, pmu_generic_event
+                    )
+                    if pmu_event.isupper()
+                ]
+
+                for event in formula:
+                    if event not in added_events and event != "":
+                        writer.write(event + "\n")
+                        added_events[pmu_alias].append(event)
+
+                        observation_event = event.replace(":", "_")
+                        if observation_event not in self.observation_metrics:
+                            self.observation_metrics.append(
+                                observation_event.replace(":", "_")
+                            )
+        writer.close()
+        subprocess.run(
+            [
+                "cp",
+                "./perfevent.conf",
+                "./perfevent_" + self.name + ".conf",
+            ]
+        )
+        print("Generated new perfevent pmda configuration..")
+        sampling.reconfigure_perfevent(self)
+        utils.register_twin_state(self)
+
     def reconfigure_observation_events_beginning(self):
 
         always_have_metrics = utils.always_have_metrics("observation", self)
@@ -669,13 +736,6 @@ class SuperTwin:
         for item in always_have_metrics:
             if item not in self.observation_metrics:
                 self.observation_metrics.append(item)
-
-        """
-        writer = open("last_observation_metrics.txt", "w+")
-        for item in metrics:
-            writer.write(item + "\n")
-        writer.close()
-        """
 
         self.reconfigure_perfevent()
         utils.register_twin_state(self)
@@ -817,6 +877,11 @@ def resolve_test(my_superTwin, threads):
 
 
 if __name__ == "__main__":
+
+    ## CONFIGURE PMU_MAPPING_UTILS
+
+    pmu_mapping_utils.initialize()
+    # add_configuration("amd64_fam15_pmu_emapping.txt")
 
     # user_name = "ftasyaran"
 
