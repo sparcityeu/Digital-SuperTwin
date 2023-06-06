@@ -63,7 +63,7 @@ _COMMON_PMU_DICT = {
     "pmu_name": {
         "generic_pmu_event_name": [
             "specific_pmu_event",  ## sub pmu event name
-            "*",  ## operator
+            "+",  ## operator
             "specific_pmu_event_2",  ## sub pmu event name 2
         ]
     }
@@ -132,7 +132,7 @@ def add_configuration(file_name):
                     "File format is erronous!!" + help_conf_file()
                 )
             else:
-                line = line.split(":")
+                line = line.split(":", 1)
                 common_event_name = line[0]
                 common_event_formula = re.split(r"(\+|\-|\*|/)", line[1])
                 if common_event_name not in _DEFAULT_GENERIC_PMU_EVENTS:
@@ -179,5 +179,4 @@ def help_conf_file():
 # add_configuration("../amd64_fam15_pmu_emapping.txt")
 
 # import pprint
-
 # pprint.pprint(_COMMON_PMU_DICT)
