@@ -121,7 +121,7 @@ def add_configuration(file_name):
                 "override" in pmu_conf
                 or pmu_name not in _COMMON_PMU_DICT.keys()
             ):
-                _COMMON_PMU_DICT[pmu_name] = {}
+                _COMMON_PMU_DICT[pmu_name] = {"alias":pmu_name}
 
             if pmu_alias != "":
                 _COMMON_PMU_DICT[pmu_name]["alias"] = pmu_alias
