@@ -23,12 +23,12 @@ INFLUXDB_HOST="localhost"
 INFLUXDB_PORT="8086"
 
 ## DONT MODIFY!! THESE ARE ALTERED BY UTILS.PY
-DATABASE_NAME="" # "user-AS-4023S-TRT" 
+DATABASE_NAME="rt7-laptop-vivo"
 
-MONITORING_URL="" # http://localhost:3000/d/wYVoa13Vz/pmus-rt7-laptop-vivo-monitor-438a34b4-4162-4127-8b9f-8122207fd642?orgId=1&from=1690569527000&to=1690569827000
+MONITORING_URL="http://localhost:3000/d/x7n8uJq4z/pmus-rt7-laptop-vivo-monitor-2cc4a779-de3f-4570-93b6-71c8b1c50d4d?orgId=1"
 MONITORING_DASHBOARD_URL=""
  
-ROOFLINE_URL="" # http://localhost:3000/d/wYVoa13Vz/pmus-rt7-laptop-vivo-monitor-438a34b4-4162-4127-8b9f-8122207fd642?orgId=1&from=1690569527000&to=1690569827000
+ROOFLINE_URL="http://localhost:3000/d/s_78u1qVz/pmus-rt7-laptop-vivo-roofline-ed160999-246b-4096-b2d9-1202293d0195?orgId=1"
 ROOFLINE_DASHBOARD_URL="" 
 ## end DONT MODIFY!! 
 
@@ -72,7 +72,7 @@ for bench in "${BENCHMARK_NAMES_LIST[@]}"
 do  
 	# BENCHMARK EXECUTION PART
 	start_time=$(date +%s)
-	echo "executing benchmark ${bench} program:${BENCHMARK_PROGRAMS[$bench]}"
+	echo "executing benchmark ${bench} program ${BENCHMARK_PROGRAMS[$bench]}"
 	${BENCHMARK_PROGRAMS[$bench]} 
 	end_time=$(date +%s) 
 	seconds=$((end_time - start_time)) ## seconds

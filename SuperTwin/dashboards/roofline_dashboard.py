@@ -1248,3 +1248,4 @@ def generate_roofline_dashboard(SuperTwin):
         json_dash_obj, SuperTwin.grafana_addr, SuperTwin.grafana_token
     )
     print("Generated:", g_url)
+    return g_url["url"]
