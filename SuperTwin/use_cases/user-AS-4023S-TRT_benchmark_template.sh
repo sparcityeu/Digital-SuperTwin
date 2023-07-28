@@ -23,12 +23,12 @@ INFLUXDB_HOST="localhost"
 INFLUXDB_PORT="8086"
 
 ## DONT MODIFY!! THESE ARE ALTERED BY UTILS.PY
-DATABASE_NAME="" # "user-AS-4023S-TRT" 
+DATABASE_NAME="user-AS-4023S-TRT"
 
-MONITORING_URL="" # http://localhost:3000/d/wYVoa13Vz/pmus-rt7-laptop-vivo-monitor-438a34b4-4162-4127-8b9f-8122207fd642?orgId=1&from=1690569527000&to=1690569827000
+MONITORING_URL="http://localhost:3000/d/ELEHC1qVk/pmus-user-as-4023s-trt-monitor-5f55583c-2df8-4252-8d69-6e7a1c033b58?orgId=1"
 MONITORING_DASHBOARD_URL=""
  
-ROOFLINE_URL="" # http://localhost:3000/d/wYVoa13Vz/pmus-rt7-laptop-vivo-monitor-438a34b4-4162-4127-8b9f-8122207fd642?orgId=1&from=1690569527000&to=1690569827000
+ROOFLINE_URL="http://localhost:3000/d/SoQNjJ3Vz/pmus-user-as-4023s-trt-roofline-10b351cb-cfa5-471f-a68d-4de831825f14?orgId=1"
 ROOFLINE_DASHBOARD_URL="" 
 ## end DONT MODIFY!! 
 
@@ -132,10 +132,9 @@ bench_end_time=$(date +%s)
 
 MONITORING_DASHBOARD_URL="${MONITORING_URL}&from=${bench_start_time}000&to=${bench_end_time}000"  # start time - end time for all benchmarks
 ROOFLINE_DASHBOARD_URL="${ROOFLINE_URL}&from=${bench_start_time}000&to=${bench_end_time}000" # start time - end time for all benchmarks
-
+ 
 echo "overall monitoring: ${MONITORING_DASHBOARD_URL}" >> ${BENCHMARK_RESULTS}/dashboard_url.txt   
 echo "overall roofline-pmu: ${ROOFLINE_DASHBOARD_URL}" >> ${BENCHMARK_RESULTS}/dashboard_url.txt   
-
 ## OPEN DASHBOARD FOR STATIC DATA
 xdg-open "${MONITORING_DASHBOARD_URL}"
 xdg-open "${ROOFLINE_DASHBOARD_URL}"

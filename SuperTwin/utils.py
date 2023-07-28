@@ -1344,7 +1344,7 @@ def generate_specific_benhmark_template(database_name, monitoring_url,roofline_u
                     output_file.write(line)
     
         # Add executable permissions to the output_file
-        os.chmod(output_file_path, 0o755)
+        os.chmod(output_file_path, 0o777)
     except FileNotFoundError:
         print(f"File not found: {input_file_path}")
     except IOError:
