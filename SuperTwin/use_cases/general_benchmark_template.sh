@@ -141,6 +141,9 @@ ROOFLINE_DASHBOARD_URL="${ROOFLINE_URL}&from=${bench_start_time}000&to=${bench_e
 echo "overall monitoring: ${MONITORING_DASHBOARD_URL}" >> ${BENCHMARK_RESULTS}/dashboard_url.txt   
 echo "overall roofline-pmu: ${ROOFLINE_DASHBOARD_URL}" >> ${BENCHMARK_RESULTS}/dashboard_url.txt   
 
+
+echo -e "Benchmarks took: $((bench_end_time - bench_start_time)) sec."
+
 ## OPEN DASHBOARD FOR STATIC DATA
 xdg-open "${MONITORING_DASHBOARD_URL}"
 xdg-open "${ROOFLINE_DASHBOARD_URL}"

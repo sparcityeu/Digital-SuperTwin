@@ -1321,7 +1321,8 @@ def get_metric_type(param_metric):
 def generate_specific_benhmark_template(ssh_user,ssh_passwd,database_name, monitoring_url,roofline_url):
     input_file_path = "./use_cases/general_benchmark_template.sh"
     output_file_path = "./use_cases/" + database_name + "_benchmark_template.sh"
-
+    
+    ssh_user = ssh_user.replace("@localhost","@127.0.0.1")
     monitoring_url += "?orgId=1"
     roofline_url += "?orgId=1"
     
