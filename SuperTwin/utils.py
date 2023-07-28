@@ -1318,7 +1318,7 @@ def get_metric_type(param_metric):
 
 
 
-def generate_specific_benhmark_template(database_name, monitoring_url,roofline_url):
+def generate_specific_benhmark_template(ssh_user,ssh_passwd,database_name, monitoring_url,roofline_url):
     input_file_path = "./use_cases/general_benchmark_template.sh"
     output_file_path = "./use_cases/" + database_name + "_benchmark_template.sh"
 
@@ -1335,7 +1335,11 @@ def generate_specific_benhmark_template(database_name, monitoring_url,roofline_u
         with open(input_file_path, 'r') as input_file:
             with open(output_file_path, 'a') as output_file:
                 for line in input_file:
-                    if line.startswith("MONITORING_URL"):
+                    if line.startswith("SSH_NAME"):
+                        line = "SSH_NAME=" +"\""  +ssh_user +"\""  +" \n"
+                    elif line.startswith("SSH_PASSWD"):
+                        line = "SSH_PASSWD=" + "\"" +ssh_passwd +"\""  +"\n"
+                    elif line.startswith("MONITORING_URL"):
                         line = "MONITORING_URL=" + "\"" + "http://localhost:3000" +monitoring_url +"\"" + "\n" 
                     elif line.startswith("ROOFLINE_URL"):
                         line = "ROOFLINE_URL=" + "\"" + "http://localhost:3000" +roofline_url +"\"" + "\n"

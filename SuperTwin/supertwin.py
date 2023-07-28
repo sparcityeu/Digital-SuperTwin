@@ -143,7 +143,7 @@ class SuperTwin:
         self.generate_monitoring_dashboard()
         self.generate_roofline_dashboard()
         
-        utils.generate_specific_benhmark_template(self.influxdb_name,self.monitoring_dashboard,self.roofline_dashboard)
+        utils.generate_specific_benhmark_template(self.SSHuser + "@" + self.addr,self.SSHpass,self.influxdb_name,self.monitoring_dashboard,self.roofline_dashboard)
 
         # benchmark functions
         # self.add_stream_benchmark()
@@ -201,7 +201,7 @@ class SuperTwin:
         self.monitor_pmu_pid = sampling.begin_sampling_pmu(self)
         
         
-        utils.generate_specific_benhmark_template(self.influxdb_name,self.monitoring_dashboard,self.roofline_dashboard)
+        utils.generate_specific_benhmark_template(self.SSHuser + "@" + self.addr,self.SSHpass,self.influxdb_name,self.monitoring_dashboard,self.roofline_dashboard)
         print(
             "SuperTwin:{} id:{} is reconstructed from db..".format(
                 self.name, self.uid

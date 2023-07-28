@@ -1,5 +1,12 @@
 echo "Loding custom queries.."
  
+function execute_remote_command() {
+    local remote_user="$1"
+    local remote_passwd="$2"
+    local remote_command="$3"
+    sshpass -p "$remote_passwd" ssh "$remote_user" "$remote_command"
+}
+
 function get_influx_data() {
     local query="$1"
     influx -execute "${query}" -database "${DATABASE_NAME}"

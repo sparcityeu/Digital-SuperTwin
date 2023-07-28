@@ -23,6 +23,9 @@ INFLUXDB_HOST="localhost"
 INFLUXDB_PORT="8086"
 
 ## DONT MODIFY!! THESE ARE ALTERED BY UTILS.PY
+SSH_NAME=""
+SSH_PASSWD=""
+
 DATABASE_NAME="" # "user-AS-4023S-TRT" 
 
 MONITORING_URL="" # http://localhost:3000/d/wYVoa13Vz/pmus-rt7-laptop-vivo-monitor-438a34b4-4162-4127-8b9f-8122207fd642?orgId=1&from=1690569527000&to=1690569827000
@@ -63,8 +66,8 @@ BENCHMARK_NAMES_LIST=("${BENCHMARK_ORDERED_SPMV}" "${BENCHMARK_UNORDERED_SPMV}" 
 # Define the associative array to map benchmarks to programs
 declare -A BENCHMARK_PROGRAMS
 BENCHMARK_PROGRAMS["${BENCHMARK_ORDERED_SPMV}"]="sleep 10"
-#BENCHMARK_PROGRAMS["${BENCHMARK_UNORDERED_SPMV}"]="sleep 5"
-#BENCHMARK_PROGRAMS["${BENCHMARK_BFS}"]="sleep 10"
+BENCHMARK_PROGRAMS["${BENCHMARK_UNORDERED_SPMV}"]="ls"
+BENCHMARK_PROGRAMS["${BENCHMARK_BFS}"]="sleep 5"
 
 
 bench_start_time=$(date +%s)
@@ -73,7 +76,7 @@ do
 	# BENCHMARK EXECUTION PART
 	start_time=$(date +%s)
 	echo "executing benchmark ${bench} program:${BENCHMARK_PROGRAMS[$bench]}"
-	${BENCHMARK_PROGRAMS[$bench]} 
+	execute_remote_command ${SSH_NAME} ${SSH_PASSWD} "${BENCHMARK_PROGRAMS[$bench]}" 
 	end_time=$(date +%s) 
 	seconds=$((end_time - start_time)) ## seconds
 	echo -e "Benchmark took: ${seconds} seconds. start:${start_time} end:${end_time}\n"
@@ -83,8 +86,7 @@ do
     
     MONITORING_DASHBOARD_URL="${MONITORING_URL}&from=${start_time}000&to=${end_time}000"  
     ROOFLINE_DASHBOARD_URL="${ROOFLINE_URL}&from=${start_time}000&to=${end_time}000"  
-    
-	echo "------------------------"
+     
 
 	### REPORTING PART 
     set -f  # Disable globbing
@@ -123,9 +125,12 @@ do
 	set +f  # Re-enable globbing   
 	echo -e "------------------------\n" >> ${BENCHMARK_RESULTS}/${bench}/queries.txt   
 	
-	echo "Benchmark ${bench} execution dashboard links: from: bench_start_time to bench_end_time "
+	echo "Benchmark ${bench} execution dashboard links added... from: bench_start_time to bench_end_time "
 	echo "${MONITORING_DASHBOARD_URL}" >> ${BENCHMARK_RESULTS}/${bench}/dashboard_url.txt   
 	echo "${ROOFLINE_DASHBOARD_URL}" >> ${BENCHMARK_RESULTS}/${bench}/dashboard_url.txt   
+	
+	
+	echo "------------------------"
 	
 done
 bench_end_time=$(date +%s) 
