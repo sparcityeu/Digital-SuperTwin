@@ -25,11 +25,10 @@ INFLUXDB_PORT="8086"
 DATABASE_NAME="$1" #"user-AS-4023S-TRT" 
 echo "entered database name :$DATABASE_NAME"
 
-function get_influx_data() {
-    local query="$1"
-    influx -execute "${query}" -database "${DATABASE_NAME}"
-}
 
+## LOAD CUSTOM QUERIES 
+source custom_queries.sh
+ 
 # benchmark names
 BENCHMARK_ORDERED_SPMV="SPMV_ordered"
 BENCHMARK_UNORDERED_SPMV="SPMV_unordered"
@@ -53,8 +52,8 @@ BENCHMARK_NAMES_LIST=("${BENCHMARK_ORDERED_SPMV}" "${BENCHMARK_UNORDERED_SPMV}" 
 # Define the associative array to map benchmarks to programs
 declare -A BENCHMARK_PROGRAMS
 BENCHMARK_PROGRAMS["${BENCHMARK_ORDERED_SPMV}"]="sleep 2"
-BENCHMARK_PROGRAMS["${BENCHMARK_UNORDERED_SPMV}"]="sleep 5"
-BENCHMARK_PROGRAMS["${BENCHMARK_BFS}"]="sleep 10"
+#BENCHMARK_PROGRAMS["${BENCHMARK_UNORDERED_SPMV}"]="sleep 5"
+#BENCHMARK_PROGRAMS["${BENCHMARK_BFS}"]="sleep 10"
 
 
 for bench in "${BENCHMARK_NAMES_LIST[@]}"
@@ -73,27 +72,39 @@ do
 
 	### REPORTING PART 
     set -f  # Disable globbing
+    
+    ## EXECUTES PARAMETER QUERIES
     for param in "${@:2}"; do
         QUERY=$(sed -E "s/now\(\) *- *[0-9a-zA-Z]*m/now() - ${seconds}s/" <<< "${param}")
-        echo "${QUERY}"
+        echo "${QUERY}" 
 		echo "${QUERY}" >> ${BENCHMARK_RESULTS}/${bench}/queries.txt  
 		echo "$(get_influx_data "$QUERY")" >> ${BENCHMARK_RESULTS}/${bench}/${bench}_${measurement}_data 
     done
-    exit 0
     
+    ## DUMPS DEFAULT MEASUREMENT RESULTS
 	QUERY="SHOW MEASUREMENTS"
 	measurements_result="$(get_influx_data "$QUERY" | tr ' ' '\n' | tail -n +5)"
-    echo "$measurements_result"
-    exit 0
+    echo "$measurements_result" 
 	for measurement in $measurements_result   #  <-- Note: Added "" quotes.
 	do  
 		# maybe repeat this part in python for each queries?
 		#echo "$measurement"
-		QUERY="SELECT * FROM ${measurement} WHERE time >= now() - ${seconds}s"
-		echo ${QUERY} >> ${BENCHMARK_RESULTS}/${bench}/queries.txt  
-		echo "$(get_influx_data "$QUERY")" >> ${BENCHMARK_RESULTS}/${bench}/${bench}_${measurement}_data 
+		QUERY="SELECT mean(*) FROM ${measurement} WHERE time >= now() - ${seconds}s GROUP BY time(1s) fill(null);"
+		
+		if [[ "$measurement" == "mem_numa_alloc_hit" ]]; then
+    		$(mem_numa_alloc_hit_query)
+  		
+  		elif [[ "$measurement" == "mem_numa_alloc_miss" ]]; then
+      		$(mem_numa_alloc_miss_query)
+      		
+    	elif [[ $measurement == "kernel_pernode_cpu_idle" ]]; then
+    		$(kernel_pernode_cpu_idle_query)
+        
+        else    	
+    		echo ${QUERY} >> ${BENCHMARK_RESULTS}/${bench}/queries.txt  
+    		echo "$(get_influx_data "$QUERY")" >> ${BENCHMARK_RESULTS}/${bench}/${bench}_${measurement}_data 
+		fi
 	done
 	set +f  # Re-enable globbing   
 	echo -e "------------------------\n" >> ${BENCHMARK_RESULTS}/${bench}/queries.txt   
 done
-  

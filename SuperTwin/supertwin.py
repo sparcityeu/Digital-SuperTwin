@@ -140,8 +140,11 @@ class SuperTwin:
         self.kill_zombie_monitors()
 
         utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
+        
+        self.dashboard_queries = [] # is set inn gegnerate_monitoring_dashboard
         self.generate_monitoring_dashboard()
-
+        
+        
         ##benchmark functions
         # self.add_stream_benchmark()
         # self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
@@ -241,6 +244,7 @@ class SuperTwin:
         self.roofline_dashboard = meta["roofline_dashboard"]
         self.monitoring_dashboard = meta["monitoring_dashboard"]
         self.pcp_pids = meta["twin_state"]["pcp_pids"]
+        #self.dashboard_queries = meta["twin_state"]["dashboard_queries"]
 
     def kill_zombie_monitors(self):
 

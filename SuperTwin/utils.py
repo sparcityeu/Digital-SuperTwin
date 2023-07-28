@@ -162,6 +162,8 @@ def register_twin_state(SuperTwin):
     meta["twin_state"]["observation_metrics"] = SuperTwin.observation_metrics
     meta["twin_state"]["grafana_datasource"] = SuperTwin.grafana_datasource
     meta["twin_state"]["pcp_pids"] = SuperTwin.pcp_pids
+    
+    meta["twin_state"]["dashboard_queries"] = SuperTwin.dashboard_queries
 
     db.replace_one({"_id": ObjectId(SuperTwin.mongodb_id)}, meta)
 
