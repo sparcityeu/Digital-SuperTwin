@@ -19,6 +19,7 @@ if  [[ "$1" == "--help" ]]; then
     exit 0
 fi
 
+BENCHMARK_SUITE="merge-spmv"
 INFLUXDB_HOST="localhost"
 INFLUXDB_PORT="8086"
 
@@ -34,13 +35,12 @@ MONITORING_DASHBOARD_URL=""
 ROOFLINE_URL="" # http://localhost:3000/d/wYVoa13Vz/pmus-rt7-laptop-vivo-monitor-438a34b4-4162-4127-8b9f-8122207fd642?orgId=1&from=1690569527000&to=1690569827000
 ROOFLINE_DASHBOARD_URL="" 
 ## end DONT MODIFY!! 
-
-
 echo "entered database name :$DATABASE_NAME"
 
 
 ## LOAD CUSTOM QUERIES 
 source custom_queries.sh
+source remote_configuration.sh
  
 # benchmark names
 BENCHMARK_ORDERED_SPMV="SPMV_ordered"
@@ -76,7 +76,9 @@ do
 	# BENCHMARK EXECUTION PART
 	start_time=$(date +%s)
 	echo "executing benchmark ${bench} program:${BENCHMARK_PROGRAMS[$bench]}"
+
 	execute_remote_command ${SSH_NAME} ${SSH_PASSWD} "${BENCHMARK_PROGRAMS[$bench]}" 
+	
 	end_time=$(date +%s) 
 	seconds=$((end_time - start_time)) ## seconds
 	echo -e "Benchmark took: ${seconds} seconds. start:${start_time} end:${end_time}\n"
