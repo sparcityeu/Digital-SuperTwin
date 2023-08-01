@@ -21,6 +21,7 @@ import zlib
 import paramiko
 
 import sys
+import os
 
 sys.path.append("dashboards")
 import observation_standard
@@ -162,7 +163,7 @@ def register_twin_state(SuperTwin):
     meta["twin_state"]["observation_metrics"] = SuperTwin.observation_metrics
     meta["twin_state"]["grafana_datasource"] = SuperTwin.grafana_datasource
     meta["twin_state"]["pcp_pids"] = SuperTwin.pcp_pids
-
+    
     db.replace_one({"_id": ObjectId(SuperTwin.mongodb_id)}, meta)
 
     print("Twin state is registered to db..")
@@ -1314,3 +1315,42 @@ def get_metric_type(param_metric):
     elif f_metric.find("proc.") != -1:
         _type = "proc"
     return _type
+
+
+
+def generate_specific_benhmark_template(ssh_user,ssh_passwd,database_name, monitoring_url,roofline_url):
+    input_file_path = "./use_cases/general_benchmark_template.sh"
+    output_file_path = "./use_cases/" + database_name + "_benchmark_template.sh"
+    
+    ssh_user = ssh_user.replace("@localhost","@127.0.0.1")
+    monitoring_url += "?orgId=1"
+    roofline_url += "?orgId=1"
+    
+    if os.path.exists(output_file_path):
+        try:
+            os.remove(output_file_path)
+        except OSError:
+            print(f"Error deleting the existing file: {output_file_path}")
+
+    try:
+        with open(input_file_path, 'r') as input_file:
+            with open(output_file_path, 'a') as output_file:
+                for line in input_file:
+                    if line.startswith("SSH_NAME"):
+                        line = "SSH_NAME=" +"\""  +ssh_user +"\""  +" \n"
+                    elif line.startswith("SSH_PASSWD"):
+                        line = "SSH_PASSWD=" + "\"" +ssh_passwd +"\""  +"\n"
+                    elif line.startswith("MONITORING_URL"):
+                        line = "MONITORING_URL=" + "\"" + "http://localhost:3000" +monitoring_url +"\"" + "\n" 
+                    elif line.startswith("ROOFLINE_URL"):
+                        line = "ROOFLINE_URL=" + "\"" + "http://localhost:3000" +roofline_url +"\"" + "\n"
+                    elif line.startswith("DATABASE_NAME"):
+                        line = "DATABASE_NAME=" + "\""+database_name +"\"" + "\n"
+                    output_file.write(line)
+    
+        # Add executable permissions to the output_file
+        os.chmod(output_file_path, 0o777)
+    except FileNotFoundError:
+        print(f"File not found: {input_file_path}")
+    except IOError:
+        print("Error reading or writing the file.")

@@ -1,5 +1,4 @@
 import sys
-
 sys.path.append("probing")
 sys.path.append("probing/benchmarks")
 sys.path.append("observation")
@@ -8,34 +7,33 @@ sys.path.append("sampling")
 sys.path.append("dashboards")
 sys.path.append("pmu_mappings")
 
-import utils
-import remote_probe
-import detect_utils
-import sampling
-import stream_benchmark
-import hpcg_benchmark
-import adcarm_benchmark
-import observation
-import influx_help
-import observation_standard
-import pmu_mapping_utils
-import roofline_dashboard
-import monitoring_dashboard
-import uuid
-import subprocess
-from bson.objectid import ObjectId
-from bson.json_util import dumps
-from bson.json_util import loads
-
 import datetime
+from bson.json_util import loads
+from bson.json_util import dumps
+from bson.objectid import ObjectId
+import subprocess
+import uuid
+import monitoring_dashboard
+import roofline_dashboard
+import pmu_mapping_utils
+import observation_standard
+import influx_help
+import observation
+import adcarm_benchmark
+import hpcg_benchmark
+import stream_benchmark
+import sampling
+import detect_utils
+import remote_probe
+import utils
 
-##HPCG benchmark parameters are set to be separate from classes, so hpcg is repeatable and easily mutable
+# HPCG benchmark parameters are set to be separate from classes, so hpcg is repeatable and easily mutable
 HPCG_PARAM = {}
 HPCG_PARAM["nx"] = 104
 HPCG_PARAM["ny"] = 104
 HPCG_PARAM["nz"] = 104
 HPCG_PARAM["time"] = 60
-##HPCG benchmark parameters
+# HPCG benchmark parameters
 
 
 def query_twin_state(name, mongodb_id, mongodb_addr):
@@ -127,26 +125,30 @@ class SuperTwin:
         self.benchmark_results = 0
 
         ##
-        ##This is a breaking point where we know everything and can configure now
+        # This is a breaking point where we know everything and can configure now
         ##
 
         # self.observation_metrics = utils.read_observation_metrics() #This may become problematic with multinode
         self.monitor_metrics = []
         self.observation_metrics = []  # Start empty
-        self.reconfigure_observation_events_with_pmu_events()  ##Only add available power
+        self.reconfigure_observation_events_with_pmu_events()  # Only add available power
 
         self.monitor_pid = sampling.begin_sampling_pcp(self)
         self.monitor_pmu_pid = sampling.begin_sampling_pmu(self)
         self.kill_zombie_monitors()
 
         utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
-        self.generate_monitoring_dashboard()
 
-        ##benchmark functions
+        self.dashboard_queries = []  # is set inn gegnerate_monitoring_dashboard
+        self.generate_monitoring_dashboard()
+        self.generate_roofline_dashboard()
+        
+        utils.generate_specific_benhmark_template(self.SSHuser + "@" + self.addr,self.SSHpass,self.influxdb_name,self.monitoring_dashboard,self.roofline_dashboard)
+
+        # benchmark functions
         # self.add_stream_benchmark()
         # self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
-        # self.add_adcarm_benchmark()
-        self.generate_roofline_dashboard()
+        # self.add_adcarm_benchmark() 
 
         utils.register_twin_state(self)
 
@@ -195,9 +197,11 @@ class SuperTwin:
 
         self.__load_pcp_and_pmu_metrics()
         self.update_twin_document__assert_new_monitor_pid()
-        self.reconfigure_observation_events_with_pmu_events()  ##Only add available power
+        self.reconfigure_observation_events_with_pmu_events()  # Only add available power
         self.monitor_pmu_pid = sampling.begin_sampling_pmu(self)
-
+        
+        
+        utils.generate_specific_benhmark_template(self.SSHuser + "@" + self.addr,self.SSHpass,self.influxdb_name,self.monitoring_dashboard,self.roofline_dashboard)
         print(
             "SuperTwin:{} id:{} is reconstructed from db..".format(
                 self.name, self.uid
@@ -241,12 +245,13 @@ class SuperTwin:
         self.roofline_dashboard = meta["roofline_dashboard"]
         self.monitoring_dashboard = meta["monitoring_dashboard"]
         self.pcp_pids = meta["twin_state"]["pcp_pids"]
+        #self.dashboard_queries = meta["twin_state"]["dashboard_queries"]
 
     def kill_zombie_monitors(self):
 
         out = detect_utils.output_lines("ps aux | grep pcp2influxdb")
 
-        for line in out:  ##Accesses are emprical
+        for line in out:  # Accesses are emprical
             if line.find("/usr/bin/pcp2influxdb") != -1:
                 fields = line.split(" ")
                 fields = [x for x in fields if x != ""]
@@ -285,7 +290,7 @@ class SuperTwin:
         benchmark_id = str(self.benchmarks)
         benchmark_result_id = (
             self.benchmark_results
-        )  ##Note that benchmark_id is str but this one is int, since we will keep incrementing this one
+        )  # Note that benchmark_id is str but this one is int, since we will keep incrementing this one
 
         id_base = "dtmi:dt:" + self.name + ":"
 
@@ -305,7 +310,7 @@ class SuperTwin:
         print("stream_res:", stream_res)
 
         for _field_key in stream_res:
-            try:  ##Field key is a thread
+            try:  # Field key is a thread
                 for _thread_key in stream_res[_field_key]:
                     _dict = {}
                     _dict["@id"] = (
@@ -323,7 +328,7 @@ class SuperTwin:
 
                     content["@contents"].append(_dict)
                     benchmark_result_id += 1
-            except:  ##Field key is a global or local max
+            except:  # Field key is a global or local max
                 continue
 
         self.benchmarks += 1
@@ -339,7 +344,7 @@ class SuperTwin:
         benchmark_id = str(self.benchmarks)
         benchmark_result_id = (
             self.benchmark_results
-        )  ##Note that benchmark_id is str but this one is int, since we will keep incrementing this one
+        )  # Note that benchmark_id is str but this one is int, since we will keep incrementing this one
 
         id_base = "dtmi:dt:" + self.name + ":"
 
@@ -381,7 +386,7 @@ class SuperTwin:
 
                     content["@contents"].append(_dict)
                     benchmark_result_id += 1
-            else:  ##Field key is a global or local max or parameter
+            else:  # Field key is a global or local max or parameter
                 continue
 
         self.benchmarks += 1
@@ -390,9 +395,9 @@ class SuperTwin:
         return content
 
     def prepare_adcarm_content(self, adcarm_modifiers, adcarm_res):
-        ##We are not probably using adcarm_modifiers here
-        ##It only contains global environment variable changes in the system
-        ##Since it is also exist in adcarm_res, in contrary to other benchmarks
+        # We are not probably using adcarm_modifiers here
+        # It only contains global environment variable changes in the system
+        # Since it is also exist in adcarm_res, in contrary to other benchmarks
 
         print("adcarm_res:", adcarm_res)
 
@@ -411,7 +416,7 @@ class SuperTwin:
 
         benchmark_id = str(
             self.benchmarks
-        )  ##These may get GLOBAL (including other systems) later
+        )  # These may get GLOBAL (including other systems) later
         benchmark_result_id = self.benchmark_results
 
         id_base = "dtmi:dt:" + self.name + ":"
@@ -499,7 +504,7 @@ class SuperTwin:
         for key in new_twin:
             if (
                 key.find("system") != -1
-            ):  ##Get the system interface and add the benchmarks
+            ):  # Get the system interface and add the benchmarks
                 content = self.prepare_stream_content(
                     stream_modifiers, stream_res
                 )
@@ -536,7 +541,7 @@ class SuperTwin:
         for key in new_twin:
             if (
                 key.find("system") != -1
-            ):  ##Get the system interface and add the benchmarks
+            ):  # Get the system interface and add the benchmarks
                 content = self.prepare_hpcg_content(hpcg_modifiers, hpcg_res)
                 new_twin[key]["contents"].append(content)
 
@@ -558,7 +563,7 @@ class SuperTwin:
     def update_twin_document__add_adcarm_benchmark(
         self, adcarm_modifiers, adcarm_res
     ):
-        ##Different from stream and hpcg benchmarks, adcarm have it's modifiers in result
+        # Different from stream and hpcg benchmarks, adcarm have it's modifiers in result
 
         db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
         meta_with_twin = loads(
@@ -569,7 +574,7 @@ class SuperTwin:
         for key in new_twin:
             if (
                 key.find("system") != -1
-            ):  ##Get the system interface and add the benchmarks
+            ):  # Get the system interface and add the benchmarks
                 content = self.prepare_adcarm_content(
                     adcarm_modifiers, adcarm_res
                 )
@@ -610,13 +615,13 @@ class SuperTwin:
         db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
         print("Monitoring dashboard added to Digital Twin")
 
-    def generate_roofline_dashboard(self):
-        url = roofline_dashboard.generate_roofline_dashboard(self)
-        self.update_twin_document__add_roofline_dashboard(url)
+    def generate_roofline_dashboard(self): 
+        self.roofline_dashboard = roofline_dashboard.generate_roofline_dashboard(self)
+        self.update_twin_document__add_roofline_dashboard(self.roofline_dashboard)
 
-    def generate_monitoring_dashboard(self):
-        url = monitoring_dashboard.generate_monitoring_dashboard(self)
-        self.update_twin_document__add_monitoring_dashboard(url)
+    def generate_monitoring_dashboard(self): 
+        self.monitoring_dashboard = monitoring_dashboard.generate_monitoring_dashboard(self)
+        self.update_twin_document__add_monitoring_dashboard(self.monitoring_dashboard)
 
     def reconfigure_monitor_events(self):
 
@@ -878,7 +883,7 @@ def resolve_test(my_superTwin, threads):
 
 if __name__ == "__main__":
 
-    ## CONFIGURE PMU_MAPPING_UTILS
+    # CONFIGURE PMU_MAPPING_UTILS
 
     pmu_mapping_utils.initialize()
     # pmu_mapping_utils.add_configuration("icl_pmu_mapping.txt")
@@ -888,10 +893,10 @@ if __name__ == "__main__":
 
     args = sys.argv
     if len(args) == 1:
-        my_superTwin = SuperTwin()  ##From scratch
+        my_superTwin = SuperTwin()  # From scratch
     else:
         addr = args[1]
-        my_superTwin = SuperTwin(addr)  ##Re-construct
+        my_superTwin = SuperTwin(addr)  # Re-construct
 
     # my_superTwin.add_stream_benchmark()
     # my_superTwin.add_hpcg_benchmark(HPCG_PARAM)

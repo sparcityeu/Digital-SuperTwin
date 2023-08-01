@@ -134,7 +134,7 @@ def get_topology(td):
 
 
 def generate_monitoring_dashboard(SuperTwin):
-
+    
     td = utils.get_twin_description(SuperTwin)
     empty_dash = obs.template_dict(
         SuperTwin.name + " Monitor-" + str(uuid.uuid4())
@@ -566,7 +566,7 @@ def generate_monitoring_dashboard(SuperTwin):
             )
         )
 
-    ##Upload to grafana
+    ##Upload to grafana 
     json_dash_obj = obs.get_dashboard_json(empty_dash, overwrite=False)
     g_url = obs.upload_to_grafana(
         json_dash_obj, SuperTwin.grafana_addr, SuperTwin.grafana_token
