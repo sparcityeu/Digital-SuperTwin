@@ -1,10 +1,10 @@
-echo "Loding custom queries.."
+
+echo "[OK] Custom Queries Started !!"
 
 function execute_remote_command() {
     local remote_user="$1"
     local remote_passwd="$2"
-    local remote_command="$3"
-    #echo "$remote_command" 
+    local remote_command="touch ~/.profile ; source ~/.profile ; $3" 
     local result=$(sshpass -p "$remote_passwd" ssh "$remote_user" "$remote_command" 2>/dev/null)
     echo -n "$result"
 } 
@@ -105,3 +105,5 @@ function mem_numa_util_free_query(){
      echo "_node1" >> "${BENCHMARK_RESULTS}/${bench}/${bench}_${measurement}_data"
      echo "$(get_influx_data "${QUERY}")" >> "${BENCHMARK_RESULTS}/${bench}/${bench}_${measurement}_data"
 }
+
+echo "[OK] Custom Queries completed !!" 
