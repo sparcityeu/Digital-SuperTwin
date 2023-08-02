@@ -1,51 +1,76 @@
 #!/bin/bash
 
-#==== remove these later
-
-BENCHMARK_SUITE="merge-spmv"
-
-#====
+echo "[OK] Remote Configuration started!!"
+# SSH_NAME="oyasal22@172.23.120.104" 
+# SSH_PASSWD="123456"
 
 
 source custom_queries.sh ## to get remote ssh function
 
+#==== remove these later
+
+BENCHMARK_SUITE="merge-spmv"
+LIBS="merge-spmv-dependencies"
+
+function command_exists() { 
+    local result="$(execute_remote_command ${SSH_NAME} ${SSH_PASSWD} 'command -v '$1' 2>/dev/null')"
+    echo $result
+}
+
 function load_benchsuite_to_remote(){
+    
     local result=$(execute_remote_command ${SSH_NAME} ${SSH_PASSWD} 'if [ -d "$HOME/'$BENCHMARK_SUITE'" ]; then echo "1"; else echo "0"; fi')
-    #echo $result
     if [ "$result" == "1" ]; then
         echo "Folder exists on the remote server."
-        # Do something when the folder exists
-    else
-        echo "Folder does not exist on the remote server."
-        scp -r ./"$BENCHMARK_SUITE" ${SSH_NAME}:/\$HOME/
+        # Do something when the folder existsicpc
+    else 
+        scp -r ./"$BENCHMARK_SUITE" ${SSH_NAME}:/\$HOME/ 
     fi
-    echo "loading completed!!"
+
+    if [[ "$(command_exists icpc)" == "" ]]; then
+        echo "icpc not found loading binaries..!!"
+        scp -r ./"$LIBS/" ${SSH_NAME}:/\$HOME/
+    else 
+        echo "icpc alread installed !\n"
+    fi
+    echo "[OK] files transferred!!"
 }
 
 function install_intel_cpp_compiler(){
-    echo ""
+    if [[ "$(command_exists icpc)" != "" ]]; then
+        echo "skipping: install_intel_cpp_compiler"
+        return 0
+    fi
+    execute_remote_command ${SSH_NAME} ${SSH_PASSWD} 'cd "$HOME/'$LIBS/'" && pwd && chmod +x ./l_dpcpp-cpp-compiler_p_2023.2.0.49256_offline.sh'
+    echo "l_dpcpp-cpp-compiler_p_2023.2.0.49256_offline.sh is being executed!"
+    local result=$(execute_remote_command ${SSH_NAME} ${SSH_PASSWD} ' cd "$HOME/'$LIBS/'" && ./l_dpcpp-cpp-compiler_p_2023.2.0.49256_offline.sh -a -s --eula accept')
+    execute_remote_command ${SSH_NAME} ${SSH_PASSWD} "echo PATH='\$PATH:\$HOME/intel/oneapi/compiler/2023.2.0/linux/bin/intel64' >> ~/.profile" ## add local paths to $PATH env variable.
+    echo "[OK] installation result if any $result"
 }
 
 function install_klp(){
-    echo ""
+    if [[ "$(command_exists icpc)" != "" ]]; then
+        echo "skipping: install_klp"
+        return 0
+    fi
+    execute_remote_command ${SSH_NAME} ${SSH_PASSWD} 'cd "$HOME/'$LIBS/'" && pwd && chmod +x ./l_onemkl_p_2023.2.0.49497_offline.sh'
+    echo "l_onemkl_p_2023.2.0.49497_offline.sh is being executed!"
+    local result=$(execute_remote_command ${SSH_NAME} ${SSH_PASSWD} ' cd "$HOME/'$LIBS/'" && ./l_onemkl_p_2023.2.0.49497_offline.sh -a -s --eula accept')
+    echo "[OK] installation result if any $result"
 }
 
 function unzip_benchsuite() {
     # Function to check if a command exists
-    function command_exists() {
-        command -v "$1" >/dev/null 2>&1
-    }
-
     # Main script
-    if ! command_exists unzip; then
-        if command_exists apt; then
+    if [[ "$command_exists unzip" == "" ]]; then
+        if [[ "$command_exists apt" != "" ]]; then
             echo "Detected APT package manager."
             sudo apt update
             sudo apt install -y unzip
-        elif command_exists yum; then
+        elif [[ "$command_exists yum" != "" ]]; then
             echo "Detected YUM package manager."
             sudo yum install -y unzip
-        elif command_exists dnf; then
+        elif [[ "$command_exists dnf" != "" ]]; then
             echo "Detected DNF package manager."
             sudo dnf install -y unzip
         else
@@ -55,16 +80,26 @@ function unzip_benchsuite() {
     else
         echo "Unzip is already installed."
     fi
-    execute_remote_command ${SSH_NAME} ${SSH_PASSWD} "cd \$HOME/$BENCHMARK_SUITE && unzip \$HOME/$BENCHMARK_SUITE/matrixes_rcm.zip"
+    execute_remote_command ${SSH_NAME} ${SSH_PASSWD} "cd \$HOME/$BENCHMARK_SUITE ; unzip -n \$HOME/$BENCHMARK_SUITE/matrixes.zip"
+    echo "[OK] Unzipping benchsuite is completed"
 }
 
-function get_all_benchmarks(){
-    echo ""
+function compile_bench_suite(){
+    execute_remote_command ${SSH_NAME} ${SSH_PASSWD} "cd \$HOME/$BENCHMARK_SUITE && make cpu_spmv"
+    echo "[OK] compilation done"
 }
-
-SSH_NAME="rt7@127.0.0.1"
-SSH_PASSWD="87826c8f"
  
+function get_suit_matrix_names(){ 
+    local result=$(execute_remote_command ${SSH_NAME} ${SSH_PASSWD} "cd \$HOME/$BENCHMARK_SUITE/ && find ./matrixes/ -name \*.mtx -exec ls {} \\;")
+    echo -e "${result}"
+}   
+echo "Remote Configuration Begun!!"
+
+
 load_benchsuite_to_remote
 unzip_benchsuite
-echo "completed!!"
+install_intel_cpp_compiler # 2gb
+install_klp
+compile_bench_suite
+
+echo "[OK] Remote Configuration completed!!"
