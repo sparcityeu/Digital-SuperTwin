@@ -1212,22 +1212,34 @@ def generate_roofline_dashboard(SuperTwin):
             ]
             if len(formula) == 0:
                 continue
-            empty_dash["panels"].append(
-                pmu_grafana_utils.dashboard_pmu_table(
-                    SuperTwin.grafana_datasource,
-                    pmu_generic_event,
-                    int(data["cpu_threads"] * data["cpu_threads_per_core"]),
-                    formula,
+            
+            if pmu_generic_event == "CARM":
+                empty_dash["panels"].append(
+                    pmu_grafana_utils.dashboard_livecarm_table(
+                        pmu_name,
+                        SuperTwin.grafana_datasource,
+                        pmu_generic_event,
+                        int(data["cpu_threads"] * data["cpu_threads_per_core"]),
+                        formula,
+                    )
+                ) 
+            else:
+                empty_dash["panels"].append(
+                    pmu_grafana_utils.dashboard_pmu_table(
+                        SuperTwin.grafana_datasource,
+                        pmu_generic_event,
+                        int(data["cpu_threads"] * data["cpu_threads_per_core"]),
+                        formula,
+                    )
                 )
-            )
-            empty_dash["panels"].append(
-                pmu_grafana_utils.dashboard_pmu_table_total(
-                    SuperTwin.grafana_datasource,
-                    pmu_generic_event,
-                    int(data["cpu_threads"] * data["cpu_threads_per_core"]),
-                    formula,
+                empty_dash["panels"].append(
+                    pmu_grafana_utils.dashboard_pmu_table_total(
+                        SuperTwin.grafana_datasource,
+                        pmu_generic_event,
+                        int(data["cpu_threads"] * data["cpu_threads_per_core"]),
+                        formula,
+                    )
                 )
-            )
 
     """
     dict_stream_bench_fig = obs.json.loads(io.to_json(stream_bench_fig))

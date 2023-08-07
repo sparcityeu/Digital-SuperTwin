@@ -37,6 +37,8 @@ _DEFAULT_GENERIC_PMU_EVENTS = []
 def _fill_default_pmu_event_names():
     """All generic pmu event names (our convention)"""
 
+    _DEFAULT_GENERIC_PMU_EVENTS.append("CARM")
+    
     _DEFAULT_GENERIC_PMU_EVENTS.append("RAPL_ENERGY_PKG")
     _DEFAULT_GENERIC_PMU_EVENTS.append("RETIRED_INSTRUCTIONS")
     _DEFAULT_GENERIC_PMU_EVENTS.append("TOTAL_DATA_CACHE_MISS")
@@ -57,6 +59,8 @@ def _fill_default_pmu_event_names():
     _DEFAULT_GENERIC_PMU_EVENTS.append("L2_CACHE_DATA_HIT")
     _DEFAULT_GENERIC_PMU_EVENTS.append("L3_CACHE_DATA_MISS")
     _DEFAULT_GENERIC_PMU_EVENTS.append("L3_CACHE_DATA_HIT")
+    
+    _DEFAULT_GENERIC_PMU_EVENTS.append("TOTAL_MEMORY_OPERATIONS") 
 
 
 _COMMON_PMU_DICT = {

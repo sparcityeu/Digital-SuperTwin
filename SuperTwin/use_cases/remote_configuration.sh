@@ -1,16 +1,8 @@
 #!/bin/bash
 
-echo "[OK] Remote Configuration started!!"
-# SSH_NAME="oyasal22@172.23.120.104" 
-# SSH_PASSWD="123456"
-
-
+echo "[OK] Remote Configuration started!!" 
 source custom_queries.sh ## to get remote ssh function
 
-#==== remove these later
-
-BENCHMARK_SUITE="merge-spmv"
-LIBS="merge-spmv-dependencies"
 
 function command_exists() { 
     local result="$(execute_remote_command ${SSH_NAME} ${SSH_PASSWD} 'command -v '$1' 2>/dev/null')"
