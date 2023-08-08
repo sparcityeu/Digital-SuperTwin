@@ -1219,7 +1219,7 @@ def generate_roofline_dashboard(SuperTwin):
                         pmu_name,
                         SuperTwin.grafana_datasource,
                         pmu_generic_event,
-                        int(data["cpu_threads"] * data["cpu_threads_per_core"]),
+                        int(data["cpu_cores"] * data["cpu_threads_per_core"]), # * data[socket_count]
                         formula,
                     )
                 ) 
@@ -1228,7 +1228,7 @@ def generate_roofline_dashboard(SuperTwin):
                     pmu_grafana_utils.dashboard_pmu_table(
                         SuperTwin.grafana_datasource,
                         pmu_generic_event,
-                        int(data["cpu_threads"] * data["cpu_threads_per_core"]),
+                        int(data["cpu_cores"] * data["cpu_threads_per_core"]),  # * data[socket_count]
                         formula,
                     )
                 )
@@ -1236,7 +1236,7 @@ def generate_roofline_dashboard(SuperTwin):
                     pmu_grafana_utils.dashboard_pmu_table_total(
                         SuperTwin.grafana_datasource,
                         pmu_generic_event,
-                        int(data["cpu_threads"] * data["cpu_threads_per_core"]),
+                        int(data["cpu_cores"] * data["cpu_threads_per_core"]), # * data[socket_count]
                         formula,
                     )
                 )

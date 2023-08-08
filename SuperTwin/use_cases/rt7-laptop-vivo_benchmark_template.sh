@@ -24,15 +24,15 @@ INFLUXDB_HOST="localhost"
 INFLUXDB_PORT="8086"
 
 ## DONT MODIFY!! THESE ARE ALTERED BY UTILS.PY
-SSH_NAME="oyasal22@172.23.120.104" 
-SSH_PASSWD="123456"
+SSH_NAME="rt7@127.0.0.1" 
+SSH_PASSWD="87826c8f"
 
-DATABASE_NAME="user-AS-4023S-TRT"
+DATABASE_NAME="rt7-laptop-vivo"
 
-MONITORING_URL="http://localhost:3000/d/c1ff8a55-ca5f-4b7c-b47d-185aa4931ad3/pmus-user-as-4023s-trt-monitor-4ecdced9-e2a4-42e6-a2c7-1cbb705e25a0?orgId=1"
+MONITORING_URL="http://localhost:3000/d/yJqzqFe4z/pmus-rt7-laptop-vivo-monitor-b9135b64-ed23-48c5-b2c2-904771ad7bfd?orgId=1"
 MONITORING_DASHBOARD_URL=""
  
-ROOFLINE_URL="http://localhost:3000/d/f65fe368-5d26-436f-9417-93d2996e10e3/pmus-user-as-4023s-trt-roofline-0477b080-4821-45a2-8139-38d8edff076d?orgId=1"
+ROOFLINE_URL="http://localhost:3000/d/WD6z3Ke4z/pmus-rt7-laptop-vivo-roofline-fd5feef8-b551-4b45-9e37-126c2c6b0495?orgId=1"
 ROOFLINE_DASHBOARD_URL="" 
 ## end DONT MODIFY!! 
 echo "entered database name :$DATABASE_NAME"

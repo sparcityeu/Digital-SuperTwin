@@ -102,6 +102,8 @@ def _fill_common_pmu_dict__amd64_fam17h_zen2(_COMMON_PMU_DICT):
         "RETIRED_SSE_AVX_OPERATIONS:DP_DIV_FLOPS",  ## div flops
         "+",
         "RETIRED_SSE_AVX_OPERATIONS:SP_DIV_FLOPS",  ## div flops
+        "+",
+        "LS_DISPATCH:LD_ST_DISPATCH"
         ]  # Number of operations dispatched to the LS unit 
 
 def initialize(_DEFAULT_GENERIC_PMU_EVENTS, _COMMON_PMU_DICT):

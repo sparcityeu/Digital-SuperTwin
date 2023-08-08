@@ -31,9 +31,14 @@ live_carm_pmu_mappings = {
     'RETIRED_SSE_AVX_OPERATIONS:DP_MULT_FLOPS': 'G',
     'RETIRED_SSE_AVX_OPERATIONS:DP_DIV_FLOPS': 'H',
     'LS_DISPATCH:LD_ST_DISPATCH': 'I',
-    'amd64_fam17h_zen2': ["($A +$B+4 *$C+2 *$D+8 *$E+4 *$F+16 *$G+8 *$H)*($A +$B +$C +$D +$E +$F +$G +$H))/(4 *$A*($Z +$Y)+8 *$B*($Z +$Y)+16 *$C*($Z +$Y)+16 *$D*($Z +$Y)+32 *$E*($Z +$Y)+32 *$F*($Z +$Y)+64 *$G*($Z +$Y)+64 *$H*($Z +$Y)",
-                                                                                               "($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)/1000000000"
+                            
+    'amd64_fam17h_zen2': ["($A+$B+$C+$D+$E+$F+$G+$H)/($I*(4*(($A+$B+$C+$D)/($A+$B+$C+$D+$E+$F+$G+$H))+8*(($E+$F+$G+$H)/($A+$B+$C+$D+$E+$F+$G+$H))))",
+                                                                                               "($A+$B+$C+$D+$E+$F+$G+$H)/1000000000"
                                                                                                ],
+
+    # (($A0)+($B0)+($C0)+($D0)+($E0)+($F0)+($G0)+($H0))/(($I0)*(4*((($A0)+($B0)+($C0)+($D0))/(($A0)+($B0)+($C0)+($D0)+($E0)+($F0)+($G0)+($H0)))+8*((($E0)+($F0)+($G0)+($H0))/(($A0)+($B0)+($C0)+($D0)+($E0)+($F0)+($G0)+($H0)))))
+    
+    
     # INTEL_SKL
     'MEM_INST_RETIRED:ALL_LOADS': 'Z',
     'MEM_INST_RETIRED:ALL_STORES': 'Y',
@@ -46,7 +51,7 @@ live_carm_pmu_mappings = {
     'FP_ARITH:512B_PACKED_SINGLE': 'G',
     'FP_ARITH:512B_PACKED_DOUBLE': 'H',
     
-    'skl': ["($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)($A+$B+$C+$D+$E+$F+$G+$H))/(4$A*($Z+$Y)+8*$B*($Z+$Y)+16*$C*($Z+$Y)+16*$D*($Z+$Y)+32*$E*($Z+$Y)+32*$F*($Z+$Y)+64*$G*($Z+$Y)+64*$H*($Z+$Y)",
+    'skl': ["(($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)*($A+$B+$C+$D+$E+$F+$G+$H))/(4*$A*($Z+$Y)+8*$B*($Z+$Y)+16*$C*($Z+$Y)+16*$D*($Z+$Y)+32*$E*($Z+$Y)+32*$F*($Z+$Y)+64*$G*($Z+$Y)+64*$H*($Z+$Y))",
                                                                                                "($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)/1000000000"
                                                                                                ],
 }
@@ -316,6 +321,14 @@ def dashboard_livecarm_table(pmu_name,datasource, title, cpu_count, formula):
         },
         "type": "xychart",
         "title": title,
+          "transformations": [
+            {
+            "id": "joinByField",
+            "options": {
+            "mode": "outer"
+            }
+            }
+        ],
         "datasource": {"uid": datasource, "type": "influxdb"},
         "targets": [],
         "options": {
@@ -428,6 +441,7 @@ def dashboard_livecarm_table(pmu_name,datasource, title, cpu_count, formula):
                         {"type": "time", "params": ["1s"]},
                         {"type": "fill", "params": ["null"]},
                     ],
+                    "hide": True,
                     "select": [
                         [
                             {
@@ -492,4 +506,5 @@ def expand_expression(expression, N):
     expanded_expression = expanded_expression.replace("$H", "($H"+str(N)+")")
     expanded_expression = expanded_expression.replace("$Z", "($Z"+str(N)+")")
     expanded_expression = expanded_expression.replace("$Y", "($Y"+str(N)+")")
+    expanded_expression = expanded_expression.replace("$I", "($I"+str(N)+")")
     return expanded_expression
