@@ -19,7 +19,7 @@ if  [[ "$1" == "--help" ]]; then
     exit 0
 fi
  
-BENCHMARK_SUITE="merge-spmv"
+BENCHMARK_SUITE="merge_spmv"
 INFLUXDB_HOST="localhost"
 INFLUXDB_PORT="8086"
 
@@ -75,7 +75,7 @@ do
 		echo "EMPTY BENCHMARK SKIPPED !"
 		continue
 	fi
-
+  
 	# BENCHMARK EXECUTION PART
 	 
 	echo "looking for matrix names \*.mtx"
@@ -85,6 +85,9 @@ do
 	for MATRIX_NAME in $result
 	do
 		echo "found -> $MATRIX_NAME"
+
+		mkdir -p ${BENCHMARK_RESULTS}/${bench}/$MATRIX_NAME/
+
 		echo "executing benchmark ${bench} program:${BENCHMARK_PROGRAMS[$bench]} --mtx=\"${MATRIX_NAME}\""
 
 		start_time=$(date +%s) ## BEGIN MEASURING PER MATRICES
@@ -128,16 +131,16 @@ do
 			elif [[ "$measurement" == "mem_numa_util_used" ]]; then
 				$(mem_numa_util_free_query)
 			else    	
-				echo ${QUERY} >> ${BENCHMARK_RESULTS}/${bench}/queries.txt  
-				echo "$(get_influx_data "$QUERY")" >> ${BENCHMARK_RESULTS}/${bench}/${bench}_${measurement}_data 
+				echo ${QUERY} >> ${BENCHMARK_RESULTS}/${bench}/$MATRIX_NAME/queries.txt  
+				echo "$(get_influx_data "$QUERY")" >> ${BENCHMARK_RESULTS}/${bench}//$MATRIX_NAME/${measurement}_data 
 			fi
 		done
 		set +f  # Re-enable globbing   
-		echo -e "------------------------\n" >> ${BENCHMARK_RESULTS}/${bench}/queries.txt   
+		echo -e "------------------------\n" >> ${BENCHMARK_RESULTS}/${bench}/$MATRIX_NAME/queries.txt   
 		
 		echo "Benchmark ${bench} execution dashboard links added... from: bench_start_time to bench_end_time "
-		echo "${MONITORING_DASHBOARD_URL}" >> ${BENCHMARK_RESULTS}/${bench}/dashboard_url.txt   
-		echo "${ROOFLINE_DASHBOARD_URL}" >> ${BENCHMARK_RESULTS}/${bench}/dashboard_url.txt   
+		echo "${MONITORING_DASHBOARD_URL}" >> ${BENCHMARK_RESULTS}/${bench}/$MATRIX_NAME/dashboard_url.txt   
+		echo "${ROOFLINE_DASHBOARD_URL}" >> ${BENCHMARK_RESULTS}/${bench}/$MATRIX_NAME/dashboard_url.txt   
 		echo "------------------------"
 	done
  

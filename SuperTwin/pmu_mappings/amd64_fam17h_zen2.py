@@ -83,7 +83,28 @@ def _fill_common_pmu_dict__amd64_fam17h_zen2(_COMMON_PMU_DICT):
         "+",
         "DATA_CACHE_REFILLS_FROM_SYSTEM:LS_MABRESP_RMT_DRAM",  # "Demand Data Cache fills by data source. Fill from DRAM (home node remote).."
     ]
-
+    
+    _COMMON_PMU_DICT[key]["TOTAL_MEMORY_OPERATIONS"] = [ "LS_DISPATCH:LD_ST_DISPATCH"]  # Number of operations dispatched to the LS unit 
+    
+    _COMMON_PMU_DICT[key]["CARM"] = [ 
+        "RETIRED_SSE_AVX_OPERATIONS:DP_MULT_ADD_FLOPS",  ## double precision mul add
+        "+",
+        "RETIRED_SSE_AVX_OPERATIONS:SP_MULT_ADD_FLOPS",  ## single precision mul add
+        "+",
+        "RETIRED_SSE_AVX_OPERATIONS:SP_ADD_SUB_FLOPS",  ## single precision add sub
+        "+",
+        "RETIRED_SSE_AVX_OPERATIONS:DP_ADD_SUB_FLOPS",  ## double precision add sub
+        "+",
+        "RETIRED_SSE_AVX_OPERATIONS:DP_MULT_FLOPS",  ## mul flops
+        "+",
+        "RETIRED_SSE_AVX_OPERATIONS:SP_MULT_FLOPS",  ## mul flops
+        "+",
+        "RETIRED_SSE_AVX_OPERATIONS:DP_DIV_FLOPS",  ## div flops
+        "+",
+        "RETIRED_SSE_AVX_OPERATIONS:SP_DIV_FLOPS",  ## div flops
+        "+",
+        "LS_DISPATCH:LD_ST_DISPATCH"
+        ]  # Number of operations dispatched to the LS unit 
 
 def initialize(_DEFAULT_GENERIC_PMU_EVENTS, _COMMON_PMU_DICT):
     _fill_common_pmu_dict__amd64_fam17h_zen2(_COMMON_PMU_DICT)
