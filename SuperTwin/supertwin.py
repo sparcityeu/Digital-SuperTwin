@@ -886,7 +886,7 @@ if __name__ == "__main__":
     # CONFIGURE PMU_MAPPING_UTILS
 
     pmu_mapping_utils.initialize()
-    # pmu_mapping_utils.add_configuration("icl_pmu_mapping.txt")
+    pmu_mapping_utils.add_configuration("skl_pmu_remapping.txt")
     # add_configuration("amd64_fam15_pmu_emapping.txt")
 
     # user_name = "ftasyaran"
