@@ -370,7 +370,8 @@ def dashboard_livecarm_table(pmu_name,datasource, title, cpu_count, formula):
                     "axisLabel": "",
                     "axisColorMode": "text",
                     "scaleDistribution": {
-                        "type": "linear"
+                        "type": "log",
+                        "log": 2
                     },
                     "axisCenteredZero": False,
                     "hideFrom": {

@@ -158,7 +158,7 @@ def generate_adcarm_bench_sh(SuperTwin, adcarm_config):
     for thread in thread_set:
         if str(thread) not in modifiers.keys():
             modifiers[str(thread)] = []
-
+        #If system only supports avx512
         if(biggest_vector == "avx512"):
             if(is_numa and thread != 1):
                 #line = "python3 " + "run.py " + " " + adcarm_config + " -t " + str(thread) + "\n\n"
@@ -167,15 +167,44 @@ def generate_adcarm_bench_sh(SuperTwin, adcarm_config):
                 binding = prepare_carm_bind(td, thread)
                 line = "python3 " + "run_binded.py " + " " + adcarm_config + " -t " + str(thread) + " -b " + "'" + binding + "'" + "\n\n"
                 lines.append(line) ##One binded
-                modifiers[str(thread)].append({'binding': binding, 'isa': 'avx512', 'inst': 'fma'})
+                modifiers[str(thread)].append({'binding': binding, 'isa': 'avx512', 'inst': 'fma', 'vendor': 'intel'})
             else:
-                line = "python3 " + "run.py " + " " + adcarm_config + " -t " + str(thread) + "\n\n"
+                line = "python3 " + "run.py " + " " + adcarm_config + " -t " + str(thread) + " --isa avx512 --inst fma --vendor intel"+"\n\n"
                 lines.append(line) ##One as it is
-                modifiers[str(thread)].append({'isa': 'avx512', 'inst': 'fma'})
+                modifiers[str(thread)].append({'isa': 'avx512', 'inst': 'fma', 'vendor': 'intel'})
+        #If system only supports avx2
+        elif(biggest_vector == "avx2"):
+            if(is_numa and thread != 1):
+                #line = "python3 " + "run.py " + " " + adcarm_config + " -t " + str(thread) + "\n\n"
+                #lines.append(line) ##One as it is
+                #modifiers[str(thread)].append({'isa': 'avx512', 'inst': 'fma'})
+                binding = prepare_carm_bind(td, thread)
+                line = "python3 " + "run_binded.py " + " " + adcarm_config + " -t " + str(thread) + " -b " + "'" + binding + "'" + "\n\n"
+                lines.append(line) ##One binded
+                modifiers[str(thread)].append({'binding': binding, 'isa': 'avx2', 'inst': 'fma', 'vendor': 'intel'})
+            else:
+                line = "python3 " + "run.py " + " " + adcarm_config + " -t " + str(thread) + " --isa avx2 --inst fma --vendor intel"+"\n\n"
+                lines.append(line) ##One as it is
+                modifiers[str(thread)].append({'isa': 'avx2', 'inst': 'fma', 'vendor': 'intel'})
+        #If systems only supports sse
+        elif(biggest_vector == "sse"):
+            if(is_numa and thread != 1):
+                #line = "python3 " + "run.py " + " " + adcarm_config + " -t " + str(thread) + "\n\n"
+                #lines.append(line) ##One as it is
+                #modifiers[str(thread)].append({'isa': 'avx512', 'inst': 'fma'})
+                binding = prepare_carm_bind(td, thread)
+                line = "python3 " + "run_binded.py " + " " + adcarm_config + " -t " + str(thread) + " -b " + "'" + binding + "'" + "\n\n"
+                lines.append(line) ##One binded
+                modifiers[str(thread)].append({'binding': binding, 'isa': 'sse', 'inst': 'fma'})
+            else:
+                line = "python3 " + "run.py " + " " + adcarm_config + " -t " + str(thread) + " --isa sse --inst fma"+"\n\n"
+                lines.append(line) ##One as it is
+                modifiers[str(thread)].append({'isa': 'sse', 'inst': 'fma'})
+        #If system only supports scalar
         else:
-            line = "python3 " + "run.py " + " " + adcarm_config + " -t " + str(thread) + " --isa scalar --inst add"+"\n\n"
+            line = "python3 " + "run.py " + " " + adcarm_config + " -t " + str(thread) + " --isa scalar --inst fma"+"\n\n"
             lines.append(line)
-            modifiers[str(thread)].append({'isa': 'scalar', 'inst': 'add'})
+            modifiers[str(thread)].append({'isa': 'scalar', 'inst': 'fma'})
 
     writer = open("probing/benchmarks/adCARM/gen_bench.sh", "w+")
     for line in lines:
