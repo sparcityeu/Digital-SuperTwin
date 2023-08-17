@@ -23,7 +23,7 @@ def _fill_common_pmu_dict__amd64_fam17h_zen2(_COMMON_PMU_DICT):
     Events that only zen2 processors have
     """
     key = "amd64_fam17h_zen2"
-    alias = "amd64_fam17h"  ## this is pmu name reported by pcp
+    alias = "amd64_fam17h"  # this is pmu name reported by pcp
 
     _COMMON_PMU_DICT[key] = copy.deepcopy(_COMMON_PMU_DICT["amd64_common"])
     _COMMON_PMU_DICT[key]["alias"] = alias
@@ -53,58 +53,66 @@ def _fill_common_pmu_dict__amd64_fam17h_zen2(_COMMON_PMU_DICT):
         "RETIRED_SSE_AVX_OPERATIONS:SP_DIV_FLOPS",
     ]
     _COMMON_PMU_DICT[key]["FP_RETIRED"] = [
-        "RETIRED_SSE_AVX_OPERATIONS:DP_MULT_ADD_FLOPS",  ## double precision mul add
+        "RETIRED_SSE_AVX_OPERATIONS:DP_MULT_ADD_FLOPS",  # double precision mul add
         "+",
-        "RETIRED_SSE_AVX_OPERATIONS:SP_MULT_ADD_FLOPS",  ## single precision mul add
+        "RETIRED_SSE_AVX_OPERATIONS:SP_MULT_ADD_FLOPS",  # single precision mul add
         "+",
-        "RETIRED_SSE_AVX_OPERATIONS:SP_ADD_SUB_FLOPS",  ## single precision add sub
+        "RETIRED_SSE_AVX_OPERATIONS:SP_ADD_SUB_FLOPS",  # single precision add sub
         "+",
-        "RETIRED_SSE_AVX_OPERATIONS:DP_ADD_SUB_FLOPS",  ## double precision add sub
+        "RETIRED_SSE_AVX_OPERATIONS:DP_ADD_SUB_FLOPS",  # double precision add sub
         "+",
-        "RETIRED_SSE_AVX_OPERATIONS:DP_MULT_FLOPS",  ## mul flops
+        "RETIRED_SSE_AVX_OPERATIONS:DP_MULT_FLOPS",  # mul flops
         "+",
-        "RETIRED_SSE_AVX_OPERATIONS:SP_MULT_FLOPS",  ## mul flops
+        "RETIRED_SSE_AVX_OPERATIONS:SP_MULT_FLOPS",  # mul flops
         "+",
-        "RETIRED_SSE_AVX_OPERATIONS:DP_DIV_FLOPS",  ## div flops
+        "RETIRED_SSE_AVX_OPERATIONS:DP_DIV_FLOPS",  # div flops
         "+",
-        "RETIRED_SSE_AVX_OPERATIONS:SP_DIV_FLOPS",  ## div flops
-    ]  ## counts all floating-point operations retired,
-    ## including additions, subtractions, multiplications, divisions, and other arithmetic or mathematical operations.
+        "RETIRED_SSE_AVX_OPERATIONS:SP_DIV_FLOPS",  # div flops
+    ]  # counts all floating-point operations retired,
+    # including additions, subtractions, multiplications, divisions, and other arithmetic or mathematical operations.
 
     _COMMON_PMU_DICT[key]["L2_CACHE_DATA_HIT"] = [
-        "CORE_TO_L2_CACHEABLE_REQUEST_ACCESS_STATUS:LS_RD_BLK_L_HIT_X",  # Number of data cache reads hitting in the L2
+        # Number of data cache reads hitting in the L2
+        "CORE_TO_L2_CACHEABLE_REQUEST_ACCESS_STATUS:LS_RD_BLK_L_HIT_X",
     ]
     _COMMON_PMU_DICT[key]["L2_CACHE_DATA_MISS"] = [
-        "CORE_TO_L2_CACHEABLE_REQUEST_ACCESS_STATUS:LS_RD_BLK_C",  # Number of data cache fill requests missing in the L2 (all types).. meaning both read/write
+        # Number of data cache fill requests missing in the L2 (all types).. meaning both read/write
+        "CORE_TO_L2_CACHEABLE_REQUEST_ACCESS_STATUS:LS_RD_BLK_C",
     ]
 
     _COMMON_PMU_DICT[key]["TOTAL_DATA_CACHE_MISS"] = [
-        "DATA_CACHE_REFILLS_FROM_SYSTEM:LS_MABRESP_LCL_DRAM",  # "Demand Data Cache fills by data source. Fill from DRAM (home node local).."
+        # "Demand Data Cache fills by data source. Fill from DRAM (home node local).."
+        "DATA_CACHE_REFILLS_FROM_SYSTEM:LS_MABRESP_LCL_DRAM",
         "+",
-        "DATA_CACHE_REFILLS_FROM_SYSTEM:LS_MABRESP_RMT_DRAM",  # "Demand Data Cache fills by data source. Fill from DRAM (home node remote).."
+        # "Demand Data Cache fills by data source. Fill from DRAM (home node remote).."
+        "DATA_CACHE_REFILLS_FROM_SYSTEM:LS_MABRESP_RMT_DRAM",
     ]
-    
-    _COMMON_PMU_DICT[key]["TOTAL_MEMORY_OPERATIONS"] = [ "LS_DISPATCH:LD_ST_DISPATCH"]  # Number of operations dispatched to the LS unit 
-    
-    _COMMON_PMU_DICT[key]["CARM"] = [ 
-        "RETIRED_SSE_AVX_OPERATIONS:DP_MULT_ADD_FLOPS",  ## double precision mul add
+
+    _COMMON_PMU_DICT[key]["TOTAL_MEMORY_OPERATIONS"] = ["LS_DISPATCH:STORE_DISPATCH",
+                                                        "+", "LS_DISPATCH:LD_DISPATCH"]  # Number of operations dispatched to the LS unit
+
+    _COMMON_PMU_DICT[key]["CARM"] = [
+        "RETIRED_SSE_AVX_OPERATIONS:DP_MULT_ADD_FLOPS",  # double precision mul add
         "+",
-        "RETIRED_SSE_AVX_OPERATIONS:SP_MULT_ADD_FLOPS",  ## single precision mul add
+        "RETIRED_SSE_AVX_OPERATIONS:SP_MULT_ADD_FLOPS",  # single precision mul add
         "+",
-        "RETIRED_SSE_AVX_OPERATIONS:SP_ADD_SUB_FLOPS",  ## single precision add sub
+        "RETIRED_SSE_AVX_OPERATIONS:SP_ADD_SUB_FLOPS",  # single precision add sub
         "+",
-        "RETIRED_SSE_AVX_OPERATIONS:DP_ADD_SUB_FLOPS",  ## double precision add sub
+        "RETIRED_SSE_AVX_OPERATIONS:DP_ADD_SUB_FLOPS",  # double precision add sub
         "+",
-        "RETIRED_SSE_AVX_OPERATIONS:DP_MULT_FLOPS",  ## mul flops
+        "RETIRED_SSE_AVX_OPERATIONS:DP_MULT_FLOPS",  # mul flops
         "+",
-        "RETIRED_SSE_AVX_OPERATIONS:SP_MULT_FLOPS",  ## mul flops
+        "RETIRED_SSE_AVX_OPERATIONS:SP_MULT_FLOPS",  # mul flops
         "+",
-        "RETIRED_SSE_AVX_OPERATIONS:DP_DIV_FLOPS",  ## div flops
+        "RETIRED_SSE_AVX_OPERATIONS:DP_DIV_FLOPS",  # div flops
         "+",
-        "RETIRED_SSE_AVX_OPERATIONS:SP_DIV_FLOPS",  ## div flops
+        "RETIRED_SSE_AVX_OPERATIONS:SP_DIV_FLOPS",  # div flops
         "+",
-        "LS_DISPATCH:LD_ST_DISPATCH"
-        ]  # Number of operations dispatched to the LS unit 
+        "LS_DISPATCH:LD_DISPATCH",
+        "+",
+        "LS_DISPATCH:STORE_DISPATCH"
+    ]  # Number of operations dispatched to the LS unit
+
 
 def initialize(_DEFAULT_GENERIC_PMU_EVENTS, _COMMON_PMU_DICT):
     _fill_common_pmu_dict__amd64_fam17h_zen2(_COMMON_PMU_DICT)

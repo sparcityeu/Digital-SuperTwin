@@ -30,9 +30,10 @@ live_carm_pmu_mappings = {
     'RETIRED_SSE_AVX_OPERATIONS:DP_ADD_SUB_FLOPS': 'F',
     'RETIRED_SSE_AVX_OPERATIONS:DP_MULT_FLOPS': 'G',
     'RETIRED_SSE_AVX_OPERATIONS:DP_DIV_FLOPS': 'H',
-    'LS_DISPATCH:LD_ST_DISPATCH': 'I',
+    'LS_DISPATCH:LD_DISPATCH': 'I',
+    'LS_DISPATCH:STORE_DISPATCH': 'J',
                             
-    'amd64_fam17h_zen2': ["($A+$B+$C+$D+$E+$F+$G+$H)/($I*(4*(($A+$B+$C+$D)/($A+$B+$C+$D+$E+$F+$G+$H))+8*(($E+$F+$G+$H)/($A+$B+$C+$D+$E+$F+$G+$H))))",
+    'amd64_fam17h_zen2': ["($A+$B+$C+$D+$E+$F+$G+$H)/(($I+$J)*(4*(($A+$B+$C+$D)/($A+$B+$C+$D+$E+$F+$G+$H))+8*(($E+$F+$G+$H)/($A+$B+$C+$D+$E+$F+$G+$H))))",
                                                                                                "($A+$B+$C+$D+$E+$F+$G+$H)/1000000000"
                                                                                                ],
 
@@ -508,4 +509,5 @@ def expand_expression(expression, N):
     expanded_expression = expanded_expression.replace("$Z", "($Z"+str(N)+")")
     expanded_expression = expanded_expression.replace("$Y", "($Y"+str(N)+")")
     expanded_expression = expanded_expression.replace("$I", "($I"+str(N)+")")
+    expanded_expression = expanded_expression.replace("$J", "($J"+str(N)+")")
     return expanded_expression
