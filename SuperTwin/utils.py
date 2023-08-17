@@ -761,6 +761,51 @@ def get_biggest_vector_inst(td):
 
     return None
 
+def get_biggest_vector_inst_carm(td):
+
+    sse = False
+    avx2 = False
+    avx512 = False
+
+    for key in td:
+        if key.find("socket") != -1:
+            contents = td[key]["contents"]
+
+            for content in contents:
+                if content["name"].find("flags") != -1:
+                    for flag in content["description"].split(" "):
+                        if flag.find("avx512") != -1:
+                            avx512 = True
+                        if flag.find("avx2") != -1:
+                            avx2 = True
+                        if flag.find("sse") != -1:
+                            sse = True
+
+    if avx512:
+        return "avx512"
+    if avx2:
+        return "avx2"
+    if sse:
+        return "sse"
+
+    return None
+
+def get_cpu_vendor(td):
+
+    for key in td:
+        if(key.find("socket") != -1):
+            contents = td[key]["contents"]
+
+            for content in contents:
+                if(content["name"] == "model"):
+                    string = content["description"]
+                    if "intel" in string.lower():
+                        return "intel"
+                    elif "amd" in string.lower():
+                        return "amd"
+
+    return None
+
 
 ##It would be much if contents will be dictionary instead of list. Require big refactorization. Fix this later.
 def find_component(td, _id):
