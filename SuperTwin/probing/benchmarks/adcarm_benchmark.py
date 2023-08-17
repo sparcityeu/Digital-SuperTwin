@@ -28,6 +28,12 @@ def get_fields(data):
 
             for content in contents:
                 
+                #Use nominal frequency instead of max frequency
+                #if(content["name"] == "model"):
+                #    string = content["description"]
+                #    max_frequency = str(float(string.split("@")[1].strip("GHz").strip("")))
+
+                #Use max frequency instead of nominal frequency
                 if(content["name"] == "max_mhz"):
                     freq_temp = content["description"]
                     max_frequency = str(float(freq_temp)/1000)
