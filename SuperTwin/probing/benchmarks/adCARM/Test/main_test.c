@@ -199,8 +199,8 @@ void * benchmark_test(void *t_args){
 		sleep0();
 		serialize();
 	}
-	fprintf(stderr, "\nMAX RECORDED FREQUENCY: %f GHz\n", freq_real);
-	fprintf(stderr, "NOMINAL RECORDED FREQUENCY: %f GHz\n", freq_nominal);
+	//fprintf(stderr, "\nMAX RECORDED FREQUENCY: %f GHz\n", freq_real);
+	//fprintf(stderr, "NOMINAL RECORDED FREQUENCY: %f GHz\n", freq_nominal);
 	
 	pthread_barrier_wait(&bar);
 	
