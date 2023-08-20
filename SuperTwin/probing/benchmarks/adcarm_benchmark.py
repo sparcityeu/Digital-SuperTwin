@@ -126,7 +126,8 @@ def generate_adcarm_bench_sh(SuperTwin, adcarm_config):
     td = utils.get_twin_description(SuperTwin)
     mt_info = utils.get_multithreading_info(td)
 
-    vendor = utils.get_cpu_vendor(td)
+    #vendor = utils.get_cpu_vendor(td)
+    vendor = "intel"
 
     no_sockets = mt_info["no_sockets"]
     no_cores_per_socket = mt_info["no_cores_per_socket"]

@@ -148,7 +148,7 @@ class SuperTwin:
         # benchmark functions
         # self.add_stream_benchmark()
         # self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
-        # self.add_adcarm_benchmark() 
+        self.add_adcarm_benchmark() 
 
         utils.register_twin_state(self)
 
