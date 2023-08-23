@@ -409,10 +409,11 @@ class SuperTwin:
 
         def which():
             runs = adcarm_res["threads"][max_threads()]
-
+            print("runs:", runs, "len(runs): ", len(runs))
             for i in range(len(runs)):
                 if "binding" not in runs[i].keys():
                     return i
+            return len(runs) - 1 ##Last one is the most important
 
         benchmark_id = str(
             self.benchmarks
@@ -430,6 +431,10 @@ class SuperTwin:
         if adcarm_modifiers["environment"] != []:
             content["@environment"] = adcarm_modifiers["environment"]
 
+        print("#####################################33")
+        print("before failure, adcarm_res: ", adcarm_res)    
+        print("#####################################33")
+        
         # content["@global_parameters"] = carm config values, L1size, L2size, Frequency?
         content["@mvres"] = adcarm_res["threads"][max_threads()][which()]["FP"]
         content["@mvres_name"] = "Max threads ridge point, without modifiers"
@@ -900,7 +905,7 @@ if __name__ == "__main__":
 
     # my_superTwin.add_stream_benchmark()
     # my_superTwin.add_hpcg_benchmark(HPCG_PARAM)
-    # my_superTwin.add_adcarm_benchmark()
+    ###my_superTwin.add_adcarm_benchmark()
     # my_superTwin.generate_roofline_dashboard()
 
     # resolve_test(my_superTwin, 1)
@@ -910,9 +915,9 @@ if __name__ == "__main__":
     # resolve_test(my_superTwin, 8)
     # resolve_test(my_superTwin, 64)
     # resolve_test(my_superTwin, 80)
-
-    # my_superTwin.update_twin_document__assert_new_monitor_pid()
-
+    
+    #my_superTwin.update_twin_document__assert_new_monitor_pid()
+    
     """
     empty_dash = mdm.generate_empty_dash(my_superTwin)
     empty_dash = mdm.name_panel(my_superTwin, empty_dash)

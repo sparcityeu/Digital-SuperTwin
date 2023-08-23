@@ -47,6 +47,7 @@ def parse_event(pmus, event):
     equiv = lines[4].split(":")[1].strip(" ")
     flags = lines[5].split(":")[1].strip(" ")
     desc = lines[6].split(":")[1][1:]
+    desc = "" ##For large servers, adding all descriptions to twin description cause mongodb to fail
     code = lines[7].split(":")[1].strip(" ")
     
     #print('pmu:', pmu)

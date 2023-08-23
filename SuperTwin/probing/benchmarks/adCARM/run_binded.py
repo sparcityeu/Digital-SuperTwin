@@ -1,9 +1,9 @@
 import argparse
 import os
 import subprocess
-import matplotlib as mpl
-mpl.use('Agg')
-import matplotlib.pyplot as plt
+#import matplotlib as mpl
+#mpl.use('Agg')
+#import matplotlib.pyplot as plt
 import numpy as np
 import datetime
 
@@ -99,9 +99,9 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         os.system("./Bench/Bench -test MEM -num_LD " + str(num_ld) + " -num_ST " + str(num_st) + " -precision " + precision + " -num_rep " + str(num_reps))
         
         if(interleaved):
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], bind[4], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor, "--interleaved"], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor, "--interleaved"], stdout=subprocess.PIPE)
         else:
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], bind[4], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor], stdout=subprocess.PIPE)
     
         out = result.stdout.decode('utf-8').split(',')
 
@@ -132,9 +132,9 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         os.system("./Bench/Bench -test MEM -num_LD " + str(num_ld) + " -num_ST " + str(num_st) + " -precision " + precision + " -num_rep " + str(num_reps))
         
         if(interleaved):
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], bind[4], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor,  "--interleaved"], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor,  "--interleaved"], stdout=subprocess.PIPE)
         else:
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], bind[4], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor], stdout=subprocess.PIPE)
         
         out = result.stdout.decode('utf-8').split(',')
 
@@ -164,9 +164,9 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         os.system("./Bench/Bench -test MEM -num_LD " + str(num_ld) + " -num_ST " + str(num_st) + " -precision " + precision + " -num_rep " + str(num_reps))
         
         if(interleaved):
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], bind[4], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor, "--interleaved"], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor, "--interleaved"], stdout=subprocess.PIPE)
         else:
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], bind[4], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor], stdout=subprocess.PIPE)
        
         out = result.stdout.decode('utf-8').split(',')
 
@@ -196,9 +196,9 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         os.system("./Bench/Bench -test MEM -num_LD " + str(num_ld) + " -num_ST " + str(num_st) + " -precision " + precision + " -num_rep " + str(num_reps))
         
         if(interleaved):
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], bind[4], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor, "--interleaved"], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor, "--interleaved"], stdout=subprocess.PIPE)
         else:
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], bind[4], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor], stdout=subprocess.PIPE)
         
         out = result.stdout.decode('utf-8').split(',')
 
@@ -233,9 +233,9 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         os.system("./Bench/Bench -test FLOPS -op " + inst + " -precision " + precision + " -fp " + str(num_fp))
         
         if(interleaved):
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], bind[4], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor, "--interleaved"], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor, "--interleaved"], stdout=subprocess.PIPE)
         else:
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], bind[4], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor], stdout=subprocess.PIPE)
         
         out = result.stdout.decode('utf-8').split(',')
 
