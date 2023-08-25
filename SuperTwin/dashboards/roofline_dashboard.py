@@ -1029,7 +1029,7 @@ def get_stream_bench_data(td):
                             # name += " numa bind"
                         except:
                             pass
-                        _res = float(result["@result"])
+                        _res = float(result["@result"]) / 1024
                         # print("Name:", name, "threads:", threads, "affinity:", affinity, "_res:", _res)
                         if name.find("Max_Thr") == -1:
                             try:
@@ -1089,7 +1089,7 @@ def generate_stream_panel(SuperTwin):
     fig.update_traces(hovertemplate="%{y}")
     fig.update_layout(hovermode="x")
     fig = rdp.grafana_layout_3(
-        fig, xtickvals
+        fig, xtickvals, "GB/s"
     )  ##return this, ##parameterise this
     print("Returning")
     return fig
@@ -1164,7 +1164,7 @@ def generate_hpcg_panel(
     fig.update_traces(hovertemplate="%{y}")
     fig.update_layout(hovermode="x")
     fig = rdp.grafana_layout_3(
-        fig, xtickvals
+        fig, xtickvals, "GFLOP/s"
     )  ##return this, ##parameterise this
     print("Returning")
     return fig

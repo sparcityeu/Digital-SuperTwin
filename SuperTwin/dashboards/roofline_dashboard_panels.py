@@ -70,7 +70,7 @@ def two_templates_two(data, layout, datasource):
             "y": 0
         },
         "type": "ae3e-plotly-panel",
-        "title": "Cache Aware Roofline Model",
+        "title": "System Hardware Info",
         "datasource": {
             "type": "influxdb",
             "uid": datasource
@@ -285,7 +285,7 @@ def grafana_layout_2(fig):
 
     return fig
 
-def grafana_layout_3(fig, xtickvals):
+def grafana_layout_3(fig, xtickvals, ytitle):
 
     fig.update_layout({
         #"legend": {
@@ -299,7 +299,7 @@ def grafana_layout_3(fig, xtickvals):
                   "tickvals": xtickvals,
                   "nticks": len(xtickvals),
                   "type": "category"},
-        "yaxis": {"title": "Bandwith [MB/s]",
+        "yaxis": {"title": ytitle,
                   "rangemode": "tozero"},
         "margin": {"l": 50, "r": 35, "t": 10, "b": 40},
         "legend": {"orientation": "h",
