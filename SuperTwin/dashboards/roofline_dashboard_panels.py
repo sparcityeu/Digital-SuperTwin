@@ -1,18 +1,18 @@
-def two_templates_one(data, layout):
+def two_templates_one(data, layout, datasource):
     
     template = {
         "id": 41,
         "gridPos": {
             "h": 16,
-            "w": 17,
+            "w": 16,
             "x": 0,
             "y": 0
         },
         "type": "ae3e-plotly-panel",
         "title": "Cache Aware Roofline Model",
         "datasource": {
-            "type": "simpod-json-datasource",
-            "uid": "yjaMegMVk"
+            "type": "influxdb",
+            "uid": datasource
         },
         "options": {
             "script": "console.log(data)\n\n\nreturn {};",
@@ -38,8 +38,8 @@ def two_templates_one(data, layout):
                     }
                 ],
                 "datasource": {
-                    "type": "simpod-json-datasource",
-                    "uid": "yjaMegMVk"
+                    "type": "influxdb",
+                    "uid": datasource
                 },
                 "metrics": [
                     {
@@ -59,21 +59,21 @@ def two_templates_one(data, layout):
 
     return template
 
-def two_templates_two(data, layout):
+def two_templates_two(data, layout, datasource):
     
     template = {
         "id": 42,
         "gridPos": {
             "h": 27,
-            "w": 6,
-            "x": 18,
+            "w": 8,
+            "x": 16,
             "y": 0
         },
         "type": "ae3e-plotly-panel",
         "title": "Cache Aware Roofline Model",
         "datasource": {
-            "type": "simpod-json-datasource",
-            "uid": "yjaMegMVk"
+            "type": "influxdb",
+            "uid": datasource
         },
         "options": {
             "script": "console.log(data)\n\n\nreturn {};",
@@ -99,8 +99,8 @@ def two_templates_two(data, layout):
                     }
                 ],
                 "datasource": {
-                    "type": "simpod-json-datasource",
-                    "uid": "yjaMegMVk"
+                    "type": "influxdb",
+                    "uid": datasource
                 },
                 "metrics": [
                     {
@@ -120,10 +120,10 @@ def two_templates_two(data, layout):
 
     return template
 
-def two_templates_three(data, layout, h, w, x, y):
+def two_templates_three(data, layout, h, w, x, y, datasource, title, id):
     
     template = {
-        "id": 442,
+        "id": id,
         "gridPos": {
             "h": h,
             "w": w,
@@ -131,10 +131,10 @@ def two_templates_three(data, layout, h, w, x, y):
             "y": y
         },
         "type": "ae3e-plotly-panel",
-        "title": "STREAM Benchmark",
+        "title": title,
         "datasource": {
-            "type": "simpod-json-datasource",
-            "uid": "yjaMegMVk"
+            "type": "influxdb",
+            "uid": datasource
         },
         "options": {
             "script": "console.log(data)\n\n\nreturn {};",
@@ -160,8 +160,8 @@ def two_templates_three(data, layout, h, w, x, y):
                     }
                 ],
                 "datasource": {
-                    "type": "simpod-json-datasource",
-                    "uid": "yjaMegMVk"
+                    "type": "influxdb",
+                    "uid": datasource
                 },
                 "metrics": [
                     {
