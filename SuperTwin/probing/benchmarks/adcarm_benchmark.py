@@ -173,7 +173,7 @@ def generate_adcarm_bench_sh(SuperTwin, adcarm_config):
     if total_threads not in thread_set:
         thread_set.append(total_threads)
 
-    thread_set = [16] ## for debug purposes
+    #thread_set = [16] ## for debug purposes
     thread_set = list(sorted(thread_set))
     print("ADCARM Benchmark thread set:", thread_set)
 
