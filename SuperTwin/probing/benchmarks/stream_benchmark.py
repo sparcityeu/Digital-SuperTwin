@@ -103,6 +103,11 @@ def generate_stream_bench_sh(SuperTwin):
     maker = "bash /tmp/dt_probing/benchmarks/compile_stream_bench.sh"
     runs = {}
 
+    print("#############")
+    print("vector:", vector)
+    print("SuperTwin.name: ", SuperTwin.name)
+    print("#############")
+    
     for thread in thread_set:
         thr_name = "t_" + str(thread)
         modif_key = str(thread)
@@ -110,7 +115,7 @@ def generate_stream_bench_sh(SuperTwin):
             runs[thr_name] = (
                 "likwid-pin -c N:0 ./stream_"
                 + vector
-                + " &>> ../STREAM_RES_"
+                + " &>> ../STREAM_RES_" 
                 + SuperTwin.name
                 + "/"
                 + thr_name
@@ -141,7 +146,10 @@ def generate_stream_bench_sh(SuperTwin):
             except:
                 modifiers[modif_key] = []
                 modifiers[modif_key].append(pin_and_thread)
-
+    print("#############")
+    print("runs: ", runs)
+    print("#############")
+                
     for key in runs:
         writer = open(SuperTwin.name + "_STREAM_" + key + ".sh", "w+")
         writer.write("#!/bin/bash" + "\n")
