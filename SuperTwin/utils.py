@@ -491,19 +491,19 @@ def fill_data(data, hostname, hostip):
 
             for content in subdata:
                 if content["name"] == "model":
-                    cpu_model = content["description"]
+                    cpu_model = content.get("description","")
                 if content["name"] == "cores":
-                    cpu_cores = int(content["description"])
+                    cpu_cores = int(content.get("description","0"))
                 if content["name"] == "threads":
-                    cpu_threads = int(content["description"])
+                    cpu_threads = int(content.get("description","0"))
                 if content["name"] == "threads_per_core":
-                    cpu_threads_per_core = int(content["description"])
+                    cpu_threads_per_core = int(content.get("description","0"))
                 if content["name"] == "hyperthreading":
-                    cpu_hyperthreading = content["description"]
+                    cpu_hyperthreading = content.get("description","")
                 if content["name"] == "max_mhz":
-                    cpu_maxmhz = float(content["description"])
+                    cpu_maxmhz = float(content.get("description","0"))
                 if content["name"] == "min_mhz":
-                    cpu_minmhz = float(content["description"])
+                    cpu_minmhz = float(content.get("description","0"))
 
             cpu = False
 
