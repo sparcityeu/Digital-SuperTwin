@@ -1,4 +1,4 @@
-65;7003;1cimport sys
+import sys
 sys.path.append("../")
 import utils
 import observation_standard as obs
@@ -114,143 +114,6 @@ def get_topology(td):
     return topol
     
 
-
-
-def stat_panel(SuperTwin, h, w, x, y, color_scheme, metric, empty_dash):
-
-    datasource = SuperTwin.grafana_datasource
-    td = utils.get_twin_description(SuperTwin)
-    
-    ##Mem Numa Alloc Hit
-    panel_id = get_next_id()
-    empty_dash["panels"].append(mp.stat_panel(datasource, panel_id, h, w, x, y, color_scheme, metric))
-    params = get_params(td, metric)
-    print("params:", params)
-    for param in params:
-        empty_dash["panels"][panel_id]["targets"].append(mp.stat_query(datasource, param["Alias"], metric, param["Param"]))
-
-    return empty_dash
-
-'''
-    ##Numa Load
-    panel_id = get_next_id()
-    empty_dash["panels"].append(mp.stat_panel(datasource, panel_id, 5, 4, 20, 0, "continuous-GrYlRd", "Numa Load"))
-    params = get_params(td, "kernel_pernode_cpu_idle")
-    for idx, param in enumerate(params):
-        empty_dash["panels"][panel_id]["targets"].append(mp.stat_query(datasource, param["Alias"], "kernel_pernode_cpu_idle", param["Param"]))
-        empty_dash["panels"][panel_id]["targets"][idx]["select"][0].append({"params": [" / 440 * -1 + 100"],"type": "math"})
-'''
-
-def name_panel(SuperTwin, empty_dash):
-
-    datasource = SuperTwin.grafana_datasource
-    
-    empty_dash["panels"].append(mp.name_panel(datasource, get_next_id(), SuperTwin.name))
-
-    return empty_dash
-
-
-def comprehend(topology, wanted, unit):
-
-    ret = []
-
-    for socket in topology:
-        contents = topology[socket]
-        for x in contents:
-            for y in wanted:
-                if(x.find(unit + str(y) + ";") != -1):
-                    print("appending:", x)
-                    ret.append(x)
-
-    return ret
-
-#def stat_panel(SuperTwin, h, w, x, y, color_scheme, metric, empty_dash):
-def freq_clock_panel(SuperTwin, h, w, x, y, threads, empty_dash):
-
-    td = utils.get_twin_description(SuperTwin)
-    topology = get_topology(td)
-    #print("topology:", topology)
-    datasource = SuperTwin.grafana_datasource
-
-    ##need threads -> topology conversion
-    #threads = ["dtmi:dt:cisec2022-Z490-AORUS-ULTRA:thread" + str(x) + ";1" for x in threads]
-    threads = comprehend(topology, threads, "thread")
-    print("threads:", threads)
-    
-    ##cpu frequency
-    for idx, socket in enumerate(topology):
-        panel_id = get_next_id()
-        empty_dash["panels"].append(mp.clock_panel(datasource, panel_id, h, w, x, y, color_schemes_clock[idx], "Thread Frequency - Socket " + str(idx)))
-        for thread in topology[socket]: ##Note that, that was a single list
-            ##can filter out threads here?
-            if(thread in threads):
-                param = get_params_interface_known(td, thread, "hinv_cpu_clock")
-                empty_dash["panels"][panel_id]["targets"].append(mp.clock_query(datasource, param["Alias"], "hinv_cpu_clock", param["Param"]))
-            
-    return empty_dash
-            
-def load_clock_panel(SuperTwin, h, w, x, y, empty_dash):
-
-    td = utils.get_twin_description(SuperTwin)
-    topology = get_topology(td)
-    datasource = SuperTwin.datasource
-    
-    ##load per cpu
-    for idx2, socket in enumerate(topology):
-        panel_id = get_next_id()
-        empty_dash["panels"].append(mp.clock_panel(datasource, h, w, x, y, color_schemes_load[idx2], "Thread Load - Socket " + str(idx2)))
-        #print("no_panels:", len(empty_dash))
-        for idt, thread in enumerate(topology[socket]): ##Note that, that was a single list
-            param = get_params_interface_known(td, thread, "kernel_percpu_cpu_idle")
-            empty_dash["panels"][panel_id]["targets"].append(mp.clock_query(datasource, param["Alias"], "kernel_percpu_cpu_idle", param["Param"]))
-            empty_dash["panels"][panel_id]["targets"][idt]["select"][0].append({"params": [" /10 *-1 +100"],"type": "math"})
-
-    return empty_dash
-
-#def stat_panel(SuperTwin, h, w, x, y, color_scheme, metric, empty_dash):
-def small_single_timeserie(SuperTwin, h, w, x, y, metric, empty_dash):
-
-    datasource = SuperTwin.grafana_datasource
-    
-    ##no_process
-    panel_id = get_next_id() ##This is most probably should come from the caller
-    empty_dash["panels"].append(mp.small_single_timeseries(datasource, panel_id, h, w, x, y, metric))
-    empty_dash["panels"][panel_id]["targets"].append(mp.small_single_query(datasource, metric, metric))
-
-    return empty_dash
-
-def generate_general_panel(SuperTwin, h, w, x, y, metric, empty_dash):
-
-    td = utils.get_twin_description(SuperTwin)
-    datasource = SuperTwin.grafana_datasource
-    
-    panel_id = get_next_id()
-    disk_reads = empty_dash["panels"].append(mp.general_panel(datasource, panel_id, 12, 5, 6, 15, metric))
-    params = get_params(td, metric)
-    for dev in params:
-        empty_dash["panels"][panel_id]["targets"].append(mp.stat_query(datasource, dev["Alias"], metric, dev["Param"]))
-
-    return empty_dash
-
-            
-def generate_empty_dash(SuperTwin):
-
-    td = utils.get_twin_description(SuperTwin)
-
-    empty_dash = obs.template_dict(SuperTwin.name + " Monitor-" + str(uuid.uuid4()))
-    empty_dash["panels"] = []
-    
-    return empty_dash
-
-##Upload to grafana
-def upload_dashboard(SuperTwin, empty_dash):
-    json_dash_obj = obs.get_dashboard_json(empty_dash, overwrite = False)
-    g_url = obs.upload_to_grafana(json_dash_obj, SuperTwin.grafana_addr, SuperTwin.grafana_token)
-    
-    print("Generated:", g_url)
-    return g_url["url"]
-
-
 def generate_monitoring_dashboard(SuperTwin):
 
     td = utils.get_twin_description(SuperTwin)
@@ -261,11 +124,6 @@ def generate_monitoring_dashboard(SuperTwin):
     topology = get_topology(td)
     datasource = SuperTwin.grafana_datasource
 
-
-    ##Hostname
-    empty_dash["panels"].append(mp.name_panel(datasource, get_next_id(), SuperTwin.name))
-
-
     ##Mem Numa Alloc Hit
     panel_id = get_next_id()
     empty_dash["panels"].append(mp.stat_panel(datasource, panel_id, 5, 4, 16, 0, "continuous-GrYlRd", "Mem Numa Alloc Hit"))
@@ -273,7 +131,6 @@ def generate_monitoring_dashboard(SuperTwin):
     for param in params:
         empty_dash["panels"][panel_id]["targets"].append(mp.stat_query(datasource, param["Alias"], "mem_numa_alloc_hit", param["Param"]))
 
-    
     ##Numa Load
     panel_id = get_next_id()
     empty_dash["panels"].append(mp.stat_panel(datasource, panel_id, 5, 4, 20, 0, "continuous-GrYlRd", "Numa Load"))
@@ -336,15 +193,21 @@ def generate_monitoring_dashboard(SuperTwin):
     for param in params:
         empty_dash["panels"][6]["targets"].append(mp.stat_query(datasource, param["Alias"], "mem_numa_alloc_local_node", param["Param"]))
 
+    ##Quick fix
     ##socket temperature
     panel_id = get_next_id()
     empty_dash["panels"].append(mp.stat_panel(datasource, panel_id, 5, 4, 20, 15, "continuous-GrYlRd", "Socket Temperature"))
-    params = get_params(td, "lmsensors_coretemp_isa_0000_package_id_0")
+    #params = get_params(td, "lmsensors_coretemp_isa_0000_package_id_0")
     #print("params:", params)
-    for idx, param in enumerate(params):
-        empty_dash["panels"][panel_id]["targets"].append(mp.stat_query(datasource, "socket" + str(idx), "lmsensors_coretemp_isa_000"+ str(idx) +"_package_id_" + str(idx), "value"))
-        #empty_dash["panels"][7]["targets"].append(mp.stat_query(datasource, "socket1", "lmsensors_coretemp_isa_0001_package_id_1", "value"))
-        empty_dash["panels"][panel_id]["fieldConfig"]["defaults"]["unit"] = "celsius"
+    mt = utils.get_multithreading_info(td)
+    no_sockets = mt["no_sockets"]
+
+    empty_dash["panels"][panel_id]["targets"].append(mp.stat_query(datasource, "socket0", "lmsensors_coretemp_isa_0000_package_id_0", "value"))
+    
+    if(no_sockets == 2):
+        empty_dash["panels"][panel_id]["targets"].append(mp.stat_query(datasource, "socket1", "lmsensors_coretemp_isa_0001_package_id_1", "value"))
+    
+    empty_dash["panels"][panel_id]["fieldConfig"]["defaults"]["unit"] = "celsius"
 
     ##mem numa used
     panel_id = get_next_id()
@@ -364,6 +227,9 @@ def generate_monitoring_dashboard(SuperTwin):
         empty_dash["panels"][panel_id]["targets"][idx]["select"][0].append({"params": [" / 1048576"],"type": "math"})
         empty_dash["panels"][panel_id]["fieldConfig"]["defaults"]["unit"] = "decgbytes"
 
+
+    ##name
+    empty_dash["panels"].append(mp.name_panel(datasource, get_next_id(), SuperTwin.name))
 
     #print("topology:", topology)
     

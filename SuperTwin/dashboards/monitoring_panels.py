@@ -136,7 +136,7 @@ def name_panel(datasource, _id, hostname):
             "reduceOptions": {
                 "values": False,
                 "calcs": ["lastNotNull"],
-                "fields": "/.*/",
+                "fields": "",
             },
             "orientation": "auto",
             "textMode": "auto",
@@ -573,3 +573,115 @@ def general_panel(datasource, _id, h, w, x, y, title):
     }
 
     return gp
+
+
+def name_panel_last(datasource, _id, hostname):
+
+    np = {
+        "datasource": {
+            "type": "influxdb",
+            "uid": datasource
+        },
+        "fieldConfig": {
+            "defaults": {
+                "mappings": [
+                    {
+                        "options": {
+                            "0": {
+                                "index": 0,
+                                "text": hostname
+                            }
+                        },
+                        "type": "value"
+                    }
+                ],
+                "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                        {
+                            "color": "text",
+                            "value": None
+                        }
+                    ]
+                },
+                "color": {
+                    "mode": "thresholds"
+                }
+            },
+            "overrides": []
+        },
+        "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 0,
+            "y": 0
+        },
+        "id": 10,
+        "options": {
+            "reduceOptions": {
+                "values": False,
+                "calcs": [
+                    "lastNotNull"
+                ],
+                "fields": ""
+            },
+            "orientation": "auto",
+            "textMode": "auto",
+            "colorMode": "background",
+            "graphMode": "none",
+            "justifyMode": "auto"
+        },
+        "pluginVersion": "9.4.7",
+        "targets": [
+            {
+                "datasource": {
+                    "type": "influxdb",
+                    "uid": "0DTZA6RIk"
+                },
+                "groupBy": [
+                    {
+                        "params": [
+                            "1s"
+                        ],
+                        "type": "time"
+                    },
+                    {
+                        "params": [
+                            None
+                        ],
+                        "type": "fill"
+                    }
+                ],
+                "measurement": "network_all_in_bytes",
+                "orderByTime": "ASC",
+                "policy": "default",
+                "refId": "A",
+                "resultFormat": "time_series",
+                "select": [
+                    [
+                        {
+                            "params": [
+                                "value"
+                            ],
+                            "type": "field"
+                        },
+                        {
+                            "params": [],
+                            "type": "mean"
+                        },
+                        {
+                            "params": [
+                                "*0"
+                            ],
+                            "type": "math"
+                        }
+                    ]
+                ],
+                "tags": []
+            }
+        ],
+        "title": "Hostname",
+        "transparent": True,
+        "type": "stat"
+    }
+    

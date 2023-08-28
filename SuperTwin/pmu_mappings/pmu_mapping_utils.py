@@ -106,6 +106,7 @@ def initialize():
 
         _initialized = True
 
+        print("default_generic_pmu_events:", _DEFAULT_GENERIC_PMU_EVENTS)
 
 def add_configuration(file_name):
     fd = open(file_name, "r")
@@ -162,7 +163,7 @@ def get(pmu_name, pmu_generic_event):
         raise RuntimeError(
             "Module not initialized. Please call initialize() before using get()."
         )
-
+    '''So many repeated prints
     if pmu_name not in _COMMON_PMU_DICT.keys():
         print("pmu_name:", pmu_name, "not found in pmu_mapping_utils")
     else:
@@ -173,7 +174,7 @@ def get(pmu_name, pmu_generic_event):
                 "not found in pmu_mapping_utils for pmu_name:",
                 pmu_name,
             )
-
+    '''
     return copy.deepcopy(
         _COMMON_PMU_DICT.get(pmu_name, {}).get(pmu_generic_event, "")
     )
