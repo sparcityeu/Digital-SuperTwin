@@ -149,11 +149,11 @@ class SuperTwin:
         # benchmark functions
         # 
         
-        #self.add_stream_benchmark()
-        #self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
-        #self.add_adcarm_benchmark() 
+        self.add_stream_benchmark()
+        self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
+        self.add_adcarm_benchmark() 
         
-        #self.generate_roofline_dashboard()
+        self.generate_roofline_dashboard()
         utils.register_twin_state(self)
 
     def __reconstruct_twin(self, *args):
@@ -529,8 +529,8 @@ class SuperTwin:
         print("stream_modifiers:", stream_modifiers)
         print("maker:", maker)
         print("runs:", runs)
-        stream_benchmark.compile_stream_bench(self, maker)
-        stream_benchmark.execute_stream_runs(self, runs)
+        #stream_benchmark.compile_stream_bench(self, maker)
+        #stream_benchmark.execute_stream_runs(self, runs)
         stream_res = stream_benchmark.parse_stream_bench(self)
         self.update_twin_document__add_stream_benchmark(
             stream_modifiers, stream_res
@@ -563,7 +563,7 @@ class SuperTwin:
         hpcg_modifiers, runs = hpcg_benchmark.generate_hpcg_bench_sh(
             self, HPCG_PARAM
         )
-        hpcg_benchmark.execute_hpcg_runs(self, runs)
+        #hpcg_benchmark.execute_hpcg_runs(self, runs)
         hpcg_res = hpcg_benchmark.parse_hpcg_bench(self)
 
         self.update_twin_document__add_hpcg_benchmark(hpcg_modifiers, hpcg_res)
@@ -598,7 +598,7 @@ class SuperTwin:
         adcarm_modifiers = adcarm_benchmark.generate_adcarm_bench_sh(
             self, adcarm_config
         )
-        adcarm_benchmark.execute_adcarm_bench(self)
+        #adcarm_benchmark.execute_adcarm_bench(self)
         adcarm_res = adcarm_benchmark.parse_adcarm_bench(self)
 
         self.update_twin_document__add_adcarm_benchmark(
@@ -916,6 +916,12 @@ if __name__ == "__main__":
     else:
         addr = args[1]
         my_superTwin = SuperTwin(addr)  # Re-construct
+
+    affinity = utils.prepare_bind(my_superTwin, 1, "compact", -1)
+    commands = ["rcm|./rcm 1138_bus.mtx","degree|./degree 1138_bus.mtx","random|./random 1138_bus.mtx","none|./none 1138_bus.mtx"]
+    my_superTwin.execute_observation_batch_parameters("/home/fatih/SparseBaseOrderExample", affinity, commands)
+    #my_superTwin.execute_observation_batch_parameters("/common_data/SparseBaseOrderExample", affinity, commands)
+    
 
     # my_superTwin.add_stream_benchmark()
     # my_superTwin.add_hpcg_benchmark(HPCG_PARAM)

@@ -152,6 +152,7 @@ def observe_single(SuperTwin, observation_id, command, obs_conf):
 
 def observe_single_parameters(SuperTwin, path, affinity, observation_id, command, obs_conf):
 
+    print("Here 0")
         
     ##Connect to remote host
     SSHuser = SuperTwin.SSHuser                                        
@@ -163,7 +164,7 @@ def observe_single_parameters(SuperTwin, path, affinity, observation_id, command
     scp = SCPClient(ssh.get_transport())
     ##Connect to remote host
 
-    
+    print("Here 1")
     
     command_script_name = "observation_" + observation_id + ".sh"
     
@@ -177,14 +178,14 @@ def observe_single_parameters(SuperTwin, path, affinity, observation_id, command
         writer.write(line + "\n")
     writer.close()
     
-    
-    
     try:
         scp.put(command_script_name, remote_path="/tmp/dt_files")
     except:
         remote_probe.run_command(ssh, SuperTwin.name, "mkdir /tmp/dt_files")
         scp.put(command_script_name, remote_path="/tmp/dt_files")
 
+    print("Here 2")
+    #exit(1)
     run_script = "sh /tmp/dt_files/" + command_script_name
     
     sampling_command = "pcp2influxdb -t 1 -c " + obs_conf + " :configured"
