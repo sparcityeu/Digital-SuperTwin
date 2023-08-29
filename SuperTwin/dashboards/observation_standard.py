@@ -10,6 +10,7 @@ from grafanalib.core import Dashboard
 from grafanalib._gen import DashboardEncoder
 
 import panels_standard as ps
+import panels_multinode as pm
 
 from bson.objectid import ObjectId
 from bson.json_util import dumps
@@ -21,6 +22,12 @@ import time
 
 import plotly.graph_objects as go
 import plotly.io as io
+
+other_hwms = ["UNHALTED_CORE_CYCLES",
+              "UNHALTED_REFERENCE_CYCLES",
+              "INSTRUCTION_RETIRED",
+              "LLC_REFERENCES"]
+
 
 y = -2
 
@@ -178,6 +185,18 @@ def find_from_likwid_pin_old(affinity):
 
     return involved
 
+def involved_resolve(threads):
+
+    involved = {}
+    socket = "socket0"
+
+    cpus = []
+    for thread in threads:
+        cpus.append("thread" + str(thread))
+
+    involved[socket] = cpus
+    return involved
+
 
 def get_field_and_metric(SuperTwin, involved, pmu_metric):
 
@@ -300,6 +319,139 @@ def main(SuperTwin, observation):
 
     json_dash_obj = get_dashboard_json(empty_dash, overwrite = False)
     g_url = upload_to_grafana(json_dash_obj, SuperTwin.grafana_addr, SuperTwin.grafana_token)
+
+    try:
+        time_from = int(time.mktime(time.strptime(res_min , "%Y-%m-%dT%H:%M:%S.%fZ"))) *1000 + 10800000 ##Convert to milliseconds then add browser time.
+    except:
+        time_from = int(time.mktime(time.strptime(res_min , "%Y-%m-%dT%H:%M:%SZ"))) *1000 + 10800000 ##Convert to milliseconds then add browser time.
+    
+    try:
+        time_to = int(time.mktime(time.strptime(res_max , "%Y-%m-%dT%H:%M:%S.%fZ"))) *1000 + 10800000
+    except:
+        time_to = int(time.mktime(time.strptime(res_max , "%Y-%m-%dT%H:%M:%SZ"))) *1000 + 10800000
+    
+    _time_window = str(round((time_to - time_from)))
+    _time = str(round((time_from + time_to) /2))
+
+    url = "http://localhost:3000" + g_url['url'] + "?" + "time=" + _time + "&" + "time.window=" + _time_window
+
+    print("Generated report at:", url)
+    return url
+
+
+##make it kwargs later
+def multinode(st1, o1, st2, o2, st3, o3, st4, o4):
+
+    global other_hwms
+
+    ##Multi-threaded visualizations are under development
+    #print("observation:", o1)
+    #print("observation:", o2)
+    #print("observation:", o3)
+    #print("observation:", o4)
+
+    involved = utils.resolve_bind(st1, o1["affinity"]) ##?
+    #print("Involved? ", involved)
+    involved = involved_resolve(involved)
+    #print("Involved?? ", involved)
+    
+    empty_dash = template_dict(o1["uid"])
+    empty_dash["panels"] = []
+
+    norm_ids = []
+    for key in o1["metrics"]:
+        norm_ids.append(key + "_normalized")
+
+    metrics_to_vis = []
+    for item in o1["metrics"]:
+        if(item.find(":") != -1 or item in other_hwms): ##Choose only PMUs for now
+            metrics_to_vis.append(item)
+
+    #print("metrics_to_vis:", metrics_to_vis)
+    
+    for metric in metrics_to_vis:
+        ts = pm.ret_ts_panel(next_y(), metric) ##For metric, get time series panel
+        gp = pm.ret_gauge_panel(metric + " MEAN", current_y()) ##For metric, get gauge panel
+        cpu_field, metric_field = get_field_and_metric(st1, involved, metric)
+
+        norm_id = o1["uid"] + "_normalized"
+        alias = o1[o1["uid"]]["name"]
+        
+        ts["targets"].append(pm.ret_query(alias, metric_field, cpu_field, norm_id, st1.grafana_datasource)) ##For "observation", get query
+        gp["targets"].append(pm.ret_query(alias, metric_field, cpu_field, norm_id, st1.grafana_datasource)) ##For "observation", get query
+        
+        norm_id = o2["uid"] + "_normalized"
+        alias = o2[o2["uid"]]["name"]
+        
+        ts["targets"].append(pm.ret_query(alias, metric_field, cpu_field, norm_id, st2.grafana_datasource)) ##For "observation", get query
+        gp["targets"].append(pm.ret_query(alias, metric_field, cpu_field, norm_id, st2.grafana_datasource)) ##For "observation", get query
+
+
+        norm_id = o3["uid"] + "_normalized"
+        alias = o3[o3["uid"]]["name"]
+        ts["targets"].append(pm.ret_query(alias, metric_field, cpu_field, norm_id, st3.grafana_datasource)) ##For "observation", get query
+        gp["targets"].append(pm.ret_query(alias, metric_field, cpu_field, norm_id, st3.grafana_datasource)) ##For "observation", get query
+
+        norm_id = o4["uid"] + "_normalized"
+        alias = o4[o4["uid"]]["name"]
+        ts["targets"].append(pm.ret_query(alias, metric_field, cpu_field, norm_id, st4.grafana_datasource)) ##For "observation", get query
+        gp["targets"].append(pm.ret_query(alias, metric_field, cpu_field, norm_id, st4.grafana_datasource)) ##For "observation", get query
+
+    
+        empty_dash["panels"].append(ts)
+        empty_dash["panels"].append(gp)
+    
+        
+        
+    fig = go.Figure(layout={})
+    keys = [st1.name, st2.name, st3.name, st4.name]
+    ref = o1[o1["uid"]]["duration"]
+    fig.add_trace(go.Indicator(
+        mode = "number",
+        value = o1[o1["uid"]]["duration"],
+        domain = {'row': 0, 'column': 0},
+        number = {"font": {"color": "black", "size": 60}, "suffix": "s"},
+        title = {'text': o1[o1["uid"]]["name"], "font": {"color": "gray", "size": 36}})
+    )
+
+    others = [o2,o3,o4]
+    for idx, o in enumerate(others):
+        fig.add_trace(go.Indicator(
+            mode = "number+delta",
+            delta = {'reference': ref, 'position': 'right', 'relative': True, 'increasing':{'color':'red'}, 'decreasing':{'color':'green'}},
+            value = o[o["uid"]]["duration"],
+            domain = {'row': 0, 'column': idx + 1},
+            number = {"font": {"color": "black", "size": 60}, "suffix": "s"},
+            title = {'text': o[o["uid"]]["name"] , "font": {"color": "gray", "size": 36 }})
+        )
+        
+    
+    
+    fig = ps.grafana_layout_2(fig)
+    
+    fig.update_layout(grid = {'rows': 1, 'columns': 4, 'pattern': "independent"})
+    dict_fig = json.loads(io.to_json(fig))
+
+
+    empty_dash["panels"].append(ps.two_templates_two(dict_fig["data"], dict_fig["layout"]))
+    ######################################
+    ##create dashboard data
+
+    #locate time and upload
+    ######################################
+    db = utils.get_influx_database(st4.influxdb_addr)
+    db.switch_database(st4.influxdb_name)
+    max_key = o4["uid"]
+    _, metric_field = get_field_and_metric(st4, involved, metric)
+    qs = influx_help.query_string(metric_field, max_key + "_normalized")
+    #print("qs:", qs)
+    #print("response:", list(db.query(qs)))
+    res = list(db.query(qs))[0]
+    res_min = res[0]["time"]
+    res_max = res[len(res) - 1]["time"]
+
+    json_dash_obj = get_dashboard_json(empty_dash, overwrite = False)
+    g_url = upload_to_grafana(json_dash_obj, st1.grafana_addr, st4.grafana_token)
 
     try:
         time_from = int(time.mktime(time.strptime(res_min , "%Y-%m-%dT%H:%M:%S.%fZ"))) *1000 + 10800000 ##Convert to milliseconds then add browser time.

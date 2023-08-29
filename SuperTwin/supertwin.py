@@ -199,7 +199,7 @@ class SuperTwin:
         self.monitor_pmu_pid = -99
         self.kill_zombie_monitors()
 
-        self.__load_pcp_and_pmu_metrics()
+        #self.__load_pcp_and_pmu_metrics()
         self.update_twin_document__assert_new_monitor_pid()
         self.reconfigure_observation_events_with_pmu_events()  # Only add available power
         self.monitor_pmu_pid = sampling.begin_sampling_pmu(self)
@@ -898,14 +898,51 @@ def resolve_test(my_superTwin, threads):
         "#############################################################################"
     )
 
+##################################################################################################################################################
+    def execute_observation_element_parameters(self, path, affinity, command, observation_id):
+        this_observation_id = observation_id
+        obs_conf = sampling.generate_pcp2influxdb_config_observation(self, this_observation_id)
+        print("obs_conf:", obs_conf)
+        duration = observation.observe_single_parameters(self, path, affinity, this_observation_id, command, obs_conf)
+        print("Observation", this_observation_id, "is completed..")
+        return duration
+
+    def execute_observation_parameters(self, path, threads, affinity, command):
+
+        affinity = utils.prepare_bind(self, threads, affinity, -1)
+        observation = {}
+        observation_id = str(uuid.uuid4())
+        observation["uid"] = observation_id
+        observation["affinity"] = affinity
+        observation["metrics"] = []
+        for metric in self.observation_metrics:
+            observation["metrics"].append(metric)
+        for metric in self.monitor_metrics:
+            observation["metrics"].append(metric)
+        
+        tag = observation_id
+        observation[tag] = {}
+        fields = command.split("|")
+        name = fields[0]
+        command = fields[1]
+        observation[tag]["name"] = name
+        observation[tag]["command"] = command
+        observation[tag]["duration"] = self.execute_observation_element_parameters(path, affinity, command, observation_id)
+
+        #influx_help.normalize_tag(self, observation_id, len(commands)) ##Here, observation_id will be a list
+        #observation["report"] = observation_standard.main(self, observation)
+        self.update_twin_document__add_observation(observation)
+        #return time, observation_id
+        return observation_id
+######################################################################################################################################################
 
 if __name__ == "__main__":
 
     # CONFIGURE PMU_MAPPING_UTILS
 
-    pmu_mapping_utils.initialize()
-    pmu_mapping_utils.add_configuration("skl_pmu_remapping.txt")
-    pmu_mapping_utils.add_configuration("skx_pmu_remapping.txt")
+    #pmu_mapping_utils.initialize()
+    #pmu_mapping_utils.add_configuration("skl_pmu_remapping.txt")
+    #pmu_mapping_utils.add_configuration("skx_pmu_remapping.txt")
     # add_configuration("amd64_fam15_pmu_emapping.txt")
 
     # user_name = "ftasyaran"
@@ -917,10 +954,12 @@ if __name__ == "__main__":
         addr = args[1]
         my_superTwin = SuperTwin(addr)  # Re-construct
 
+    my_superTwin.reconfigure_observation_events_parameterized("dolap10_perfevent.txt")
+        
     affinity = utils.prepare_bind(my_superTwin, 1, "compact", -1)
-    commands = ["rcm|./rcm 1138_bus.mtx","degree|./degree 1138_bus.mtx","random|./random 1138_bus.mtx","none|./none 1138_bus.mtx"]
-    my_superTwin.execute_observation_batch_parameters("/home/fatih/SparseBaseOrderExample", affinity, commands)
-    #my_superTwin.execute_observation_batch_parameters("/common_data/SparseBaseOrderExample", affinity, commands)
+    commands = ["none|./none 1138_bus.mtx", "rcm|./rcm 1138_bus.mtx","degree|./degree 1138_bus.mtx","random|./random 1138_bus.mtx"]
+    #my_superTwin.execute_observation_batch_parameters("/home/fatih/SparseBaseOrderExample", affinity, commands)
+    my_superTwin.execute_observation_batch_parameters("/common_data/SparseBaseOrderExample", affinity, commands)
     
 
     # my_superTwin.add_stream_benchmark()
