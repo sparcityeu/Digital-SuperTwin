@@ -91,7 +91,7 @@ def ret_query(alias, measurement, field, tag):
                 "alias": alias,
                 "datasource": {
                     "type": "influxdb",
-                    "uid": "54U16937k"
+                    "uid": "qkKkaegIk"
                 },
                 "groupBy": [
                     {
@@ -259,8 +259,8 @@ def two_templates_two(data, layout):
         "type": "ae3e-plotly-panel",
         "title": "Observation Result",
         "datasource": {
-            "type": "simpod-json-datasource",
-            "uid": "yjaMegMVk"
+            "type": "influxdb",
+            "uid": "qkKkaegIk"
         },
         "options": {
             "script": "console.log(data)\n\n\nreturn {};",

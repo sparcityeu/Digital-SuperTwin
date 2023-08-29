@@ -125,7 +125,35 @@ def template_dict(observation_id):
 
     return _template
 
-def find_from_likwid_pin(affinity):
+def find_my_socket(socket_threads, thread):
+    for key in socket_threads:
+        if(thread in socket_threads[key]):
+            return key
+        else:
+            print("There is no such thread in the system")
+            exit(1)
+
+def find_from_likwid_pin(SuperTwin, affinity):
+
+    td = utils.get_twin_description(SuperTwin)
+    socket_threads = utils.find_socket_threads_td(td)
+    mt_info = utils.get_multithreading_info(td)
+    no_sockets = mt_info["no_sockets"]
+    involved = {}
+    for i in range(no_sockets):
+        _key = "S" + str(i)
+        involved[_key] = []
+
+    threads = utils.resolve_bind(SuperTwin, affinity)
+
+    for thread in threads:
+        socket = find_my_socket(socket_threads, thread)
+        _key = "S" + str(socket)
+        involved[_key].append("thread" + str(thread))
+    
+    return involved
+
+def find_from_likwid_pin_old(affinity):
 
     fields = affinity.split(" ")
     affinity = fields[3]
@@ -157,16 +185,17 @@ def get_field_and_metric(SuperTwin, involved, pmu_metric):
     db = utils.get_mongo_database(SuperTwin.name, SuperTwin.mongodb_addr)["twin"]
     meta_with_twin = loads(dumps(db.find({"_id": ObjectId(SuperTwin.mongodb_id)})))[0]                
     twin = meta_with_twin["twin_description"]
-        
+    print("metric:", pmu_metric)
     for t_key in twin.keys(): ##Every component is a digital twin
         for s_key in involved.keys(): ##Socket
             for c_key in involved[s_key]: ##Thread
-            
                 if(t_key.find(c_key) != -1):
                     contents = twin[t_key]["contents"]
                     for content in contents:
                         if("PMUName" in content.keys()):
-                            if(pmu_metric == content["PMUName"]):
+                            content_to_look = content["PMUName"].replace(":", "_")
+                            if(pmu_metric == content_to_look or pmu_metric == content["PMUName"]):
+                                print("Returning!")
                                 return content["displayName"], content["DBName"]
                             
                     
@@ -176,7 +205,7 @@ def main(SuperTwin, observation):
     ##Multi-threaded visualizations are under development
     print("observation:", observation)
 
-    involved = find_from_likwid_pin(observation["affinity"])
+    involved = find_from_likwid_pin(SuperTwin, observation["affinity"])
     
     empty_dash = template_dict(observation["uid"])
     empty_dash["panels"] = []
@@ -186,17 +215,27 @@ def main(SuperTwin, observation):
         norm_ids.append(key + "_normalized")
 
     metrics_to_vis = []
+    '''
     for item in observation["metrics"]:
         if(item.find(":") != -1): ##Choose only PMUs for now
             metrics_to_vis.append(item)
-            
+    '''
+    for item in observation["metrics"]:
+        print("item:", item, item.isupper())
+        if(item.isupper() and item.find("ENERGY") == -1):
+            metrics_to_vis.append(item)
+    print("metrics_to_vis: ", metrics_to_vis)
+    
     for metric in metrics_to_vis:
         ts = ps.ret_ts_panel(SuperTwin.grafana_datasource, next_y(), metric) ##For metric, get time series panel
         gp = ps.ret_gauge_panel(SuperTwin.grafana_datasource, metric + " MEAN", current_y()) ##For metric, get gauge panel
         cpu_field, metric_field = get_field_and_metric(SuperTwin, involved, metric)
         
         for _id in observation["elements"].keys():
-            norm_id = _id + "_normalized"
+            if(_id.find("_0") == -1):
+                norm_id = _id + "_normalized" ##The first one is not normalized
+            else:
+                norm_id = _id
             alias = observation["elements"][_id]["name"]
             ts["targets"].append(ps.ret_query(alias, metric_field, cpu_field, norm_id)) ##For "observation", get query
             gp["targets"].append(ps.ret_query(alias, metric_field, cpu_field, norm_id)) ##For "observation", get query
