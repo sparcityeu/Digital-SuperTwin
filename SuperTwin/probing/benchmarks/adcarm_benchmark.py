@@ -102,7 +102,7 @@ def generate_adcarm_config(SuperTwin):
     return local_path_and_name
     
 
-def prepare_carm_bind(td, threads):
+def prepare_carm_bind_old(td, threads):
 
     per_socket = int(threads / 2)
     _str = "S0:" + str(per_socket) + "@" + "S1:" + str(per_socket)
@@ -118,6 +118,23 @@ def prepare_carm_bind(td, threads):
     #print("threads:", threads, "ret:", ret)
     return ret
 
+def prepare_carm_bind(SuperTwin, threads):
+
+    bind = utils.prepare_bind(SuperTwin, threads, "balanced", -1)
+    print("Returning bind for", threads, "threads: ", bind)
+
+    bind = bind.split(" ")
+    ret = ""
+    for item in bind:
+        print("item:", item)
+        ret += item + "|"
+    ret = ret[:-1]
+    #print("threads:", threads, "ret:", ret)
+    return ret
+    
+
+
+
 def generate_adcarm_bench_sh(SuperTwin, adcarm_config):
     
     modifiers = {}
@@ -126,7 +143,8 @@ def generate_adcarm_bench_sh(SuperTwin, adcarm_config):
     td = utils.get_twin_description(SuperTwin)
     mt_info = utils.get_multithreading_info(td)
 
-    vendor = utils.get_cpu_vendor(td)
+    #vendor = utils.get_cpu_vendor(td)
+    vendor = "intel" ##Why?
 
     no_sockets = mt_info["no_sockets"]
     no_cores_per_socket = mt_info["no_cores_per_socket"]
@@ -155,6 +173,7 @@ def generate_adcarm_bench_sh(SuperTwin, adcarm_config):
     if total_threads not in thread_set:
         thread_set.append(total_threads)
 
+    #thread_set = [16] ## for debug purposes
     thread_set = list(sorted(thread_set))
     print("ADCARM Benchmark thread set:", thread_set)
 
@@ -172,8 +191,8 @@ def generate_adcarm_bench_sh(SuperTwin, adcarm_config):
                 #line = "python3 " + "run.py " + " " + adcarm_config + " -t " + str(thread) + "\n\n"
                 #lines.append(line) ##One as it is
                 #modifiers[str(thread)].append({'isa': 'avx512', 'inst': 'fma'})
-                binding = prepare_carm_bind(td, thread)
-                line = "python3 " + "run_binded.py " + " " + adcarm_config + " -t " + str(thread) + " -b " + "'" + binding + "'" + "\n\n"
+                binding = prepare_carm_bind(SuperTwin, thread)
+                line = "python3 " + "run_binded.py " + " " + adcarm_config + " -t " + str(thread) + " --isa avx512 --inst fma --vendor " + vendor + " -b " + "'" + binding + "'" + "\n\n"
                 lines.append(line) ##One binded
                 modifiers[str(thread)].append({'binding': binding, 'isa': 'avx512', 'inst': 'fma', 'vendor': vendor})
             else:
@@ -186,7 +205,7 @@ def generate_adcarm_bench_sh(SuperTwin, adcarm_config):
                 #line = "python3 " + "run.py " + " " + adcarm_config + " -t " + str(thread) + "\n\n"
                 #lines.append(line) ##One as it is
                 #modifiers[str(thread)].append({'isa': 'avx512', 'inst': 'fma'})
-                binding = prepare_carm_bind(td, thread)
+                binding = prepare_carm_bind(SuperTwin, thread)
                 line = "python3 " + "run_binded.py " + " " + adcarm_config + " -t " + str(thread) + " -b " + "'" + binding + "'" + "\n\n"
                 lines.append(line) ##One binded
                 modifiers[str(thread)].append({'binding': binding, 'isa': 'avx2', 'inst': 'fma', 'vendor': vendor})
@@ -200,7 +219,7 @@ def generate_adcarm_bench_sh(SuperTwin, adcarm_config):
                 #line = "python3 " + "run.py " + " " + adcarm_config + " -t " + str(thread) + "\n\n"
                 #lines.append(line) ##One as it is
                 #modifiers[str(thread)].append({'isa': 'avx512', 'inst': 'fma'})
-                binding = prepare_carm_bind(td, thread)
+                binding = prepare_carm_bind(SuperTwin, thread)
                 line = "python3 " + "run_binded.py " + " " + adcarm_config + " -t " + str(thread) + " -b " + "'" + binding + "'" + "\n\n"
                 lines.append(line) ##One binded
                 modifiers[str(thread)].append({'binding': binding, 'isa': 'sse', 'inst': 'fma', 'vendor': vendor})
@@ -366,10 +385,10 @@ def execute_adcarm_bench(SuperTwin):
     scp.get(recursive=True, remote_path = "/tmp/dt_probing/benchmarks/adCARM/Results", local_path = "probing/benchmarks/")
 
     try:
-        detect_utils.cmd("mv probing/benchmarks/Results probing/benchmarks/adCARM_RES") ##On local
+        detect_utils.cmd("mv probing/benchmarks/Results probing/benchmarks/adCARM_RES_" + SuperTwin.name) ##On local
     except:
-        detect_utils.cmd("rm -r probing/benchmarks/adCARM_RES") ##On local
-        detect_utils.cmd("mv probing/benchmarks/Results probing/benchmarks/adCARM_RES") ##On local
+        detect_utils.cmd("rm -r probing/benchmarks/adCARM_RES_" + SuperTwin.name) ##On local
+        detect_utils.cmd("mv probing/benchmarks/Results probing/benchmarks/adCARM_RES_" + SuperTwin.name) ##On local
 
 
 def pretty_binding(ugly_binding):

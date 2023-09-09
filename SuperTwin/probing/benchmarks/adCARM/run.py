@@ -1,9 +1,9 @@
 import argparse
 import os
 import subprocess
-import matplotlib as mpl
-mpl.use('Agg')
-import matplotlib.pyplot as plt
+#import matplotlib as mpl
+#mpl.use('Agg')
+#import matplotlib.pyplot as plt
 import numpy as np
 import datetime
 
@@ -102,19 +102,24 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
     
         out = result.stdout.decode('utf-8').split(',')
 
-        data['L1'] = float(threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq))*float(out[1])/float(out[0])
-
+        freq_aux = float(out[2])
+        freq = float(out[3])
+        data['L1'] = float(((threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq_aux))*float(out[1]))/(float(out[0])*float(freq_aux/freq)))
+        
         if (verbose > 1):
-            print ("---------L1 RESULTS-----------")
+            print ("---------NEW L1 RESULTS-----------")
             print ("Total Cycles:", out[0],"Total Inner Loop Reps:", out[1], "Number of threads:", threads, "Number of reps:", num_reps,"Number of loads:", num_ld,"Number of stores:", num_st, "Memory instruction size:", mem_inst_size[isa][precision], "Frequency:", freq)
             
             #print ("EXTRA MODIFIERS:", float(threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq)))
             
-            print ("CYCLES PER INNER LOOP:", float(out[0])/float(out[1]))
+            print ("CYCLES PER INNER LOOP:", (float(out[0])*(freq_aux/freq))/float(out[1]))
         
-            print ("ISTRUCTION PER CYCLE:", threads*num_reps*(num_ld+num_st)*float(out[1])/float(out[0]))
-            print ("BYTES PER CYCLE:", threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(out[1])/float(out[0]))
+            print ("ISTRUCTION PER CYCLE:", threads*num_reps*(num_ld+num_st)*float(out[1])/(float(out[0])*float(freq_aux/freq)))
+            print ("BYTES PER CYCLE:", threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(out[1])/(float(out[0])*float(freq_aux/freq)))
             print ("BANDWIDTH (Gbps):", data['L1'])
+            print ("Max Recorded Frequency (GHz):", freq_aux)
+            print ("Nominal Frequency (GHz):", freq)
+            print ("Actual Frequency to Nominal Frequency Ratio:", float(freq_aux/freq))
             print ("------------------------------")
         
     if (test_type == 'L2' or test_type == 'roofline'):
@@ -130,16 +135,24 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         
         out = result.stdout.decode('utf-8').split(',')
 
-        data['L2'] = float(threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq))*float(out[1])/float(out[0])
+        freq_aux = float(out[2])
+        freq = float(out[3])
+        data['L2'] = float((threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq_aux)*float(out[1]))/(float(out[0])*float(freq_aux/freq)))
 
         if (verbose > 1):
-            print ("---------L2 RESULTS-----------")
+            print ("---------NEW L2 RESULTS-----------")
             print ("Total Cycles:", out[0],"Total Inner Loop Reps:", out[1], "Number of threads:", threads, "Number of reps:", num_reps,"Number of loads:", num_ld,"Number of stores:", num_st, "Memory instruction size:", mem_inst_size[isa][precision], "Frequency:", freq)
             
-            print ("CYCLES PER INNER LOOP:", float(out[0])/float(out[1]))
-            print ("ISTRUCTION PER CYCLE:", threads*num_reps*(num_ld+num_st)*float(out[1])/float(out[0]))
-            print ("BYTES PER CYCLE:", threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(out[1])/float(out[0]))
+            #print ("EXTRA MODIFIERS:", float(threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq)))
+            
+            print ("CYCLES PER INNER LOOP:", (float(out[0])*(freq_aux/freq))/float(out[1]))
+        
+            print ("ISTRUCTION PER CYCLE:", threads*num_reps*(num_ld+num_st)*float(out[1])/(float(out[0])*float(freq_aux/freq)))
+            print ("BYTES PER CYCLE:", threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(out[1])/(float(out[0])*float(freq_aux/freq)))
             print ("BANDWIDTH (Gbps):", data['L2'])
+            print ("Max Recorded Frequency (GHz):", freq_aux)
+            print ("Nominal Frequency (GHz):", freq)
+            print ("Actual Frequency to Nominal Frequency Ratio:", float(freq_aux/freq))
             print ("------------------------------")
         
     if (test_type == 'L3' or test_type == 'roofline'):
@@ -155,16 +168,23 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
        
         out = result.stdout.decode('utf-8').split(',')
 
-        data['L3'] = float(threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq))*float(out[1])/float(out[0])
-
+        freq_aux = float(out[2])
+        freq = float(out[3])
+        data['L3'] = float(threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq_aux)*float(out[1]))/(float(out[0])*float(freq_aux/freq))
         if (verbose > 1):
-            print ("---------L3 RESULTS-----------")
+            print ("---------NEW L3 RESULTS-----------")
             print ("Total Cycles:", out[0],"Total Inner Loop Reps:", out[1], "Number of threads:", threads, "Number of reps:", num_reps,"Number of loads:", num_ld,"Number of stores:", num_st, "Memory instruction size:", mem_inst_size[isa][precision], "Frequency:", freq)
             
-            print ("CYCLES PER INNER LOOP:", float(out[0])/float(out[1]))
-            print ("ISTRUCTION PER CYCLE:", threads*num_reps*(num_ld+num_st)*float(out[1])/float(out[0]))
-            print ("BYTES PER CYCLE:", threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(out[1])/float(out[0]))
+            #print ("EXTRA MODIFIERS:", float(threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq)))
+            
+            print ("CYCLES PER INNER LOOP:", (float(out[0])*(freq_aux/freq))/float(out[1]))
+        
+            print ("ISTRUCTION PER CYCLE:", threads*num_reps*(num_ld+num_st)*float(out[1])/(float(out[0])*float(freq_aux/freq)))
+            print ("BYTES PER CYCLE:", (threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(out[1]))/(float(out[0])*float(freq_aux/freq)))
             print ("BANDWIDTH (Gbps):", data['L3'])
+            print ("Max Recorded Frequency (GHz):", freq_aux)
+            print ("Nominal Frequency (GHz):", freq)
+            print ("Actual Frequency to Nominal Frequency Ratio:", float(freq_aux/freq))
             print ("------------------------------")
         
     if (test_type == 'DRAM' or test_type == 'roofline'):
@@ -180,16 +200,23 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         
         out = result.stdout.decode('utf-8').split(',')
 
-        data['DRAM'] = float(threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq))*float(out[1])/float(out[0])
-
+        freq_aux = float(out[2])
+        freq = float(out[3])
+        data['DRAM'] = float(threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq_aux)*float(out[1]))/(float(out[0])*float(freq_aux/freq))
         if (verbose > 1):
-            print ("---------DRAM RESULTS-----------")
+            print ("---------NEW DRAM RESULTS-----------")
             print ("Total Cycles:", out[0],"Total Inner Loop Reps:", out[1], "Number of threads:", threads, "Number of reps:", num_reps,"Number of loads:", num_ld,"Number of stores:", num_st, "Memory instruction size:", mem_inst_size[isa][precision], "Frequency:", freq)
             
-            print ("CYCLES PER INNER LOOP:", float(out[0])/float(out[1]))
-            print ("ISTRUCTION PER CYCLE:", threads*num_reps*(num_ld+num_st)*float(out[1])/float(out[0]))
-            print ("BYTES PER CYCLE:", threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(out[1])/float(out[0]))
+            #print ("EXTRA MODIFIERS:", float(threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq)))
+            
+            print ("CYCLES PER INNER LOOP:", (float(out[0])*(freq_aux/freq))/float(out[1]))
+        
+            print ("ISTRUCTION PER CYCLE:", threads*num_reps*(num_ld+num_st)*float(out[1])/(float(out[0])*float(freq_aux/freq)))
+            print ("BYTES PER CYCLE:", (threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(out[1]))/(float(out[0])*float(freq_aux/freq)))
             print ("BANDWIDTH (Gbps):", data['DRAM'])
+            print ("Max Recorded Frequency (GHz):", freq_aux)
+            print ("Nominal Frequency (GHz):", freq)
+            print ("Actual Frequency to Nominal Frequency Ratio:", float(freq_aux/freq))
             print ("------------------------------")
 
     if (test_type == 'FP' or test_type == 'roofline'):
@@ -210,16 +237,20 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         
         out = result.stdout.decode('utf-8').split(',')
 
-        data['FP'] = float(threads*num_fp*factor*ops_fp[isa][precision]*float(freq)*float(out[1]))/float(out[0])
-
+        freq_aux = float(out[2])
+        freq = float(out[3])
+        data['FP'] = float(threads*num_fp*factor*ops_fp[isa][precision]*float(freq_aux)*float(out[1]))/(float(out[0])*float(freq_aux/freq))
         if (verbose > 1):
-            print ("---------FP RESULTS-----------")
+            print ("---------NEW FP RESULTS-----------")
             print ("Total Cycles:", out[0],"| Total Inner Loop Reps:", out[1], "| Number of threads:", threads, "| Number of reps:", num_fp,"| Instruction:", inst, "| Floating point operations per instruction:", (factor*ops_fp[isa][precision]), "| Frequency:", freq)
             
-            print ("CYCLES PER INNER LOOP:", float(out[0])/float(out[1]))
-            print ("ISTRUCTION PER CYCLE:", threads*num_fp*factor*float(out[1])/float(out[0]))
-            print ("FlOPS PER CYCLE:", threads*num_fp*factor*ops_fp[isa][precision]*float(out[1])/float(out[0]))
+            print ("CYCLES PER INNER LOOP:", (float(out[0])*float(freq_aux/freq))/float(out[1]))
+            print ("ISTRUCTION PER CYCLE:", (threads*num_fp*float(out[1]))/(float(out[0])*float(freq_aux/freq)))
+            print ("FlOPS PER CYCLE:", (threads*num_fp*factor*ops_fp[isa][precision]*float(out[1]))/(float(out[0])*float(freq_aux/freq)))
             print ("GFLOPS:", data['FP'])
+            print ("Max Recorded Frequency (GHz):", freq_aux)
+            print ("Nominal Frequency (GHz):", freq)
+            print ("Actual Frequency to Nominal Frequency Ratio:", float(freq_aux/freq))
             print ("------------------------------")
         
     if (test_type == 'roofline'):
@@ -256,11 +287,11 @@ def main():
     parser = argparse.ArgumentParser(description='Script to run micro-benchmarks to construct Cache-Aware Roofline Model')
     parser.add_argument('--test', default='roofline', nargs='?', choices=['FP', 'L1', 'L2', 'L3', 'DRAM', 'roofline'], help='Type of the test. Roofline test measures the bandwidth of the different memory levels and FP Performance (Default: roofline)')
     
-    parser.add_argument('--vendor', nargs='?', type = str, choices=['intel', 'amd'], help='Name of CPU vendor (intel or amd)')
+    parser.add_argument('--vendor', default='intel', nargs='?', type = str, choices=['intel', 'amd'], help='Name of CPU vendor (intel or amd)')
 
     parser.add_argument('--freq', default='2.0', nargs='?', type = float, help='Desired CPU frequency during test (if not using config file)')
     parser.add_argument('--set_freq',  dest='set_freq', action='store_const', const=1, default=0, help='Set Processor frequency to indicated one')
-    parser.add_argument('--name', nargs='?', type = str, help='Name for results file (if not using config file)')
+    parser.add_argument('--name', default='', nargs='?', type = str, help='Name for results file (if not using config file)')
     parser.add_argument('-v', '--verbose', default=0, nargs='?', type = int, choices=[0, 1, 2, 3], help='Level of terminal output (0 -> No Output 1 -> Only ISA Errors, 2 -> Intermediate Test Results, 3 -> Configuration Values Selected)')
     
     parser.add_argument('--inst', default='fma', nargs='?', choices=['fma', 'add', 'mul', 'div'], help='FP Instruction (Default: fma)')
@@ -268,6 +299,7 @@ def main():
     parser.add_argument('-p', '--precision', default='dp', nargs='?', choices=['dp', 'sp'], help='Data Precision (Default: dp)')
     parser.add_argument('-ldst', '--ld_st_ratio',  default=2, nargs='?', type = int, help='Load/Store Ratio (Default: 2)')
     parser.add_argument('--only_ld',  dest='only_ld', action='store_const', const=1, default=0, help='Run only loads in mem test (ld_st_ratio is ignored)')
+    parser.add_argument('--only_st',  dest='only_st', action='store_const', const=1, default=0, help='Run only stores in mem test (ld_st_ratio is ignored)')
     #parser.add_argument('--curve',  dest='curve', action='store_const', const=1, default=0, help='To obtain full MEM and FP Curves')
     parser.add_argument('config', nargs='?', help='Path for the system configuration file')
     parser.add_argument('-t', '--threads', default=1, nargs='?', type = int, help='Number of threads for the micro-benchmarking (Default: 1)')
@@ -299,6 +331,9 @@ def main():
     #print(name, freq, l1_size, l2_size, l3_size)
 
     if(args.only_ld == 1):
+        num_ld = 1
+        num_st = 0
+    elif(args.only_st == 1):
         num_ld = 0
         num_st = 1
     else:
