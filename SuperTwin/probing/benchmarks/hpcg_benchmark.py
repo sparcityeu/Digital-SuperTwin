@@ -108,32 +108,20 @@ def generate_hpcg_bench_sh(SuperTwin, HPCG_PARAM):
         thr_name = "t_" + str(thread)
         modif_key = str(thread)
         if(thread == 1):
-            runs[thr_name] = "likwid-pin -c N:0 ./xhpcg_" + vecmsr
+            #runs[thr_name] = "likwid-pin -c N:0 ./xhpcg_" + vecmsr
+            runs[thr_name] = utils.prepare_bind(SuperTwin, 1, "balanced", -1) + " ./xhpcg_" + vecmsr
             try:
-                modifiers[modif_key].append("likwid-pin -c N:0")
+                modifiers[modif_key].append(utils.prepare_bind(SuperTwin, 1, "balanced", -1))
             except:
                 modifiers[modif_key] = []
-                modifiers[modif_key].append("likwid-pin -c N:0")
+                modifiers[modif_key].append(utils.prepare_bind(SuperTwin, 1, "balanced", -1))
         else:
-            if(is_numa):
-                per_socket = int(thread / 2)
-                per_socket_string = "S0:" + str(per_socket - 1) + "@" + "S1:" + str(per_socket - 1)
-                affinity = utils.prepare_st_likwid_pin(per_socket_string)
-                affinity = "likwid-pin -q -c " + affinity
-                runs[thr_name] = affinity + " ./xhpcg_" + vecmsr
-                try:
-                    modifiers[modif_key].append(pin_and_thread)
-                except:
-                    modifiers[modif_key] = []
-                    modifiers[modif_key].append(pin_and_thread)
-            else:
-                affinity = "likwid-pin -c N:0-" + str(thread - 1) + " ./xhpcg_" + vecmsr
-                runs[thr_name] = affinity
-                try:
-                    modifiers[modif_key].append(affinity.split(" ./xhpcg")[0])
-                except:
-                    modifiers[modif_key] = []
-                    modifiers[modif_key].append(affinity.split(" ./xhpcg")[0])
+            runs[thr_name] = utils.prepare_bind(SuperTwin, thread, "balanced", -1) + " ./xhpcg_" + vecmsr
+            try:
+                modifiers[modif_key].append(utils.prepare_bind(SuperTwin, thread, "balanced", -1))
+            except:
+                modifiers[modif_key] = []
+                modifiers[modif_key].append(utils.prepare_bind(SuperTwin, thread, "balanced", -1))
 
                 
     for key in runs:
@@ -366,13 +354,13 @@ def copy_script_files_to_remote(SuperTwin):
         scp.put(_file, remote_path = "/tmp/dt_files")
         print("putting file:", _file)
 
-def get_benchmark_observation_fields(td, script):
+def get_benchmark_observation_fields(SuperTwin, script):
 
     reader = open(script, "r")
     lines = reader.readlines()
     command = lines[3].strip("\n")
     affinity = command.split("./")[0].strip(" ")
-    threads = utils.resolve_likwid_pin(td, affinity)
+    threads = utils.resolve_bind(SuperTwin, affinity)
     thread_count = len(threads)
     observation = {}
     observation["command"] = command
@@ -396,7 +384,7 @@ def execute_hpcg_runs(SuperTwin, runs):
         time, uid = observation.observe_script_wrap(SuperTwin, script_name)
         observation_dict = {}
         print("Observation", uid, "is completed in", time, "seconds")
-        observation_dict = get_benchmark_observation_fields(td, script_name)
+        observation_dict = get_benchmark_observation_fields(SuperTwin, script_name)
         observation_dict["name"] = "HPCG_" + key
         observation_dict["duration"] = time
         observation_dict["uid"] = uid

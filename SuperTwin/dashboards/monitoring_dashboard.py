@@ -134,7 +134,8 @@ def get_topology(td):
 
 
 def generate_monitoring_dashboard(SuperTwin):
-    
+
+        
     td = utils.get_twin_description(SuperTwin)
     empty_dash = obs.template_dict(
         SuperTwin.name + " Monitor-" + str(uuid.uuid4())
@@ -219,7 +220,9 @@ def generate_monitoring_dashboard(SuperTwin):
                 param["Param"],
             )
         )
-
+    #print("############################3")
+    #print("Is this really this one?!!")
+    
     ##Socket Energy
     panel_id = get_next_id()
     empty_dash["panels"].append(
@@ -573,5 +576,5 @@ def generate_monitoring_dashboard(SuperTwin):
     )
 
     print("Generated:", g_url)
-
+    
     return g_url["url"]

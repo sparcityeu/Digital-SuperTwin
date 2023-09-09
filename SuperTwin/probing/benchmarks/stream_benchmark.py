@@ -103,29 +103,32 @@ def generate_stream_bench_sh(SuperTwin):
     maker = "bash /tmp/dt_probing/benchmarks/compile_stream_bench.sh"
     runs = {}
 
+    print("#############")
+    print("vector:", vector)
+    print("SuperTwin.name: ", SuperTwin.name)
+    print("#############")
+    
     for thread in thread_set:
         thr_name = "t_" + str(thread)
         modif_key = str(thread)
         if thread == 1:  ##Burasını environment'a yazmak lazım
             runs[thr_name] = (
-                "likwid-pin -c N:0 ./stream_"
+                utils.prepare_bind(SuperTwin, 1, "balanced", -1) + 
+                " ./stream_"
                 + vector
-                + " &>> ../STREAM_RES_"
+                + " &>> ../STREAM_RES_" 
                 + SuperTwin.name
                 + "/"
                 + thr_name
                 + ".txt"
             )
             try:
-                modifiers[modif_key].append("likwid-pin -c N:0")
+                modifiers[modif_key].append(utils.prepare_bind(SuperTwin, 1, "balanced", -1))
             except:
                 modifiers[modif_key] = []
-                modifiers[modif_key].append("likwid-pin -c N:0")
+                modifiers[modif_key].append(utils.prepare_bind(SuperTwin, 1, "balanced", -1))
         else:
-            pin_and_thread = "likwid-pin "
-            if is_numa:
-                pin_and_thread += "-m "
-            pin_and_thread += "-c N:0-" + str(thread - 1)
+            pin_and_thread = utils.prepare_bind(SuperTwin, thread, "balanced", -1)
             runs[thr_name] = (
                 pin_and_thread
                 + " ./stream_"
@@ -141,7 +144,10 @@ def generate_stream_bench_sh(SuperTwin):
             except:
                 modifiers[modif_key] = []
                 modifiers[modif_key].append(pin_and_thread)
-
+    print("#############")
+    print("runs: ", runs)
+    print("#############")
+                
     for key in runs:
         writer = open(SuperTwin.name + "_STREAM_" + key + ".sh", "w+")
         writer.write("#!/bin/bash" + "\n")
@@ -247,13 +253,13 @@ def copy_file_to_local(SuperTwin, remote_path, local_path):
         print("Can't get remote files..")
 
 
-def get_benchmark_observation_fields(td, script):
+def get_benchmark_observation_fields(SuperTwin, script):
 
     reader = open(script, "r")
     lines = reader.readlines()
     command = lines[3].strip("\n")
     affinity = command.split("./")[0].strip(" ")
-    threads = utils.resolve_likwid_pin(td, affinity)
+    threads = utils.resolve_bind(SuperTwin, affinity)
     thread_count = len(threads)
     observation = {}
     observation["command"] = command
@@ -273,7 +279,7 @@ def execute_stream_runs(SuperTwin, runs):
         time, uid = observation.observe_script_wrap(SuperTwin, script_name)
 
         print("Observation", uid, "is completed in", time, "seconds")
-        observation_dict = get_benchmark_observation_fields(td, script_name)
+        observation_dict = get_benchmark_observation_fields(SuperTwin, script_name)
         observation_dict["name"] = "STREAM_" + key
         observation_dict["duration"] = time
         observation_dict["uid"] = uid

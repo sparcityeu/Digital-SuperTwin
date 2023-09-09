@@ -3,4 +3,4 @@ CFLAGS = -g -Wall -Wextra -Ofast -march=native
 CFLAGS += -pthread
 
 all:
-	$(COMPILER) $(CFLAGS) Test/main_test.c -o bin/test -lm
+	$(COMPILER) $(CFLAGS) Test/main_test.c Test/CoreClockChecker_x86.s -o bin/test -lm

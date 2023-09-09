@@ -5,6 +5,8 @@ ifeq ($(isa),sse)
 	FLAGS += -DSSE
 else ifeq ($(isa),avx)
 	FLAGS += -DAVX
+else ifeq ($(isa),avx2)
+	FLAGS += -DAVX2
 else ifeq ($(isa),avx512)
 	FLAGS += -DAVX512
 else
