@@ -50,7 +50,7 @@ def get_date_tag():
 def add_pcp(SuperTwin, config_lines):
 
     # "4186626 /var/lib/pcp/pmdas/root/pmdaroot"
-
+    
     pcp_lines = [
         "mem_use = mem_use \n",
         "mem_use.formula = proc.psinfo.rss / 1024 \n",
@@ -79,6 +79,24 @@ def generate_pcp2influxdb_config(SuperTwin):
     if "hinv.cpu.clock" not in metrics:
         metrics.append("hinv.cpu.clock")
 
+    ##Quick fix
+    if "perfevent.hwcounters.RAPL_ENERGY_PKG.value" not in metrics:
+        metrics.append("perfevent.hwcounters.RAPL_ENERGY_PKG.value")
+        
+    ##Quick fix
+    if "perfevent.hwcounters.RAPL_ENERGY_DRAM.value" not in metrics:
+        metrics.append("perfevent.hwcounters.RAPL_ENERGY_DRAM.value")
+        
+##Quick fix
+    if "lmsensors.coretemp_isa_0000.package_id_0" not in metrics:
+        metrics.append("lmsensors.coretemp_isa_0000.package_id_0")
+
+##Quick fix
+    if "lmsensors.coretemp_isa_0001.package_id_1" not in metrics:
+        metrics.append("lmsensors.coretemp_isa_0001.package_id_1")
+
+
+
     config_lines = [
         "[options]" + "\n",
         "influx_server = http://127.0.0.1:8086" + "\n",
@@ -94,7 +112,7 @@ def generate_pcp2influxdb_config(SuperTwin):
         config_lines.append(metric + " = ,," + "\n")
 
     ##Add remote ship overheead
-    config_lines = add_pcp(SuperTwin, config_lines)
+    #config_lines = add_pcp(SuperTwin, config_lines)
 
     pcp_conf_name = "pcp_" + source_name + db_tag + ".conf"
     writer = open(pcp_conf_name, "w")

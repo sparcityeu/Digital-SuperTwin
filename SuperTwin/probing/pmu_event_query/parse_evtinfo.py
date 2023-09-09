@@ -15,6 +15,7 @@ def main():
         fields = line.strip("\n").split("\t")
         pmu,metric = fields[0].split("::")
         desc = fields[1].replace('"', '')
+        desc = "" ##Adding metric descriptions to twin description cause mongodb to fail in large servers due to very large file size 
         if(pmu not in PMUs.keys()):
             PMUs[pmu] = {}
             PMUs[pmu]["events"] = []

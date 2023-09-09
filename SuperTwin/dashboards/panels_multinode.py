@@ -1,4 +1,4 @@
-def ret_ts_panel(datasource, y, title):
+def ret_ts_panel(y, title):
     ts = {
         "id": 2,
         "gridPos": {
@@ -10,8 +10,8 @@ def ret_ts_panel(datasource, y, title):
         "type": "timeseries",
         "title": title,
         "datasource": {
-            "type": "influxdb",
-            "uid": datasource
+            "uid": "-- Mixed --",
+            "type": "datasource"
         },
         "fieldConfig": {
             "defaults": {
@@ -86,12 +86,12 @@ def ret_ts_panel(datasource, y, title):
 
     return ts
 
-def ret_query(alias, measurement, field, tag):
+def ret_query(alias, measurement, field, tag, datasource):
     query = {
                 "alias": alias,
                 "datasource": {
                     "type": "influxdb",
-                    "uid": "qkKkaegIk"
+                    "uid": datasource
                 },
                 "groupBy": [
                     {
@@ -136,7 +136,7 @@ def ret_query(alias, measurement, field, tag):
             }
     return query
 
-def ret_gauge_panel(datasource, title, y):
+def ret_gauge_panel(title, y):
 
     gp = {
         "id": 3,
@@ -149,8 +149,8 @@ def ret_gauge_panel(datasource, title, y):
         "type": "gauge",
         "title": title,
         "datasource": {
-            "type": "influxdb",
-            "uid": datasource
+            "uid": "-- Mixed --",
+            "type": "datasource"
         },
         "pluginVersion": "9.2.2",
         "fieldConfig": {
@@ -259,8 +259,8 @@ def two_templates_two(data, layout):
         "type": "ae3e-plotly-panel",
         "title": "Observation Result",
         "datasource": {
-            "type": "influxdb",
-            "uid": "qkKkaegIk"
+            "type": "simpod-json-datasource",
+            "uid": "yjaMegMVk"
         },
         "options": {
             "script": "console.log(data)\n\n\nreturn {};",

@@ -48,6 +48,15 @@ def _fill_default_pmu_event_names():
     _DEFAULT_GENERIC_PMU_EVENTS.append("FP_MUL_RETIRED")
     _DEFAULT_GENERIC_PMU_EVENTS.append("FP_DIV_RETIRED")
 
+    _DEFAULT_GENERIC_PMU_EVENTS.append("FP_SCALAR_SINGLE")
+    _DEFAULT_GENERIC_PMU_EVENTS.append("FP_SCALAR_DOUBLE")
+    _DEFAULT_GENERIC_PMU_EVENTS.append("FP_128B_SINGLE")
+    _DEFAULT_GENERIC_PMU_EVENTS.append("FP_128B_DOUBLE")
+    _DEFAULT_GENERIC_PMU_EVENTS.append("FP_256B_SINGLE")
+    _DEFAULT_GENERIC_PMU_EVENTS.append("FP_256B_DOUBLE")
+    _DEFAULT_GENERIC_PMU_EVENTS.append("FP_512B_SINGLE")
+    _DEFAULT_GENERIC_PMU_EVENTS.append("FP_512B_DOUBLE")
+
     _DEFAULT_GENERIC_PMU_EVENTS.append("FP_DISPATCH_FAULTS_ANY")
     _DEFAULT_GENERIC_PMU_EVENTS.append("RETIRED_BRANCH_TAKEN")
     _DEFAULT_GENERIC_PMU_EVENTS.append("RETIRED_BRANCH_TAKEN_MISPREDICTED")
@@ -60,6 +69,8 @@ def _fill_default_pmu_event_names():
     _DEFAULT_GENERIC_PMU_EVENTS.append("L3_CACHE_DATA_MISS")
     _DEFAULT_GENERIC_PMU_EVENTS.append("L3_CACHE_DATA_HIT")
     
+    _DEFAULT_GENERIC_PMU_EVENTS.append("LOAD_RETIRED")
+    _DEFAULT_GENERIC_PMU_EVENTS.append("STORE_RETIRED")
     _DEFAULT_GENERIC_PMU_EVENTS.append("TOTAL_MEMORY_OPERATIONS") 
 
 
@@ -95,6 +106,7 @@ def initialize():
 
         _initialized = True
 
+        print("default_generic_pmu_events:", _DEFAULT_GENERIC_PMU_EVENTS)
 
 def add_configuration(file_name):
     fd = open(file_name, "r")
@@ -151,7 +163,7 @@ def get(pmu_name, pmu_generic_event):
         raise RuntimeError(
             "Module not initialized. Please call initialize() before using get()."
         )
-
+    '''So many repeated prints
     if pmu_name not in _COMMON_PMU_DICT.keys():
         print("pmu_name:", pmu_name, "not found in pmu_mapping_utils")
     else:
@@ -162,7 +174,7 @@ def get(pmu_name, pmu_generic_event):
                 "not found in pmu_mapping_utils for pmu_name:",
                 pmu_name,
             )
-
+    '''
     return copy.deepcopy(
         _COMMON_PMU_DICT.get(pmu_name, {}).get(pmu_generic_event, "")
     )

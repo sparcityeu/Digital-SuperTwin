@@ -35,7 +35,27 @@
 	#define REGISTER "ymm"
 	#define DP_ALIGN 32
 	#define SP_ALIGN 32
-	#define COBLERED "\"%ymm0\",\"%ymm1\",\"%ymm2\",\"%ymm3\",\"%ymm4\",\"%ymm5\",\"%ymm6\",\"%ymm7\",\"%ymm8\",\"%ymm9\",\"%ymm10\",\"%ymm11\",\"%ymm12\",\"%ymm13\",\"%ymm14\",\"%ymm15\",\"memory\""
+	#define COBLERED "\"%%ymm0\",\"%%ymm1\",\"%%ymm2\",\"%%ymm3\",\"%%ymm4\",\"%%ymm5\",\"%%ymm6\",\"%%ymm7\",\"%%ymm8\",\"%%ymm9\",\"%%ymm10\",\"%%ymm11\",\"%%ymm12\",\"%%ymm13\",\"%%ymm14\",\"%%ymm15\",\"memory\""
+	#define DP_OPS 4
+	#define DP_DIV "vdivpd"
+	#define DP_ADD "vaddpd"
+	#define DP_MUL "vmulpd"
+	#define DP_FMA "vfmadd132pd" 
+	#define DP_MEM "vmovapd"
+
+	#define SP_OPS 8
+	#define SP_DIV "vdivps"
+	#define SP_ADD "vaddps"
+	#define SP_MUL "vmulps"
+	#define SP_FMA "vfmadd132ps"
+	#define SP_MEM "vmovaps"
+#elif defined (AVX2)
+	#define ISA "avx2"
+	#define NUM_REGISTER 16
+	#define REGISTER "ymm"
+	#define DP_ALIGN 32
+	#define SP_ALIGN 32
+	#define COBLERED "\"%%ymm0\",\"%%ymm1\",\"%%ymm2\",\"%%ymm3\",\"%%ymm4\",\"%%ymm5\",\"%%ymm6\",\"%%ymm7\",\"%%ymm8\",\"%%ymm9\",\"%%ymm10\",\"%%ymm11\",\"%%ymm12\",\"%%ymm13\",\"%%ymm14\",\"%%ymm15\",\"memory\""
 	#define DP_OPS 4
 	#define DP_DIV "vdivpd"
 	#define DP_ADD "vaddpd"
