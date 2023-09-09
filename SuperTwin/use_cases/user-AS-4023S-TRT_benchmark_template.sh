@@ -29,10 +29,10 @@ SSH_PASSWD="123456"
 
 DATABASE_NAME="user-AS-4023S-TRT"
 
-MONITORING_URL="http://localhost:3000/d/ac3461c2-6337-4d1b-ac35-fe4c50773a8f/pmus-user-as-4023s-trt-monitor-b2b4bdbc-3985-4f97-828a-9d2cc86c5ed1?orgId=1"
+MONITORING_URL="http://localhost:3000/d/e7b22ef8-dcc2-4e53-affe-e6f6edbab1dd/pmus-user-as-4023s-trt-monitor-1758540c-ae7c-45de-b06f-19537607c23f?orgId=1"
 MONITORING_DASHBOARD_URL=""
  
-ROOFLINE_URL="http://localhost:3000/d/afed4d58-be2a-4aff-bed7-44ca90c4d638/pmus-user-as-4023s-trt-roofline-d7e5294b-3d0f-40c5-a575-31318f462ba7?orgId=1"
+ROOFLINE_URL="http://localhost:3000/d/fb1c81b2-6d71-4ca2-80a1-1a832b19507c/pmus-user-as-4023s-trt-roofline-fe836760-9d14-439b-b26e-8c326885bd1d?orgId=1"
 ROOFLINE_DASHBOARD_URL="" 
 ## end DONT MODIFY!! 
 echo "entered database name :$DATABASE_NAME"
