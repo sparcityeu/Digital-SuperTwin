@@ -19,6 +19,8 @@ def _fill_common_pmu_dict__intel_common(_COMMON_PMU_DICT):
     _COMMON_PMU_DICT[key]["RETIRED_BRANCH_INSTRUCTIONS"] = [
         "BRANCH_INSTRUCTIONS_RETIRED"
     ]
+    #_COMMON_PMU_DICT[key]["RAPL_ENERGY_PKG"] = ["RAPL_ENERGY_PKG"]
+    #_COMMON_PMU_DICT[key]["RAPL_ENERGY_CORES"] = ["RAPL_ENERGY_CORES"]
 
 
 def _fill_common_pmu_dict__intel_icl(_COMMON_PMU_DICT):

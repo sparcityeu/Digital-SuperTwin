@@ -15,7 +15,6 @@ ops_fp = {"avx512": {"sp": 16, "dp": 8}, "avx": {"sp": 8, "dp": 4}, "avx2": {"sp
 def read_config(config_file):
     f = open(config_file, "r")
     name = ''
-    freq = 0
     l1_size = 0
     l2_size = 0
     l3_size = 0
@@ -24,9 +23,6 @@ def read_config(config_file):
         l = line.split('=')
         if(l[0] == 'name'):
             name = l[1].rstrip()
-
-        if(l[0] == 'nominal_frequency'):
-            freq = l[1].rstrip()
 
         if(l[0] == 'l1_cache'):
             l1_size = l[1].rstrip()
@@ -37,7 +33,7 @@ def read_config(config_file):
         if(l[0] == 'l3_cache'):
             l3_size = l[1].rstrip()
 
-    return name, freq, l1_size, l2_size, l3_size
+    return name, l1_size, l2_size, l3_size
 
 
 def round_power_of_2(number):
@@ -83,9 +79,10 @@ def plot_roofline(name, data, ct):
     plt.savefig('Results/' + name + '_roofline_' + str(ct.time()) + '_' + str(ct.date()) + '.svg')
 
 #Run roofline tests
-def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, num_ld, num_st, threads, interleaved, num_ops, dram_bytes, test_type, verbose, set_freq, vendor, args):
+def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, num_ld, num_st, threads, interleaved, num_ops, dram_bytes, test_type, verbose, set_freq, measure_freq, args):
     
     data = {}
+    freq_aux = 0
 
     #Compile benchmark generator
     os.system("make clean && make isa=" + isa)
@@ -99,9 +96,9 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         os.system("./Bench/Bench -test MEM -num_LD " + str(num_ld) + " -num_ST " + str(num_st) + " -precision " + precision + " -num_rep " + str(num_reps))
         
         if(interleaved):
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor, "--interleaved"], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-measure_freq", str(measure_freq), "--interleaved"], stdout=subprocess.PIPE)
         else:
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-measure_freq", str(measure_freq)], stdout=subprocess.PIPE)
     
         out = result.stdout.decode('utf-8').split(',')
 
@@ -110,7 +107,7 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         data['L1'] = float(((threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq_aux))*float(out[1]))/(float(out[0])*float(freq_aux/freq)))
         
         if (verbose > 1):
-            print ("---------NEW L1 RESULTS-----------")
+            print ("---------L1 RESULTS-----------")
             print ("Total Cycles:", out[0],"Total Inner Loop Reps:", out[1], "Number of threads:", threads, "Number of reps:", num_reps,"Number of loads:", num_ld,"Number of stores:", num_st, "Memory instruction size:", mem_inst_size[isa][precision], "Frequency:", freq)
             
             #print ("EXTRA MODIFIERS:", float(threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq)))
@@ -132,9 +129,9 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         os.system("./Bench/Bench -test MEM -num_LD " + str(num_ld) + " -num_ST " + str(num_st) + " -precision " + precision + " -num_rep " + str(num_reps))
         
         if(interleaved):
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor,  "--interleaved"], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-measure_freq", str(measure_freq),  "--interleaved"], stdout=subprocess.PIPE)
         else:
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-measure_freq", str(measure_freq)], stdout=subprocess.PIPE)
         
         out = result.stdout.decode('utf-8').split(',')
 
@@ -142,7 +139,7 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         freq = float(out[3])
         data['L2'] = float((threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq_aux)*float(out[1]))/(float(out[0])*float(freq_aux/freq)))
         if (verbose > 1):
-            print ("---------NEW L2 RESULTS-----------")
+            print ("---------L2 RESULTS-----------")
             print ("Total Cycles:", out[0],"Total Inner Loop Reps:", out[1], "Number of threads:", threads, "Number of reps:", num_reps,"Number of loads:", num_ld,"Number of stores:", num_st, "Memory instruction size:", mem_inst_size[isa][precision], "Frequency:", freq)
             
             #print ("EXTRA MODIFIERS:", float(threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq)))
@@ -164,9 +161,9 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         os.system("./Bench/Bench -test MEM -num_LD " + str(num_ld) + " -num_ST " + str(num_st) + " -precision " + precision + " -num_rep " + str(num_reps))
         
         if(interleaved):
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor, "--interleaved"], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-measure_freq", str(measure_freq), "--interleaved"], stdout=subprocess.PIPE)
         else:
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-measure_freq", str(measure_freq)], stdout=subprocess.PIPE)
        
         out = result.stdout.decode('utf-8').split(',')
 
@@ -174,7 +171,7 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         freq = float(out[3])
         data['L3'] = float(threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq_aux)*float(out[1]))/(float(out[0])*float(freq_aux/freq))
         if (verbose > 1):
-            print ("---------NEW L3 RESULTS-----------")
+            print ("---------L3 RESULTS-----------")
             print ("Total Cycles:", out[0],"Total Inner Loop Reps:", out[1], "Number of threads:", threads, "Number of reps:", num_reps,"Number of loads:", num_ld,"Number of stores:", num_st, "Memory instruction size:", mem_inst_size[isa][precision], "Frequency:", freq)
             
             #print ("EXTRA MODIFIERS:", float(threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq)))
@@ -196,9 +193,9 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         os.system("./Bench/Bench -test MEM -num_LD " + str(num_ld) + " -num_ST " + str(num_st) + " -precision " + precision + " -num_rep " + str(num_reps))
         
         if(interleaved):
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor, "--interleaved"], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-measure_freq", str(measure_freq), "--interleaved"], stdout=subprocess.PIPE)
         else:
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-measure_freq", str(measure_freq)], stdout=subprocess.PIPE)
         
         out = result.stdout.decode('utf-8').split(',')
 
@@ -206,7 +203,7 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         freq = float(out[3])
         data['DRAM'] = float(threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq_aux)*float(out[1]))/(float(out[0])*float(freq_aux/freq))
         if (verbose > 1):
-            print ("---------NEW DRAM RESULTS-----------")
+            print ("---------DRAM RESULTS-----------")
             print ("Total Cycles:", out[0],"Total Inner Loop Reps:", out[1], "Number of threads:", threads, "Number of reps:", num_reps,"Number of loads:", num_ld,"Number of stores:", num_st, "Memory instruction size:", mem_inst_size[isa][precision], "Frequency:", freq)
             
             #print ("EXTRA MODIFIERS:", float(threads*num_reps*(num_ld+num_st)*mem_inst_size[isa][precision]*float(freq)))
@@ -233,9 +230,9 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         os.system("./Bench/Bench -test FLOPS -op " + inst + " -precision " + precision + " -fp " + str(num_fp))
         
         if(interleaved):
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor, "--interleaved"], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-measure_freq", str(measure_freq), "--interleaved"], stdout=subprocess.PIPE)
         else:
-            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-vendor", vendor], stdout=subprocess.PIPE)
+            result = subprocess.run([bind[0], bind[1], bind[2], bind[3], "./bin/test", "-threads", str(threads), "-freq", str(freq), "-measure_freq", str(measure_freq)], stdout=subprocess.PIPE)
         
         out = result.stdout.decode('utf-8').split(',')
 
@@ -243,7 +240,7 @@ def run_roofline(name, freq, l1_size, l2_size, l3_size, inst, isa, precision, nu
         freq = float(out[3])
         data['FP'] = float(threads*num_fp*factor*ops_fp[isa][precision]*float(freq_aux)*float(out[1]))/(float(out[0])*float(freq_aux/freq))
         if (verbose > 1):
-            print ("---------NEW FP RESULTS-----------")
+            print ("---------FP RESULTS-----------")
             print ("Total Cycles:", out[0],"| Total Inner Loop Reps:", out[1], "| Number of threads:", threads, "| Number of reps:", num_fp,"| Instruction:", inst, "| Floating point operations per instruction:", (factor*ops_fp[isa][precision]), "| Frequency:", freq)
             
             print ("CYCLES PER INNER LOOP:", (float(out[0])*float(freq_aux/freq))/float(out[1]))
@@ -290,7 +287,7 @@ def main():
     parser = argparse.ArgumentParser(description='Script to run micro-benchmarks to construct Cache-Aware Roofline Model')
     parser.add_argument('--test', default='roofline', nargs='?', choices=['FP', 'L1', 'L2', 'L3', 'DRAM', 'roofline'], help='Type of the test. Roofline test measures the bandwidth of the different memory levels and FP Performance (Default: roofline)')
     
-    parser.add_argument('--vendor', default='intel', nargs='?', type = str, choices=['intel', 'amd'], help='Name of CPU vendor (intel or amd)')
+    parser.add_argument('--no_freq_measure',  dest='measure_freq', action='store_const', const=1, default=0, help='Measure CPU frequency or not')
 
     parser.add_argument('--freq', default='2.0', nargs='?', type = float, help='Desired CPU frequency during test (if not using config file)')
     parser.add_argument('--set_freq',  dest='set_freq', action='store_const', const=1, default=0, help='Set Processor frequency to indicated one')
@@ -318,10 +315,9 @@ def main():
     l3_size = 0
     freq = 0
     name = ''
-    if(args.vendor == None):
-        raise ValueError('Please specify a cpu vendor (intel or amd available)')
+
     if (args.config != None):
-        name, freq, l1_size, l2_size, l3_size = read_config(args.config)
+        name, l1_size, l2_size, l3_size = read_config(args.config)
    
 
     #uses frequency from arguments if not present in config file
@@ -357,7 +353,7 @@ def main():
         else:
             run_mem(name, freq, args.size, args.isa, args.precision, num_ld, num_st) """
     else:
-        run_roofline(name, freq, l1_size, l2_size, l3_size, args.inst, args.isa, args.precision, num_ld, num_st, args.threads, args.interleaved, args.num_ops, args.dram_bytes, args.test, args.verbose, args.set_freq, args.vendor, args)
+        run_roofline(name, freq, l1_size, l2_size, l3_size, args.inst, args.isa, args.precision, num_ld, num_st, args.threads, args.interleaved, args.num_ops, args.dram_bytes, args.test, args.verbose, args.set_freq, args.measure_freq, args)
 
 if __name__ == "__main__":
     main()

@@ -59,7 +59,7 @@ void write_asm_fp (int long long fp, char * op, int flops, char * assembly_op_fl
 			if(i % NUM_REGISTER == 0){
 				j = 0;
 			}
-			#if defined(AVX) || defined(AVX512) || !defined(SSE)
+			#if defined(AVX) || defined(AVX512) || defined(AVX2) || !defined(SSE)
 				if(strcmp(op,"div") == 0){
 					fprintf(file,"\t\t\"%s %%%%%s0, %%%%%s%d, %%%%%s%d\\n\\t\\t\"\n", assembly_op_flops_1, REGISTER, REGISTER, j, REGISTER, j);
 				}else if(strcmp(op,"mad") == 0){
@@ -105,7 +105,7 @@ void write_asm_fp (int long long fp, char * op, int flops, char * assembly_op_fl
 		if(i % 16 == 0){
 			j = 0;
 		}
-		#if defined (AVX512) || defined (AVX)
+		#if defined (AVX512) || defined (AVX) || defined (AVX2)
 			if(strcmp(op,"div") == 0){
 				fprintf(file,"\t\t\"%s %%%%%s0, %%%%%s%d, %%%%%s%d\\n\\t\\t\"\n", assembly_op_flops_1, REGISTER, REGISTER, j, REGISTER, j);
 			}else if(strcmp(op,"mad") == 0){

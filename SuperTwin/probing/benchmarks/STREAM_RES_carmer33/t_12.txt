@@ -1,0 +1,48 @@
+-------------------------------------------------------------
+STREAM version $Revision: 5.10 $
+-------------------------------------------------------------
+This system uses 8 bytes per array element.
+-------------------------------------------------------------
+Array size = 268435456 (elements), Offset = 0 (elements)
+Memory per array = 2048.0 MiB (= 2.0 GiB).
+Total memory required = 6144.0 MiB (= 6.0 GiB).
+Each kernel will be executed 5 times.
+ The *best* time for each kernel (excluding the first iteration)
+ will be used to compute the reported bandwidth.
+-------------------------------------------------------------
+[1;34m[pthread wrapper] 
+[0m[1;34m[pthread wrapper] MAIN -> 0
+[0m[1;34m[pthread wrapper] PIN_MASK: [0m[1;34m0->1  [0m[1;34m1->2  [0m[1;34m2->3  [0m[1;34m3->4  [0m[1;34m4->5  [0m[1;34m5->6  [0m[1;34m6->7  [0m[1;34m7->8  [0m[1;34m8->9  [0m[1;34m9->10  [0m[1;34m10->11  [0m[1;34m
+[pthread wrapper] SKIP MASK: 0x0
+[0m[1;34m	threadid 140447377463168 -> hwthread 1 - OK[0m[1;34m
+[0m[1;34m	threadid 140447369066496 -> hwthread 2 - OK[0m[1;34m
+[0m[1;34m	threadid 140447360669824 -> hwthread 3 - OK[0m[1;34m
+[0m[1;34m	threadid 140447352273152 -> hwthread 4 - OK[0m[1;34m
+[0m[1;34m	threadid 140447343876480 -> hwthread 5 - OK[0m[1;34m
+[0m[1;34m	threadid 140447335479808 -> hwthread 6 - OK[0m[1;34m
+[0m[1;34m	threadid 140447327083136 -> hwthread 7 - OK[0m[1;34m
+[0m[1;34m	threadid 140447318686464 -> hwthread 8 - OK[0m[1;34m
+[0m[1;34m	threadid 140446839860096 -> hwthread 9 - OK[0m[1;34m
+[0m[1;34m	threadid 140446831463424 -> hwthread 10 - OK[0m[1;34m
+[0m[1;34m	threadid 140446823066752 -> hwthread 11 - OK[0m[1;34m
+[0mNumber of Threads requested = 12
+Number of Threads counted = 12
+-------------------------------------------------------------
+Your clock granularity/precision appears to be 2 microseconds.
+Each test below will take on the order of 139877 microseconds.
+   (= 69938 clock ticks)
+Increase the size of the arrays if this shows that
+you are not getting at least 20 clock ticks per test.
+-------------------------------------------------------------
+WARNING -- The above is only a rough guideline.
+For best results, please be sure you know the
+precision of your system timer.
+-------------------------------------------------------------
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:           39194.8     0.109999     0.109580     0.110161
+Scale:          22960.5     0.187332     0.187059     0.187785
+Add:            27146.8     0.238288     0.237319     0.239528
+Triad:          26679.9     0.241784     0.241472     0.242048
+-------------------------------------------------------------
+Solution Validates: avg error less than 1.000000e-13 on all three arrays
+-------------------------------------------------------------

@@ -598,6 +598,7 @@ class SuperTwin:
         adcarm_modifiers = adcarm_benchmark.generate_adcarm_bench_sh(
             self, adcarm_config
         )
+        #uncomment this to run the adCARM tool, if commented you need a folder with CARM results already generated under the same name as the twin
         #adcarm_benchmark.execute_adcarm_bench(self)
         adcarm_res = adcarm_benchmark.parse_adcarm_bench(self)
 
@@ -940,9 +941,10 @@ if __name__ == "__main__":
 
     # CONFIGURE PMU_MAPPING_UTILS
 
-    #pmu_mapping_utils.initialize()
+    pmu_mapping_utils.initialize()
     #pmu_mapping_utils.add_configuration("skl_pmu_remapping.txt")
-    #pmu_mapping_utils.add_configuration("skx_pmu_remapping.txt")
+    #pmu_mapping_utils.add_configuration("rapl_pmu_remapping.txt")
+    pmu_mapping_utils.add_configuration("skx_pmu_remapping.txt")
     # add_configuration("amd64_fam15_pmu_emapping.txt")
 
     # user_name = "ftasyaran"
@@ -954,12 +956,12 @@ if __name__ == "__main__":
         addr = args[1]
         my_superTwin = SuperTwin(addr)  # Re-construct
 
-    my_superTwin.reconfigure_observation_events_parameterized("dolap10_perfevent.txt")
+    #my_superTwin.reconfigure_observation_events_parameterized("dolap10_perfevent.txt")
         
-    affinity = utils.prepare_bind(my_superTwin, 1, "compact", -1)
-    commands = ["none|./none 1138_bus.mtx", "rcm|./rcm 1138_bus.mtx","degree|./degree 1138_bus.mtx","random|./random 1138_bus.mtx"]
+    #affinity = utils.prepare_bind(my_superTwin, 1, "compact", -1)
+    #commands = ["none|./none 1138_bus.mtx", "rcm|./rcm 1138_bus.mtx","degree|./degree 1138_bus.mtx","random|./random 1138_bus.mtx"]
     #my_superTwin.execute_observation_batch_parameters("/home/fatih/SparseBaseOrderExample", affinity, commands)
-    my_superTwin.execute_observation_batch_parameters("/common_data/SparseBaseOrderExample", affinity, commands)
+    #my_superTwin.execute_observation_batch_parameters("/common_data/SparseBaseOrderExample", affinity, commands)
     
 
     # my_superTwin.add_stream_benchmark()
