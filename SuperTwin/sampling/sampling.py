@@ -50,7 +50,7 @@ def get_date_tag():
 def add_pcp(SuperTwin, config_lines):
 
     # "4186626 /var/lib/pcp/pmdas/root/pmdaroot"
-    
+
     pcp_lines = [
         "mem_use = mem_use \n",
         "mem_use.formula = proc.psinfo.rss / 1024 \n",
@@ -71,31 +71,11 @@ def generate_pcp2influxdb_config(SuperTwin):
     source_name = SuperTwin.name
     metrics = SuperTwin.monitor_metrics
     always_have_metrics = utils.always_have_metrics("monitor", SuperTwin)
+ 
 
     for item in always_have_metrics:
         if item not in metrics and item in SuperTwin.pcp_metrics:
             metrics.append(item)
-
-    if "hinv.cpu.clock" not in metrics:
-        metrics.append("hinv.cpu.clock")
-
-    ##Quick fix
-    if "perfevent.hwcounters.RAPL_ENERGY_PKG.value" not in metrics:
-        metrics.append("perfevent.hwcounters.RAPL_ENERGY_PKG.value")
-        
-    ##Quick fix
-    if "perfevent.hwcounters.RAPL_ENERGY_DRAM.value" not in metrics:
-        metrics.append("perfevent.hwcounters.RAPL_ENERGY_DRAM.value")
-        
-##Quick fix
-    if "lmsensors.coretemp_isa_0000.package_id_0" not in metrics:
-        metrics.append("lmsensors.coretemp_isa_0000.package_id_0")
-
-##Quick fix
-    if "lmsensors.coretemp_isa_0001.package_id_1" not in metrics:
-        metrics.append("lmsensors.coretemp_isa_0001.package_id_1")
-
-
 
     config_lines = [
         "[options]" + "\n",
@@ -111,7 +91,8 @@ def generate_pcp2influxdb_config(SuperTwin):
     for metric in metrics:
         config_lines.append(metric + " = ,," + "\n")
 
-    ##Add remote ship overheead
+    ##This causes a bug in pcp2influxdb
+    ##Add remote ship overheead 
     #config_lines = add_pcp(SuperTwin, config_lines)
 
     pcp_conf_name = "pcp_" + source_name + db_tag + ".conf"
@@ -131,6 +112,11 @@ def generate_pcp2influxdb_config_observation(SuperTwin, observation_id):
     sourceIP = SuperTwin.addr
     source_name = SuperTwin.name
     metrics = SuperTwin.observation_metrics
+    always_have_metrics = utils.always_have_metrics("observation", SuperTwin)
+
+    for item in always_have_metrics:
+        if item not in metrics:
+            metrics.append(item)
 
     metrics = [x.strip("node").strip(" ") for x in metrics]
     metrics = [
@@ -220,50 +206,20 @@ def reconfigure_perfevent(SuperTwin):
     print("Reconfigured remote perfevent pmda")
 
 
-def begin_sampling_pcp(SuperTwin):
+def main(SuperTwin):
     pcp_conf_name = generate_pcp2influxdb_config(SuperTwin)
     print("pcp2influxdb configuration:", pcp_conf_name, "generated")
 
     # This command is executed on monitoring server
     # Metrics to be monitored are defined in pcp_conf_name
     # Then pcp2influxdb connects to monitored server to get metric resutls.
-    p0_command = (
-        "pcp2influxdb -t 1 -c "
-        + pcp_conf_name
-        + "  --ignore-unknown :configured"
-    )
+    p0_command = "pcp2influxdb -t 1 -c " + pcp_conf_name + " :configured"
     p0 = Popen(shlex.split(p0_command))
     print(
         "A daemon with pid:", p0.pid, "is started monitoring", SuperTwin.name
     )
 
     return p0.pid
-
-
-def begin_sampling_pmu(SuperTwin):
-    pcp_conf_name = generate_pcp2influxdb_config_observation(
-        SuperTwin, SuperTwin.monitor_tag
-    )
-    print("pcp2influxdb configuration:", pcp_conf_name, "generated")
-
-    # This command is executed on monitoring server
-    # Metrics to be monitored are defined in pcp_conf_name
-    # Then pcp2influxdb connects to monitored server to get metric resutls.
-    p0_command = (
-        "pcp2influxdb -t 1 -c "
-        + pcp_conf_name
-        + " --ignore-unknown :configured"
-    )
-    p0 = Popen(shlex.split(p0_command))
-    print(
-        "A daemon with pid:", p0.pid, "is started monitoring", SuperTwin.name
-    )
-
-    return p0.pid
-
-
-def main(SuperTwin):
-    return (begin_sampling_pcp(SuperTwin), begin_sampling_pmu(SuperTwin))
 
 
 if __name__ == "__main__":

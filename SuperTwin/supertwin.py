@@ -1,39 +1,38 @@
 import sys
+
 sys.path.append("probing")
 sys.path.append("probing/benchmarks")
 sys.path.append("observation")
 sys.path.append("twin_description")
 sys.path.append("sampling")
 sys.path.append("dashboards")
-sys.path.append("pmu_mappings")
+
+import utils
+import remote_probe
+import detect_utils
+import sampling
+import stream_benchmark
+import hpcg_benchmark
+import adcarm_benchmark
+import observation
+import influx_help
+import observation_standard
+import roofline_dashboard
+import monitoring_dashboard
+import uuid
+from bson.objectid import ObjectId
+from bson.json_util import dumps
+from bson.json_util import loads
 
 import datetime
-from bson.json_util import loads
-from bson.json_util import dumps
-from bson.objectid import ObjectId
-import subprocess
-import uuid
-import monitoring_dashboard_saved as monitoring_dashboard#_modular as monitoring_dashboard
-import roofline_dashboard
-import pmu_mapping_utils
-import observation_standard
-import influx_help
-import observation
-import adcarm_benchmark
-import hpcg_benchmark
-import stream_benchmark
-import sampling
-import detect_utils
-import remote_probe
-import utils
 
-# HPCG benchmark parameters are set to be separate from classes, so hpcg is repeatable and easily mutable
+##HPCG benchmark parameters are set to be separate from classes, so hpcg is repeatable and easily mutable
 HPCG_PARAM = {}
 HPCG_PARAM["nx"] = 104
 HPCG_PARAM["ny"] = 104
 HPCG_PARAM["nz"] = 104
 HPCG_PARAM["time"] = 60
-# HPCG benchmark parameters
+##HPCG benchmark parameters
 
 
 def query_twin_state(name, mongodb_id, mongodb_addr):
@@ -89,7 +88,6 @@ class SuperTwin:
             self.grafana_addr,
             self.grafana_token,
         ) = utils.read_env()
-
         self.grafana_datasource = utils.create_grafana_datasource(
             self.name,
             self.uid,
@@ -102,7 +100,9 @@ class SuperTwin:
         self.pcp_pids = utils.get_pcp_pids(self)
 
         self.influxdb_name = self.name
-        self.influx_datasource = utils.get_influx_database(self.influxdb_addr)
+        self.influx_datasource = utils.get_influx_database(
+            self.influxdb_addr
+        )
         utils.create_influx_database(
             self.influx_datasource, self.influxdb_name
         )
@@ -118,42 +118,33 @@ class SuperTwin:
             self,
         )
         print("Collection id:", self.mongodb_id)
-        
-
-        self.__load_pcp_and_pmu_metrics()
-        
+        self.pcp_metrics = [x["metric_name"] for x in utils.get_monitoring_metrics(self,"SWTelemetry")]
+        self.pmu_metrics = [x["metric_name"] for x in utils.get_monitoring_metrics(self,"HWTelemetry")]
         
         # benchmark members
         self.benchmarks = 0
         self.benchmark_results = 0
 
         ##
-        # This is a breaking point where we know everything and can configure now
+        ##This is a breaking point where we know everything and can configure now
         ##
 
         # self.observation_metrics = utils.read_observation_metrics() #This may become problematic with multinode
         self.monitor_metrics = []
         self.observation_metrics = []  # Start empty
-        self.reconfigure_observation_events_with_pmu_events()  # Only add available power
-        self.monitor_pid = sampling.begin_sampling_pcp(self)
-        self.monitor_pmu_pid = sampling.begin_sampling_pmu(self)
-        self.kill_zombie_monitors()
+        self.reconfigure_observation_events_beginning()  ##Only add available power
 
+        self.monitor_pid = sampling.main(self)
         utils.update_state(self.name, self.addr, self.uid, self.mongodb_id)
-        self.dashboard_queries = []  # is set inn generate_monitoring_dashboard is this used?
+        self.kill_zombie_monitors()  ##If there is any zombie monitor sampler
         self.generate_monitoring_dashboard()
-        print("Monitoring dashboard generated.. ")
-        
-        #utils.generate_specific_benhmark_template(self.SSHuser + "@" + self.addr,self.SSHpass,self.influxdb_name,self.monitoring_dashboard,self.roofline_dashboard)
 
-        # benchmark functions
-        # 
-        
-        self.add_stream_benchmark()
-        self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
-        self.add_adcarm_benchmark() 
-        
-        self.generate_roofline_dashboard()
+        ##benchmark functions
+        # self.add_stream_benchmark()
+        # self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
+        # self.add_adcarm_benchmark()
+        # self.generate_roofline_dashboard()
+
         utils.register_twin_state(self)
 
     def __reconstruct_twin(self, *args):
@@ -196,41 +187,16 @@ class SuperTwin:
         self.__load_twin_state(
             query_twin_state(self.name, self.mongodb_id, self.mongodb_addr)
         )
-        self.monitor_pmu_pid = -99
         self.kill_zombie_monitors()
-
-        #self.__load_pcp_and_pmu_metrics()
+        
+        self.pcp_metrics = [x["metric_name"] for x in utils.get_monitoring_metrics(self,"SWTelemetry")]
+        self.pmu_metrics = [x["metric_name"] for x in utils.get_monitoring_metrics(self,"HWTelemetry")]
         self.update_twin_document__assert_new_monitor_pid()
-        self.reconfigure_observation_events_with_pmu_events()  # Only add available power
-        self.monitor_pmu_pid = sampling.begin_sampling_pmu(self)
-        
-        
-        utils.generate_specific_benhmark_template(self.SSHuser + "@" + self.addr,self.SSHpass,self.influxdb_name,self.monitoring_dashboard,self.roofline_dashboard)
         print(
             "SuperTwin:{} id:{} is reconstructed from db..".format(
                 self.name, self.uid
             )
         )
-
-    def __load_pcp_and_pmu_metrics(self):
-        self.pcp_metrics = [
-            x["metric_name"]
-            for x in utils.get_monitoring_metrics(self, "SWTelemetry")
-        ]
-        self.pmu_metrics = {}
-        appended_metric_names = []
-        for x in utils.get_monitoring_metrics(self, "HWTelemetry"):
-            if x["pmu_group"] not in self.pmu_metrics:
-                self.pmu_metrics[x["pmu_group"]] = []
-
-            if x["metric_name"] not in appended_metric_names:
-                self.pmu_metrics[x["pmu_group"]].append(
-                    {
-                        "metric_name": x["metric_name"],
-                        "pmu_event": x["pmu_name"],
-                    }
-                )
-                appended_metric_names.append(x["metric_name"])
 
     def __load_twin_state(self, meta):
         self.monitor_metrics = meta["twin_state"]["monitor_metrics"]
@@ -249,13 +215,12 @@ class SuperTwin:
         self.roofline_dashboard = meta["roofline_dashboard"]
         self.monitoring_dashboard = meta["monitoring_dashboard"]
         self.pcp_pids = meta["twin_state"]["pcp_pids"]
-        #self.dashboard_queries = meta["twin_state"]["dashboard_queries"]
 
     def kill_zombie_monitors(self):
 
         out = detect_utils.output_lines("ps aux | grep pcp2influxdb")
 
-        for line in out:  # Accesses are emprical
+        for line in out:  ##Accesses are emprical
             if line.find("/usr/bin/pcp2influxdb") != -1:
                 fields = line.split(" ")
                 fields = [x for x in fields if x != ""]
@@ -270,7 +235,7 @@ class SuperTwin:
                     continue
 
                 print("pid:", pid, "state:", state, "conf_file:", conf_file)
-                if pid != self.monitor_pid and pid != self.monitor_pmu_pid:
+                if pid != self.monitor_pid:
                     print("Killing zombie monitoring sampler with pid:", pid)
                     detect_utils.cmd("sudo kill -9 " + str(pid))
 
@@ -279,7 +244,7 @@ class SuperTwin:
         db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
         print("Killing existed monitor sampler with pid:", self.monitor_pid)
         detect_utils.cmd("sudo kill " + str(self.monitor_pid))
-        new_pid = sampling.begin_sampling_pcp(self)
+        new_pid = sampling.main(self)
         print("New sampler pid: ", new_pid)
         to_new = loads(dumps(db.find({"_id": ObjectId(self.mongodb_id)})))[0]
         # print(to_new)
@@ -294,7 +259,7 @@ class SuperTwin:
         benchmark_id = str(self.benchmarks)
         benchmark_result_id = (
             self.benchmark_results
-        )  # Note that benchmark_id is str but this one is int, since we will keep incrementing this one
+        )  ##Note that benchmark_id is str but this one is int, since we will keep incrementing this one
 
         id_base = "dtmi:dt:" + self.name + ":"
 
@@ -314,7 +279,7 @@ class SuperTwin:
         print("stream_res:", stream_res)
 
         for _field_key in stream_res:
-            try:  # Field key is a thread
+            try:  ##Field key is a thread
                 for _thread_key in stream_res[_field_key]:
                     _dict = {}
                     _dict["@id"] = (
@@ -332,7 +297,7 @@ class SuperTwin:
 
                     content["@contents"].append(_dict)
                     benchmark_result_id += 1
-            except:  # Field key is a global or local max
+            except:  ##Field key is a global or local max
                 continue
 
         self.benchmarks += 1
@@ -348,7 +313,7 @@ class SuperTwin:
         benchmark_id = str(self.benchmarks)
         benchmark_result_id = (
             self.benchmark_results
-        )  # Note that benchmark_id is str but this one is int, since we will keep incrementing this one
+        )  ##Note that benchmark_id is str but this one is int, since we will keep incrementing this one
 
         id_base = "dtmi:dt:" + self.name + ":"
 
@@ -390,7 +355,7 @@ class SuperTwin:
 
                     content["@contents"].append(_dict)
                     benchmark_result_id += 1
-            else:  # Field key is a global or local max or parameter
+            else:  ##Field key is a global or local max or parameter
                 continue
 
         self.benchmarks += 1
@@ -399,9 +364,9 @@ class SuperTwin:
         return content
 
     def prepare_adcarm_content(self, adcarm_modifiers, adcarm_res):
-        # We are not probably using adcarm_modifiers here
-        # It only contains global environment variable changes in the system
-        # Since it is also exist in adcarm_res, in contrary to other benchmarks
+        ##We are not probably using adcarm_modifiers here
+        ##It only contains global environment variable changes in the system
+        ##Since it is also exist in adcarm_res, in contrary to other benchmarks
 
         print("adcarm_res:", adcarm_res)
 
@@ -413,15 +378,14 @@ class SuperTwin:
 
         def which():
             runs = adcarm_res["threads"][max_threads()]
-            print("runs:", runs, "len(runs): ", len(runs))
+
             for i in range(len(runs)):
                 if "binding" not in runs[i].keys():
                     return i
-            return len(runs) - 1 ##Last one is the most important
 
         benchmark_id = str(
             self.benchmarks
-        )  # These may get GLOBAL (including other systems) later
+        )  ##These may get GLOBAL (including other systems) later
         benchmark_result_id = self.benchmark_results
 
         id_base = "dtmi:dt:" + self.name + ":"
@@ -435,7 +399,6 @@ class SuperTwin:
         if adcarm_modifiers["environment"] != []:
             content["@environment"] = adcarm_modifiers["environment"]
 
-                
         # content["@global_parameters"] = carm config values, L1size, L2size, Frequency?
         content["@mvres"] = adcarm_res["threads"][max_threads()][which()]["FP"]
         content["@mvres_name"] = "Max threads ridge point, without modifiers"
@@ -510,7 +473,7 @@ class SuperTwin:
         for key in new_twin:
             if (
                 key.find("system") != -1
-            ):  # Get the system interface and add the benchmarks
+            ):  ##Get the system interface and add the benchmarks
                 content = self.prepare_stream_content(
                     stream_modifiers, stream_res
                 )
@@ -521,16 +484,14 @@ class SuperTwin:
         print("STREAM benchmark result added to Digital Twin")
 
     def add_stream_benchmark(self):
+
         (
             stream_modifiers,
             maker,
             runs,
         ) = stream_benchmark.generate_stream_bench_sh(self)
-        print("stream_modifiers:", stream_modifiers)
-        print("maker:", maker)
-        print("runs:", runs)
-        #stream_benchmark.compile_stream_bench(self, maker)
-        #stream_benchmark.execute_stream_runs(self, runs)
+        stream_benchmark.compile_stream_bench(self, maker)
+        stream_benchmark.execute_stream_runs(self, runs)
         stream_res = stream_benchmark.parse_stream_bench(self)
         self.update_twin_document__add_stream_benchmark(
             stream_modifiers, stream_res
@@ -550,7 +511,7 @@ class SuperTwin:
         for key in new_twin:
             if (
                 key.find("system") != -1
-            ):  # Get the system interface and add the benchmarks
+            ):  ##Get the system interface and add the benchmarks
                 content = self.prepare_hpcg_content(hpcg_modifiers, hpcg_res)
                 new_twin[key]["contents"].append(content)
 
@@ -563,7 +524,7 @@ class SuperTwin:
         hpcg_modifiers, runs = hpcg_benchmark.generate_hpcg_bench_sh(
             self, HPCG_PARAM
         )
-        #hpcg_benchmark.execute_hpcg_runs(self, runs)
+        hpcg_benchmark.execute_hpcg_runs(self, runs)
         hpcg_res = hpcg_benchmark.parse_hpcg_bench(self)
 
         self.update_twin_document__add_hpcg_benchmark(hpcg_modifiers, hpcg_res)
@@ -572,7 +533,7 @@ class SuperTwin:
     def update_twin_document__add_adcarm_benchmark(
         self, adcarm_modifiers, adcarm_res
     ):
-        # Different from stream and hpcg benchmarks, adcarm have it's modifiers in result
+        ##Different from stream and hpcg benchmarks, adcarm have it's modifiers in result
 
         db = utils.get_mongo_database(self.name, self.mongodb_addr)["twin"]
         meta_with_twin = loads(
@@ -583,7 +544,7 @@ class SuperTwin:
         for key in new_twin:
             if (
                 key.find("system") != -1
-            ):  # Get the system interface and add the benchmarks
+            ):  ##Get the system interface and add the benchmarks
                 content = self.prepare_adcarm_content(
                     adcarm_modifiers, adcarm_res
                 )
@@ -598,8 +559,7 @@ class SuperTwin:
         adcarm_modifiers = adcarm_benchmark.generate_adcarm_bench_sh(
             self, adcarm_config
         )
-        #uncomment this to run the adCARM tool, if commented you need a folder with CARM results already generated under the same name as the twin
-        #adcarm_benchmark.execute_adcarm_bench(self)
+        adcarm_benchmark.execute_adcarm_bench(self)
         adcarm_res = adcarm_benchmark.parse_adcarm_bench(self)
 
         self.update_twin_document__add_adcarm_benchmark(
@@ -625,13 +585,13 @@ class SuperTwin:
         db.replace_one({"_id": ObjectId(self.mongodb_id)}, to_new)
         print("Monitoring dashboard added to Digital Twin")
 
-    def generate_roofline_dashboard(self): 
-        self.roofline_dashboard = roofline_dashboard.generate_roofline_dashboard(self)
-        self.update_twin_document__add_roofline_dashboard(self.roofline_dashboard)
+    def generate_roofline_dashboard(self):
+        url = roofline_dashboard.generate_roofline_dashboard(self)
+        self.update_twin_document__add_roofline_dashboard(url)
 
-    def generate_monitoring_dashboard(self): 
-        self.monitoring_dashboard = monitoring_dashboard.generate_monitoring_dashboard(self)
-        self.update_twin_document__add_monitoring_dashboard(self.monitoring_dashboard)
+    def generate_monitoring_dashboard(self):
+        url = monitoring_dashboard.generate_monitoring_dashboard(self)
+        self.update_twin_document__add_monitoring_dashboard(url)
 
     def reconfigure_monitor_events(self):
 
@@ -702,57 +662,6 @@ class SuperTwin:
         self.reconfigure_perfevent()
         utils.register_twin_state(self)
 
-    def correct(self, writer):
-
-        missing = ["RAPL_ENERGY_PKG", "RAPL_ENERGY_DRAM"] ##If fails on your pc, remove failing metric
-
-        for miss in missing:
-            writer.write(miss + "\n")
-        print("Corrected!")
-            
-    def reconfigure_observation_events_with_pmu_events(self):
-
-        writer = open("perfevent.conf", "w+")
-        added_events = {}
-        for pmu_name in self.pmu_metrics.keys():
-            pmu_alias = pmu_mapping_utils.get(pmu_name, "alias")
-            
-            writer.write("[" + pmu_alias + "]" + "\n")
-            added_events[pmu_alias] = []
-            for (
-                pmu_generic_event
-            ) in pmu_mapping_utils._DEFAULT_GENERIC_PMU_EVENTS:
-                formula = [
-                    pmu_event
-                    for pmu_event in pmu_mapping_utils.get(
-                        pmu_name, pmu_generic_event
-                    )
-                    if pmu_event.isupper()
-                ]
-                print("formula: ", formula)
-                for event in formula:
-                    if event not in added_events and event != "":
-                        writer.write(event + "\n")
-                        added_events[pmu_alias].append(event)
-
-                        observation_event = event.replace(":", "_")
-                        if observation_event not in self.observation_metrics:
-                            self.observation_metrics.append(
-                                observation_event.replace(":", "_")
-                            )
-        self.correct(writer)
-        writer.close()
-        subprocess.run(
-            [
-                "cp",
-                "./perfevent.conf",
-                "./perfevent_" + self.name + ".conf",
-            ]
-        )
-        print("Generated new perfevent pmda configuration..")
-        sampling.reconfigure_perfevent(self)
-        utils.register_twin_state(self)
-
     def reconfigure_observation_events_beginning(self):
 
         always_have_metrics = utils.always_have_metrics("observation", self)
@@ -761,6 +670,7 @@ class SuperTwin:
             if item not in self.observation_metrics:
                 self.observation_metrics.append(item)
 
+                
         self.reconfigure_perfevent()
         utils.register_twin_state(self)
 
@@ -780,6 +690,8 @@ class SuperTwin:
         print("Observation", observation_id, "is completed..")
         return duration
 
+    
+
     def execute_observation_batch_element(
         self, command, observation_id, element_id
     ):
@@ -797,7 +709,7 @@ class SuperTwin:
     def execute_observation_batch_element_parameters(
         self, path, affinity, command, observation_id, element_id
     ):
-        
+        print("Called")
         this_observation_id = observation_id + "_" + str(element_id)
         obs_conf = sampling.generate_pcp2influxdb_config_observation(
             self, this_observation_id
@@ -829,6 +741,45 @@ class SuperTwin:
             "Observation", observation["uid"], "is added to twin description.."
         )
 
+    def create_observation_interface(self, path, affinity, command, duration, observation_id):
+
+        observation = {}
+        observation["uid"] = observation_id
+        observation["path"] = path
+        observation["command"] = command
+        observation["affinity"] = affinity
+        observation["duration"] = duration
+        
+        observation["observation_metrics"] = []
+        observation["monitor_metrics"] = []
+        observation["observation_db_tag"] = observation_id
+        observation["observation_monitor_tag"] = self.monitor_tag
+
+        for metric in self.observation_metrics:
+            observation["observation_metrics"].append(metric)
+        for metric in self.monitor_metrics:
+            observation["monitor_metrics"].append(metric)
+
+
+        involved_threads = utils.resolve_bind(self, affinity)
+        observation["involved_threads"] = involved_threads
+
+        print("observation_interface:", observation)
+        self.update_twin_document__add_observation(observation)
+        
+
+    def execute_observation_parameters(self, path, affinity, command):
+        observation_id = str(uuid.uuid4())
+        obs_conf = sampling.generate_pcp2influxdb_config_observation(
+            self, observation_id
+        )
+        duration = observation.observe_single_parameters(
+            self, path, affinity, observation_id, command, obs_conf
+        )
+        print("Observation", observation_id, "is completed..")
+        self.create_observation_interface(path, affinity, command, duration, observation_id)
+        return duration
+        
     def execute_observation_batch_parameters(self, path, affinity, commands):
         print("here:", path, affinity, commands)
 
@@ -856,7 +807,7 @@ class SuperTwin:
             ] = self.execute_observation_batch_element_parameters(
                 path, affinity, command, observation_id, i
             )
-
+            
         influx_help.normalize_tag(self, observation_id, len(commands))
         observation["report"] = observation_standard.main(self, observation)
         self.update_twin_document__add_observation(observation)
@@ -899,93 +850,21 @@ def resolve_test(my_superTwin, threads):
         "#############################################################################"
     )
 
-##################################################################################################################################################
-    def execute_observation_element_parameters(self, path, affinity, command, observation_id):
-        this_observation_id = observation_id
-        obs_conf = sampling.generate_pcp2influxdb_config_observation(self, this_observation_id)
-        print("obs_conf:", obs_conf)
-        duration = observation.observe_single_parameters(self, path, affinity, this_observation_id, command, obs_conf)
-        print("Observation", this_observation_id, "is completed..")
-        return duration
-
-    def execute_observation_parameters(self, path, threads, affinity, command):
-
-        affinity = utils.prepare_bind(self, threads, affinity, -1)
-        observation = {}
-        observation_id = str(uuid.uuid4())
-        observation["uid"] = observation_id
-        observation["affinity"] = affinity
-        observation["metrics"] = []
-        for metric in self.observation_metrics:
-            observation["metrics"].append(metric)
-        for metric in self.monitor_metrics:
-            observation["metrics"].append(metric)
-        
-        tag = observation_id
-        observation[tag] = {}
-        fields = command.split("|")
-        name = fields[0]
-        command = fields[1]
-        observation[tag]["name"] = name
-        observation[tag]["command"] = command
-        observation[tag]["duration"] = self.execute_observation_element_parameters(path, affinity, command, observation_id)
-
-        #influx_help.normalize_tag(self, observation_id, len(commands)) ##Here, observation_id will be a list
-        #observation["report"] = observation_standard.main(self, observation)
-        self.update_twin_document__add_observation(observation)
-        #return time, observation_id
-        return observation_id
-######################################################################################################################################################
 
 if __name__ == "__main__":
-
-    # CONFIGURE PMU_MAPPING_UTILS
-
-    pmu_mapping_utils.initialize()
-    #pmu_mapping_utils.add_configuration("skl_pmu_remapping.txt")
-    #pmu_mapping_utils.add_configuration("rapl_pmu_remapping.txt")
-    pmu_mapping_utils.add_configuration("skx_pmu_remapping.txt")
-    # add_configuration("amd64_fam15_pmu_emapping.txt")
 
     # user_name = "ftasyaran"
 
     args = sys.argv
     if len(args) == 1:
-        my_superTwin = SuperTwin()  # From scratch
+        my_superTwin = SuperTwin()  ##From scratch
     else:
         addr = args[1]
-        my_superTwin = SuperTwin(addr)  # Re-construct
+        my_superTwin = SuperTwin(addr)  ##Re-construct
 
-    #my_superTwin.reconfigure_observation_events_parameterized("dolap10_perfevent.txt")
-        
-    #affinity = utils.prepare_bind(my_superTwin, 1, "compact", -1)
-    #commands = ["none|./none 1138_bus.mtx", "rcm|./rcm 1138_bus.mtx","degree|./degree 1138_bus.mtx","random|./random 1138_bus.mtx"]
-    #my_superTwin.execute_observation_batch_parameters("/home/fatih/SparseBaseOrderExample", affinity, commands)
-    #my_superTwin.execute_observation_batch_parameters("/common_data/SparseBaseOrderExample", affinity, commands)
-    
 
-    # my_superTwin.add_stream_benchmark()
-    # my_superTwin.add_hpcg_benchmark(HPCG_PARAM)
-    ###my_superTwin.add_adcarm_benchmark()
-    # my_superTwin.generate_roofline_dashboard()
 
-    # resolve_test(my_superTwin, 1)
-    # resolve_test(my_superTwin, 2)
-    # resolve_test(my_superTwin, 4)
-    # resolve_test(my_superTwin, 6)
-    # resolve_test(my_superTwin, 8)
-    # resolve_test(my_superTwin, 64)
-    # resolve_test(my_superTwin, 80)
-    
-    #my_superTwin.update_twin_document__assert_new_monitor_pid()
-    
-    """
-    empty_dash = mdm.generate_empty_dash(my_superTwin)
-    empty_dash = mdm.name_panel(my_superTwin, empty_dash)
-    empty_dash = mdm.freq_clock_panel(my_superTwin, 5, 5, 5, 5, [2,6,7,22,23,65], empty_dash)
-    empty_dash = mdm.stat_panel(my_superTwin, 5, 5, 5, 5, "continuous-GrYlRd", "kernel_pernode_cpu_idle", empty_dash)
-    url = mdm.upload_dashboard(my_superTwin, empty_dash)
-    print("url here:", url)
-    """
-
-    # sampling.get_pcp_pids(my_superTwin)
+    path = "/common_data/SparseBaseOrderExample"
+    affinity = utils.prepare_bind(my_superTwin, 1, "compact", -1)
+    command = "degree|./degree 1138_bus.mtx"
+    my_superTwin.execute_observation_parameters("/common_data/SparseBaseOrderExample", affinity, command)
