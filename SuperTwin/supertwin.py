@@ -144,6 +144,8 @@ class SuperTwin:
         self.generate_monitoring_dashboard()
         print("Monitoring dashboard generated.. ")
         
+        self.add_adcarm_benchmark() 
+
         self.generate_roofline_dashboard()
         utils.generate_specific_benhmark_template(self.SSHuser + "@" + self.addr,self.SSHpass,self.influxdb_name,self.monitoring_dashboard,self.roofline_dashboard)
 
@@ -152,7 +154,7 @@ class SuperTwin:
         
         #self.add_stream_benchmark()
         #self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
-        #self.add_adcarm_benchmark() 
+        
         
         
         utils.register_twin_state(self)
@@ -943,8 +945,8 @@ if __name__ == "__main__":
 
 
     pmu_mapping_utils.initialize()
-    pmu_mapping_utils.add_configuration("clx_pmu_mapping.txt")
-    pmu_mapping_utils.add_configuration("icl_pmu_mapping.txt")
+    #pmu_mapping_utils.add_configuration("clx_pmu_mapping.txt")
+    #pmu_mapping_utils.add_configuration("icl_pmu_mapping.txt")
     pmu_mapping_utils.add_configuration("skl_pmu_remapping.txt")
     # pmu_mapping_utils.add_configuration("skx_pmu_remapping.txt")
 

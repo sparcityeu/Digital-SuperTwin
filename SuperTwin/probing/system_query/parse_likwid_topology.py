@@ -62,7 +62,7 @@ def parse_likwid():
         
     if(len(topol) == 0):
     '''
-    topol = detect_utils.output_lines('sudo /usr/bin/likwid-topology --caches')
+    topol = detect_utils.output_lines('sudo likwid-topology --caches')
 
     #print('topol:', topol)
     
@@ -165,8 +165,8 @@ def remove_whitespace(ls):
 
 def parse_affinity():
 
-    info = detect_utils.cmd('/usr/bin/likwid-topology')[1]
-    num_info = detect_utils.output_lines('/usr/bin/likwid-topology')
+    info = detect_utils.cmd('likwid-topology')[1]
+    num_info = detect_utils.output_lines('likwid-topology')
     
     sockets = int(remove_whitespace(num_info[find_ind("Sockets:", num_info)].split("\t"))[1])
     cores_per_socket = int(remove_whitespace(num_info[find_ind("Cores per socket:", num_info)].split("\t"))[1])
