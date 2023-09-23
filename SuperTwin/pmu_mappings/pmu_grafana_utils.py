@@ -41,7 +41,7 @@ live_carm_pmu_mappings = {
     'LS_DISPATCH:LD_DISPATCH': 'I',
     'LS_DISPATCH:STORE_DISPATCH': 'J',
     'amd64_fam17h_zen2': [ai, "($A+$B+$C+$D+$E+$F+$G+$H)/1000000000"],
- 
+
 
     # INTEL_SKL
     'MEM_INST_RETIRED:ALL_LOADS': 'Z',
@@ -56,6 +56,10 @@ live_carm_pmu_mappings = {
     'FP_ARITH:512B_PACKED_DOUBLE': 'H',
 
     'skl': ["(($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)*($A+$B+$C+$D+$E+$F+$G+$H))/(4*$A*($Z+$Y)+8*$B*($Z+$Y)+16*$C*($Z+$Y)+16*$D*($Z+$Y)+32*$E*($Z+$Y)+32*$F*($Z+$Y)+64*$G*($Z+$Y)+64*$H*($Z+$Y))",
+            "($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)/1000000000"
+            ],
+ 
+    'clx': ["(($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)*($A+$B+$C+$D+$E+$F+$G+$H))/(4*$A*($Z+$Y)+8*$B*($Z+$Y)+16*$C*($Z+$Y)+16*$D*($Z+$Y)+32*$E*($Z+$Y)+32*$F*($Z+$Y)+64*$G*($Z+$Y)+64*$H*($Z+$Y))",
             "($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)/1000000000"
             ],
 }

@@ -1185,8 +1185,8 @@ def generate_roofline_dashboard(SuperTwin):
     next_color = -1
     info_fig = generate_info_panel(SuperTwin)
     next_color = -1
-    stream_bench_fig = generate_stream_panel(SuperTwin)
-    hpcg_bench_fig = generate_hpcg_panel(SuperTwin)
+    #stream_bench_fig = generate_stream_panel(SuperTwin)
+    #hpcg_bench_fig = generate_hpcg_panel(SuperTwin)
 
     dict_roofline_fig = obs.json.loads(io.to_json(roofline_fig))
     empty_dash["panels"].append(
@@ -1200,16 +1200,59 @@ def generate_roofline_dashboard(SuperTwin):
         rdp.two_templates_two(dict_info_fig["data"], dict_info_fig["layout"], SuperTwin.grafana_datasource)
     )
 
-    dict_stream_bench_fig = obs.json.loads(io.to_json(stream_bench_fig))
-    empty_dash["panels"].append(rdp.two_templates_three(dict_stream_bench_fig["data"],
-                                                        dict_stream_bench_fig["layout"],
-                                                        8, 8 , 0, 16, SuperTwin.grafana_datasource, "STREAM Benchmark", 442))
+
+    ## Add pmu events
+    for pmu_name in SuperTwin.pmu_metrics.keys():
+        for pmu_generic_event in pmu_mapping_utils._DEFAULT_GENERIC_PMU_EVENTS:
+            formula = [
+                pmu_event
+                for pmu_event in pmu_mapping_utils.get(
+                    pmu_name, pmu_generic_event
+                )
+                if pmu_event.isupper()
+            ]
+            if len(formula) == 0:
+                continue
+            
+            if pmu_generic_event == "CARM":
+                empty_dash["panels"].append(
+                    pmu_grafana_utils.dashboard_livecarm_table(
+                        pmu_name,
+                        SuperTwin.grafana_datasource,
+                        pmu_generic_event,
+                        int(data["cpu_cores"] * data["cpu_threads_per_core"]), # * data[socket_count]
+                        formula,
+                    )
+                ) 
+            else:
+                empty_dash["panels"].append(
+                    pmu_grafana_utils.dashboard_pmu_table(
+                        SuperTwin.grafana_datasource,
+                        pmu_generic_event,
+                        int(data["cpu_cores"] * data["cpu_threads_per_core"]),  # * data[socket_count]
+                        formula,
+                    )
+                )
+                empty_dash["panels"].append(
+                    pmu_grafana_utils.dashboard_pmu_table_total(
+                        SuperTwin.grafana_datasource,
+                        pmu_generic_event,
+                        int(data["cpu_cores"] * data["cpu_threads_per_core"]), # * data[socket_count]
+                        formula,
+                    )
+                )
+
+
+    # dict_stream_bench_fig = obs.json.loads(io.to_json(stream_bench_fig))
+    # empty_dash["panels"].append(rdp.two_templates_three(dict_stream_bench_fig["data"],
+    #                                                     dict_stream_bench_fig["layout"],
+    #                                                     8, 8 , 0, 16, SuperTwin.grafana_datasource, "STREAM Benchmark", 442))
 
     
-    dict_hpcg_bench_fig = obs.json.loads(io.to_json(hpcg_bench_fig))
-    empty_dash["panels"].append(rdp.two_templates_three(dict_hpcg_bench_fig["data"],
-                                                        dict_hpcg_bench_fig["layout"],
-                                                        8, 8, 8, 16, SuperTwin.grafana_datasource, "HPCG Benchmark", 443))
+    # dict_hpcg_bench_fig = obs.json.loads(io.to_json(hpcg_bench_fig))
+    # empty_dash["panels"].append(rdp.two_templates_three(dict_hpcg_bench_fig["data"],
+    #                                                     dict_hpcg_bench_fig["layout"],
+    #                                                     8, 8, 8, 16, SuperTwin.grafana_datasource, "HPCG Benchmark", 443))
     
     print("Upload?")
     ###

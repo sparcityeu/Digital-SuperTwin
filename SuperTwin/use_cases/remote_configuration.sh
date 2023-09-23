@@ -2,7 +2,7 @@
 
 echo "[OK] Remote Configuration started!!" 
 source custom_queries.sh ## to get remote ssh function
-
+LIBS="merge-spmv-dependencies"
 
 function command_exists() { 
     local result="$(execute_remote_command ${SSH_NAME} ${SSH_PASSWD} 'command -v '$1' 2>/dev/null')"
@@ -88,10 +88,10 @@ function get_suit_matrix_names(){
 echo "Remote Configuration Begun!!"
 
 
-load_benchsuite_to_remote
-unzip_benchsuite
-install_intel_cpp_compiler # 2gb
-install_klp
-compile_bench_suite
+# load_benchsuite_to_remote
+# unzip_benchsuite
+# install_intel_cpp_compiler # 2gb
+# install_klp
+# compile_bench_suite
 
 echo "[OK] Remote Configuration completed!!"

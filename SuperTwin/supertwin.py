@@ -144,16 +144,17 @@ class SuperTwin:
         self.generate_monitoring_dashboard()
         print("Monitoring dashboard generated.. ")
         
-        #utils.generate_specific_benhmark_template(self.SSHuser + "@" + self.addr,self.SSHpass,self.influxdb_name,self.monitoring_dashboard,self.roofline_dashboard)
+        self.generate_roofline_dashboard()
+        utils.generate_specific_benhmark_template(self.SSHuser + "@" + self.addr,self.SSHpass,self.influxdb_name,self.monitoring_dashboard,self.roofline_dashboard)
 
         # benchmark functions
         # 
         
-        self.add_stream_benchmark()
-        self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
-        self.add_adcarm_benchmark() 
+        #self.add_stream_benchmark()
+        #self.add_hpcg_benchmark(HPCG_PARAM) ##One can change HPCG_PARAM and call this function repeatedly as wanted
+        #self.add_adcarm_benchmark() 
         
-        self.generate_roofline_dashboard()
+        
         utils.register_twin_state(self)
 
     def __reconstruct_twin(self, *args):
@@ -940,15 +941,13 @@ if __name__ == "__main__":
 
     # CONFIGURE PMU_MAPPING_UTILS
 
-<<<<<<< HEAD
+
     pmu_mapping_utils.initialize()
     pmu_mapping_utils.add_configuration("clx_pmu_mapping.txt")
-    # pmu_mapping_utils.add_configuration("icl_pmu_mapping.txt")
-=======
-    #pmu_mapping_utils.initialize()
-    #pmu_mapping_utils.add_configuration("skl_pmu_remapping.txt")
-    #pmu_mapping_utils.add_configuration("skx_pmu_remapping.txt")
->>>>>>> 8c638a79cd91ad3164c349ebfaf032326ee5a07e
+    pmu_mapping_utils.add_configuration("icl_pmu_mapping.txt")
+    pmu_mapping_utils.add_configuration("skl_pmu_remapping.txt")
+    # pmu_mapping_utils.add_configuration("skx_pmu_remapping.txt")
+
     # add_configuration("amd64_fam15_pmu_emapping.txt")
 
     # user_name = "ftasyaran"
@@ -960,12 +959,12 @@ if __name__ == "__main__":
         addr = args[1]
         my_superTwin = SuperTwin(addr)  # Re-construct
 
-    my_superTwin.reconfigure_observation_events_parameterized("dolap10_perfevent.txt")
+    #my_superTwin.reconfigure_observation_events_parameterized("dolap10_perfevent.txt")
         
-    affinity = utils.prepare_bind(my_superTwin, 1, "compact", -1)
-    commands = ["none|./none 1138_bus.mtx", "rcm|./rcm 1138_bus.mtx","degree|./degree 1138_bus.mtx","random|./random 1138_bus.mtx"]
+    #affinity = utils.prepare_bind(my_superTwin, 1, "compact", -1)
+    #commands = ["none|./none 1138_bus.mtx", "rcm|./rcm 1138_bus.mtx","degree|./degree 1138_bus.mtx","random|./random 1138_bus.mtx"]
     #my_superTwin.execute_observation_batch_parameters("/home/fatih/SparseBaseOrderExample", affinity, commands)
-    my_superTwin.execute_observation_batch_parameters("/common_data/SparseBaseOrderExample", affinity, commands)
+    #my_superTwin.execute_observation_batch_parameters("/common_data/SparseBaseOrderExample", affinity, commands)
     
 
     # my_superTwin.add_stream_benchmark()
