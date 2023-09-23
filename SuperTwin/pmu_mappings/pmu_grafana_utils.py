@@ -55,11 +55,11 @@ live_carm_pmu_mappings = {
     'FP_ARITH:512B_PACKED_SINGLE': 'G',
     'FP_ARITH:512B_PACKED_DOUBLE': 'H',
 
-    'skl': ["(($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)*($A+$B+$C+$D+$E+$F+$G+$H))/(4*$A*($Z+$Y)+8*$B*($Z+$Y)+16*$C*($Z+$Y)+16*$D*($Z+$Y)+32*$E*($Z+$Y)+32*$F*($Z+$Y)+64*$G*($Z+$Y)+64*$H*($Z+$Y))",
+    'skl': ["(($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)*($A+$B+$C+$D+$E+$F+$G+$H)+0.000001)/(4*$A*($Z+$Y)+8*$B*($Z+$Y)+16*$C*($Z+$Y)+16*$D*($Z+$Y)+32*$E*($Z+$Y)+32*$F*($Z+$Y)+64*$G*($Z+$Y)+64*$H*($Z+$Y)+0.000001)",
             "($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)/1000000000"
             ],
  
-    'clx': ["(($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)*($A+$B+$C+$D+$E+$F+$G+$H))/(4*$A*($Z+$Y)+8*$B*($Z+$Y)+16*$C*($Z+$Y)+16*$D*($Z+$Y)+32*$E*($Z+$Y)+32*$F*($Z+$Y)+64*$G*($Z+$Y)+64*$H*($Z+$Y))",
+    'clx': ["(($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)*($A+$B+$C+$D+$E+$F+$G+$H)+0.000001)/(4*$A*($Z+$Y)+8*$B*($Z+$Y)+16*$C*($Z+$Y)+16*$D*($Z+$Y)+32*$E*($Z+$Y)+32*$F*($Z+$Y)+64*$G*($Z+$Y)+64*$H*($Z+$Y)+0.000001)",
             "($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)/1000000000"
             ],
 }
@@ -312,7 +312,7 @@ def dashboard_pmu_table_total(datasource, title, cpu_count, formula):
     return dash
 
 
-def dashboard_livecarm_table(pmu_name, datasource, title, cpu_count, formula):
+def dashboard_livecarm_table(pmu_name,datasource, title, cpu_count, formula, script, maxY):
     global _id, _table_xloc, _table_yloc, _table_wloc, _table_hloc
     global _initialized
     if not _initialized:
@@ -320,115 +320,129 @@ def dashboard_livecarm_table(pmu_name, datasource, title, cpu_count, formula):
         _initialized = True
 
     dash = {
-        "id": _id,
+        "datasource": {
+            "type": "influxdb",
+            "uid": datasource
+        },
+        "targets": [],
         "gridPos": {
             "x": _table_xloc,
             "y": _table_yloc,
-            "w": _table_wloc + 4,
-            "h": _table_hloc,
+            "w": _table_wloc + 2,
+            "h": _table_hloc + 9,
         },
-        "type": "xychart",
         "title": title,
         "transformations": [
             {
-                "id": "joinByField",
-                "options": {
-                    "mode": "outer"
-                }
+            "id": "joinByField",
+            "options": {
+                "mode": "outer"
+            }
             }
         ],
-        "datasource": {"uid": datasource, "type": "influxdb"},
-        "targets": [],
+        "type": "nline-plotlyjs-panel",
+        "transparent": True,
+        "id": _id,
         "options": {
-            "seriesMapping": "manual",
-            "series": [
+            "yamlMode": True,
+            "resScale": 2,
+            "allData": {
+            "opacity": 1
+            },
+            "data": [
+            {
+                "line": {
+                "color": "red"
+                },
+                "mode": "markers",
+                "type": "scatter"
+            },
+            {
+                "line": {
+                "color": "blue",
+                "width": 0.2
+                },
+                "mode": "lines+markers",
+                "type": "scatter"
+            }
+            ],
+            "layout": {
+            "font": {
+                "family": "Inter, Helvetica, Arial, sans-serif",
+                "color": "black"
+            },
+            "paper_bgcolor": "rgba(0,0,0,0)",
+            "plot_bgcolor": "rgba(0,0,0,0)",
+            "hoverlabel": {
+                "bgcolor": "darkgrey"
+            },
+            "margin": {
+                "t": 10,
+                "r": 10,
+                "b": 10,
+                "l": 10
+            },
+            "xaxis": {
+                "type": "log",
+                "autorange": False,
+                "automargin": True,
+                "dtick": 0.30102999566,
+                "gridcolor": "rgba(128,128,128,255)",
+                "range": [
+                -1.5194309088656293,
+                2.5
+                ]
+            },
+            "yaxis": {
+                "automargin": True,
+                "autorange": False,
+                "dtick": 0.30102999566,
+                "gridcolor": "rgba(128,128,128,255)",
+                "range": [
+                -1.5194309088656293,
+                maxY
+                ],
+                "type": "log"
+            },
+            "annotations": [
                 {
-                    "name": "CARM",
-                    "pointColor": {
-                        "fixed": "#37872D"
-                    },
-                    "pointSize": {
-                        "fixed": 10,
-                        "max": 100,
-                        "min": 1
-                    },
-                    "x": "AI",
-                    "y": "Gflops"
+                "showarrow": False,
+                "text": "Performance [GFlops/s]",
+                "textangle": -90,
+                "x": -0.03,
+                "xanchor": "right",
+                "xref": "paper",
+                "y": 0.5,
+                "yanchor": "right",
+                "yref": "paper"
+                },
+                {
+                "showarrow": False,
+                "text": "Arithmetic Intensity",
+                "x": 0.5,
+                "xanchor": "top",
+                "xref": "paper",
+                "y": -0.07,
+                "yanchor": "top",
+                "yref": "paper"
                 }
             ],
-            "tooltip": {"mode": "single", "sort": "none"},
+            "hovermode": "closest",
             "legend": {
-                "showLegend": True,
-                "displayMode": "list",
-                "placement": "bottom",
-                "calcs": [],
+                "orientation": "h",
+                "x": 0,
+                "y": -0.12
+            }
             },
-
+            "config": {},
+            "script": script,
+            "onclick": "// console.log(data);\nwindow.updateVariables({query:{'var-project':'test'}, partial: true})"
         },
-
         "pluginVersion": "9.5.2",
-        "fieldConfig": {
-            "defaults": {
-                "custom": {
-                    "show": "points",
-                    "pointSize": {
-                        "fixed": 5
-                    },
-                    "axisPlacement": "auto",
-                    "axisLabel": "",
-                    "axisColorMode": "text",
-                    "scaleDistribution": {
-                        "type": "log",
-                        "log": 2
-                    },
-                    "axisCenteredZero": False,
-                    "hideFrom": {
-                        "tooltip": False,
-                        "viz": False,
-                        "legend": False
-                    }
-                },
-                "color": {
-                    "mode": "palette-classic"
-                },
-                "mappings": [
 
-                ],
-                "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                        {
-                            "color": "green",
-                            "value": None
-                        },
-                        {
-                            "color": "red",
-                            "value": 80
-                        }
-                    ]
-                },
-                "min": 0,
-                "noValue": "0",
-                "unit": "none"
-            },
-            "overrides": [
-                {
-                    "matcher": {
-                        "id": "byName",
-                        "options": "AI"
-                    },
-                    "properties": [
-                        {
-                            "id": "noValue",
-                            "value": "0"
-                        }
-                    ]
-                }
-            ]
-        },
     }
 
-    generic_temp1, generic_temp2 = live_carm_pmu_mappings[pmu_name]
+    generic_temp1,generic_temp2 = live_carm_pmu_mappings[pmu_name]
 
     expression_template1 = "0"
     expression_template2 = "0"

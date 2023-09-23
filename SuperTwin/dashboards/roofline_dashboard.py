@@ -28,6 +28,7 @@ import matplotlib.colors as mc
 import colorsys
 import pmu_grafana_utils
 import pmu_mapping_utils
+import math
 
 
 vis_all = []
@@ -55,7 +56,7 @@ colors = [
     "#cadba5",
     "#02531d",
     "#56ebd3",
-    "#d11f0b",
+    "#b4ddd4",
     "#a0e85b",
     "#3163d8",
     "#b3d9fa",
@@ -71,7 +72,7 @@ colors = [
     "#cadba5",
     "#02531d",
     "#56ebd3",
-    "#d11f0b",
+    "#b4ddd4",
     "#a0e85b",
     "#3163d8",
     "#b3d9fa",
@@ -447,6 +448,7 @@ def get_hpcg_marks(hpcg_res):
 ##For returning a roofline dashboard for observations; it should levitate these indices
 ##For buttons; probably shouldnt exist
 ##When there is no buttons, legend automatically comes back which is nice
+#Possibly deprecated now
 def generate_carm_roofline(
     SuperTwin,
 ):  ##THREADS as a parameter to redraw for observations
@@ -1170,15 +1172,417 @@ def generate_hpcg_panel(
     return fig
 
 
+#Function that returns the thread_set used by the various benchmarks
+def get_thread_set(SuperTwin):
+    
+    td = utils.get_twin_description(SuperTwin)  ##Twin description
+    mt_info = utils.get_multithreading_info(td)
+    no_cores_per_socket = mt_info["no_cores_per_socket"]
+    no_threads_per_socket = mt_info["no_threads_per_socket"]
+    total_cores = mt_info["total_cores"]
+    total_threads = mt_info["total_threads"]
+    thread_set = []
+    thr = 1
+
+    while(thr < total_threads):
+        thread_set.append(thr)
+        thr = thr * 2
+
+    if no_cores_per_socket not in thread_set:
+        thread_set.append(no_cores_per_socket)
+
+    if no_threads_per_socket not in thread_set:
+        thread_set.append(no_threads_per_socket)
+
+    if total_cores not in thread_set:
+        thread_set.append(total_cores)
+
+    if total_threads not in thread_set:
+        thread_set.append(total_threads)
+
+    #thread_set = [16] ## for debug purposes
+    thread_set = list(sorted(thread_set))
+
+    print(thread_set)
+
+    return thread_set
+
+#Function that generates the rooflinecontrol dashboard variable, based on number of threads of the cpu
+def generate_dashboard_variable(thread_set, number):
+
+    
+    tester = {}
+    tester["current"] = {}
+    tester["current"]["selected"] = True
+    if (number == 1):
+        tester["current"]["text"] = "1"
+        tester["current"]["value"] = "1"
+        tester["label"] = "Live Cache Aware Roofline Model Thread Count"
+        tester["name"] = "rooflinecontrol"
+        tester["description"] = "Select the static Roofline results for a particular number of threads"
+    elif (number == 2):
+        tester["current"]["text"] = "None"
+        tester["current"]["value"] = "None"
+        tester["label"] = "Live Cache Aware Roofline Model Thread Count 2"
+        tester["name"] = "rooflinecontrol2"
+        tester["description"] = "Select the static Roofline results for a particular number of threads"
+        
+    elif (number == 3):
+        tester["current"]["text"] = "None"
+        tester["current"]["value"] = "None"
+        tester["label"] = "Display Benchmark"
+        tester["name"] = "benchmarkcontrol"
+        tester["description"] = "Display Benchmarks to be plotted in the CARM graph."
+
+    tester["includeAll"] = False
+    tester["hide"] = 0
+    tester["multi"] = False
+
+    tester["options"] = []
+
+
+    if(number == 1 or number == 2):
+        if (number == 2):
+            tester["options"].append({
+                "selected": False,
+                "text": "None",
+                "value": "None"
+            },)
+        for thread in thread_set:
+            tester["options"].append({
+                "selected": False,
+                "text": str(thread),
+                "value": str(thread)
+            },)
+    
+        query_numbers = ', '.join(str(thread) for thread in thread_set)
+        if (number == 1):
+            tester_query = f"{query_numbers}"
+        elif (number == 2):
+            tester_query = f"None, {query_numbers}"
+    elif (number == 3):
+        tester["options"].append({
+                "selected": False,
+                "text": "None",
+                "value": "None"
+            },)
+        tester["options"].append({
+                "selected": False,
+                "text": "spmv",
+                "value": "spmv"
+            },)
+        tester["options"].append({
+                "selected": False,
+                "text": "ddot",
+                "value": "ddot"
+            },)
+        tester["options"].append({
+                "selected": False,
+                "text": "waxpby",
+                "value": "waxpby"
+            },)
+        tester["options"].append({
+                "selected": False,
+                "text": "All",
+                "value": "All"
+            },)
+        tester_query = f"None, spmv, ddot, waxpby, All"
+        
+
+    tester["querry"] = tester_query
+    tester["queryValue"] = ""
+    tester["skipUrlSync"] = False
+    tester["type"] = "custom"
+
+    return  tester
+
+#function that auto generates the script part of the live-carm graph, based on thread number of the machine
+def generate_live_carm_script(thread_set, SuperTwin):
+
+    data = get_carm_res_from_dt(SuperTwin)
+    td = utils.get_twin_description(SuperTwin)
+
+    panelMaxY = 0
+
+    results = {}
+
+    ai = np.linspace(0.00390625, 256, num=200000)
+
+    script = ''
+
+    script += f'let timestamps = data.series[0].fields[0].values;\nlet ai = data.series[0].fields[1].values;\nlet gflops = data.series[0].fields[2].values;\n\n'
+    script += f"// Format timestamps into human-readable dates\nlet formattedTimestamps = timestamps.map(timestamp => {{\n  let date = new Date(timestamp);\n  let hours = date.getHours().toString().padStart(2, '0');\n  let minutes = date.getMinutes().toString().padStart(2, '0');\n  let seconds = date.getSeconds().toString().padStart(2, '0');\n  let day = date.getDate().toString().padStart(2, '0');\n  let month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based, so add 1\n  let year = date.getFullYear();\n  return `${{hours}}:${{minutes}}:${{seconds}} ${{day}}-${{month}}-${{year}}`;\n}});\n\n"
+    script += f"let trace0 = {{\n  x: ai,\n  y: gflops,\n  name : \"CARM\",\n  text: formattedTimestamps,\n  mode: 'markers', // Specify marker mode for scatter plot\n  type: 'scatter', // Specify trace type as scatter plot\n  marker: {{\n    size: 10, // Set marker size as needed\n    color: timestamps // Set marker color as needed\n  }}\n}};\n"
+
+    for cpu in thread_set:
+        thread_number = str(cpu)
+
+        if thread_number in data["threads"]:
+            
+            values_for_thread = data["threads"][thread_number]
+            # Now, values_for_thread contains the list of dictionaries for the specified thread number
+
+            # You can access specific values from this list of dictionaries
+            for item in values_for_thread:
+                ai = np.linspace(0.00390625, 256, num=200000)
+                L1_eq = carm_eq(ai, item["L1"], item['FP'])
+                L2_eq = carm_eq(ai, item['L2'], item['FP'])
+                L3_eq = carm_eq(ai, item['L3'], item['FP'])
+                DRAM_eq = carm_eq(ai, item['DRAM'], item['FP'])
+
+                ai_list = ai.tolist()
+                L1_eq_list = L1_eq.tolist()
+                L2_eq_list = L2_eq.tolist()
+                L3_eq_list = L3_eq.tolist()
+                DRAM_eq_list = DRAM_eq.tolist()
+
+                results["L1sx"] = float(ai_list[0])
+                results["L1sy"] = float(L1_eq_list[0])
+                results["L2sy"] = float(L2_eq_list[0])
+                results["L3sy"] = float(L3_eq_list[0])
+                results["DRAMsy"] = float(DRAM_eq_list[0])
+
+                for i in range(1, len(L1_eq_list)):
+                    if(L1_eq_list[i-1] == L1_eq_list[i]):
+                        results["L1mx"] = float(ai[i])
+                        results["L1my"] = float(L1_eq_list[i])
+                        if(float(results["L1my"]) > panelMaxY):
+                            panelMaxY = results["L1my"]
+                        break
+                for i in range(1, len(L2_eq_list)):
+                    if(L2_eq_list[i-1] == L2_eq_list[i]):
+                        results["L2mx"] = float(ai[i])
+                        break
+                for i in range(1, len(L3_eq_list)):
+                    if(L3_eq_list[i-1] == L3_eq_list[i]):
+                        results["L3mx"] = float(ai[i])
+                        break
+                for i in range(1, len(DRAM_eq_list)):
+                    if(DRAM_eq_list[i-1] == DRAM_eq_list[i]):
+                        results["DRAMmx"] = float(ai[i])
+                        break
+
+                script += f'let l1x{cpu} = [0, {results["L1sx"]}, {results["L1mx"]}, 8192];\n'
+                script += f'let l1y{cpu} = [0, {results["L1sy"]}, {results["L1my"]}, {results["L1my"]}];\n'
+                script += f'let l2x{cpu} = [0, {results["L1sx"]}, {results["L2mx"]}];\n'
+                script += f'let l2y{cpu} = [0, {results["L2sy"]}, {results["L1my"]}];\n'
+                script += f'let l3x{cpu} = [0, {results["L1sx"]}, {results["L3mx"]}];\n'
+                script += f'let l3y{cpu} = [0, {results["L3sy"]}, {results["L1my"]}];\n'
+                script += f'let dramx{cpu} = [0, {results["L1sx"]}, {results["DRAMmx"]}];\n'
+                script += f'let dramy{cpu} = [0, {results["DRAMsy"]}, {results["L1my"]}];\n\n'
+
+            else:
+                print(f"No data found for thread number {thread_number}")
+       
+    # Add the threadNumber variable at the end
+    script += 'let threadNumber = variables.rooflinecontrol;\nlet threadNumber2 = variables.rooflinecontrol2;\nlet benchmarkcontrol = variables.benchmarkcontrol;\n\n'
+
+    trace_names = ["DRAM", "L1", "L2", "L3"]
+
+    # Define the template for the trace
+    trace_template = """
+    let trace{index} = {{
+    x: {type}x{thread},
+    y: {type}y{thread},
+    order: "natural",
+    name: "{name}",
+    type: 'scatter',
+    mode: 'lines+markers',
+    marker: {{
+        size: 2,
+        symbol: 'square',
+        color: "{color}"
+    }},
+    line: {{
+        "color": "{color}",
+        "dash": "{dash}",
+        "shape": "linear",
+        "width": 3
+    }},
+    }};
+    """
+
+    # Loop to generate the code for each thread and change names accordingly
+    total = 0
+    for cpu in thread_set:
+        gc = get_next_color()
+        if cpu not in chosen_thread_colors.keys():
+            chosen_thread_colors[cpu] = gc
+        for i in range (1, 5):
+            name = trace_names[i % 4]
+            dash = "solid" 
+            if i % 4 == 2:
+                dash = "dash" 
+            elif i % 4 == 3:
+                dash = "dashdot" 
+            elif i % 4 == 0:
+                dash = "dot"
+            total += 1
+           
+            script += trace_template.format(index=total, color=gc, thread=cpu, name=name, type=name.lower(), dash=dash)
+            
+    
+    hpcg_res = get_hpcg_bench_data(td)
+    hpcg_marks = get_hpcg_marks(hpcg_res)
+    print("hpcg marks:", hpcg_marks)
+    ##hpcg marks
+    print(chosen_thread_colors)
+
+    marker_symbols = {
+        "spmv": "cross-open",
+        "ddot": "x-open",
+        "waxpby": "hash-open",
+    }
+
+    hpcg_ai = {"spmv": 0.25, "waxpby": 0.125, "ddot": 0.125}
+
+    # Define the template for the trace
+    trace_template2 = """
+    let {name}{index} = {{
+    x: [{ai}],
+    y: [{result}],
+    order: "natural",
+    name: "{name}",
+    type: 'scatter',
+    mode: 'markers',
+    marker: {{
+        size: 15,
+        symbol: "{symbol}",
+        color: "{color}"
+    }},}};
+    """
+
+    for _threads in hpcg_marks:
+        #gc = get_next_color()
+        for _tuple in hpcg_marks[_threads]:
+            
+            _name = _tuple[0]
+            _res = _tuple[1]
+            total += 1
+           
+            script += trace_template2.format(index=_threads, ai=hpcg_ai[_name],color=chosen_thread_colors[int(_threads)], thread=cpu, result=_res, name=_name, type=name.lower(), symbol=marker_symbols[_name])
+
+    
+    
+    # Define the base trace
+    base_trace = "trace0"
+
+    # Initialize an empty list for each group of traces
+    traces = []
+
+    total = 1
+    # Loop to generate the code
+    for i in thread_set:
+        # Create traces for the current group
+        
+        group_traces = [f"trace{total + j}" for j in range(4)]
+        total += 4
+
+        # Combine the base trace and group traces into a data array
+        data_array = [base_trace] + group_traces
+
+        # Append the JavaScript code for this threadNumber
+        script += f'else if (threadNumber == {i})' + '{\n'
+        script += f'data = [{", ".join(data_array)}]\n'
+        if(hpcg_marks != None):
+            script += "if (benchmarkcontrol == 'spmv'){"
+            script += f'data = data.concat([{"spmv"+str(i)}])\n'
+            script += '}'
+            script += "else if (benchmarkcontrol == 'ddot'){"
+            script += f'data = data.concat([{"ddot"+str(i)}])\n'
+            script += '}'
+            script += "else if (benchmarkcontrol == 'waxpby'){"
+            script += f'data = data.concat([{"waxpby"+str(i)}])\n'
+            script += '}'
+            script += "else if (benchmarkcontrol == 'All'){"
+            script += f'data = data.concat([{"spmv"+str(i)}, {"ddot"+str(i)}, {"waxpby"+str(i)}])\n'
+            script += '}'
+        #script += f'    return {{ data: [{", ".join(data_array)}] }};\n'
+        script += '}'
+
+        # Extend the list of all traces
+        traces.extend(group_traces)
+
+    # Remove the leading 'else' from the first condition
+    script = script.replace('else if (threadNumber == 1)', '\n\nif (threadNumber == 1)')
+
+    #script += f'else if (threadNumber == \"1 + Max\"){{\n return {{ data: [trace0, trace1, trace2, trace3, trace4, trace{total-4}, trace{total-3}, trace{total-2}, trace{total-1}] }};\n}}else {{return {{ data: [trace0]}}}};\n'
+    script += f'else {{data = [trace0]}};\n'
+
+    traces = []
+
+    total = 1
+    # Loop to generate the code
+    for i in thread_set:
+        # Create traces for the current group
+        
+        group_traces = [f"trace{total + j}" for j in range(4)]
+        total += 4
+
+        # Combine the base trace and group traces into a data array
+        data_array = group_traces
+
+        # Append the JavaScript code for this threadNumber
+        script += f'else if (threadNumber2 == {i})' + '{\n'
+        script += f'data = data.concat([{", ".join(data_array)}])\n'
+        if(hpcg_marks != None):
+            script += "if (benchmarkcontrol == 'spmv'){"
+            script += f'data = data.concat([{"spmv"+str(i)}])\n'
+            script += '}'
+            script += "else if (benchmarkcontrol == 'ddot'){"
+            script += f'data = data.concat([{"ddot"+str(i)}])\n'
+            script += '}'
+            script += "else if (benchmarkcontrol == 'waxpby'){"
+            script += f'data = data.concat([{"waxpby"+str(i)}])\n'
+            script += '}'
+            script += "else if (benchmarkcontrol == 'All'){"
+            script += f'data = data.concat([{"spmv"+str(i)}, {"ddot"+str(i)}, {"waxpby"+str(i)}])\n'
+            script += '}'
+        #script += f'    return {{ data: [{", ".join(data_array)}] }};\n'
+        script += '}'
+
+        # Extend the list of all traces
+        traces.extend(group_traces)
+
+    # Remove the leading 'else' from the first condition
+    script = script.replace('else if (threadNumber2 == 1)', '\n\nif (threadNumber2 == 1)')
+
+    
+
+    #script += f'else if (threadNumber == \"1 + Max\"){{\n return {{ data: [trace0, trace1, trace2, trace3, trace4, trace{total-4}, trace{total-3}, trace{total-2}, trace{total-1}] }};\n}}else {{return {{ data: [trace0]}}}};\n'
+    #script += f'else {{data = [trace0]}};\n'
+
+    
+    script += f'\n\nreturn {{data}};'
+
+    return script, panelMaxY
+
+def next_power_of_2(n):
+    # Use bitwise left shift to find the next power of 2
+    if n <= 0:
+        return 1
+    else:
+        return 2**(int(n) - 1).bit_length()
+
+
 def generate_roofline_dashboard(SuperTwin):
     global next_color
 
     td = utils.get_twin_description(SuperTwin)  ##Twin description
     data = utils.fill_data(td, SuperTwin.name, SuperTwin.addr)
 
+    cpu_count = int(data["cpu_cores"] * data["cpu_threads_per_core"]) # * data[socket_count]
+
+    thread_set = get_thread_set(SuperTwin)
+
     empty_dash = obs.template_dict(
         SuperTwin.name + " Roofline-" + str(uuid.uuid4())
     )
+    #Generating the dashboard variables, used by the live-CARM graph
+    empty_dash["templating"]["list"].append(generate_dashboard_variable(thread_set, 1))
+    empty_dash["templating"]["list"].append(generate_dashboard_variable(thread_set, 2))
+    empty_dash["templating"]["list"].append(generate_dashboard_variable(thread_set, 3))
+
     empty_dash["panels"] = []
 
     roofline_fig = generate_carm_roofline(SuperTwin)
@@ -1188,12 +1592,12 @@ def generate_roofline_dashboard(SuperTwin):
     #stream_bench_fig = generate_stream_panel(SuperTwin)
     #hpcg_bench_fig = generate_hpcg_panel(SuperTwin)
 
-    dict_roofline_fig = obs.json.loads(io.to_json(roofline_fig))
-    empty_dash["panels"].append(
-        rdp.two_templates_one(
-            dict_roofline_fig["data"], dict_roofline_fig["layout"], SuperTwin.grafana_datasource
-        )
-    )
+    #dict_roofline_fig = obs.json.loads(io.to_json(roofline_fig))
+    #empty_dash["panels"].append(
+    #    rdp.two_templates_one(
+    #        dict_roofline_fig["data"], dict_roofline_fig["layout"], SuperTwin.grafana_datasource
+    #    )
+    #)
 
     dict_info_fig = obs.json.loads(io.to_json(info_fig))
     empty_dash["panels"].append(
@@ -1215,13 +1619,20 @@ def generate_roofline_dashboard(SuperTwin):
                 continue
             
             if pmu_generic_event == "CARM":
+
+                script, maxY = generate_live_carm_script(thread_set, SuperTwin)
+
+                print (script)
+
                 empty_dash["panels"].append(
                     pmu_grafana_utils.dashboard_livecarm_table(
                         pmu_name,
                         SuperTwin.grafana_datasource,
-                        pmu_generic_event,
-                        int(data["cpu_cores"] * data["cpu_threads_per_core"]), # * data[socket_count]
+                        "Live Cache Aware Roofline Model",
+                        cpu_count, # * data[socket_count]
                         formula,
+                        script,
+                        math.log10(next_power_of_2(maxY))+0.02
                     )
                 ) 
             else:
@@ -1229,7 +1640,7 @@ def generate_roofline_dashboard(SuperTwin):
                     pmu_grafana_utils.dashboard_pmu_table(
                         SuperTwin.grafana_datasource,
                         pmu_generic_event,
-                        int(data["cpu_cores"] * data["cpu_threads_per_core"]),  # * data[socket_count]
+                        cpu_count,  # * data[socket_count]
                         formula,
                     )
                 )
@@ -1237,7 +1648,7 @@ def generate_roofline_dashboard(SuperTwin):
                     pmu_grafana_utils.dashboard_pmu_table_total(
                         SuperTwin.grafana_datasource,
                         pmu_generic_event,
-                        int(data["cpu_cores"] * data["cpu_threads_per_core"]), # * data[socket_count]
+                        cpu_count, # * data[socket_count]
                         formula,
                     )
                 )
