@@ -177,7 +177,47 @@ def v2_get_data_for_metric(SuperTwin, ObservationInterface):
     
 def v2_generate_thread_query(metric, displayName, tagkey):
 
-    return("SELECT " + displayName + " FROM " + metric + ' where "tag"' + "=" + "'" + tagkey + "'")
+    #all = "SELECT " + displayName + " FROM " + metric + ' where "tag"' + "=" + "'" + tagkey + "'"
+    min = "SELECT " + "MIN("+displayName + ")" + " FROM " + metric + ' where "tag"' + "=" + "'" + tagkey + "'"
+    max = "SELECT " + "MAX("+displayName + ")" + " FROM " + metric + ' where "tag"' + "=" + "'" + tagkey + "'"
+    mean = "SELECT " + "MEAN("+displayName + ")" + " FROM " + metric + ' where "tag"' + "=" + "'" + tagkey + "'"
+    median = "SELECT " + "MEDIAN("+displayName + ")" + " FROM " + metric + ' where "tag"' + "=" + "'" + tagkey + "'"
+    mode = "SELECT " + "MODE("+displayName + ")" + " FROM " + metric + ' where "tag"' + "=" + "'" + tagkey + "'"
+    spread = "SELECT " + "SPREAD("+displayName + ")" + " FROM " + metric + ' where "tag"' + "=" + "'" + tagkey + "'"
+    stddev = "SELECT " + "STDDEV("+displayName + ")" + " FROM " + metric + ' where "tag"' + "=" + "'" + tagkey + "'"
+    sum = "SELECT " + "SUM("+displayName + ")" + " FROM " + metric + ' where "tag"' + "=" + "'" + tagkey + "'"
+    integral = "SELECT " + "INTEGRAL("+displayName + ")" + " FROM " + metric + ' where "tag"' + "=" + "'" + tagkey + "'"
+
+    queries = {}
+    #queries[displayName] = all
+    queries["min"] = min
+    queries["max"] = max
+    queries["mean"] = mean
+    queries["median"] = median
+    queries["mode"] = mode
+    queries["spread"] = spread
+    queries["stddev"] = stddev
+    queries["sum"] = sum
+    queries["integral"] = integral
+
+    return queries
+
+
+def v2_return_aggregates(SuperTwin, queries):
+
+    aggregates = {}
+    
+    db = get_influx_database(SuperTwin.influxdb_addr)
+    db.switch_database(SuperTwin.influxdb_name)
+    
+    for key in queries.keys():
+        #print("Running query:", queries[key])
+        result = list(db.query(queries[key]))
+        #print("result:", result[0][0])
+        aggregates[key] = result[0][0][key]
+
+    #print(aggregates)
+    return aggregates
 
 def v2_generate_queries_and_aggregate(SuperTwin, ObservationInterface): ##For threads
     ##Need to categorize metrics beforehand this operation and generate queries like
@@ -206,7 +246,8 @@ def v2_generate_queries_and_aggregate(SuperTwin, ObservationInterface): ##For th
                         if(content["@type"] == "HWTelemetry"):
                             if(content["PMUName"] == metric):
                                 print("dbname:", content["DBName"])
-                                print(v2_generate_thread_query(content["DBName"], content["displayName"], ObservationInterface["observation_db_tag"]))
+                                queries = v2_generate_thread_query(content["DBName"], content["displayName"], ObservationInterface["observation_db_tag"])
+                                aggregates = v2_return_aggregates(SuperTwin, queries)
                     
 def v2_insert_observation_to_gpd(SuperTwin, ObservationInterface):
 
