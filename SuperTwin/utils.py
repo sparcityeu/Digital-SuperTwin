@@ -235,6 +235,8 @@ def v2_generate_queries_and_aggregate(SuperTwin, ObservationInterface): ##For th
 
     threads = ["thread" + str(x) + ";" for x in ObservationInterface["involved_threads"]]
     print("threads interface ids:", threads)
+
+    aggregates = {}
     
     for metric in hw_metrics:
         for thread in threads:
@@ -247,11 +249,11 @@ def v2_generate_queries_and_aggregate(SuperTwin, ObservationInterface): ##For th
                             if(content["PMUName"] == metric):
                                 print("dbname:", content["DBName"])
                                 queries = v2_generate_thread_query(content["DBName"], content["displayName"], ObservationInterface["observation_db_tag"])
-                                aggregates = v2_return_aggregates(SuperTwin, queries)
+                                aggregates[metric] = v2_return_aggregates(SuperTwin, queries)
+
+    return aggregates
                     
 def v2_insert_observation_to_gpd(SuperTwin, ObservationInterface):
-
-    v2_generate_queries_and_aggregate(SuperTwin, ObservationInterface)
     
     twin_with_meta = get_twin_with_meta(SuperTwin)
     twin_uid = twin_with_meta["uid"]
@@ -262,6 +264,27 @@ def v2_insert_observation_to_gpd(SuperTwin, ObservationInterface):
         
     client = v2_get_performance_database()
     collection = client["Observations"]
+    
+    to_insert = {"twin_uid": twin_with_meta["uid"], "ObservationInterface": ObservationInterface}
+    
+    collection.insert_one(to_insert)
+    print("Observation", ObservationInterface["uid"], "successfuly inserted to global performance database..")
+
+
+def v2_insert_agg_observation_to_gpd(SuperTwin, ObservationInterface):
+    
+    twin_with_meta = get_twin_with_meta(SuperTwin)
+    twin_uid = twin_with_meta["uid"]
+    
+    if(not v2_is_inserted_to_gpd(SuperTwin)):
+        v2_insert_twin_to_gpd(SuperTwin)
+
+        
+    client = v2_get_performance_database()
+    collection = client["Observations"]
+
+    aggregates = v2_generate_queries_and_aggregate(SuperTwin, ObservationInterface)
+    ObservationInterface["aggregates"] = aggregates
     
     to_insert = {"twin_uid": twin_with_meta["uid"], "ObservationInterface": ObservationInterface}
     
