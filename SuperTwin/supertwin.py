@@ -741,19 +741,28 @@ class SuperTwin:
             "Observation", observation["uid"], "is added to twin description.."
         )
 
-    def create_observation_interface(self, path, affinity, command, duration, observation_id):
+    def v2_insert_observation_to_lpd(self, ObservationInterface): ##insert local performance database
+    
+        self.update_twin_document__add_observation(observation)
+        
+    def v2_create_observation_interface(self, path, affinity, command, duration, observation_id, name):
 
+        date = str(datetime.date.today())
+        
         observation = {}
         observation["uid"] = observation_id
+        observation["name"] = name
         observation["path"] = path
         observation["command"] = command
         observation["affinity"] = affinity
         observation["duration"] = duration
-        
+        involved_threads = utils.resolve_bind(self, affinity)
+        observation["involved_threads"] = involved_threads
+    
         observation["observation_metrics"] = []
         observation["monitor_metrics"] = []
         observation["observation_db_tag"] = observation_id
-        observation["observation_monitor_tag"] = self.monitor_tag
+        observation["observation_monitor_tag"] = self.monitor_tag    
 
         for metric in self.observation_metrics:
             observation["observation_metrics"].append(metric)
@@ -761,14 +770,14 @@ class SuperTwin:
             observation["monitor_metrics"].append(metric)
 
 
-        involved_threads = utils.resolve_bind(self, affinity)
-        observation["involved_threads"] = involved_threads
+        observation["date"] = date
 
-        print("observation_interface:", observation)
-        self.update_twin_document__add_observation(observation)
+        return observation
+        #self.update_twin_document__add_observation(observation)
         
 
-    def execute_observation_parameters(self, path, affinity, command):
+    def v2_execute_observation_parameters(self, path, affinity, command, name):
+        
         observation_id = str(uuid.uuid4())
         obs_conf = sampling.generate_pcp2influxdb_config_observation(
             self, observation_id
@@ -777,8 +786,8 @@ class SuperTwin:
             self, path, affinity, observation_id, command, obs_conf
         )
         print("Observation", observation_id, "is completed..")
-        self.create_observation_interface(path, affinity, command, duration, observation_id)
-        return duration
+        ObservationInterface = self.v2_create_observation_interface(path, affinity, command, duration, observation_id, name)
+        return ObservationInterface
         
     def execute_observation_batch_parameters(self, path, affinity, commands):
         print("here:", path, affinity, commands)
@@ -862,9 +871,15 @@ if __name__ == "__main__":
         addr = args[1]
         my_superTwin = SuperTwin(addr)  ##Re-construct
 
-
-
+    #my_superTwin.reconfigure_observation_events_parameterized("dolap4_perfevent.txt")
+    
     path = "/common_data/SparseBaseOrderExample"
-    affinity = utils.prepare_bind(my_superTwin, 1, "compact", -1)
-    command = "degree|./degree 1138_bus.mtx"
-    my_superTwin.execute_observation_parameters("/common_data/SparseBaseOrderExample", affinity, command)
+    affinity = utils.prepare_bind(my_superTwin, 6, "compact", -1)
+    command = "./degree 1138_bus.mtx"
+    name = "degree"
+    obsint = my_superTwin.v2_execute_observation_parameters("/common_data/SparseBaseOrderExample", affinity, command, name)
+    
+
+    #utils.v2_check_performance_database()
+    #utils.v2_insert_twin_to_performance_database(my_superTwin)
+    utils.v2_insert_observation_to_gpd(my_superTwin, obsint)
