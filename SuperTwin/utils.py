@@ -28,6 +28,7 @@ import os
 
 sys.path.append("dashboards")
 import observation_standard
+import global_influx
 
 ## can be listed with pmprobe
 ALWAYS_EXISTS_MONITOR = [
@@ -109,6 +110,7 @@ def get_mongo_database(mongodb_name, CONNECTION_STRING):
     ##Create the database for this instance(s)
 
     return client[mongodb_name]
+
 
 def v2_check_performance_database():
     
@@ -250,6 +252,7 @@ def v2_generate_queries_and_aggregate(SuperTwin, ObservationInterface): ##For th
                                 print("dbname:", content["DBName"])
                                 queries = v2_generate_thread_query(content["DBName"], content["displayName"], ObservationInterface["observation_db_tag"])
                                 aggregates[metric] = v2_return_aggregates(SuperTwin, queries)
+                                v2_get_global_influx_client(SuperTwin, content["DBName"], content["displayName"], ObservationInterface["observation_db_tag"])
 
     return aggregates
                     
@@ -291,8 +294,43 @@ def v2_insert_agg_observation_to_gpd(SuperTwin, ObservationInterface):
     collection.insert_one(to_insert)
     print("Observation", ObservationInterface["uid"], "successfuly inserted to global performance database..")
     
-    
 
+def v2_generate_point(md, metric, displayName, tagkey): 
+
+    print("md:", md)
+    print("metric:", metric)
+    print("displayName:", displayName)
+    print("tagkey:", tagkey)
+
+    point = {"measurement": metric,
+             "tags": {"tagkey": tagkey},
+             "fields": {displayName: md[displayName]},
+             "time": md["time"]}
+
+    print("point:", point)
+
+    return point
+    
+def v2_get_global_influx_client(SuperTwin, metric, displayName, tagkey):
+
+    bucket = SuperTwin.name
+    cloud_client = global_influx.get_client()
+        
+    all = "SELECT " + displayName + " FROM " + metric + ' where "tag"' + "=" + "'" + tagkey + "'"
+    
+    db = get_influx_database(SuperTwin.influxdb_addr)
+    db.switch_database(SuperTwin.influxdb_name)
+    
+    result = db.query(all)
+    raw_points = list(result.get_points(measurement=metric))
+    points = []
+    
+    for raw_point in raw_points:
+        points.append(v2_generate_point(raw_point, metric, displayName, tagkey))
+    
+    for point in points:
+        cloud_client.write(record = point)
+    
 
 def get_influx_database(address):
 
