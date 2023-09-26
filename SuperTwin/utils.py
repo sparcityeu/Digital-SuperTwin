@@ -176,10 +176,9 @@ def v2_get_data_for_metric(SuperTwin, ObservationInterface):
     db = get_influx_database(SuperTwin.influxdb_addr)
     db.switch_database(SuperTwin.influxdb_name)
 
-    
-def v2_generate_thread_query(metric, displayName, tagkey):
 
-    #all = "SELECT " + displayName + " FROM " + metric + ' where "tag"' + "=" + "'" + tagkey + "'"
+def v2_generate_aggregate_query(metric, displayName, tagkey):
+
     min = "SELECT " + "MIN("+displayName + ")" + " FROM " + metric + ' where "tag"' + "=" + "'" + tagkey + "'"
     max = "SELECT " + "MAX("+displayName + ")" + " FROM " + metric + ' where "tag"' + "=" + "'" + tagkey + "'"
     mean = "SELECT " + "MEAN("+displayName + ")" + " FROM " + metric + ' where "tag"' + "=" + "'" + tagkey + "'"
@@ -244,18 +243,50 @@ def v2_generate_queries_and_aggregate(SuperTwin, ObservationInterface): ##For th
         for thread in threads:
             for key in _td.keys():
                 if(key.find(thread) != -1):
-                    print("Thread:", thread, "key:", key)
+                    #print("Thread:", thread, "key:", key)
                     contents = _td[key]["contents"]
                     for content in contents:
                         if(content["@type"] == "HWTelemetry"):
                             if(content["PMUName"] == metric):
                                 print("dbname:", content["DBName"])
-                                queries = v2_generate_thread_query(content["DBName"], content["displayName"], ObservationInterface["observation_db_tag"])
+                                queries = v2_generate_aggregate_query(content["DBName"], content["displayName"], ObservationInterface["observation_db_tag"])
                                 aggregates[metric] = v2_return_aggregates(SuperTwin, queries)
-                                v2_get_global_influx_client(SuperTwin, content["DBName"], content["displayName"], ObservationInterface["observation_db_tag"])
 
     return aggregates
-                    
+
+
+def v2_generate_queries_and_report(SuperTwin, ObservationInterface): ##For threads
+    ##Need to categorize metrics beforehand this operation and generate queries like
+    ##select _cpu2 from, select _socket0 from, select * from, select value from etc.
+
+    print("Involved sw:", ObservationInterface["monitor_metrics"])
+    print("Involved hw:", ObservationInterface["observation_metrics"])
+
+    hw_metrics = ObservationInterface["observation_metrics"]
+    hw_metrics = [x for x in hw_metrics if x.find("ENERGY") == -1]
+
+    print("new hw metrics:", hw_metrics)
+
+    _td = get_twin_description(SuperTwin)
+
+    threads = ["thread" + str(x) + ";" for x in ObservationInterface["involved_threads"]]
+    print("threads interface ids:", threads)
+
+    aggregates = {}
+    
+    for metric in hw_metrics:
+        for thread in threads:
+            for key in _td.keys():
+                if(key.find(thread) != -1):
+                    #print("Thread:", thread, "key:", key)
+                    contents = _td[key]["contents"]
+                    for content in contents:
+                        if(content["@type"] == "HWTelemetry"):
+                            if(content["PMUName"] == metric):
+                                #print("dbname:", content["DBName"])
+                                v2_get_global_influx_client(SuperTwin, content["DBName"], content["displayName"], ObservationInterface["observation_db_tag"])
+
+
 def v2_insert_observation_to_gpd(SuperTwin, ObservationInterface):
     
     twin_with_meta = get_twin_with_meta(SuperTwin)
@@ -284,7 +315,7 @@ def v2_insert_agg_observation_to_gpd(SuperTwin, ObservationInterface):
 
         
     client = v2_get_performance_database()
-    collection = client["Observations"]
+    collection = client["AGGObservations"]
 
     aggregates = v2_generate_queries_and_aggregate(SuperTwin, ObservationInterface)
     ObservationInterface["aggregates"] = aggregates
@@ -292,22 +323,34 @@ def v2_insert_agg_observation_to_gpd(SuperTwin, ObservationInterface):
     to_insert = {"twin_uid": twin_with_meta["uid"], "ObservationInterface": ObservationInterface}
     
     collection.insert_one(to_insert)
-    print("Observation", ObservationInterface["uid"], "successfuly inserted to global performance database..")
+    print("AGGObservation", ObservationInterface["uid"], "successfuly inserted to global performance database..")
+
+
+def v2_insert_ts_observation_to_gpd(SuperTwin, ObservationInterface):
+    
+    twin_with_meta = get_twin_with_meta(SuperTwin)
+    twin_uid = twin_with_meta["uid"]
+    
+    if(not v2_is_inserted_to_gpd(SuperTwin)):
+        v2_insert_twin_to_gpd(SuperTwin)
+
+    client = v2_get_performance_database()
+    collection = client["TSObservations"]
+    
+    v2_generate_queries_and_report(SuperTwin, ObservationInterface)
+        
+    to_insert = {"twin_uid": twin_with_meta["uid"], "ObservationInterface": ObservationInterface}
+    
+    collection.insert_one(to_insert)
+    print("TSObservation", ObservationInterface["uid"], "successfuly inserted to global performance database..")
     
 
 def v2_generate_point(md, metric, displayName, tagkey): 
-
-    print("md:", md)
-    print("metric:", metric)
-    print("displayName:", displayName)
-    print("tagkey:", tagkey)
 
     point = {"measurement": metric,
              "tags": {"tagkey": tagkey},
              "fields": {displayName: md[displayName]},
              "time": md["time"]}
-
-    print("point:", point)
 
     return point
     
