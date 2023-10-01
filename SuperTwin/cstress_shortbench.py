@@ -13,7 +13,7 @@ import paramiko
 #import time
 from timeit import default_timer as timer
 
-repeat = 5
+repeat = 3
 client = InfluxDBClient(host='localhost', port=8086)
 
 AIs = {'triad': 0.0625,
