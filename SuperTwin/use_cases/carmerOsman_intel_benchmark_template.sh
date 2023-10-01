@@ -24,15 +24,15 @@ INFLUXDB_HOST="localhost"
 INFLUXDB_PORT="8086"
 
 ## DONT MODIFY!! THESE ARE ALTERED BY UTILS.PY
-SSH_NAME="" 
-SSH_PASSWD=""
+SSH_NAME="oyasal22@172.20.31.81" 
+SSH_PASSWD="123456"
 
-DATABASE_NAME=""
+DATABASE_NAME="carmerOsman_intel"
 
-MONITORING_URL=""
+MONITORING_URL="http://localhost:3000/d/be7d6da8-f3a9-49a7-89e6-3a3861e734f5/pmus-carmerosman-intel-monitor-d4cc98fb-e474-4175-99e8-d98ac431bcea?orgId=1"
 MONITORING_DASHBOARD_URL=""
  
-ROOFLINE_URL=""
+ROOFLINE_URL="http://localhost:3000/d/ded1df58-7655-4344-8af6-12e2f67eb250/pmus-carmerosman-intel-roofline-fbb28482-9a15-4655-ba83-f06ee80c8aff?orgId=1"
 ROOFLINE_DASHBOARD_URL="" 
 ## end DONT MODIFY!! 
 echo "entered database name :$DATABASE_NAME"

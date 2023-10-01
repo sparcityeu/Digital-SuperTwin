@@ -1,2 +1,0 @@
-http://localhost:3000/d/ad732b77-e81f-4d3b-84c9-22d7cd1f29e1/pmus-user-as-4023s-trt-monitor-d5fd6e5e-6531-4889-a518-be90b77266b5?orgId=1&from=1695300078000&to=1695300138000
-http://localhost:3000/d/a02c38b0-5f6d-45ef-ba4d-ad0f099499d8/pmus-user-as-4023s-trt-roofline-dbd6070b-1811-48f8-9e58-efd8eef586f9?orgId=1&from=1695300078000&to=1695300138000
