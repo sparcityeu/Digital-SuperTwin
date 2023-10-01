@@ -70,7 +70,7 @@ def parse_lshw():
     parse_motherboard_info(out,system)
     parse_bios_info(out,system)
     parse_memory_info(out,system)
-    parse_network_info(out,system)
+    #parse_network_info(out,system)
     parse_disk_info(out,system)
     generate_hardware_dict(system, get_cpus() + get_kernel_info())
     

@@ -28,7 +28,7 @@ import os
 
 sys.path.append("dashboards")
 import observation_standard
-import global_influx
+#import global_influx
 
 ## can be listed with pmprobe
 ALWAYS_EXISTS_MONITOR = [

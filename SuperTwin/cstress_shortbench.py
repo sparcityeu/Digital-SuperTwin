@@ -187,7 +187,7 @@ def get_sum(metric):
     ## get stddev of metric
     ## get values bigger than stddev
 
-    client.switch_database("poseidon_run")
+    client.switch_database("cara_run")
     query = "select _cpu0 from " + metric
     print("query:", query)
     res = list(client.query(query))[0]
@@ -211,7 +211,7 @@ def write_accuracy_to_file(db, bench, metric, no_metrics, frequency, accuracy):
     print("")
     line = db + "," + bench + "," + metric + "," + str(no_metrics) + "," + str(frequency) + "," + str(accuracy) + "," + "1" + "\n"
     
-    writer = open("poseidon_cstress_accuracy.csv", "a")
+    writer = open("cara_cstress_accuracy.csv", "a")
     writer.write(line)
     writer.close()
     print("Wrote line - ", line)
@@ -222,7 +222,7 @@ def write_overhead_to_file(db, bench, no_metrics, frequency, overhead):
 
     line = db + "," + bench + "," + str(no_metrics) + "," + str(frequency) + "," + str(overhead) + "," + "1" + "\n"
 
-    writer = open("poseidon_cstress_overhead.csv", "a")
+    writer = open("cara_cstress_overhead.csv", "a")
     writer.write(line)
     writer.close()
     print("Wrote line - ", line)
@@ -279,18 +279,18 @@ def one_run_sampled(SuperTwin, bench, config, db, baseline, no_metrics, frequenc
         for item in involved_dlist:
             involved.append(item['name'])
     
-        if("perfevent_hwcounters_UNHALTED_REFERENCE_CYCLES_value" in involved):
-            unhalted_ref, p, zp = get_sum("perfevent_hwcounters_UNHALTED_REFERENCE_CYCLES_value")
-        if("perfevent_hwcounters_INSTRUCTION_RETIRED_value" in involved):
-            inst_retired, p, zp = get_sum("perfevent_hwcounters_INSTRUCTION_RETIRED_value")
-        if("perfevent_hwcounters_UOPS_EXECUTED_CORE_value" in involved):
-            uops_retired_any, p, zp = get_sum("perfevent_hwcounters_UOPS_EXECUTED_CORE_value")
-        if("perfevent_hwcounters_MEM_INST_RETIRED_ALL_LOADS_value" in involved):
-            mem_uops_all_loads, p, zp = get_sum("perfevent_hwcounters_MEM_INST_RETIRED_ALL_LOADS_value")
-        if("perfevent_hwcounters_MEM_INST_RETIRED_ALL_STORES_value" in involved):
-            mem_uops_all_stores, p, zp = get_sum("perfevent_hwcounters_MEM_INST_RETIRED_ALL_STORES_value")
+        if("perfevent_hwcounters_PERF_COUNT_HW_CPU_CYCLES_value" in involved):
+            unhalted_ref, p, zp = get_sum("perfevent_hwcounters_PERF_COUNT_HW_CPU_CYCLES_value")
+        if("perfevent_hwcounters_RETIRED_INSTRUCTIONS_value" in involved):
+            inst_retired, p, zp = get_sum("perfevent_hwcounters_RETIRED_INSTRUCTIONS_value")
+        if("perfevent_hwcounters_RETIRED_OPS_value" in involved):
+            uops_retired_any, p, zp = get_sum("perfevent_hwcounters_RETIRED_OPS_value")
+        if("perfevent_hwcounters_LS_DISPATCH_LD_DISPATCH_value" in involved):
+            mem_uops_all_loads, p, zp = get_sum("perfevent_hwcounters_LS_DISPATCH_LD_DISPATCH_value")
+        if("perfevent_hwcounters_LS_DISPATCH_STORE_DISPATCH_value" in involved):
+            mem_uops_all_stores, p, zp = get_sum("perfevent_hwcounters_LS_DISPATCH_STORE_DISPATCH_value")
 
-        fp_arith_scalar_d, p, zp = get_sum("perfevent_hwcounters_FP_ARITH_SCALAR_DOUBLE_value") ##This is always on
+        fp_arith_scalar_d, p, zp = get_sum("perfevent_hwcounters_RETIRED_SSE_AVX_FLOPS_value") ##This is always on
         fp_arith_scalar_err = (((fp_arith_scalar_d/p)*time) - flops) / flops
         fp_arith_inst_list[i] = fp_arith_scalar_err
 
@@ -366,8 +366,8 @@ def write_to_file(times, bench, interval, no_metrics):
     time_mean = statistics.mean(times)
     time_std = statistics.stdev(times)
     
-    writer = open("poseidon_cstress.csv", "a")
-    line = "poseidon," + str(interval) + "," + str(no_metrics) + "," + bench + "," + str(time_mean) + "," + str(time_std) + "," + "1" + "\n"
+    writer = open("cara_cstress.csv", "a")
+    line = "cara," + str(interval) + "," + str(no_metrics) + "," + bench + "," + str(time_mean) + "," + str(time_std) + "," + "1" + "\n"
     writer.write(line)
     writer.close()
 
@@ -378,15 +378,15 @@ def write_to_file(times, bench, interval, no_metrics):
 
 if __name__ == "__main__":
     
-    my_superTwin = supertwin.SuperTwin("10.92.55.4")
+    my_superTwin = supertwin.SuperTwin("146.193.56.30")
     name = my_superTwin.name
     benchs = ["triad", "sum", "stream", "peakflops", "ddot", "daxpy"]
 
     #sizes = [1,4,8,12,16,20,24]
     sizes = [8,12,16,24]
 
-    my_superTwin.reconfigure_observation_events_parameterized("twentyfour_perfevent.txt")
-    
+    #my_superTwin.reconfigure_observation_events_parameterized("twentyfour_perfevent.txt")
+    #exit(1)
     for size in sizes:
         for bench in benchs:
             print("##################" + bench + "##################")
@@ -396,42 +396,24 @@ if __name__ == "__main__":
             str_mtr = str(mtr)
             
             config = "-t 1 -c cstress_configs/" + name + "_" + str_mtr + ".conf :configured"
-            one_run_sampled(my_superTwin, bench, config, "poseidon_run", baseline, mtr, 1)
+            one_run_sampled(my_superTwin, bench, config, "cara_run", baseline, mtr, 1)
             print("##################" + bench + "##################")
             
             config = "-t 0.5 -c cstress_configs/" + name + "_" + str_mtr + ".conf :configured"
-            one_run_sampled(my_superTwin, bench, config, "poseidon_run", baseline, mtr, 2)
+            one_run_sampled(my_superTwin, bench, config, "cara_run", baseline, mtr, 2)
             print("##################" + bench + "##################")
             
             config = "-t 0.25 -c cstress_configs/" + name + "_" + str_mtr + ".conf :configured"
-            one_run_sampled(my_superTwin, bench, config, "poseidon_run", baseline, mtr, 4)
+            one_run_sampled(my_superTwin, bench, config, "cara_run", baseline, mtr, 4)
             print("##################" + bench + "##################")
             
             config = "-t 0.125 -c cstress_configs/" + name + "_" + str_mtr + ".conf :configured"
-            one_run_sampled(my_superTwin, bench, config, "poseidon_run", baseline, mtr, 8)
+            one_run_sampled(my_superTwin, bench, config, "cara_run", baseline, mtr, 8)
             print("##################" + bench + "##################")
             
             config = "-t 0.0625 -c cstress_configs/" + name + "_" + str_mtr + ".conf :configured"
-            one_run_sampled(my_superTwin, bench, config, "poseidon_run", baseline, mtr, 16)
+            one_run_sampled(my_superTwin, bench, config, "cara_run", baseline, mtr, 16)
             print("##################" + bench + "##################")
-        
-            '''
-            config = "-t 0.03125 -c cstress_configs/poseidon_" + str_mtr + ".conf :configured"
-            one_run_sampled(my_superTwin, bench, config, "poseidon_run", baseline, mtr, 32)
-            print("##################" + bench + "##################")
-            
-            config = "-t 0.015625 -c cstress_configs/poseidon_" + str_mtr + ".conf :configured"
-            one_run_sampled(my_superTwin, bench, config, "poseidon_run", baseline, mtr, 64)
-            print("##################" + bench + "##################")
-            
-            config = "-t 0.0078125 -c cstress_configs/poseidon_" + str_mtr + ".conf :configured"
-            one_run_sampled(my_superTwin, bench, config, "poseidon_run", baseline, mtr, 128)
-            print("##################" + bench + "##################")
-            
-            config = "-t 0.00390625 -c cstress_configs/poseidon_" + str_mtr + ".conf :configured"
-            one_run_sampled(my_superTwin, bench, config, "poseidon_run", baseline, mtr, 256)
-            print("##################" + bench + "##################")
-            '''
                 
 
                 

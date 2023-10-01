@@ -25,7 +25,7 @@ if __name__ == "__main__":
     for idx, line in enumerate(reader_lines):
         if(line.find("configured") != -1):
             start = idx + 1
-            no_metrics = len(reader_lines) - start
+            no_metrics = len(reader_lines) - start + 1
             print("start:", start, "no_metrics:", no_metrics)
             
     generate(name, reader_lines, start, no_metrics)
