@@ -38,7 +38,7 @@ def _fill_default_pmu_event_names():
     """All generic pmu event names (our convention)"""
 
     _DEFAULT_GENERIC_PMU_EVENTS.append("CARM")
-    
+
     _DEFAULT_GENERIC_PMU_EVENTS.append("RAPL_ENERGY_PKG")
     _DEFAULT_GENERIC_PMU_EVENTS.append("RAPL_ENERGY_CORES")
     _DEFAULT_GENERIC_PMU_EVENTS.append("RETIRED_INSTRUCTIONS")
@@ -69,18 +69,18 @@ def _fill_default_pmu_event_names():
     _DEFAULT_GENERIC_PMU_EVENTS.append("L2_CACHE_DATA_HIT")
     _DEFAULT_GENERIC_PMU_EVENTS.append("L3_CACHE_DATA_MISS")
     _DEFAULT_GENERIC_PMU_EVENTS.append("L3_CACHE_DATA_HIT")
-    
+
     _DEFAULT_GENERIC_PMU_EVENTS.append("LOAD_RETIRED")
     _DEFAULT_GENERIC_PMU_EVENTS.append("STORE_RETIRED")
-    _DEFAULT_GENERIC_PMU_EVENTS.append("TOTAL_MEMORY_OPERATIONS") 
+    _DEFAULT_GENERIC_PMU_EVENTS.append("TOTAL_MEMORY_OPERATIONS")
 
 
 _COMMON_PMU_DICT = {
     "pmu_name": {
         "generic_pmu_event_name": [
-            "specific_pmu_event",  ## sub pmu event name
-            "+",  ## operator
-            "specific_pmu_event_2",  ## sub pmu event name 2
+            "specific_pmu_event",  # sub pmu event name
+            "+",  # operator
+            "specific_pmu_event_2",  # sub pmu event name 2
         ]
     }
 }
@@ -93,7 +93,7 @@ def initialize():
     if not _initialized:
         _fill_default_pmu_event_names()
 
-        ## AMD init.
+        # AMD init.
         amd64_common.initialize(_DEFAULT_GENERIC_PMU_EVENTS, _COMMON_PMU_DICT)
         amd64_fam17h_zen2.initialize(
             _DEFAULT_GENERIC_PMU_EVENTS, _COMMON_PMU_DICT
@@ -101,13 +101,14 @@ def initialize():
         amd64_fam17h_zen3.initialize(
             _DEFAULT_GENERIC_PMU_EVENTS, _COMMON_PMU_DICT
         )
-        ## Intel init.
+        # Intel init.
 
         intel_common.initialize(_DEFAULT_GENERIC_PMU_EVENTS, _COMMON_PMU_DICT)
 
         _initialized = True
 
         print("default_generic_pmu_events:", _DEFAULT_GENERIC_PMU_EVENTS)
+
 
 def add_configuration(file_name):
     fd = open(file_name, "r")
@@ -138,7 +139,7 @@ def add_configuration(file_name):
                 "override" in pmu_conf
                 or pmu_name not in _COMMON_PMU_DICT.keys()
             ):
-                _COMMON_PMU_DICT[pmu_name] = {"alias":pmu_name}
+                _COMMON_PMU_DICT[pmu_name] = {"alias": pmu_name}
 
             if pmu_alias != "":
                 _COMMON_PMU_DICT[pmu_name]["alias"] = pmu_alias

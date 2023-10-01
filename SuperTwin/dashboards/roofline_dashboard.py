@@ -1,3 +1,22 @@
+import math
+import pmu_mapping_utils
+import pmu_grafana_utils
+import colorsys
+import matplotlib.colors as mc
+import plotly.io as io
+import plotly.graph_objects as go
+import numpy as np
+import uuid
+from grafanalib._gen import DashboardEncoder
+from grafanalib.core import Dashboard
+import requests
+import json
+import roofline_dashboard_panels as rdp
+import observation_standard as obs
+import hpcg_benchmark
+import adcarm_benchmark
+import stream_benchmark
+import utils
 import os
 
 import sys
@@ -5,30 +24,6 @@ import sys
 sys.path.append("../")
 sys.path.append("../probing/benchmarks")
 sys.path.append("pmu_mappings")
-
-import utils
-import stream_benchmark
-import adcarm_benchmark
-import hpcg_benchmark
-
-import observation_standard as obs
-import roofline_dashboard_panels as rdp
-
-import json
-import requests
-
-from grafanalib.core import Dashboard
-from grafanalib._gen import DashboardEncoder
-import uuid
-import numpy as np
-
-import plotly.graph_objects as go
-import plotly.io as io
-import matplotlib.colors as mc
-import colorsys
-import pmu_grafana_utils
-import pmu_mapping_utils
-import math
 
 
 vis_all = []
@@ -43,7 +38,7 @@ vis_map_L1s = {}
 vis_map_L2s = {}
 vis_map_L3s = {}
 vis_map_DRAMs = {}
-vis_map_threads = {}  ##This is where markings will be added
+vis_map_threads = {}  # This is where markings will be added
 
 
 # colors = ["#75eab6", "#2d747a", "#20d8fd", "#c0583d", "#bccd97", "#b1e632", "#57832e", "#efaa79"]
@@ -346,7 +341,7 @@ def thread_groups(fig, thread, color, data, ai, ai_list):
 
         if thread not in chosen_thread_colors.keys():
             chosen_thread_colors[thread] = gc
-        if thread == "32":  ##Will change anyway
+        if thread == "32":  # Will change anyway
             chosen_thread_colors[thread] = gc
 
     return fig
@@ -405,7 +400,7 @@ def fill_carm_res_dict(carm_res, result):
 
 def get_carm_res_from_dt(SuperTwin):
 
-    td = utils.get_twin_description(SuperTwin)  ##Twin description
+    td = utils.get_twin_description(SuperTwin)  # Twin description
 
     carm_res = {}
     carm_res["threads"] = {}
@@ -441,17 +436,17 @@ def get_hpcg_marks(hpcg_res):
     return hpcg_marks
 
 
-##colors needs to be related with number of threads
-##I need various different color sets for various different result sets
+# colors needs to be related with number of threads
+# I need various different color sets for various different result sets
 
-##This visibility thing; should keep indices, then generate, true false arrays from it
-##For returning a roofline dashboard for observations; it should levitate these indices
-##For buttons; probably shouldnt exist
-##When there is no buttons, legend automatically comes back which is nice
-#Possibly deprecated now
+# This visibility thing; should keep indices, then generate, true false arrays from it
+# For returning a roofline dashboard for observations; it should levitate these indices
+# For buttons; probably shouldnt exist
+# When there is no buttons, legend automatically comes back which is nice
+# Possibly deprecated now
 def generate_carm_roofline(
     SuperTwin,
-):  ##THREADS as a parameter to redraw for observations
+):  # THREADS as a parameter to redraw for observations
 
     global vis_map_all
     global vis_map_L1s
@@ -463,7 +458,7 @@ def generate_carm_roofline(
     global next_color
     global chosen_thread_colors
 
-    td = utils.get_twin_description(SuperTwin)  ##Twin description
+    td = utils.get_twin_description(SuperTwin)  # Twin description
 
     # empty_dash = obs.template_dict(SuperTwin.name + " Roofline-" + str(uuid.uuid4()))
     # empty_dash["panels"] = []
@@ -472,7 +467,7 @@ def generate_carm_roofline(
     # data = adcarm_benchmark.parse_adcarm_bench()
     data = adcarm_benchmark.parse_adcarm_bench(
         SuperTwin
-    )  ##This is not good coding
+    )  # This is not good coding
     ###
 
     fig = go.Figure(layout={})
@@ -497,11 +492,11 @@ def generate_carm_roofline(
     print("Threads:", vis_map_threads)
     # print("##########")
 
-    ##hpcg marks
+    # hpcg marks
     hpcg_res = get_hpcg_bench_data(td)
     hpcg_marks = get_hpcg_marks(hpcg_res)
     print("hpcg marks:", hpcg_marks)
-    ##hpcg marks
+    # hpcg marks
 
     marker_symbols = {
         "spmv": "cross-open",
@@ -594,14 +589,14 @@ def generate_carm_roofline(
     fig.update_traces(hovertemplate="%{y}")
     fig.update_layout(hovermode="x")
 
-    ##update layout with buttons
+    # update layout with buttons
     fig.update_layout(
         updatemenus=[
             dict(
                 type="buttons",
                 direction="right",
                 buttons=buttons,
-                pad={"r": 4, "t": 4, "l": 0, "b": 0},  ##b?
+                pad={"r": 4, "t": 4, "l": 0, "b": 0},  # b?
                 showactive=True,
                 x=0.1,
                 xanchor="left",
@@ -612,7 +607,7 @@ def generate_carm_roofline(
                 type="buttons",
                 direction="right",
                 buttons=buttons2,
-                pad={"r": 4, "t": 4, "l": 0, "b": 0},  ##b?
+                pad={"r": 4, "t": 4, "l": 0, "b": 0},  # b?
                 showactive=True,
                 x=0.1,
                 xanchor="left",
@@ -622,7 +617,7 @@ def generate_carm_roofline(
         ]
     )
 
-    fig = rdp.grafana_layout(fig)  ##return this, ##parameterise this
+    fig = rdp.grafana_layout(fig)  # return this, ##parameterise this
 
     return fig
 
@@ -635,8 +630,8 @@ def get_indicator_fields(_string):
     for idx, char in enumerate(_string):
         if char.isdigit():
             value = int(_string[idx])
-            prefix = _string[0 : idx - 1]
-            suffix = _string[idx + 1 :]
+            prefix = _string[0: idx - 1]
+            suffix = _string[idx + 1:]
 
     return value, prefix, suffix
 
@@ -653,7 +648,7 @@ def get_indicator_fields_vector(_array):
         _string += " "
         if (
             idx == 3 and len(_array) >= 6
-        ):  ##Just aesthetical, change the values and see
+        ):  # Just aesthetical, change the values and see
             _string += "<br>"
     _string = _string[:-1]
 
@@ -661,7 +656,7 @@ def get_indicator_fields_vector(_array):
         if char.isdigit():
             value = int(_string[idx])
             prefix = _string[0:idx]
-            suffix = _string[idx + 1 :]
+            suffix = _string[idx + 1:]
             break
 
     print("vps:", value, prefix, suffix)
@@ -670,7 +665,7 @@ def get_indicator_fields_vector(_array):
 
 def generate_info_panel(SuperTwin):
 
-    td = utils.get_twin_description(SuperTwin)  ##Twin description
+    td = utils.get_twin_description(SuperTwin)  # Twin description
     data = utils.fill_data(td, SuperTwin.name, SuperTwin.addr)
 
     number_size = 24
@@ -697,7 +692,7 @@ def generate_info_panel(SuperTwin):
     )
 
     number_size = 36
-    ##Don't need to do split prefix suffix thing if value is simply a number
+    # Don't need to do split prefix suffix thing if value is simply a number
     fig.add_trace(
         go.Indicator(
             mode="number",
@@ -1092,7 +1087,7 @@ def generate_stream_panel(SuperTwin):
     fig.update_layout(hovermode="x")
     fig = rdp.grafana_layout_3(
         fig, xtickvals, "GB/s"
-    )  ##return this, ##parameterise this
+    )  # return this, ##parameterise this
     print("Returning")
     return fig
 
@@ -1135,15 +1130,15 @@ def get_hpcg_bench_data(td):
 
 def generate_hpcg_panel(
     SuperTwin,
-):  ##Tricky part is marking results on the roofline
+):  # Tricky part is marking results on the roofline
 
     td = utils.get_twin_description(
         SuperTwin
-    )  ##This line keeps repeating because we may call
-    fig = go.Figure(layout={})  ##these generate panel functions on their own
+    )  # This line keeps repeating because we may call
+    fig = go.Figure(layout={})  # these generate panel functions on their own
 
     hpcg_res = get_hpcg_bench_data(td)
-    ##hpcg_marks = get_hpcg_bench_marks() ##Make this global, and let roofline call it
+    # hpcg_marks = get_hpcg_bench_marks() ##Make this global, and let roofline call it
 
     x = generate_x(hpcg_res)
 
@@ -1167,15 +1162,15 @@ def generate_hpcg_panel(
     fig.update_layout(hovermode="x")
     fig = rdp.grafana_layout_3(
         fig, xtickvals, "GFLOP/s"
-    )  ##return this, ##parameterise this
+    )  # return this, ##parameterise this
     print("Returning")
     return fig
 
 
-#Function that returns the thread_set used by the various benchmarks
+# Function that returns the thread_set used by the various benchmarks
 def get_thread_set(SuperTwin):
-    
-    td = utils.get_twin_description(SuperTwin)  ##Twin description
+
+    td = utils.get_twin_description(SuperTwin)  # Twin description
     mt_info = utils.get_multithreading_info(td)
     no_cores_per_socket = mt_info["no_cores_per_socket"]
     no_threads_per_socket = mt_info["no_threads_per_socket"]
@@ -1200,17 +1195,18 @@ def get_thread_set(SuperTwin):
     if total_threads not in thread_set:
         thread_set.append(total_threads)
 
-    #thread_set = [16] ## for debug purposes
+    # thread_set = [16] ## for debug purposes
     thread_set = list(sorted(thread_set))
 
     print(thread_set)
 
     return thread_set
 
-#Function that generates the rooflinecontrol dashboard variable, based on number of threads of the cpu
+# Function that generates the rooflinecontrol dashboard variable, based on number of threads of the cpu
+
+
 def generate_dashboard_variable(thread_set, number):
 
-    
     tester = {}
     tester["current"] = {}
     tester["current"]["selected"] = True
@@ -1226,7 +1222,7 @@ def generate_dashboard_variable(thread_set, number):
         tester["label"] = "Live Cache Aware Roofline Model Thread Count 2"
         tester["name"] = "rooflinecontrol2"
         tester["description"] = "Select the static Roofline results for a particular number of threads"
-        
+
     elif (number == 3):
         tester["current"]["text"] = "None"
         tester["current"]["value"] = "None"
@@ -1239,7 +1235,6 @@ def generate_dashboard_variable(thread_set, number):
     tester["multi"] = False
 
     tester["options"] = []
-
 
     if(number == 1 or number == 2):
         if (number == 2):
@@ -1254,7 +1249,7 @@ def generate_dashboard_variable(thread_set, number):
                 "text": str(thread),
                 "value": str(thread)
             },)
-    
+
         query_numbers = ', '.join(str(thread) for thread in thread_set)
         if (number == 1):
             tester_query = f"{query_numbers}"
@@ -1262,41 +1257,42 @@ def generate_dashboard_variable(thread_set, number):
             tester_query = f"None, {query_numbers}"
     elif (number == 3):
         tester["options"].append({
-                "selected": False,
-                "text": "None",
-                "value": "None"
-            },)
+            "selected": False,
+            "text": "None",
+            "value": "None"
+        },)
         tester["options"].append({
-                "selected": False,
-                "text": "spmv",
-                "value": "spmv"
-            },)
+            "selected": False,
+            "text": "spmv",
+            "value": "spmv"
+        },)
         tester["options"].append({
-                "selected": False,
-                "text": "ddot",
-                "value": "ddot"
-            },)
+            "selected": False,
+            "text": "ddot",
+            "value": "ddot"
+        },)
         tester["options"].append({
-                "selected": False,
-                "text": "waxpby",
-                "value": "waxpby"
-            },)
+            "selected": False,
+            "text": "waxpby",
+            "value": "waxpby"
+        },)
         tester["options"].append({
-                "selected": False,
-                "text": "All",
-                "value": "All"
-            },)
+            "selected": False,
+            "text": "All",
+            "value": "All"
+        },)
         tester_query = f"None, spmv, ddot, waxpby, All"
-        
 
     tester["querry"] = tester_query
     tester["queryValue"] = ""
     tester["skipUrlSync"] = False
     tester["type"] = "custom"
 
-    return  tester
+    return tester
 
-#function that auto generates the script part of the live-carm graph, based on thread number of the machine
+# function that auto generates the script part of the live-carm graph, based on thread number of the machine
+
+
 def generate_live_carm_script(thread_set, SuperTwin):
 
     data = get_carm_res_from_dt(SuperTwin)
@@ -1318,7 +1314,7 @@ def generate_live_carm_script(thread_set, SuperTwin):
         thread_number = str(cpu)
 
         if thread_number in data["threads"]:
-            
+
             values_for_thread = data["threads"][thread_number]
             # Now, values_for_thread contains the list of dictionaries for the specified thread number
 
@@ -1373,7 +1369,7 @@ def generate_live_carm_script(thread_set, SuperTwin):
 
             else:
                 print(f"No data found for thread number {thread_number}")
-       
+
     # Add the threadNumber variable at the end
     script += 'let threadNumber = variables.rooflinecontrol;\nlet threadNumber2 = variables.rooflinecontrol2;\nlet benchmarkcontrol = variables.benchmarkcontrol;\n\n'
 
@@ -1408,24 +1404,24 @@ def generate_live_carm_script(thread_set, SuperTwin):
         gc = get_next_color()
         if cpu not in chosen_thread_colors.keys():
             chosen_thread_colors[cpu] = gc
-        for i in range (1, 5):
+        for i in range(1, 5):
             name = trace_names[i % 4]
-            dash = "solid" 
+            dash = "solid"
             if i % 4 == 2:
-                dash = "dash" 
+                dash = "dash"
             elif i % 4 == 3:
-                dash = "dashdot" 
+                dash = "dashdot"
             elif i % 4 == 0:
                 dash = "dot"
             total += 1
-           
-            script += trace_template.format(index=total, color=gc, thread=cpu, name=name, type=name.lower(), dash=dash)
-            
-    
+
+            script += trace_template.format(index=total, color=gc,
+                                            thread=cpu, name=name, type=name.lower(), dash=dash)
+
     hpcg_res = get_hpcg_bench_data(td)
     hpcg_marks = get_hpcg_marks(hpcg_res)
     print("hpcg marks:", hpcg_marks)
-    ##hpcg marks
+    # hpcg marks
     print(chosen_thread_colors)
 
     marker_symbols = {
@@ -1455,15 +1451,14 @@ def generate_live_carm_script(thread_set, SuperTwin):
     for _threads in hpcg_marks:
         #gc = get_next_color()
         for _tuple in hpcg_marks[_threads]:
-            
+
             _name = _tuple[0]
             _res = _tuple[1]
             total += 1
-           
-            script += trace_template2.format(index=_threads, ai=hpcg_ai[_name],color=chosen_thread_colors[int(_threads)], thread=cpu, result=_res, name=_name, type=name.lower(), symbol=marker_symbols[_name])
 
-    
-    
+            script += trace_template2.format(index=_threads, ai=hpcg_ai[_name], color=chosen_thread_colors[int(
+                _threads)], thread=cpu, result=_res, name=_name, type=name.lower(), symbol=marker_symbols[_name])
+
     # Define the base trace
     base_trace = "trace0"
 
@@ -1474,7 +1469,7 @@ def generate_live_carm_script(thread_set, SuperTwin):
     # Loop to generate the code
     for i in thread_set:
         # Create traces for the current group
-        
+
         group_traces = [f"trace{total + j}" for j in range(4)]
         total += 4
 
@@ -1504,7 +1499,8 @@ def generate_live_carm_script(thread_set, SuperTwin):
         traces.extend(group_traces)
 
     # Remove the leading 'else' from the first condition
-    script = script.replace('else if (threadNumber == 1)', '\n\nif (threadNumber == 1)')
+    script = script.replace('else if (threadNumber == 1)',
+                            '\n\nif (threadNumber == 1)')
 
     #script += f'else if (threadNumber == \"1 + Max\"){{\n return {{ data: [trace0, trace1, trace2, trace3, trace4, trace{total-4}, trace{total-3}, trace{total-2}, trace{total-1}] }};\n}}else {{return {{ data: [trace0]}}}};\n'
     script += f'else {{data = [trace0]}};\n'
@@ -1515,7 +1511,7 @@ def generate_live_carm_script(thread_set, SuperTwin):
     # Loop to generate the code
     for i in thread_set:
         # Create traces for the current group
-        
+
         group_traces = [f"trace{total + j}" for j in range(4)]
         total += 4
 
@@ -1545,17 +1541,16 @@ def generate_live_carm_script(thread_set, SuperTwin):
         traces.extend(group_traces)
 
     # Remove the leading 'else' from the first condition
-    script = script.replace('else if (threadNumber2 == 1)', '\n\nif (threadNumber2 == 1)')
-
-    
+    script = script.replace('else if (threadNumber2 == 1)',
+                            '\n\nif (threadNumber2 == 1)')
 
     #script += f'else if (threadNumber == \"1 + Max\"){{\n return {{ data: [trace0, trace1, trace2, trace3, trace4, trace{total-4}, trace{total-3}, trace{total-2}, trace{total-1}] }};\n}}else {{return {{ data: [trace0]}}}};\n'
     #script += f'else {{data = [trace0]}};\n'
 
-    
     script += f'\n\nreturn {{data}};'
 
     return script, panelMaxY
+
 
 def next_power_of_2(n):
     # Use bitwise left shift to find the next power of 2
@@ -1568,20 +1563,26 @@ def next_power_of_2(n):
 def generate_roofline_dashboard(SuperTwin):
     global next_color
 
-    td = utils.get_twin_description(SuperTwin)  ##Twin description
+    td = utils.get_twin_description(SuperTwin)  # Twin description
     data = utils.fill_data(td, SuperTwin.name, SuperTwin.addr)
+    print(data)
 
-    cpu_count = int(data["cpu_cores"] * data["cpu_threads_per_core"]) # * data[socket_count]
-
+    cpu_count = int(data["cpu_cores"] * data["cpu_threads_per_core"]
+                    * data["system_no_numa_nodes"])  # * data[socket_count]
+    print("[INFO] SOCKET CORES: ", data["system_no_numa_nodes"], "SOCKET THREADS:",
+          data["system_no_numa_nodes"] * data["cpu_threads_per_core"], " TOTAL THREADS X SOCKETS: ", cpu_count)
     thread_set = get_thread_set(SuperTwin)
 
     empty_dash = obs.template_dict(
         SuperTwin.name + " Roofline-" + str(uuid.uuid4())
     )
-    #Generating the dashboard variables, used by the live-CARM graph
-    empty_dash["templating"]["list"].append(generate_dashboard_variable(thread_set, 1))
-    empty_dash["templating"]["list"].append(generate_dashboard_variable(thread_set, 2))
-    empty_dash["templating"]["list"].append(generate_dashboard_variable(thread_set, 3))
+    # Generating the dashboard variables, used by the live-CARM graph
+    empty_dash["templating"]["list"].append(
+        generate_dashboard_variable(thread_set, 1))
+    empty_dash["templating"]["list"].append(
+        generate_dashboard_variable(thread_set, 2))
+    empty_dash["templating"]["list"].append(
+        generate_dashboard_variable(thread_set, 3))
 
     empty_dash["panels"] = []
 
@@ -1593,19 +1594,19 @@ def generate_roofline_dashboard(SuperTwin):
     #hpcg_bench_fig = generate_hpcg_panel(SuperTwin)
 
     #dict_roofline_fig = obs.json.loads(io.to_json(roofline_fig))
-    #empty_dash["panels"].append(
+    # empty_dash["panels"].append(
     #    rdp.two_templates_one(
     #        dict_roofline_fig["data"], dict_roofline_fig["layout"], SuperTwin.grafana_datasource
     #    )
-    #)
+    # )
 
     dict_info_fig = obs.json.loads(io.to_json(info_fig))
     empty_dash["panels"].append(
-        rdp.two_templates_two(dict_info_fig["data"], dict_info_fig["layout"], SuperTwin.grafana_datasource)
+        rdp.two_templates_two(
+            dict_info_fig["data"], dict_info_fig["layout"], SuperTwin.grafana_datasource)
     )
 
-
-    ## Add pmu events
+    # Add pmu events
     for pmu_name in SuperTwin.pmu_metrics.keys():
         for pmu_generic_event in pmu_mapping_utils._DEFAULT_GENERIC_PMU_EVENTS:
             formula = [
@@ -1617,24 +1618,24 @@ def generate_roofline_dashboard(SuperTwin):
             ]
             if len(formula) == 0:
                 continue
-            
+
             if pmu_generic_event == "CARM":
 
                 script, maxY = generate_live_carm_script(thread_set, SuperTwin)
 
-                print (script)
+                print(script)
 
                 empty_dash["panels"].append(
                     pmu_grafana_utils.dashboard_livecarm_table(
                         pmu_name,
                         SuperTwin.grafana_datasource,
                         "Live Cache Aware Roofline Model",
-                        cpu_count, # * data[socket_count]
+                        cpu_count,  # * data[socket_count]
                         formula,
                         script,
                         math.log10(next_power_of_2(maxY))+0.02
                     )
-                ) 
+                )
             else:
                 empty_dash["panels"].append(
                     pmu_grafana_utils.dashboard_pmu_table(
@@ -1648,23 +1649,21 @@ def generate_roofline_dashboard(SuperTwin):
                     pmu_grafana_utils.dashboard_pmu_table_total(
                         SuperTwin.grafana_datasource,
                         pmu_generic_event,
-                        cpu_count, # * data[socket_count]
+                        cpu_count,  # * data[socket_count]
                         formula,
                     )
                 )
-
 
     # dict_stream_bench_fig = obs.json.loads(io.to_json(stream_bench_fig))
     # empty_dash["panels"].append(rdp.two_templates_three(dict_stream_bench_fig["data"],
     #                                                     dict_stream_bench_fig["layout"],
     #                                                     8, 8 , 0, 16, SuperTwin.grafana_datasource, "STREAM Benchmark", 442))
 
-    
     # dict_hpcg_bench_fig = obs.json.loads(io.to_json(hpcg_bench_fig))
     # empty_dash["panels"].append(rdp.two_templates_three(dict_hpcg_bench_fig["data"],
     #                                                     dict_hpcg_bench_fig["layout"],
     #                                                     8, 8, 8, 16, SuperTwin.grafana_datasource, "HPCG Benchmark", 443))
-    
+
     print("Upload?")
     ###
     json_dash_obj = obs.get_dashboard_json(empty_dash, overwrite=False)

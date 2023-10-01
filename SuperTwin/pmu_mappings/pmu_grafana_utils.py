@@ -58,10 +58,12 @@ live_carm_pmu_mappings = {
     'skl': ["(($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)*($A+$B+$C+$D+$E+$F+$G+$H)+0.000001)/(4*$A*($Z+$Y)+8*$B*($Z+$Y)+16*$C*($Z+$Y)+16*$D*($Z+$Y)+32*$E*($Z+$Y)+32*$F*($Z+$Y)+64*$G*($Z+$Y)+64*$H*($Z+$Y)+0.000001)",
             "($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)/1000000000"
             ],
- 
+
     'clx': ["(($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)*($A+$B+$C+$D+$E+$F+$G+$H)+0.000001)/(4*$A*($Z+$Y)+8*$B*($Z+$Y)+16*$C*($Z+$Y)+16*$D*($Z+$Y)+32*$E*($Z+$Y)+32*$F*($Z+$Y)+64*$G*($Z+$Y)+64*$H*($Z+$Y)+0.000001)",
             "($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)/1000000000"
             ],
+
+    # FLOPS intel =($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)
 }
 
 
@@ -312,7 +314,7 @@ def dashboard_pmu_table_total(datasource, title, cpu_count, formula):
     return dash
 
 
-def dashboard_livecarm_table(pmu_name,datasource, title, cpu_count, formula, script, maxY):
+def dashboard_livecarm_table(pmu_name, datasource, title, cpu_count, formula, script, maxY):
     global _id, _table_xloc, _table_yloc, _table_wloc, _table_hloc
     global _initialized
     if not _initialized:
@@ -334,10 +336,10 @@ def dashboard_livecarm_table(pmu_name,datasource, title, cpu_count, formula, scr
         "title": title,
         "transformations": [
             {
-            "id": "joinByField",
-            "options": {
-                "mode": "outer"
-            }
+                "id": "joinByField",
+                "options": {
+                    "mode": "outer"
+                }
             }
         ],
         "type": "nline-plotlyjs-panel",
@@ -347,92 +349,92 @@ def dashboard_livecarm_table(pmu_name,datasource, title, cpu_count, formula, scr
             "yamlMode": True,
             "resScale": 2,
             "allData": {
-            "opacity": 1
+                "opacity": 1
             },
             "data": [
-            {
-                "line": {
-                "color": "red"
-                },
-                "mode": "markers",
-                "type": "scatter"
-            },
-            {
-                "line": {
-                "color": "blue",
-                "width": 0.2
-                },
-                "mode": "lines+markers",
-                "type": "scatter"
-            }
-            ],
-            "layout": {
-            "font": {
-                "family": "Inter, Helvetica, Arial, sans-serif",
-                "color": "black"
-            },
-            "paper_bgcolor": "rgba(0,0,0,0)",
-            "plot_bgcolor": "rgba(0,0,0,0)",
-            "hoverlabel": {
-                "bgcolor": "darkgrey"
-            },
-            "margin": {
-                "t": 10,
-                "r": 10,
-                "b": 10,
-                "l": 10
-            },
-            "xaxis": {
-                "type": "log",
-                "autorange": False,
-                "automargin": True,
-                "dtick": 0.30102999566,
-                "gridcolor": "rgba(128,128,128,255)",
-                "range": [
-                -1.5194309088656293,
-                2.5
-                ]
-            },
-            "yaxis": {
-                "automargin": True,
-                "autorange": False,
-                "dtick": 0.30102999566,
-                "gridcolor": "rgba(128,128,128,255)",
-                "range": [
-                -1.5194309088656293,
-                maxY
-                ],
-                "type": "log"
-            },
-            "annotations": [
                 {
-                "showarrow": False,
-                "text": "Performance [GFlops/s]",
-                "textangle": -90,
-                "x": -0.03,
-                "xanchor": "right",
-                "xref": "paper",
-                "y": 0.5,
-                "yanchor": "right",
-                "yref": "paper"
+                    "line": {
+                        "color": "red"
+                    },
+                    "mode": "markers",
+                    "type": "scatter"
                 },
                 {
-                "showarrow": False,
-                "text": "Arithmetic Intensity",
-                "x": 0.5,
-                "xanchor": "top",
-                "xref": "paper",
-                "y": -0.07,
-                "yanchor": "top",
-                "yref": "paper"
+                    "line": {
+                        "color": "blue",
+                        "width": 0.2
+                    },
+                    "mode": "lines+markers",
+                    "type": "scatter"
                 }
             ],
-            "hovermode": "closest",
-            "legend": {
-                "orientation": "h",
-                "x": 0,
-                "y": -0.12
-            }
+            "layout": {
+                "font": {
+                    "family": "Inter, Helvetica, Arial, sans-serif",
+                    "color": "black"
+                },
+                "paper_bgcolor": "rgba(0,0,0,0)",
+                "plot_bgcolor": "rgba(0,0,0,0)",
+                "hoverlabel": {
+                    "bgcolor": "darkgrey"
+                },
+                "margin": {
+                    "t": 10,
+                    "r": 10,
+                    "b": 10,
+                    "l": 10
+                },
+                "xaxis": {
+                    "type": "log",
+                    "autorange": False,
+                    "automargin": True,
+                    "dtick": 0.30102999566,
+                    "gridcolor": "rgba(128,128,128,255)",
+                    "range": [
+                        -1.5194309088656293,
+                        2.5
+                    ]
+                },
+                "yaxis": {
+                    "automargin": True,
+                    "autorange": False,
+                    "dtick": 0.30102999566,
+                    "gridcolor": "rgba(128,128,128,255)",
+                    "range": [
+                        -1.5194309088656293,
+                        maxY
+                    ],
+                    "type": "log"
+                },
+                "annotations": [
+                    {
+                        "showarrow": False,
+                        "text": "Performance [GFlops/s]",
+                        "textangle": -90,
+                        "x": -0.03,
+                        "xanchor": "right",
+                        "xref": "paper",
+                        "y": 0.5,
+                        "yanchor": "right",
+                        "yref": "paper"
+                    },
+                    {
+                        "showarrow": False,
+                        "text": "Arithmetic Intensity",
+                        "x": 0.5,
+                        "xanchor": "top",
+                        "xref": "paper",
+                        "y": -0.07,
+                        "yanchor": "top",
+                        "yref": "paper"
+                    }
+                ],
+                "hovermode": "closest",
+                "legend": {
+                    "orientation": "h",
+                    "x": 0,
+                    "y": -0.12
+                }
             },
             "config": {},
             "script": script,
@@ -442,7 +444,7 @@ def dashboard_livecarm_table(pmu_name,datasource, title, cpu_count, formula, scr
 
     }
 
-    generic_temp1,generic_temp2 = live_carm_pmu_mappings[pmu_name]
+    generic_temp1, generic_temp2 = live_carm_pmu_mappings[pmu_name]
 
     expression_template1 = "0"
     expression_template2 = "0"

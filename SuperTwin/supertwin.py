@@ -945,8 +945,8 @@ if __name__ == "__main__":
 
 
     pmu_mapping_utils.initialize()
-    #pmu_mapping_utils.add_configuration("clx_pmu_mapping.txt")
-    #pmu_mapping_utils.add_configuration("icl_pmu_mapping.txt")
+    # pmu_mapping_utils.add_configuration("clx_pmu_mapping.txt")
+    # pmu_mapping_utils.add_configuration("icl_pmu_mapping.txt")
     pmu_mapping_utils.add_configuration("skl_pmu_remapping.txt")
     # pmu_mapping_utils.add_configuration("skx_pmu_remapping.txt")
 
