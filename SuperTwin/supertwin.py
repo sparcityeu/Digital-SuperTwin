@@ -873,13 +873,17 @@ if __name__ == "__main__":
 
     #my_superTwin.reconfigure_observation_events_parameterized("dolap4_perfevent.txt")
     
-    path = "/common_data/SparseBaseOrderExample"
-    affinity = utils.prepare_bind(my_superTwin, 6, "compact", -1)
-    command = "./degree 1138_bus.mtx"
-    name = "degree"
-    obsint = my_superTwin.v2_execute_observation_parameters("/common_data/SparseBaseOrderExample", affinity, command, name)
+    #path = "/common_data/SparseBaseOrderExample"
+    #affinity = utils.prepare_bind(my_superTwin, 1, "compact", -1)
+    #command = "./degree 1138_bus.mtx"
+    #name = "degree"
+    #obsint = my_superTwin.v2_execute_observation_parameters("/common_data/SparseBaseOrderExample", affinity, command, name)
     
 
     #utils.v2_check_performance_database()
     #utils.v2_insert_twin_to_performance_database(my_superTwin)
-    utils.v2_insert_observation_to_gpd(my_superTwin, obsint)
+    #utils.v2_insert_agg_observation_to_gpd(my_superTwin, obsint)
+    #utils.v2_insert_ts_observation_to_gpd(my_superTwin, obsint)
+
+    #print("obsint:", obsint)
+    
