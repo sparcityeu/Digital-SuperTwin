@@ -33,5 +33,5 @@ def _fill_common_pmu_dict__amd64_rapl(_COMMON_PMU_DICT):
 
 
 def initialize(_DEFAULT_GENERIC_PMU_EVENTS, _COMMON_PMU_DICT):
-    _fill_common_pmu_dict__amd64_rapl(_COMMON_PMU_DICT)
+    # _fill_common_pmu_dict__amd64_rapl(_COMMON_PMU_DICT)
     _fill_common_pmu_dict__amd64_common(_COMMON_PMU_DICT)

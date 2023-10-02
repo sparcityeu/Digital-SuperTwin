@@ -27,7 +27,6 @@ import copy
 import re
 import amd64_common
 import amd64_fam17h_zen2
-import amd64_fam17h_zen3
 import intel_common
 import pmu_grafana_utils
 
@@ -98,13 +97,8 @@ def initialize():
         amd64_fam17h_zen2.initialize(
             _DEFAULT_GENERIC_PMU_EVENTS, _COMMON_PMU_DICT
         )
-        amd64_fam17h_zen3.initialize(
-            _DEFAULT_GENERIC_PMU_EVENTS, _COMMON_PMU_DICT
-        )
         # Intel init.
-
         intel_common.initialize(_DEFAULT_GENERIC_PMU_EVENTS, _COMMON_PMU_DICT)
-
         _initialized = True
 
         print("default_generic_pmu_events:", _DEFAULT_GENERIC_PMU_EVENTS)

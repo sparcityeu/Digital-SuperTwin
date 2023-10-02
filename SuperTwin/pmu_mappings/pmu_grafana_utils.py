@@ -25,10 +25,13 @@ total_memory_instr = "(0.000001+($I+$J))"
 single_precision_instr_ratio = "4 * ($A+$B+$C+$D+0.000001)/($A+$B+$C+$D+$E+$F+$G+$H+0.000001)"
 double_precision_instr_ratio = "8 * ($E+$F+$G+$H+0.000001)/($A+$B+$C+$D+$E+$F+$G+$H+0.000001)"
 
-ai = flops + "/" + "(" + total_memory_instr + "*" + "(" + \
+ai_zen2 = flops + "/" + "(" + total_memory_instr + "*" + "(" + \
     single_precision_instr_ratio + " + " + double_precision_instr_ratio + ")" + ")"
 
+ai_zen3 = "($A+$B+$C+$D) / ( 8 * ($I + $J))"
+
 live_carm_pmu_mappings = {
+
     # ZEN2
     'RETIRED_SSE_AVX_OPERATIONS:SP_MULT_ADD_FLOPS': 'A',
     'RETIRED_SSE_AVX_OPERATIONS:SP_ADD_SUB_FLOPS': 'B',
@@ -39,9 +42,7 @@ live_carm_pmu_mappings = {
     'RETIRED_SSE_AVX_OPERATIONS:DP_MULT_FLOPS': 'G',
     'RETIRED_SSE_AVX_OPERATIONS:DP_DIV_FLOPS': 'H',
     'LS_DISPATCH:LD_DISPATCH': 'I',
-    'LS_DISPATCH:STORE_DISPATCH': 'J',
-    'amd64_fam17h_zen2': [ai, "($A+$B+$C+$D+$E+$F+$G+$H)/1000000000"],
-
+    'LS_DISPATCH:STORE_DISPATCH': 'J',  
 
     # INTEL_SKL
     'MEM_INST_RETIRED:ALL_LOADS': 'Z',
@@ -54,6 +55,17 @@ live_carm_pmu_mappings = {
     'FP_ARITH:256B_PACKED_DOUBLE': 'F',
     'FP_ARITH:512B_PACKED_SINGLE': 'G',
     'FP_ARITH:512B_PACKED_DOUBLE': 'H',
+
+    # ZEN3
+    'RETIRED_SSE_AVX_FLOPS:ANY' : 'Z',
+    'RETIRED_SSE_AVX_FLOPS:ADD_SUB_FLOPS' :'A',
+    'RETIRED_SSE_AVX_FLOPS:MULT_FLOPS': 'B',
+    'RETIRED_SSE_AVX_FLOPS:DIV_FLOPS' :'C',
+    'RETIRED_SSE_AVX_FLOPS:MAC_FLOPS': 'D',
+
+    'amd64_fam17h_zen2': [ai_zen2, "($A+$B+$C+$D+$E+$F+$G+$H)/1000000000"],
+
+    'amd64_fam19h_zen3': [ai_zen3, "($A+$B+$C+$D)"],
 
     'skl': ["(($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)*($A+$B+$C+$D+$E+$F+$G+$H)+0.000001)/(4*$A*($Z+$Y)+8*$B*($Z+$Y)+16*$C*($Z+$Y)+16*$D*($Z+$Y)+32*$E*($Z+$Y)+32*$F*($Z+$Y)+64*$G*($Z+$Y)+64*$H*($Z+$Y)+0.000001)",
             "($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)/1000000000"
