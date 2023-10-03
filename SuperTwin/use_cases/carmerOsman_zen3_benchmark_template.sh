@@ -27,12 +27,12 @@ INFLUXDB_PORT="8086"
 SSH_NAME="oyasal22@172.20.31.89" 
 SSH_PASSWD="12345"
 
-DATABASE_NAME="zen3"
+DATABASE_NAME="carmerOsman_zen3"
 
-MONITORING_URL="http://localhost:3000/d/ac207388-cfc9-4d8b-9d32-1501607632ff/pmus-zen3-monitor-a4e62303-5b4e-497c-ac84-dd8aedd939e8?orgId=1"
+MONITORING_URL="http://localhost:3000/d/f486499f-8b0b-4d58-9054-bf0cc7834c1f/pmus-carmerosman-zen3-monitor-04c95ad8-7bfe-4134-9065-55502592e013?orgId=1"
 MONITORING_DASHBOARD_URL=""
  
-ROOFLINE_URL="http://localhost:3000/d/ae64f061-a848-44c4-8c62-aca68d97a321/pmus-zen3-roofline-036ea630-ae53-4a17-a125-512207b1b9c1?orgId=1"
+ROOFLINE_URL="http://localhost:3000/d/ccee1abc-7e30-4a20-ba14-77f1de3b45b3/pmus-carmerosman-zen3-roofline-de67d6b1-62ee-4725-987b-a8b454efe0ec?orgId=1"
 ROOFLINE_DASHBOARD_URL="" 
 ## end DONT MODIFY!! 
 echo "entered database name :$DATABASE_NAME"
