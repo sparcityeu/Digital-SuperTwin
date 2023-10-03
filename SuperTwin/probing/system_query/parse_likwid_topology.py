@@ -57,16 +57,16 @@ def parse_likwid():
     topol = []
     print("Topology is empty, trying.. ")
     '''
-    topol = detect_utils.output_lines('sudo  likwid-topology --caches -G')
+    topol = detect_utils.output_lines('sudo  /usr/local/bin/likwid-topology --caches -G')
     if(len(topol) == 0):
         print("Likwid is not linked with CUPTI..")
-        print("Do not read GPU specs from  likwid-topology.. ")
-        topol = detect_utils.output_lines('sudo  likwid-topology --caches')
+        print("Do not read GPU specs from  /usr/local/bin/likwid-topology.. ")
+        topol = detect_utils.output_lines('sudo  /usr/local/bin/likwid-topology --caches')
         
     if(len(topol) == 0):
     '''
     topol = detect_utils.output_lines(
-        'sudo  likwid-topology --caches')
+        'sudo  /usr/local/bin/likwid-topology --caches')
 
     #print('topol:', topol)
 
@@ -169,8 +169,8 @@ def remove_whitespace(ls):
 
 def parse_affinity():
 
-    info = detect_utils.cmd(' likwid-topology')[1]
-    num_info = detect_utils.output_lines(' likwid-topology')
+    info = detect_utils.cmd(' /usr/local/bin/likwid-topology')[1]
+    num_info = detect_utils.output_lines(' /usr/local/bin/likwid-topology')
 
     sockets = int(remove_whitespace(
         num_info[find_ind("Sockets:", num_info)].split("\t"))[1])
@@ -202,7 +202,7 @@ def parse_affinity():
         # print(big_fields[2].split('\n'))
 
         '''
-        What's happening here is:  likwid-topology layout changes w.r. to numa and CUPTI existence
+        What's happening here is:  /usr/local/bin/likwid-topology layout changes w.r. to numa and CUPTI existence
         '''
         if(len(cols) != 0 and cols[0] != 'HWThread'):
             hwthread = int(cols[0])

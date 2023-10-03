@@ -143,7 +143,7 @@ class SuperTwin:
         self.generate_monitoring_dashboard()
         print("Monitoring dashboard generated.. ")
 
-        # self.add_adcarm_benchmark()
+        self.add_adcarm_benchmark()
 
         self.generate_roofline_dashboard()
         utils.generate_specific_benhmark_template(

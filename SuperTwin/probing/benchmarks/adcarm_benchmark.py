@@ -16,17 +16,17 @@ import glob
 
 def get_fields(data):
 
-    max_frequency = "" ##We are looking at name for this because this is nominal frequency
+    max_frequency = "2700" ##We are looking at name for this because this is nominal frequency
     l1_cache = ""
     l2_cache = ""
     l3_cache = ""
 
     for key in data.keys():
 
-        if(key.find("socket") != -1):
-            contents = data[key]["contents"]
+        #if(key.find("socket") != -1):
+        #    contents = data[key]["contents"]
 
-            for content in contents:
+            #for content in contents:
                 
                 #Use nominal frequency instead of max frequency
                 #if(content["name"] == "model"):
@@ -34,9 +34,9 @@ def get_fields(data):
                 #    max_frequency = str(float(string.split("@")[1].strip("GHz").strip("")))
 
                 #Use max frequency instead of nominal frequency
-                if(content["name"] == "max_mhz"):
-                    freq_temp = content["description"]
-                    max_frequency = str(float(freq_temp)/1000)
+                #if(content["name"] == "max_mhz"):
+                #    freq_temp = content["description"]
+                #    max_frequency = str(float(freq_temp)/1000)
 
         if(key.find("L1D") != -1):
             contents = data[key]["contents"]
