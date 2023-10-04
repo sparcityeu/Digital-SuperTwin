@@ -20,15 +20,15 @@ _table_total_hloc = None
 
 _initialized = False
 
-flops = "($A+$B+$C+$D+$E+$F+$G+$H+0.000001)"
+flops = "($A+$B+$C+$D+$E+$F+$G+$H)"
 total_memory_instr = "(0.000001+($I+$J))"
-single_precision_instr_ratio = "4 * ($A+$B+$C+$D+0.000001)/($A+$B+$C+$D+$E+$F+$G+$H+0.000001)"
-double_precision_instr_ratio = "8 * ($E+$F+$G+$H+0.000001)/($A+$B+$C+$D+$E+$F+$G+$H+0.000001)"
+single_precision_instr_ratio = "4 * ($A+$B+$C+$D)/($A+$B+$C+$D+$E+$F+$G+$H)"
+double_precision_instr_ratio = "8 * ($E+$F+$G+$H)/($A+$B+$C+$D+$E+$F+$G+$H)"
 
 ai_zen2 = flops + "/" + "(" + total_memory_instr + "*" + "(" + \
     single_precision_instr_ratio + " + " + double_precision_instr_ratio + ")" + ")"
 
-ai_zen3 = "($A+$B+$C+$D) / ( 8 * ($I + $J))"
+ai_zen3 = "($Z) / ( 8 * ($I + $J))"
 
 live_carm_pmu_mappings = {
 
@@ -67,11 +67,11 @@ live_carm_pmu_mappings = {
 
     'amd64_fam19h_zen3': [ai_zen3, "($A+$B+$C+$D)/1000000000"],
 
-    'skl': ["(($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)*($A+$B+$C+$D+$E+$F+$G+$H)+0.000001)/(4*$A*($Z+$Y)+8*$B*($Z+$Y)+16*$C*($Z+$Y)+16*$D*($Z+$Y)+32*$E*($Z+$Y)+32*$F*($Z+$Y)+64*$G*($Z+$Y)+64*$H*($Z+$Y)+0.000001)",
+    'skl': ["(($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)*($A+$B+$C+$D+$E+$F+$G+$H))/(4*$A*($Z+$Y)+8*$B*($Z+$Y)+16*$C*($Z+$Y)+16*$D*($Z+$Y)+32*$E*($Z+$Y)+32*$F*($Z+$Y)+64*$G*($Z+$Y)+64*$H*($Z+$Y))",
             "($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)/1000000000"
             ],
 
-    'clx': ["(($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)*($A+$B+$C+$D+$E+$F+$G+$H)+0.000001)/(4*$A*($Z+$Y)+8*$B*($Z+$Y)+16*$C*($Z+$Y)+16*$D*($Z+$Y)+32*$E*($Z+$Y)+32*$F*($Z+$Y)+64*$G*($Z+$Y)+64*$H*($Z+$Y)+0.000001)",
+    'clx': ["(($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)*($A+$B+$C+$D+$E+$F+$G+$H))/(4*$A*($Z+$Y)+8*$B*($Z+$Y)+16*$C*($Z+$Y)+16*$D*($Z+$Y)+32*$E*($Z+$Y)+32*$F*($Z+$Y)+64*$G*($Z+$Y)+64*$H*($Z+$Y))",
             "($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)/1000000000"
             ],
 
