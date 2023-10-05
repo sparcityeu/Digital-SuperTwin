@@ -1619,7 +1619,17 @@ def generate_roofline_dashboard(SuperTwin):
             if len(formula) == 0:
                 continue
 
-            if pmu_generic_event == "CARM":
+            if pmu_generic_event == "COMBINED_METRICS":
+                empty_dash["panels"].append(
+                    pmu_grafana_utils.dashboard_combined_metrics_table(
+                        pmu_name,
+                        SuperTwin.grafana_datasource,
+                        "SCALAR | AVX | RAPL | TOTAL MEMORY",
+                        cpu_count,  # * data[socket_count]
+                        formula
+                    )
+                )
+            elif pmu_generic_event == "CARM":
 
                 script, maxY = generate_live_carm_script(thread_set, SuperTwin)
 

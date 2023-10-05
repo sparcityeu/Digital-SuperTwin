@@ -42,7 +42,7 @@ live_carm_pmu_mappings = {
     'RETIRED_SSE_AVX_OPERATIONS:DP_MULT_FLOPS': 'G',
     'RETIRED_SSE_AVX_OPERATIONS:DP_DIV_FLOPS': 'H',
     'LS_DISPATCH:LD_DISPATCH': 'I',
-    'LS_DISPATCH:STORE_DISPATCH': 'J',  
+    'LS_DISPATCH:STORE_DISPATCH': 'J',
 
     # INTEL_SKL
     'MEM_INST_RETIRED:ALL_LOADS': 'Z',
@@ -57,10 +57,10 @@ live_carm_pmu_mappings = {
     'FP_ARITH:512B_PACKED_DOUBLE': 'H',
 
     # ZEN3
-    'RETIRED_SSE_AVX_FLOPS:ANY' : 'Z',
-    'RETIRED_SSE_AVX_FLOPS:ADD_SUB_FLOPS' :'A',
+    'RETIRED_SSE_AVX_FLOPS:ANY': 'Z',
+    'RETIRED_SSE_AVX_FLOPS:ADD_SUB_FLOPS': 'A',
     'RETIRED_SSE_AVX_FLOPS:MULT_FLOPS': 'B',
-    'RETIRED_SSE_AVX_FLOPS:DIV_FLOPS' :'C',
+    'RETIRED_SSE_AVX_FLOPS:DIV_FLOPS': 'C',
     'RETIRED_SSE_AVX_FLOPS:MAC_FLOPS': 'D',
 
     'amd64_fam17h_zen2': [ai_zen2, "($A+$B+$C+$D+$E+$F+$G+$H)/1000000000"],
@@ -76,6 +76,13 @@ live_carm_pmu_mappings = {
             ],
 
     # FLOPS intel =($A+$B+4*$C+2*$D+8*$E+4*$F+16*$G+8*$H)
+
+
+    'RAPL_ENERGY_PKG': 'C',
+
+    'RelevantMetrics': ["$B", "$H", "$C*0.23*0.01", "$Z + $Y"],
+
+
 }
 
 
@@ -530,6 +537,183 @@ def dashboard_livecarm_table(pmu_name, datasource, title, cpu_count, formula, sc
     _table_total_increment()
     return dash
 
+
+def dashboard_combined_metrics_table(pmu_name, datasource, title, cpu_count, formula):
+    global _id, _table_xloc, _table_yloc, _table_wloc, _table_hloc
+    global _initialized
+    if not _initialized:
+        _init()
+        _initialized = True
+
+    dash = {
+        "id": _id,
+        "gridPos": {
+            "x": _table_total_xloc,
+            "y": _table_total_yloc,
+            "w": _table_total_wloc,
+            "h": _table_total_hloc,
+        },
+        "type": "timeseries",
+        "title": title,
+        "transformations": [],
+        "datasource": {"uid": datasource, "type": "influxdb"},
+        "targets": [],
+        "options": {
+            "tooltip": {"mode": "single", "sort": "none"},
+            "legend": {
+                "showLegend": True,
+                "displayMode": "list",
+                "placement": "bottom",
+                "calcs": [],
+            },
+        },
+        "fieldConfig": {
+            "defaults": {
+                "custom": {
+                    "drawStyle": "line",
+                    "lineInterpolation": "linear",
+                    "barAlignment": 0,
+                    "lineWidth": 1,
+                    "fillOpacity": 0,
+                    "gradientMode": "none",
+                    "spanNulls": False,
+                    "showPoints": "auto",
+                    "pointSize": 5,
+                    "stacking": {"mode": "none", "group": "A"},
+                    "axisPlacement": "auto",
+                    "axisLabel": "",
+                    "axisColorMode": "text",
+                    "scaleDistribution": {"type": "linear"},
+                    "axisCenteredZero": False,
+                    "hideFrom": {
+                        "tooltip": False,
+                        "viz": False,
+                        "legend": False,
+                    },
+                    "thresholdsStyle": {"mode": "off"},
+                },
+                "color": {"mode": "palette-classic"},
+                "mappings": [],
+                "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                        {"value": None, "color": "green"},
+                        {"value": 80, "color": "red"},
+                    ],
+                },
+            },
+            "overrides": [],
+        },
+    }
+
+    generic_temp1, generic_temp2, generic_temp3, generic_temp4 = live_carm_pmu_mappings[
+        "RelevantMetrics"]
+
+    expression_template1 = "0"
+    expression_template2 = "0"
+    expression_template3 = "0"
+    expression_template4 = "0"
+
+    for cpu in range(cpu_count):
+        for event in formula:
+            if len(event) == 1:
+                continue
+            dash["targets"].append(
+                {
+                    "datasource": {"type": "influxdb", "uid": datasource},
+                    "refId": ""+live_carm_pmu_mappings[event]+str(cpu),
+                    "policy": "default",
+                    "resultFormat": "time_series",
+                    "orderByTime": "ASC",
+                    "tags": [],
+                    "groupBy": [
+                        {"type": "time", "params": ["1s"]},
+                        {"type": "fill", "params": ["null"]},
+                    ],
+                    "hide": True,
+                    "select": [
+                        [
+                            {
+                                "type": "field",
+                                "params": ["_cpu" + str(cpu)],
+                            },
+                            {"type": "mean", "params": []},
+                        ]
+                    ],
+                    "measurement": "perfevent_hwcounters_"
+                    + event.replace(":", "_")
+                    + "_value",
+                    "alias": "cpu_" + str(cpu) + "_" + str(uuid.uuid4())[:4],
+                },
+            )
+
+        expression_template1 = expression_template1 + \
+            "+" + expand_expression(generic_temp1, cpu)
+        expression_template2 = expression_template2 + \
+            "+" + expand_expression(generic_temp2, cpu)
+        expression_template3 = expression_template3 + \
+            "+" + expand_expression(generic_temp3, cpu)
+        expression_template4 = expression_template4 + \
+            "+" + expand_expression(generic_temp4, cpu)
+
+    dash["targets"].append(
+        {
+            "datasource": {
+                "name": "Expression",
+                "type": "__expr__",
+                "uid": "__expr__"
+            },
+            "expression": "("+expression_template1+")",
+            "hide": False,
+            "refId": "SCALAR DOUBLE INSTRUCTIONS",
+            "type": "math"
+        },
+    )
+
+    dash["targets"].append(
+        {
+            "datasource": {
+                "name": "Expression",
+                "type": "__expr__",
+                "uid": "__expr__"
+            },
+            "expression": "("+expression_template2+")",
+            "hide": False,
+            "refId": "AVX512 DOUBLE INSTRUCTIONS",
+            "type": "math"
+        }
+    )
+
+    dash["targets"].append(
+        {
+            "datasource": {
+                "name": "Expression",
+                "type": "__expr__",
+                "uid": "__expr__"
+            },
+            "expression": "("+expression_template3+")",
+            "hide": False,
+            "refId": "RAPL ENERGY PACKAGE",
+            "type": "math"
+        }
+    )
+
+    dash["targets"].append(
+        {
+            "datasource": {
+                "name": "Expression",
+                "type": "__expr__",
+                "uid": "__expr__"
+            },
+            "expression": "("+expression_template4+")",
+            "hide": False,
+            "refId": "TOTAL MEMORY OPERATIONS",
+            "type": "math"
+        }
+    )
+    _table_increment()
+    _table_total_increment()
+    return dash
 
 def expand_expression(expression, N):
     expanded_expression = expression.replace("$A", "($A"+str(N)+")")
