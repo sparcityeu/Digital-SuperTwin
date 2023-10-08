@@ -1,0 +1,32 @@
+[oyasal22@du01 merge_spmv]$ cat commands*
+#!/bin/bash
+
+. add_dynamic_libs.sh "123456"
+echo "Executing Normal Matrices"
+date
+
+./cpu_spmv --mtx="./matrixes/ADAPTIVE/adaptive.mtx" --iterations 5
+./cpu_spmv --mtx="./matrixes/AUDIKW/audikw_1.mtx" --iterations 5
+./cpu_spmv --mtx="./matrixes/DIEL_FILTER/dielFilterV3real.mtx" --iterations 5
+./cpu_spmv --mtx="./matrixes/HUGETRACE/hugetrace-00020.mtx" --iterations 5
+./cpu_spmv --mtx="./matrixes/HUMAN_GENE1/human_gene1.mtx" --iterations 5
+
+date
+echo "-------------"
+
+#!/bin/bash
+
+. add_dynamic_libs.sh "123456"
+echo "Executing RCM Matrices"
+date
+
+./cpu_spmv --mtx="./matrixes/ADAPTIVE/adaptive_rcm.mtx" --iterations 5
+./cpu_spmv --mtx="./matrixes/AUDIKW/audikw_1_rcm.mtx" --iterations 5
+./cpu_spmv --mtx="./matrixes/DIEL_FILTER/dielFilterV3real_rcm.mtx" --iterations 5
+./cpu_spmv --mtx="./matrixes/HUGETRACE/hugetrace-00020_rcm.mtx" --iterations 5
+./cpu_spmv --mtx="./matrixes/HUMAN_GENE1/human_gene1_rcm.mtx" --iterations 5
+
+
+date
+echo "-------------"
+

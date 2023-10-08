@@ -29,10 +29,10 @@ SSH_PASSWD="123456"
 
 DATABASE_NAME="carmerOsman_intel"
 
-MONITORING_URL="http://localhost:3000/d/c923f4ed-eb47-4660-a979-f428f9459a22/pmus-carmerosman-intel-monitor-2b62b6ce-c3b3-46c6-b1d3-fb63d5e72066?orgId=1"
+MONITORING_URL="http://localhost:3000/d/a7f65535-7495-441d-8373-68d079d08f56/pmus-carmerosman-intel-monitor-ba33e018-e593-49d9-9478-84c4442f894c?orgId=1"
 MONITORING_DASHBOARD_URL=""
  
-ROOFLINE_URL="http://localhost:3000/d/ff369003-5948-4dea-8ecc-cce5d40de406/pmus-carmerosman-intel-roofline-a728350e-be81-433a-898c-e05d0a50eb31?orgId=1"
+ROOFLINE_URL="http://localhost:3000/d/f2e62994-847f-4334-bdaa-ab6413a5efa1/pmus-carmerosman-intel-roofline-9edf877a-1723-493c-b3c7-4867c7d8ff92?orgId=1"
 ROOFLINE_DASHBOARD_URL="" 
 ## end DONT MODIFY!! 
 echo "entered database name :$DATABASE_NAME"

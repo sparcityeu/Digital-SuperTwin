@@ -1,0 +1,114 @@
+[oyasal22@du01 merge_spmv]$ ./commands_normal_matrixes.sh 
+[sudo] password for oyasal22: Executing Normal Matrices
+Thu  5 Oct 00:47:46 +03 2023
+Reading... Parsing... (symmetric: 1, skew: 0, array: 0) done. ./matrixes/ADAPTIVE/adaptive.mtx, 
+	 num_rows: 6815744
+	 num_cols: 6815744
+	 num_nonzeros: 27248640
+	 row_length_mean: 3.99790
+	 row_length_std_dev: 0.04583
+	 row_length_variation: 0.01146
+	 row_length_skewness: -21.75376
+
+CSR matrix (6815744 rows, 6815744 columns, 27248640 non-zeros, max-length 4):
+	Degree 1e-1: 	0 (0.00%)
+	Degree 1e0: 	6815744 (100.00%)
+
+
+	630 timing iterations
+MKL CsrMV, 	PASS
+Merge CsrMV
+	Using 56 threads on 56 procs
+	PASS
+
+Reading... Parsing... (symmetric: 1, skew: 0, array: 0) done. ./matrixes/AUDIKW/audikw_1.mtx, 
+	 num_rows: 943695
+	 num_cols: 943695
+	 num_nonzeros: 77651847
+	 row_length_mean: 82.28490
+	 row_length_std_dev: 42.44525
+	 row_length_variation: 0.51583
+	 row_length_skewness: 2.26782
+
+CSR matrix (943695 rows, 943695 columns, 77651847 non-zeros, max-length 345):
+	Degree 1e-1: 	0 (0.00%)
+	Degree 1e0: 	0 (0.00%)
+	Degree 1e1: 	817722 (86.65%)
+	Degree 1e2: 	125973 (13.35%)
+
+
+	221 timing iterations
+MKL CsrMV, 	PASS
+Merge CsrMV
+	Using 56 threads on 56 procs
+	PASS
+
+Reading... Parsing... (symmetric: 1, skew: 0, array: 0) done. ./matrixes/DIEL_FILTER/dielFilterV3real.mtx, 
+	 num_rows: 1102824
+	 num_cols: 1102824
+	 num_nonzeros: 89306020
+	 row_length_mean: 80.97939
+	 row_length_std_dev: 36.55308
+	 row_length_variation: 0.45139
+	 row_length_skewness: 1.51276
+
+CSR matrix (1102824 rows, 1102824 columns, 89306020 non-zeros, max-length 270):
+	Degree 1e-1: 	0 (0.00%)
+	Degree 1e0: 	18 (0.00%)
+	Degree 1e1: 	906510 (82.20%)
+	Degree 1e2: 	196296 (17.80%)
+
+
+	192 timing iterations
+MKL CsrMV, 	PASS
+Merge CsrMV
+	Using 56 threads on 56 procs
+	PASS
+
+Reading... Parsing... (symmetric: 1, skew: 0, array: 0) done. ./matrixes/HUGETRACE/hugetrace-00020.mtx, 
+	 num_rows: 16002413
+	 num_cols: 16002413
+	 num_nonzeros: 47997626
+	 row_length_mean: 2.99940
+	 row_length_std_dev: 0.02450
+	 row_length_variation: 0.00817
+	 row_length_skewness: -40.76352
+
+CSR matrix (16002413 rows, 16002413 columns, 47997626 non-zeros, max-length 3):
+	Degree 1e-1: 	0 (0.00%)
+	Degree 1e0: 	16002413 (100.00%)
+
+
+	357 timing iterations
+MKL CsrMV, 	PASS
+Merge CsrMV
+	Using 56 threads on 56 procs
+	PASS
+
+Reading... Parsing... (symmetric: 1, skew: 0, array: 0) done. ./matrixes/HUMAN_GENE1/human_gene1.mtx, 
+	 num_rows: 22283
+	 num_cols: 22283
+	 num_nonzeros: 24669643
+	 row_length_mean: 1107.10600
+	 row_length_std_dev: 1409.12161
+	 row_length_variation: 1.27280
+	 row_length_skewness: 1.85181
+
+CSR matrix (22283 rows, 22283 columns, 24669643 non-zeros, max-length 7939):
+	Degree 1e-1: 	0 (0.00%)
+	Degree 1e0: 	1651 (7.41%)
+	Degree 1e1: 	3195 (14.34%)
+	Degree 1e2: 	9603 (43.10%)
+	Degree 1e3: 	7834 (35.16%)
+
+
+	696 timing iterations
+MKL CsrMV, 	PASS
+Merge CsrMV
+	Using 56 threads on 56 procs
+	PASS
+
+Thu  5 Oct 00:49:46 +03 2023
+-------------
+[oyasal22@du01 merge_spmv]$ 
+
