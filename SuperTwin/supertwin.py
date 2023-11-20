@@ -50,6 +50,8 @@ def query_twin_state(name, mongodb_id, mongodb_addr):
 class SuperTwin:
     def __init__(self, *args):
 
+        pmu_mapping_utils.initialize() 
+
         if len(args) == 1:
             self.__reconstruct_twin(args)
 
@@ -212,6 +214,15 @@ class SuperTwin:
                 self.name, self.uid
             )
         )
+        
+    def get_pmu_formula(self, pmu_generic_event):
+        pmu_names = self.pmu_metrics.keys()
+        for pmu in pmu_names:
+            item = pmu_mapping_utils.get(pmu, pmu_generic_event)
+            if len(item) != 0:
+                return item
+        return "[]"
+
 
     def __load_pcp_and_pmu_metrics(self):
         self.pcp_metrics = [
@@ -717,33 +728,32 @@ class SuperTwin:
     def reconfigure_observation_events_with_pmu_events(self):
 
         writer = open("perfevent.conf", "w+")
-        added_events = {}
-        for pmu_name in self.pmu_metrics.keys():
-            pmu_alias = pmu_mapping_utils.get(pmu_name, "alias")
+        added_events = []
+        
+        pmu_alias = self.get_pmu_formula("alias")
+        writer.write("[" + pmu_alias + "]" + "\n")
+        for (
+            pmu_generic_event
+        ) in pmu_mapping_utils._DEFAULT_GENERIC_PMU_EVENTS:
+            formula = [
+                pmu_event
+                for pmu_event in self.get_pmu_formula(
+                    pmu_generic_event
+                )
+                if pmu_event.isupper()
+            ]
+            print("formula: ", formula)
+            for event in formula:
+                if event not in added_events and event != "":
+                    writer.write(event + "\n")
+                    added_events.append(event)
 
-            writer.write("[" + pmu_alias + "]" + "\n")
-            added_events[pmu_alias] = []
-            for (
-                pmu_generic_event
-            ) in pmu_mapping_utils._DEFAULT_GENERIC_PMU_EVENTS:
-                formula = [
-                    pmu_event
-                    for pmu_event in pmu_mapping_utils.get(
-                        pmu_name, pmu_generic_event
-                    )
-                    if pmu_event.isupper()
-                ]
-                print("formula: ", formula)
-                for event in formula:
-                    if event not in added_events and event != "":
-                        writer.write(event + "\n")
-                        added_events[pmu_alias].append(event)
-
-                        observation_event = event.replace(":", "_")
-                        if observation_event not in self.observation_metrics:
-                            self.observation_metrics.append(
-                                observation_event.replace(":", "_")
-                            )
+                    observation_event = event.replace(":", "_")
+                    if observation_event not in self.observation_metrics:
+                        self.observation_metrics.append(
+                            observation_event.replace(":", "_")
+                        )
+         
         self.correct(writer)
         writer.close()
         subprocess.run(
@@ -946,15 +956,7 @@ def resolve_test(my_superTwin, threads):
 
 
 if __name__ == "__main__":
-
-    # CONFIGURE PMU_MAPPING_UTILS
-
-    pmu_mapping_utils.initialize()
-    # pmu_mapping_utils.add_configuration("clx_pmu_mapping.txt")
-    # pmu_mapping_utils.add_configuration("icl_pmu_mapping.txt")
-    pmu_mapping_utils.add_configuration("skl_pmu_remapping.txt")
-    pmu_mapping_utils.add_configuration("zen3_pmu_remapping_full.txt")
-    # pmu_mapping_utils.add_configuration("skx_pmu_remapping.txt")
+ 
 
     # add_configuration("amd64_fam15_pmu_emapping.txt")
 

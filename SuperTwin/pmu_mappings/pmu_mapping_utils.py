@@ -29,6 +29,7 @@ import amd64_common
 import amd64_fam17h_zen2
 import intel_common
 import pmu_grafana_utils
+import glob
 
 _DEFAULT_GENERIC_PMU_EVENTS = []
 
@@ -102,6 +103,12 @@ def initialize():
         _initialized = True
 
         print("default_generic_pmu_events:", _DEFAULT_GENERIC_PMU_EVENTS)
+        
+        search_dictionary = "./"
+        file_pattern = "*pmu*mapping*.txt"
+        matching_files = glob.glob(f'{search_dictionary}/{file_pattern}')
+        for file in matching_files:
+            add_configuration(file)
 
 
 def add_configuration(file_name):
