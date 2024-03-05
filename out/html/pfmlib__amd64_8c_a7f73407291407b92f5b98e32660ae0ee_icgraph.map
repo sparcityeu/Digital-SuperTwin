@@ -1,0 +1,7 @@
+<map id="cpuid" name="cpuid">
+<area shape="rect" id="node1" title=" " alt="" coords="484,56,541,83"/>
+<area shape="rect" id="node2" href="$pfmlib__amd64_8c.html#a9886e1623179257102c22deda040cd43" title=" " alt="" coords="288,56,436,83"/>
+<area shape="rect" id="node3" href="$pfmlib__amd64_8c.html#a5918a65c96e9dc10755b4588cd3c8e09" title=" " alt="" coords="24,5,221,32"/>
+<area shape="rect" id="node4" href="$pfmlib__amd64__fam17h_8c.html#aab2c8ebbfda0de074511afc69cb65456" title=" " alt="" coords="5,56,240,83"/>
+<area shape="rect" id="node5" href="$pfmlib__amd64__rapl_8c.html#ac08c33344c8083e7d597c1652c53003e" title=" " alt="" coords="33,107,213,133"/>
+</map>

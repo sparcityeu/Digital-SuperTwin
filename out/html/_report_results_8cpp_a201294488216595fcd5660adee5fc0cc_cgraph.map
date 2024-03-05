@@ -1,0 +1,10 @@
+<map id="ReportResults" name="ReportResults">
+<area shape="rect" id="node1" title=" " alt="" coords="5,107,119,133"/>
+<area shape="rect" id="node2" href="$class_output_file.html#a07ac64c4cc6518bd9c14136460582a7c" title="Create and add a descendant element with value of type &quot;string&quot;." alt="" coords="213,31,335,57"/>
+<area shape="rect" id="node6" href="$class_output_file.html#a38d1428de20d22744f5f4505d1a76fad" title="Generate output string with results based on the stored key&#45;value hierarchy." alt="" coords="197,81,351,108"/>
+<area shape="rect" id="node7" href="$class_output_file.html#a459f68746f3822d272778c57c7da1733" title="Get the element in the list with the given key or return NULL if not found." alt="" coords="215,132,333,159"/>
+<area shape="rect" id="node8" href="$_optimize_problem_8cpp.html#a85528a2d0f5221116d814a3a014adbd6" title=" " alt="" coords="167,183,381,209"/>
+<area shape="rect" id="node3" href="$class_output_file.html#a8240fdc10b8db4385dd41ead17acd24d" title=" " alt="" coords="429,31,601,57"/>
+<area shape="rect" id="node4" href="$class_output_file.html#a7cecb1c944d5fde73a44f0c81c0eccde" title="Default constructor: no&#45;arguments accepted, should be used for descendant nodes." alt="" coords="656,5,820,32"/>
+<area shape="rect" id="node5" href="$class_output_file.html#a59f126337f7851d2daaf10cc3440adf7" title="Key&#45;Value setter method." alt="" coords="649,56,827,83"/>
+</map>

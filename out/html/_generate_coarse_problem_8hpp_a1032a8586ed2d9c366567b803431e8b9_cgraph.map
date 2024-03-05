@@ -1,0 +1,18 @@
+<map id="GenerateCoarseProblem" name="GenerateCoarseProblem">
+<area shape="rect" id="node1" title=" " alt="" coords="5,284,187,311"/>
+<area shape="rect" id="node2" href="$_generate_geometry_8cpp.html#ad9726ddd586359b065bb32990d8d63f2" title=" " alt="" coords="243,132,390,159"/>
+<area shape="rect" id="node9" href="$_generate_problem_8cpp.html#af33c81648a394e044c2e50148d5bdba3" title=" " alt="" coords="249,208,385,235"/>
+<area shape="rect" id="node11" href="$_vector_8hpp.html#a6bf3c51076c605817c5ff308218a22f9" title=" " alt="" coords="735,259,853,285"/>
+<area shape="rect" id="node12" href="$_m_g_data_8hpp.html#a57f27ceb7dde1bda11a1a5c7b4ecacb4" title=" " alt="" coords="251,309,382,336"/>
+<area shape="rect" id="node13" href="$_sparse_matrix_8hpp.html#af635e8b1fcc5776f0b61401a117df7d1" title=" " alt="" coords="235,360,399,387"/>
+<area shape="rect" id="node14" href="$_setup_halo_8cpp.html#a875bd301fa558b4f918c63700f0daa60" title=" " alt="" coords="272,411,361,437"/>
+<area shape="rect" id="node3" href="$_compute_optimal_shape_x_y_z_8cpp.html#ab60166a900dd2e890ef84743276a534d" title=" " alt="" coords="447,120,645,147"/>
+<area shape="rect" id="node4" href="$_compute_optimal_shape_x_y_z_8cpp.html#aa5d2da3236728f20d1a71622d53e0cb8" title=" " alt="" coords="711,5,877,32"/>
+<area shape="rect" id="node5" href="$class_mixed_base_counter.html#ae4df2190cd419df4afa13e5207e43efa" title=" " alt="" coords="695,56,893,83"/>
+<area shape="rect" id="node6" href="$class_mixed_base_counter.html#aac1b3f857aa9d654f14f0b82024f1f09" title=" " alt="" coords="703,107,885,133"/>
+<area shape="rect" id="node7" href="$_compute_optimal_shape_x_y_z_8cpp.html#a72c2351efe203bd294b53020e3b0487c" title=" " alt="" coords="764,157,824,184"/>
+<area shape="rect" id="node8" href="$class_mixed_base_counter.html#a86fd921c1c9ce24a70faeba20a4a0eaf" title=" " alt="" coords="693,208,895,235"/>
+<area shape="rect" id="node10" href="$_generate_problem__ref_8cpp.html#ae0b82d3be10fe476c87aae281462cfbb" title=" " alt="" coords="465,208,627,235"/>
+<area shape="rect" id="node15" href="$_setup_halo__ref_8cpp.html#a97cc85f0145af44d0a2f63d6bb11fbdf" title=" " alt="" coords="489,411,603,437"/>
+<area shape="rect" id="node16" href="$_geometry_8hpp.html#a6422db7d64b3e46997e53b0cb7973295" title=" " alt="" coords="695,411,893,437"/>
+</map>

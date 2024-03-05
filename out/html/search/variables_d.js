@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['l1tlbmiss_17547',['l1tlbmiss',['../unionpfm__amd64__reg__t.html#abe39082f3e3b20ee8e1233d0a02c651e',1,'pfm_amd64_reg_t']]],
+  ['l1tlbpgsz_17548',['l1tlbpgsz',['../unionpfm__amd64__reg__t.html#a8d9031fc06e8ece06169daa339bc424b',1,'pfm_amd64_reg_t']]],
+  ['l2d_5fset1_5fcnts_17549',['l2d_set1_cnts',['../pfmlib__montecito_8c.html#aeb6d54cd13dd210b549d270624ec1c3b',1,'pfmlib_montecito.c']]],
+  ['l2d_5fset2_5fcnts_17550',['l2d_set2_cnts',['../pfmlib__montecito_8c.html#a411644034ded18bee7f793f3ac8d556d',1,'pfmlib_montecito.c']]],
+  ['l2hit_17551',['L2HIT',['../unionpmd__sicortex__cpu__reg__t.html#a0e21b4c22d757f43614ba3c7d8be0a13',1,'pmd_sicortex_cpu_reg_t']]],
+  ['l2state_17552',['L2STATE',['../unionpmd__sicortex__cpu__reg__t.html#a4621136c881e03a89af28d633c89aedc',1,'pmd_sicortex_cpu_reg_t']]],
+  ['l2stop_17553',['L2STOP',['../unionpmd__sicortex__cpu__reg__t.html#a11ba8f073f44c696b7feb4a6bcf5fd2c',1,'pmd_sicortex_cpu_reg_t']]],
+  ['l2tlbmiss_17554',['l2tlbmiss',['../unionpfm__amd64__reg__t.html#a8b084df9b7b9645a69362322e13beef1',1,'pfm_amd64_reg_t']]],
+  ['l3_17555',['l3',['../unionpfm__amd64__reg__t.html#a053fdd2e18e2d1f2f065a06100e6eae2',1,'pfm_amd64_reg_t']]],
+  ['l3_5fmods_17556',['l3_mods',['../pfmlib__amd64__fam19h__l3_8c.html#a24ed1050afc931122be646453e45cf82',1,'pfmlib_amd64_fam19h_l3.c']]],
+  ['label_17557',['label',['../system__query_2_s_t_r_e_a_m_2stream_8c.html#a27ede6dbedff6ad3d962962505663045',1,'label():&#160;stream.c'],['../benchmarks_2_s_t_r_e_a_m_2stream_8c.html#a27ede6dbedff6ad3d962962505663045',1,'label():&#160;stream.c']]],
+  ['lat_17558',['lat',['../unionpfm__amd64__reg__t.html#afabc2f75bf661afe6f82b65805df2a30',1,'pfm_amd64_reg_t']]],
+  ['length_17559',['length',['../class_mixed_base_counter.html#ac9d4b9b4a59d95ccdbce3bf128b38b58',1,'MixedBaseCounter']]],
+  ['live_5fcarm_5fpmu_5fmappings_17560',['live_carm_pmu_mappings',['../namespacepmu__grafana__utils.html#a501c4061affba6ed4f27a3e7582a6b48',1,'pmu_grafana_utils']]],
+  ['llcrd_5fimplnull_17561',['llcrd_implnull',['../unionpfm__snbep__unc__reg__t.html#ac8b7bb2fb49259783e133e25eb95547b',1,'pfm_snbep_unc_reg_t']]],
+  ['llcrd_5fnon0_17562',['llcrd_non0',['../unionpfm__snbep__unc__reg__t.html#a19c488524cf262613a13c7ccc65a73c3',1,'pfm_snbep_unc_reg_t']]],
+  ['lo_5faddr_17563',['lo_addr',['../unionpfm__snbep__unc__reg__t.html#ad3cd202220798f212e25e1ac83e7b29d',1,'pfm_snbep_unc_reg_t']]],
+  ['loc_17564',['loc',['../unionpfm__snbep__unc__reg__t.html#afe28cd427a260021528bc8b8df67a0d7',1,'pfm_snbep_unc_reg_t']]],
+  ['locallength_17565',['localLength',['../struct_vector___s_t_r_u_c_t.html#af94ada3c74db3783065414ce4211b563',1,'Vector_STRUCT']]],
+  ['localnumberofcolumns_17566',['localNumberOfColumns',['../struct_sparse_matrix___s_t_r_u_c_t.html#aba980a6a210ffaa0fee1ee17cc020ecb',1,'SparseMatrix_STRUCT']]],
+  ['localnumberofnonzeros_17567',['localNumberOfNonzeros',['../struct_sparse_matrix___s_t_r_u_c_t.html#ae3f8d95c81e9d7e492e4dae9a3ccadba',1,'SparseMatrix_STRUCT']]],
+  ['localnumberofrows_17568',['localNumberOfRows',['../struct_sparse_matrix___s_t_r_u_c_t.html#afd139f12dda2d535aab6abe9c2ce5389',1,'SparseMatrix_STRUCT']]],
+  ['localtoglobalmap_17569',['localToGlobalMap',['../struct_sparse_matrix___s_t_r_u_c_t.html#a9db0e09c6677e49fc889c6cb366a75c4',1,'SparseMatrix_STRUCT']]],
+  ['lock_17570',['lock',['../structperf__event__mmap__page.html#ab499bb0bd23441b2399da831428d433e',1,'perf_event_mmap_page']]],
+  ['lower_5fmask_17571',['LOWER_MASK',['../namespacemersenne.html#acf20a66491f0aa0b216242795057669f',1,'mersenne']]]
+];

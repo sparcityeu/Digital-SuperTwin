@@ -1,0 +1,20 @@
+<map id="TestSymmetry" name="TestSymmetry">
+<area shape="rect" id="node1" title=" " alt="" coords="5,284,121,311"/>
+<area shape="rect" id="node2" href="$_compute_dot_product_8cpp.html#a76387b162d5deb3faa124ae3adcc56fe" title=" " alt="" coords="169,81,323,108"/>
+<area shape="rect" id="node5" href="$_compute_m_g_8cpp.html#ab22f640a352b269b523f4f26859dd559" title=" " alt="" coords="195,157,297,184"/>
+<area shape="rect" id="node13" href="$_compute_residual_8cpp.html#a6a43c08095e05dd9e32248c60da4d40c" title=" " alt="" coords="177,208,315,235"/>
+<area shape="rect" id="node14" href="$_compute_s_p_m_v_8cpp.html#a292adaade309f558ecdc105babafedb1" title=" " alt="" coords="401,259,519,285"/>
+<area shape="rect" id="node15" href="$_vector_8hpp.html#a7a280ef2c709511d65a8d175233d4bb0" title=" " alt="" coords="198,309,294,336"/>
+<area shape="rect" id="node16" href="$_vector_8hpp.html#ad5d348ab1af4d6c7fd5edce6eb154813" title=" " alt="" coords="193,360,299,387"/>
+<area shape="rect" id="node17" href="$_vector_8hpp.html#a31ef70778149a4aa49283c809118280a" title=" " alt="" coords="178,411,314,437"/>
+<area shape="rect" id="node18" href="$_vector_8hpp.html#a6bf3c51076c605817c5ff308218a22f9" title=" " alt="" coords="187,461,305,488"/>
+<area shape="rect" id="node3" href="$_compute_dot_product__ref_8cpp.html#a819eaf3833a71ab69d3a1845ba5f7202" title=" " alt="" coords="371,56,549,83"/>
+<area shape="rect" id="node4" href="$mytimer_8cpp.html#a0b04ff9771a1e7e058c00def240e0123" title=" " alt="" coords="652,5,731,32"/>
+<area shape="rect" id="node6" href="$_compute_m_g__ref_8cpp.html#a373735b46734be908ba77ff922f6e6e9" title=" " alt="" coords="396,157,524,184"/>
+<area shape="rect" id="node7" href="$_compute_prolongation__ref_8cpp.html#a249103e6fca9da3db22b6f04d020d7d3" title=" " alt="" coords="597,56,785,83"/>
+<area shape="rect" id="node8" href="$_compute_restriction__ref_8cpp.html#aa3bcdb6352d16a7a3ed5f462f5087412" title=" " alt="" coords="603,107,779,133"/>
+<area shape="rect" id="node9" href="$_compute_s_p_m_v__ref_8cpp.html#a186a3ca182e53af1b5a15e599e5700c5" title=" " alt="" coords="620,259,763,285"/>
+<area shape="rect" id="node11" href="$_compute_s_y_m_g_s__ref_8cpp.html#a005d01514716c1b4d1df34c9be09d5bd" title=" " alt="" coords="615,157,767,184"/>
+<area shape="rect" id="node12" href="$_vector_8hpp.html#abdaaf5238317670a5d6ed2b51e312bac" title=" " alt="" coords="645,208,738,235"/>
+<area shape="rect" id="node10" href="$_exchange_halo_8cpp.html#a7d7d64e7a7ddadcb8a044974c6075e95" title=" " alt="" coords="833,208,948,235"/>
+</map>

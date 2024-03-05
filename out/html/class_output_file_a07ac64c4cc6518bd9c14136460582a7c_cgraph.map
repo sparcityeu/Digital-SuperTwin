@@ -1,0 +1,6 @@
+<map id="OutputFile::add" name="OutputFile::add">
+<area shape="rect" id="node1" title="Create and add a descendant element with value of type &quot;string&quot;." alt="" coords="5,31,127,57"/>
+<area shape="rect" id="node2" href="$class_output_file.html#a8240fdc10b8db4385dd41ead17acd24d" title=" " alt="" coords="175,31,347,57"/>
+<area shape="rect" id="node3" href="$class_output_file.html#a7cecb1c944d5fde73a44f0c81c0eccde" title="Default constructor: no&#45;arguments accepted, should be used for descendant nodes." alt="" coords="401,5,565,32"/>
+<area shape="rect" id="node4" href="$class_output_file.html#a59f126337f7851d2daaf10cc3440adf7" title="Key&#45;Value setter method." alt="" coords="395,56,572,83"/>
+</map>

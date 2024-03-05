@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['f_16337',['f',['../unionpfm__gen__ia64__pmc__reg__t.html#a5eb6aaac693eaf9e1b57d78e9479e96d',1,'pfm_gen_ia64_pmc_reg_t']]],
+  ['f2coperator_16338',['f2cOperator',['../struct_m_g_data___s_t_r_u_c_t.html#accd17f1052e94b45bab0a361a7f53d50',1,'MGData_STRUCT']]],
+  ['family_16339',['family',['../structpfm__amd64__config__t.html#adc75120082d5a7fd7a38d8e305210a3e',1,'pfm_amd64_config_t::family()'],['../structpfm__intel__x86__config__t.html#a982a1b7f57f2d46c5f1f3562d8fa245f',1,'pfm_intel_x86_config_t::family()']]],
+  ['far_5fbranch_16340',['far_branch',['../unionpfm__intel__x86__reg.html#aa11d3748d1f235232d4647a7c1f1960e',1,'pfm_intel_x86_reg']]],
+  ['fedora_5fid_16341',['fedora_id',['../namespacedemo__cross.html#af495e3e8060cb0128c62915dc4f534aa',1,'demo_cross']]],
+  ['fedora_5fid_5f2_16342',['fedora_id_2',['../namespacedemo__cross.html#a9650d5589160319ac8c6b6799579cfbe',1,'demo_cross']]],
+  ['fedora_5fsupertwin_16343',['fedora_SuperTwin',['../namespacedemo__cross.html#a17ba60bbdbedfc4e0231ab1d204604a1',1,'demo_cross']]],
+  ['filt0_16344',['filt0',['../unionpfm__snbep__unc__reg__t.html#ae000d5d355f3e61eeefb80e0fa61fb95',1,'pfm_snbep_unc_reg_t']]],
+  ['filt1_16345',['filt1',['../unionpfm__snbep__unc__reg__t.html#ab6fd557f887bc122650ef3473067ec5c',1,'pfm_snbep_unc_reg_t']]],
+  ['filt2_16346',['filt2',['../unionpfm__snbep__unc__reg__t.html#a05a7dbdd812380a02b0e0fe76d5cf5c0',1,'pfm_snbep_unc_reg_t']]],
+  ['filt3_16347',['filt3',['../unionpfm__snbep__unc__reg__t.html#a258a3fd1dfe7a738d075acafb04f271b',1,'pfm_snbep_unc_reg_t']]],
+  ['first_5fevent_16348',['first_event',['../structpfm__pmu__info__t.html#ae10f0cc74eb48af6bf5932dd8a3a909e',1,'pfm_pmu_info_t']]],
+  ['flags_16349',['flags',['../structpfmlib__pmu.html#ab4735ae369975c78ae592a2e2feeee28',1,'pfmlib_pmu::flags()'],['../structpfm__perf__encode__arg__t.html#a8bab3a45fe99131855d64beca4d2a45c',1,'pfm_perf_encode_arg_t::flags()'],['../structpfmlib__os__t.html#a32571d0eb37b76b575013b46f7ae5d4f',1,'pfmlib_os_t::flags()'],['../structperf__event__t.html#aa08edf07dfc701efb4d03db99a9bf6df',1,'perf_event_t::flags()'],['../structintel__x86__entry__t.html#aa504fbdfff33835c0b90e5bed1a21ab4',1,'intel_x86_entry_t::flags()'],['../structnetburst__event__mask__t.html#ad011ad240fe26bad618662b3e1392946',1,'netburst_event_mask_t::flags()'],['../structamd64__entry__t.html#ae08b14e9a1c6b9c873216ac1909a0dc2',1,'amd64_entry_t::flags()']]],
+  ['flops_16350',['flops',['../namespacepmu__grafana__utils.html#a8679bd8372b8c2168e2b32a3c760fbad',1,'pmu_grafana_utils']]],
+  ['fname_16351',['fname',['../structpfm__s390__perf__aptt.html#aeadecf3356bc2c2a0a7da1830bcfe7fc',1,'pfm_s390_perf_aptt']]],
+  ['force_5fovf_16352',['force_ovf',['../unionnetburst__cccr__value__t.html#abd67b93781f371097fd1f95e4bc4fb78',1,'netburst_cccr_value_t']]],
+  ['forced_5fpmu_16353',['forced_pmu',['../structpfmlib__config__t.html#aa87a72881b7bd1889550637d2d3f90b0',1,'pfmlib_config_t']]],
+  ['fp_16354',['fp',['../structpfmlib__config__t.html#a341a5871c683ef8ffe34a9671a649b24',1,'pfmlib_config_t']]],
+  ['freq_16355',['freq',['../structperf__event__attr.html#a6c078451c042700cf957c0f4ad170e08',1,'perf_event_attr::freq()'],['../structpfm__cell__signal__group__desc.html#a0a4ceb238933729c2e7eda6d62008951',1,'pfm_cell_signal_group_desc::freq()'],['../structpthread__args.html#adea297bc02bc24aed2a98ee07e00cc6d',1,'pthread_args::freq()']]],
+  ['freq_5fnominal_16356',['freq_nominal',['../main__test_8c.html#ae1594242a09861ab08cae384e51dcaa3',1,'main_test.c']]],
+  ['freq_5freal_16357',['freq_real',['../main__test_8c.html#a82ac0173afed8f99e55dbfb9615f8c43',1,'main_test.c']]],
+  ['friday_16358',['Friday',['../news_8php.html#adb99c05ea56bc4ad8b220c0bed298ade',1,'news.php']]],
+  ['from_16359',['from',['../structperf__branch__entry.html#a2f437020592ada41a0c6950a343f93fc',1,'perf_branch_entry']]],
+  ['fstr_16360',['fstr',['../structpfmlib__event__desc__t.html#a775eb4b1c119ab1917b6655a64929525',1,'pfmlib_event_desc_t::fstr()'],['../structpfm__pmu__encode__arg__t.html#a512b0f3f0a6ebab7a2766d36d856bdf5',1,'pfm_pmu_encode_arg_t::fstr()'],['../structpfm__perf__encode__arg__t.html#aaa5bcc245214184c43fe49b7666de044',1,'pfm_perf_encode_arg_t::fstr()']]],
+  ['function_16361',['function',['../hpcg_8m.html#aeed293c815572bf9274c9c7ab3ed66d4',1,'function():&#160;hpcg.m'],['../symgs_8m.html#aeed293c815572bf9274c9c7ab3ed66d4',1,'function():&#160;symgs.m']]]
+];

@@ -1,0 +1,8 @@
+var searchData=
+[
+  ['which_15124',['which',['../namespacedetect__utils.html#abbc276fb3941c10987616b698173caba',1,'detect_utils']]],
+  ['write_5fasm_5ffp_15125',['write_asm_fp',['../functions_8h.html#aa6c2dcbfad9688291a3bada4df331f44',1,'write_asm_fp(int long long fp, char *op, int flops, char *assembly_op_flops_1, char *assembly_op_flops_2, char *precision):&#160;write_asm.c'],['../write__asm_8c.html#aa6c2dcbfad9688291a3bada4df331f44',1,'write_asm_fp(int long long fp, char *op, int flops, char *assembly_op_flops_1, char *assembly_op_flops_2, char *precision):&#160;write_asm.c']]],
+  ['write_5fasm_5fmem_15126',['write_asm_mem',['../functions_8h.html#a87d2bbe0408b2bb0cb0831d98289df24',1,'write_asm_mem(int long long num_rep, int align, int ops, int num_ld, int num_st, char *assembly_op, char *precision):&#160;write_asm.c'],['../write__asm_8c.html#a87d2bbe0408b2bb0cb0831d98289df24',1,'write_asm_mem(int long long num_rep, int align, int ops, int num_ld, int num_st, char *assembly_op, char *precision):&#160;write_asm.c']]],
+  ['writehpcgdat_15127',['WriteHpcgDat',['../unittesting_2hpcg__dat_2main_8cpp.html#a940ad888e83664648bcc4b019e78451f',1,'main.cpp']]],
+  ['writeproblem_15128',['WriteProblem',['../_write_problem_8cpp.html#abcafabb53be568a4bd5f222a37385d18',1,'WriteProblem(const Geometry &amp;geom, const SparseMatrix &amp;A, const Vector b, const Vector x, const Vector xexact):&#160;WriteProblem.cpp'],['../_write_problem_8hpp.html#abcafabb53be568a4bd5f222a37385d18',1,'WriteProblem(const Geometry &amp;geom, const SparseMatrix &amp;A, const Vector b, const Vector x, const Vector xexact):&#160;WriteProblem.cpp']]]
+];

@@ -1,0 +1,14 @@
+<map id="CG_ref" name="CG_ref">
+<area shape="rect" id="node1" title=" " alt="" coords="5,176,72,203"/>
+<area shape="rect" id="node2" href="$_compute_dot_product__ref_8cpp.html#a819eaf3833a71ab69d3a1845ba5f7202" title=" " alt="" coords="120,12,299,39"/>
+<area shape="rect" id="node3" href="$mytimer_8cpp.html#a0b04ff9771a1e7e058c00def240e0123" title=" " alt="" coords="401,5,480,32"/>
+<area shape="rect" id="node4" href="$_compute_m_g__ref_8cpp.html#a373735b46734be908ba77ff922f6e6e9" title=" " alt="" coords="145,151,273,177"/>
+<area shape="rect" id="node7" href="$_compute_s_p_m_v__ref_8cpp.html#a186a3ca182e53af1b5a15e599e5700c5" title=" " alt="" coords="369,259,512,285"/>
+<area shape="rect" id="node11" href="$_compute_w_a_x_p_b_y__ref_8cpp.html#a0418589163f170779baaf4fefe696d7a" title=" " alt="" coords="129,252,289,279"/>
+<area shape="rect" id="node12" href="$_vector_8hpp.html#a7a280ef2c709511d65a8d175233d4bb0" title=" " alt="" coords="161,303,257,329"/>
+<area shape="rect" id="node5" href="$_compute_prolongation__ref_8cpp.html#a249103e6fca9da3db22b6f04d020d7d3" title=" " alt="" coords="347,56,535,83"/>
+<area shape="rect" id="node6" href="$_compute_restriction__ref_8cpp.html#aa3bcdb6352d16a7a3ed5f462f5087412" title=" " alt="" coords="353,107,529,133"/>
+<area shape="rect" id="node9" href="$_compute_s_y_m_g_s__ref_8cpp.html#a005d01514716c1b4d1df34c9be09d5bd" title=" " alt="" coords="365,157,517,184"/>
+<area shape="rect" id="node10" href="$_vector_8hpp.html#abdaaf5238317670a5d6ed2b51e312bac" title=" " alt="" coords="394,208,487,235"/>
+<area shape="rect" id="node8" href="$_exchange_halo_8cpp.html#a7d7d64e7a7ddadcb8a044974c6075e95" title=" " alt="" coords="583,208,697,235"/>
+</map>

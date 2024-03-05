@@ -1,0 +1,17 @@
+<map id="pfm_arm_detect" name="pfm_arm_detect">
+<area shape="rect" id="node1" title=" " alt="" coords="261,335,391,361"/>
+<area shape="rect" id="node2" href="$pfmlib__arm__armv6_8c.html#af18415ef7bda13f9bc773d2b8b90a504" title=" " alt="" coords="25,5,193,32"/>
+<area shape="rect" id="node3" href="$pfmlib__arm__armv8_8c.html#af6c1841e67963baab3550c9e8a0eb444" title=" " alt="" coords="23,56,196,83"/>
+<area shape="rect" id="node4" href="$pfmlib__arm__armv7__pmuv1_8c.html#ab3f370649f6e4a357865f505791a3b95" title=" " alt="" coords="5,107,213,133"/>
+<area shape="rect" id="node5" href="$pfmlib__arm__armv8_8c.html#a2e27ad6b9618b8bf4e64f88ef1c8e63d" title=" " alt="" coords="5,157,213,184"/>
+<area shape="rect" id="node6" href="$pfmlib__arm__armv8_8c.html#a30735727d4a8f94e4c9dfe2364cfb52e" title=" " alt="" coords="5,208,213,235"/>
+<area shape="rect" id="node7" href="$pfmlib__arm__armv7__pmuv1_8c.html#af56ec7d6f9062c8eb594bf02963d300b" title=" " alt="" coords="9,259,209,285"/>
+<area shape="rect" id="node8" href="$pfmlib__arm__armv7__pmuv1_8c.html#a582f6b6561402009aa6e4501a9f8fcb7" title=" " alt="" coords="9,309,209,336"/>
+<area shape="rect" id="node9" href="$pfmlib__arm__armv7__pmuv1_8c.html#a107ff36d503cc53fe68d85978b1be242" title=" " alt="" coords="9,360,209,387"/>
+<area shape="rect" id="node10" href="$pfmlib__arm__armv8_8c.html#a9182d105689a2b5f27858f440ca2ee01" title=" " alt="" coords="14,411,205,453"/>
+<area shape="rect" id="node11" href="$pfmlib__arm__armv7__pmuv1_8c.html#adbd660e495042f492cb05f3edb3f96ec" title=" " alt="" coords="26,477,193,504"/>
+<area shape="rect" id="node12" href="$pfmlib__arm__armv8_8c.html#a548c348841d1d848fecfb3cc586fe3d1" title=" " alt="" coords="33,528,185,555"/>
+<area shape="rect" id="node13" href="$pfmlib__arm__armv8_8c.html#a4ca8ea685f064b17f3c2996bfb445a72" title=" " alt="" coords="33,579,185,605"/>
+<area shape="rect" id="node14" href="$pfmlib__arm__armv8_8c.html#adc209f0596d48f174f851c82d6dbc51a" title=" " alt="" coords="8,629,211,656"/>
+<area shape="rect" id="node15" href="$pfmlib__arm__armv8_8c.html#a09cc58e59e402b3f03369ccbe7706676" title=" " alt="" coords="21,680,197,707"/>
+</map>

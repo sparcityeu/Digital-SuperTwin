@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['amd64_5fcpu_5fun_19030',['AMD64_CPU_UN',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053a37c78496408973998a7c50ca532b45fd',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5ffam10h_5frev_5fb_19031',['AMD64_FAM10H_REV_B',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053a0a5f3587b6bf5552ef18937b4794f1ca',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5ffam10h_5frev_5fc_19032',['AMD64_FAM10H_REV_C',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053a0b99b38bb34cdbf5bd0557f93c127976',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5ffam10h_5frev_5fd_19033',['AMD64_FAM10H_REV_D',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053a01dd343ecee0038e965ac4e10980ddba',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5ffam11h_19034',['AMD64_FAM11H',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053af566e9d7d04ca9a62aae6a5a389880af',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5ffam12h_19035',['AMD64_FAM12H',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053ad7e0ed364c773b7c8338839ee36243ac',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5ffam14h_5frev_5fb_19036',['AMD64_FAM14H_REV_B',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053acdd7e5d6c890450a596a23b38cccf556',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5ffam15h_19037',['AMD64_FAM15H',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053a2f7c69ba82a7f4504900dcb2f140f0b1',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5ffam16h_19038',['AMD64_FAM16H',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053ac747283414c471250e0648e0b48b248b',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5ffam17h_19039',['AMD64_FAM17H',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053a5184615dc5dceb3690678417475e9f7b',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5ffam19h_19040',['AMD64_FAM19H',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053a604e07f2c8f0e49fe78d3c67d0a98dc0',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5fk7_19041',['AMD64_K7',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053a62d735cb31fb1524f1167b348be875cc',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5fk8_5frev_5fb_19042',['AMD64_K8_REV_B',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053afc29766eea1b9520d3dc5b2ee4033afc',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5fk8_5frev_5fc_19043',['AMD64_K8_REV_C',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053a17621e167315efcba994f372bd99939a',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5fk8_5frev_5fd_19044',['AMD64_K8_REV_D',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053ab8db6cd0f09bf7335e5d95bea2fffb38',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5fk8_5frev_5fe_19045',['AMD64_K8_REV_E',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053a018372b7f48bb04cd8ad8c1c2a66b33f',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5fk8_5frev_5ff_19046',['AMD64_K8_REV_F',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053a1448a49807306984fa3f4442bb0f7b29',1,'pfmlib_amd64_priv.h']]],
+  ['amd64_5fk8_5frev_5fg_19047',['AMD64_K8_REV_G',['../pfmlib__amd64__priv_8h.html#ac2c0e7fb70e8823413bab8c957209053af72d38b6c76dc1273caf476601db063a',1,'pfmlib_amd64_priv.h']]]
+];

@@ -1,0 +1,52 @@
+<map id="main" name="main">
+<area shape="rect" id="node1" title=" " alt="" coords="5,930,60,957"/>
+<area shape="rect" id="node2" href="$_c_g_8cpp.html#a216925ba68b21d213052f3ab68fa5644" title=" " alt="" coords="399,651,440,678"/>
+<area shape="rect" id="node5" href="$mytimer_8cpp.html#a0b04ff9771a1e7e058c00def240e0123" title=" " alt="" coords="1077,651,1156,678"/>
+<area shape="rect" id="node7" href="$_compute_m_g__ref_8cpp.html#a373735b46734be908ba77ff922f6e6e9" title=" " alt="" coords="821,322,949,349"/>
+<area shape="rect" id="node10" href="$_compute_s_p_m_v__ref_8cpp.html#a186a3ca182e53af1b5a15e599e5700c5" title=" " alt="" coords="1045,423,1188,450"/>
+<area shape="rect" id="node13" href="$_vector_8hpp.html#abdaaf5238317670a5d6ed2b51e312bac" title=" " alt="" coords="1070,221,1163,247"/>
+<area shape="rect" id="node18" href="$_c_g__ref_8cpp.html#aefe22b3242e00655bcb0b22ea56d7239" title=" " alt="" coords="615,474,682,501"/>
+<area shape="rect" id="node19" href="$_check_aspect_ratio_8cpp.html#a8e3db134a6e8535d8c3279f6f9a5ca37" title=" " alt="" coords="129,499,269,526"/>
+<area shape="rect" id="node20" href="$_check_problem_8cpp.html#a95e696392cfa7d7c47f2d4e5cd5d9d6e" title=" " alt="" coords="141,550,257,577"/>
+<area shape="rect" id="node21" href="$_compute_residual_8cpp.html#a6a43c08095e05dd9e32248c60da4d40c" title=" " alt="" coords="580,930,717,957"/>
+<area shape="rect" id="node22" href="$_c_g_data_8hpp.html#a23e12d84575d5165b5e79ec5173e0dcd" title=" " alt="" coords="141,69,256,95"/>
+<area shape="rect" id="node23" href="$_vector_8hpp.html#ad5d348ab1af4d6c7fd5edce6eb154813" title=" " alt="" coords="595,170,702,197"/>
+<area shape="rect" id="node24" href="$_sparse_matrix_8hpp.html#a54e6f6c435d0363ed825c522455ddfdd" title=" " alt="" coords="145,221,252,247"/>
+<area shape="rect" id="node27" href="$_vector_8hpp.html#a31ef70778149a4aa49283c809118280a" title=" " alt="" coords="581,1031,717,1058"/>
+<area shape="rect" id="node28" href="$_generate_coarse_problem_8cpp.html#a858f5e05439dbc6b8cc2ec26fec2000c" title=" " alt="" coords="108,1006,289,1033"/>
+<area shape="rect" id="node29" href="$_generate_geometry_8cpp.html#ad9726ddd586359b065bb32990d8d63f2" title=" " alt="" coords="346,905,493,931"/>
+<area shape="rect" id="node31" href="$_generate_problem_8cpp.html#af33c81648a394e044c2e50148d5bdba3" title=" " alt="" coords="351,1158,487,1185"/>
+<area shape="rect" id="node33" href="$_vector_8hpp.html#a6bf3c51076c605817c5ff308218a22f9" title=" " alt="" coords="826,1158,945,1185"/>
+<area shape="rect" id="node35" href="$_sparse_matrix_8hpp.html#af635e8b1fcc5776f0b61401a117df7d1" title=" " alt="" coords="337,955,501,982"/>
+<area shape="rect" id="node36" href="$_setup_halo_8cpp.html#a875bd301fa558b4f918c63700f0daa60" title=" " alt="" coords="375,1107,464,1134"/>
+<area shape="rect" id="node37" href="$finalize_8cpp.html#a742f32601dd1ff706804ff50276a85c2" title=" " alt="" coords="141,1253,257,1279"/>
+<area shape="rect" id="node38" href="$hpcg_8hpp.html#a50c02ece0e1e3c1268adaff87b206bde" title=" " alt="" coords="155,1202,242,1229"/>
+<area shape="rect" id="node41" href="$_c_g_data_8hpp.html#a5a86aad5ca59c686d4dade0bd1cedd90" title=" " alt="" coords="563,1361,735,1387"/>
+<area shape="rect" id="node42" href="$_optimize_problem_8cpp.html#a35c4efc8668d98169ae9bb06783009b0" title=" " alt="" coords="131,1411,266,1438"/>
+<area shape="rect" id="node43" href="$_report_results_8cpp.html#a201294488216595fcd5660adee5fc0cc" title=" " alt="" coords="142,1361,255,1387"/>
+<area shape="rect" id="node47" href="$_test_c_g_8cpp.html#af406bcc7b65c52845651359bdd6fd697" title=" " alt="" coords="165,702,232,729"/>
+<area shape="rect" id="node48" href="$_test_norms_8cpp.html#ac2eb5ddaa55cebf4ef57105bd108427a" title=" " alt="" coords="153,1614,244,1641"/>
+<area shape="rect" id="node49" href="$_test_symmetry_8cpp.html#a7cf2a56404a97d66399f11ee59dc0a38" title=" " alt="" coords="361,753,477,779"/>
+<area shape="rect" id="node50" href="$_write_problem_8cpp.html#abcafabb53be568a4bd5f222a37385d18" title=" " alt="" coords="143,1715,254,1742"/>
+<area shape="rect" id="node3" href="$_compute_dot_product_8cpp.html#a76387b162d5deb3faa124ae3adcc56fe" title=" " alt="" coords="572,727,725,754"/>
+<area shape="rect" id="node6" href="$_compute_m_g_8cpp.html#ab22f640a352b269b523f4f26859dd559" title=" " alt="" coords="597,423,700,450"/>
+<area shape="rect" id="node14" href="$_compute_s_p_m_v_8cpp.html#a292adaade309f558ecdc105babafedb1" title=" " alt="" coords="589,677,708,703"/>
+<area shape="rect" id="node15" href="$_compute_w_a_x_p_b_y_8cpp.html#a41862f9ef77ab26e0a6d24c1ddd20baf" title=" " alt="" coords="581,525,716,551"/>
+<area shape="rect" id="node17" href="$_vector_8hpp.html#a7a280ef2c709511d65a8d175233d4bb0" title=" " alt="" coords="837,753,933,779"/>
+<area shape="rect" id="node4" href="$_compute_dot_product__ref_8cpp.html#a819eaf3833a71ab69d3a1845ba5f7202" title=" " alt="" coords="796,677,975,703"/>
+<area shape="rect" id="node8" href="$_compute_prolongation__ref_8cpp.html#a249103e6fca9da3db22b6f04d020d7d3" title=" " alt="" coords="1023,322,1211,349"/>
+<area shape="rect" id="node9" href="$_compute_restriction__ref_8cpp.html#aa3bcdb6352d16a7a3ed5f462f5087412" title=" " alt="" coords="1029,373,1205,399"/>
+<area shape="rect" id="node12" href="$_compute_s_y_m_g_s__ref_8cpp.html#a005d01514716c1b4d1df34c9be09d5bd" title=" " alt="" coords="1041,271,1193,298"/>
+<area shape="rect" id="node11" href="$_exchange_halo_8cpp.html#a7d7d64e7a7ddadcb8a044974c6075e95" title=" " alt="" coords="1259,347,1373,374"/>
+<area shape="rect" id="node16" href="$_compute_w_a_x_p_b_y__ref_8cpp.html#a0418589163f170779baaf4fefe696d7a" title=" " alt="" coords="805,525,965,551"/>
+<area shape="rect" id="node25" href="$_geometry_8hpp.html#af962ad9d2e5ec75c5961a7648b8ea9a7" title=" " alt="" coords="354,221,485,247"/>
+<area shape="rect" id="node26" href="$_m_g_data_8hpp.html#a26ad14d51002aa7650d51beb017fac15" title=" " alt="" coords="360,170,479,197"/>
+<area shape="rect" id="node34" href="$_m_g_data_8hpp.html#a57f27ceb7dde1bda11a1a5c7b4ecacb4" title=" " alt="" coords="354,1006,485,1033"/>
+<area shape="rect" id="node30" href="$_compute_optimal_shape_x_y_z_8cpp.html#ab60166a900dd2e890ef84743276a534d" title=" " alt="" coords="549,1082,748,1109"/>
+<area shape="rect" id="node32" href="$_generate_problem__ref_8cpp.html#ae0b82d3be10fe476c87aae281462cfbb" title=" " alt="" coords="568,1183,729,1210"/>
+<area shape="rect" id="node39" href="$_read_hpcg_dat_8cpp.html#ad9b5e8414e7b436d88ecb590051a2f53" title=" " alt="" coords="364,1209,475,1235"/>
+<area shape="rect" id="node40" href="$init_8cpp.html#a17f9ee2d3b6bd798074ad3aa34a2cd49" title=" " alt="" coords="376,1259,463,1286"/>
+<area shape="rect" id="node44" href="$class_output_file.html#a07ac64c4cc6518bd9c14136460582a7c" title="Create and add a descendant element with value of type &quot;string&quot;." alt="" coords="359,1361,480,1387"/>
+<area shape="rect" id="node45" href="$class_output_file.html#a38d1428de20d22744f5f4505d1a76fad" title="Generate output string with results based on the stored key&#45;value hierarchy." alt="" coords="342,1411,497,1438"/>
+<area shape="rect" id="node46" href="$class_output_file.html#a459f68746f3822d272778c57c7da1733" title="Get the element in the list with the given key or return NULL if not found." alt="" coords="360,1462,479,1489"/>
+</map>
