@@ -141,5 +141,17 @@ Twin state is registered to db..
 ```
 Web application is available at localhost:3000
 
+## If you want to cite please use:
+```
+@InProceedings{tasyaran2024_protools,
+  author       = "Tasyaran, Fatih and Yasal, Osman and Morgado, José A and Ilic, Aleksandar and Unat, Didem and Kaya, Kamer",
+  title        = "P-MOVE: Performance Monitoring and Visualization with Encoded Knowledge",
+  year         = "2024",
+  booktitle    = {{IEEE/ACM} Workshop on Programming and Performance Visualization Tools,
+                  ProTools@SC 2024, Atlanta, GA, USA, November 17-22, 2024},
+  publisher    = "IEEE",
+}
+```
+
 <mark>Warning: This software is under development and may not produce same results on every host</mark>
 
